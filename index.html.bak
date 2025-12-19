@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barrios A2I - The Intelligence Architecture</title>
+<!-- Fonts: Inter, Playfair Display, JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'sans-serif'],
+serif: ['Playfair Display', 'serif'],
+mono: ['JetBrains Mono', 'monospace'],
+},
+letterSpacing: {
+tighter: '-0.04em',
+tight: '-0.02em',
+},
+colors: {
+void: '#0a0a0f',
+obsidian: '#0a0a1e',
+primary: '#00C2FF',
+accent: '#F59E0B',
+muted: '#94a3b8',
+},
+backgroundImage: {
+'obsidian-gradient': 'linear-gradient(to bottom, #0a0a0f 0%, #0a0a1e 100%)',
+'hud-shine': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent%)',
+},
+boxShadow: {
+'hud-inset': 'inset 0 1px 0 0 rgba(255,255,255,0.08), inset 0 0 20px rgba(0,0,0,0.5)',
+'neon-primary': '0 0 10px rgba(0, 194, 255, 0.3), inset 0 0 5px rgba(0, 194, 255, 0.1)',
+},
+animation: {
+'marquee': 'marquee 30s linear infinite',
+'beam': 'beam 8s linear infinite',
+'pulse-glow': 'pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+'typewriter': 'typewriter 2s steps(40, end) 1s 1 normal both',
+'cursor': 'cursor .75s step-end infinite',
+'shine': 'shine 8s ease-in-out infinite',
+'spin-slow': 'spin 12s linear infinite',
+'float': 'float-orbit 6s ease-in-out infinite',
+'orbit-cw': 'orbit-cw 8s linear infinite',
+'orbit-ccw': 'orbit-ccw 12s linear infinite',
+'underline-grow': 'underline-grow 1s ease-out 0.8s forwards',
+'signal-sweep': 'signal-sweep 2s linear infinite',
+},
+keyframes: {
+marquee: {
+'0%': { transform: 'translateX(0)' },
+'100%': { transform: 'translateX(-50%)' },
+},
+beam: {
+'0%': { top: '-200px', opacity: '0' },
+'10%': { opacity: '1' },
+'90%': { opacity: '1' },
+'100%': { top: '100%', opacity: '0' },
+},
+'pulse-glow': {
+'0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+'50%': { opacity: '1', transform: 'scale(1.05)' },
+},
+typewriter: {
+'from': { width: '0' },
+'to': { width: '100%' },
+},
+'underline-grow': {
+'from': { width: '0' },
+'to': { width: '100%' },
+},
+cursor: {
+'0%, 100%': { opacity: '1' },
+'50%': { opacity: '0' },
+},
+shine: {
+'0%, 100%': { 'background-position': '200% center' },
+},
+'float-orbit': {
+'0%, 100%': { transform: 'translateY(0px)' },
+'50%': { transform: 'translateY(-20px)' },
+},
+'orbit-cw': {
+'from': { transform: 'rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg)' },
+'to': { transform: 'rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg)' },
+},
+'orbit-ccw': {
+'from': { transform: 'rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg)' },
+'to': { transform: 'rotate(-360deg) translateX(var(--orbit-radius)) rotate(360deg)' },
+},
+'signal-sweep': {
+'0%': { transform: 'translateX(-100%)' },
+'100%': { transform: 'translateX(100%)' },
+}
+}
+}
+}
+}
+</script>
+<!-- Iconify -->
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<style>
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00C2FF; }
+::selection { background-color: rgba(0, 194, 255, 0.2); color: white; }
+/* Cinematic HUD Utilities */
+.hud-card {
+background: linear-gradient(180deg, rgba(16, 20, 30, 0.8) 0%, rgba(10, 10, 15, 0.9) 100%);
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(255, 255, 255, 0.08);
+box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.05), 0 20px 40px -20px rgba(0,0,0,0.8);
+border-radius: 20px;
+transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+position: relative;
+overflow: hidden;
+}
+.hud-card::after {
+content: "";
+position: absolute;
+top: 0; left: 0; right: 0; bottom: 0;
+background: radial-gradient(circle at top right, rgba(255,255,255,0.03), transparent 60%);
+pointer-events: none;
+z-index: 1;
+}
+.hud-card:hover {
+border-color: rgba(255, 255, 255, 0.15);
+transform: translateY(-2px) scale(1.005);
+box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.08), 0 30px 60px -20px rgba(0,0,0,0.9), 0 0 20px rgba(0, 194, 255, 0.05);
+}
+/* Corner Accents for Tech Feel */
+.corner-accent::before, .corner-accent::after {
+content: ''; position: absolute; width: 8px; height: 8px;
+border-color: rgba(255,255,255,0.2); border-style: solid; transition: all 0.3s;
+}
+.corner-accent::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; border-radius: 6px 0 0 0; }
+.corner-accent::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; border-radius: 0 0 6px 0; }
+.hud-card:hover .corner-accent::before { border-color: #00C2FF; }
+.hud-card:hover .corner-accent::after { border-color: #00C2FF; }
+/* Intro Animation */
+@keyframes animationIn {
+0% { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+@keyframes cortex-scan {
+0% { transform: translateX(-120%); }
+100% { transform: translateX(120%); }
+}
+@keyframes bar-pulse-1 { 0%,100%{height:30%} 50%{height:70%} }
+@keyframes bar-pulse-2 { 0%,100%{height:55%} 50%{height:35%} }
+@keyframes bar-pulse-3 { 0%,100%{height:70%} 50%{height:50%} }
+@keyframes bar-pulse-4 { 0%,100%{height:45%} 50%{height:85%} }
+@keyframes bar-pulse-5 { 0%,100%{height:80%} 50%{height:40%} }
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 25s linear infinite; }
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(500%); }
+}
+.animate-scan { animation: scan 4s linear infinite; }
+
+.animate-on-scroll { animation-play-state: paused !important; }
+.animate-on-scroll.animate { animation-play-state: running !important; }
+/* Aurora Background adjustments for Obsidian */
+.aurora-blob {
+position: absolute; border-radius: 50%; filter: blur(120px); z-index: -1;
+mix-blend-mode: screen;
+}
+/* Marquee gradient masks */
+.marquee-mask {
+mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+-webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+/* Plasma & Grid Specifics */
+.containment-grid {
+background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+background-size: 30px 30px;
+mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+-webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+}
+/* Signal Row Animation */
+.signal-line {
+position: relative;
+overflow: hidden;
+}
+.signal-line::after {
+content: '';
+position:set: 0;
+background: linear-gradient(to right, transparent, #00C2FF, transparent);
+width: 50%;
+opacity: 0.5;
+animation: signal-sweep 2s linear infinite;
+}
+.signal-line-delay-1::after { animation-delay: 0.4s; }
+.signal-line-delay-2::after { animation-delay: 0.8s; }
+
+    @keyframes progress {
+      0% { transform: scaleX(0); }
+      50% { transform: scaleX(0.7); }
+      100% { transform: scaleX(1); }
+    }
+    .animate-progress {
+      animation: progress 2.5s ease-in-out forwards;
+    }
+    
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spin-slow 25s linear infinite;
+    }
+    .animate-pulse-slow {
+      animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: -24; }
+    }
+    .animate-dash {
+      animation: dash 1.5s linear infinite;
+    }
+    
+    
+    
+    
+    @media (prefers-reduced-motion: reduce) {
+      .logoWrap:hover::after,
+      .logoWrap:focus-visible::after {
+        animation: none;
+        opacity: 0.8;
+      }
+    }
+    
+    /* === ENTERPRISE WORDMARK SLOT === */
+    .logoWrap {
+      position: relative;
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 240px;
+      height: 76px;
+      padding: 0;
+      flex: 0 0 auto;
+    }
+    @media (max-width: 768px) {
+      .logoWrap {
+        width: 190px;
+        height: 64px;
+      }
+    }
+    /* === BREATHING GLOW (center-locked) === */
+    .logoWrap::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 170%;
+      height: 170%;
+      border-radius: 18px;
+      background: radial-gradient(
+        circle at 50% 55%,
+        rgba(0, 194, 255, 0.22),
+        rgba(34, 211, 238, 0.10),
+        transparent 62%
+      );
+      filter: blur(10px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: -1;
+      animation: logoBreath 3.2s ease-in-out infinite;
+    }
+    @keyframes logoBreath {
+      0%, 100% { transform: translate(-50%, -50%) scale(0.98); opacity: 0.26; }
+      50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.48; }
+    }
+    .logoWrap:hover::before {
+      animation: logoBreathHover 1.1s ease-in-out infinite alternate;
+      opacity: 0.6;
+    }
+    @keyframes logoBreathHover {
+      from { transform: translate(-50%, -50%) scale(1.02); }
+      to { transform: translate(-50%, -50%) scale(1.08); }
+    }
+    .logoImg {
+      display: block;
+      height: 64px;
+      width: auto;
+      object-fit: contain;
+      transform: translateZ(0);
+    }
+    @media (max-width: 768px) {
+      .logoImg {
+        height: 52px;
+      }
+    }
+    </style>
+<!-- Intersection Observer -->
+<script>
+(function () {
+const once = true;
+if (!window.__inViewIO) {
+window.__inViewIO = new IntersectionObserver((entries) => {
+entries.forEach((entry) => {
+if (entry.isIntersecting) {
+entry.target.classList.add("animate");
+if (once) window.__inViewIO.unobserve(entry.target);
+}
+});
+}, { threshold: 0.1, rootMargin: "0px 0px -5% 0px" });
+}
+window.initInViewAnimations = function (selector = ".animate-on-scroll") {
+document.querySelectorAll(selector).forEach((el) => {
+window.__inViewIO.observe(el);
+});
+};
+document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
+})();
+</script>
+<link id="all-fonts-link-font-geist" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-geist">.font-geist { font-family: 'Geist', sans-serif !important; }</style><link id="all-fonts-link-font-roboto" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-roboto">.font-roboto { font-family: 'Roboto', sans-serif !important; }</style><link id="all-fonts-link-font-montserrat" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-montserrat">.font-montserrat { font-family: 'Montserrat', sans-serif !important; }</style><link id="all-fonts-link-font-poppins" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-poppins">.font-poppins { font-family: 'Poppins', sans-serif !important; }</style><link id="all-fonts-link-font-playfair" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&amp;display=swap"><style id="all-fonts-style-font-playfair">.font-playfair { font-family: 'Playfair Display', serif !important; }</style><link id="all-fonts-link-font-instrument-serif" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-instrument-serif">.font-instrument-serif { font-family: 'Instrument Serif', serif !important; }</style><link id="all-fonts-link-font-merriweather" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&amp;display=swap"><style id="all-fonts-style-font-merriweather">.font-merriweather { font-family: 'Merriweather', serif !important; }</style><link id="all-fonts-link-font-bricolage" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-bricolage">.font-bricolage { font-family: 'Bricolage Grotesque', sans-serif !important; }</style><link id="all-fonts-link-font-jakarta" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"><style id="all-fonts-style-font-jakarta">.font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif !important; }</style><link id="all-fonts-link-font-manrope" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"><style id="all-fonts-style-font-manrope">.font-manrope { font-family: 'Manrope', sans-serif !important; }</style><link id="all-fonts-link-font-space-grotesk" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-space-grotesk">.font-space-grotesk { font-family: 'Space Grotesk', sans-serif !important; }</style><link id="all-fonts-link-font-work-sans" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800&amp;display=swap"><style id="all-fonts-style-font-work-sans">.font-work-sans { font-family: 'Work Sans', sans-serif !important; }</style><link id="all-fonts-link-font-pt-serif" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&amp;display=swap"><style id="all-fonts-style-font-pt-serif">.font-pt-serif { font-family: 'PT Serif', serif !important; }</style><link id="all-fonts-link-font-geist-mono" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-geist-mono">.font-geist-mono { font-family: 'Geist Mono', monospace !important; }</style><link id="all-fonts-link-font-space-mono" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;display=swap"><style id="all-fonts-style-font-space-mono">.font-space-mono { font-family: 'Space Mono', monospace !important; }</style><link id="all-fonts-link-font-quicksand" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-quicksand">.font-quicksand { font-family: 'Quicksand', sans-serif !important; }</style><link id="all-fonts-link-font-nunito" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&amp;display=swap"><style id="all-fonts-style-font-nunito">.font-nunito { font-family: 'Nunito', sans-serif !important; }</style><link id="all-fonts-link-font-newsreader" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..800&amp;display=swap"><style id="all-fonts-style-font-newsreader">.font-newsreader { font-family: 'Newsreader', serif !important; }</style><link id="all-fonts-link-font-google-sans-flex" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-google-sans-flex">.font-google-sans-flex { font-family: 'Google Sans Flex', sans-serif !important; }</style><link id="all-fonts-link-font-oswald" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-oswald">.font-oswald { font-family: 'Oswald', sans-serif !important; }</style><link id="all-fonts-link-font-dm-sans" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-dm-sans">.font-dm-sans { font-family: 'DM Sans', sans-serif !important; }</style></head>
+
+<body class="bg-gradient-to-b from-void to-obsidian text-white font-sans antialiased min-h-screen w-full overflow-x-hidden flex flex-col selection:bg-primary/20" id="main-body">
+
+<!-- Cinematic Noise/Scanlines -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[90] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+
+<!-- Background (component) added by Aura -->
+<div class="aura-background-component fixed top-0 w-full h-screen -z-10" data-alpha-mask="60" style="mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 0%, black 80%, transparent)"><div class="aura-background-component top-0 w-full -z-10 absolute h-full">
+  <div data-us-project="FixNvEwvWwbu3QX9qC3F" class="absolute w-full h-full left-0 top-0 -z-10 opacity-60 mix-blend-color-dodge"></div>
+  <script type="text/javascript">
+    !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
+  </script>
+</div></div>
+
+    <!-- Aurora Backgrounds -->
+    <div class="fixed top-0 right-0 w-[800px] h-[800px] bg-primary aurora-blob translate-x-1/3 -translate-y-1/3 opacity-10" style="transform: translate(38.25px, 58.35px);"></div>
+    <div class="fixed bottom-0 left-0 w-[600px] h-[600px] bg-accent aurora-blob -translate-x-1/3 translate-y-1/3 opacity-10" style="transform: translate(19.125px, 29.175px);"></div>
+
+    <!-- Grid Lines (Fixed) -->
+    <div class="fixed inset-0 pointer-events-none z-0 grid grid-cols-6 md:grid-cols-12 max-w-7xl mx-auto border-x border-white/[0.03] h-full">
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden"></div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden">
+             <div class="absolute -top-40 -right-[1 h-40 bg-gradient-to-b from-transparent via-primary/50 to-transparent animate-beam" style="animation-duration: 7s;"></div>
+        </div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden"></div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden"></div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden">
+             <div class="absolute -top-40 -right-[1px] w-[1px] h-40 bg-gradient-to-b from-accent/50 to-transparent animate-beam" style="animation-duration: 10s; animation-delay: 2s;"></div>
+        </div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden"></div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden"></div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden"></div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden">
+             <div class="absolute -top-40 -right-[1px] w-[1px] h-40 bg-gradient-to-b from-transparent via-primary/30 to-transparent animate-beam" style="animation-duration: 5s; animation-delay: 4s;"></div>
+        </div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden"></div>
+        <div class="border-r border-white/[0.03] h-full hidden md:block relative overflow-hidden"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-void/80 backdrop-blur-xl shrink-0 overflow-visible">
+      <div class="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between gap-6 overflow-visible">
+        <!-- Header Logo - Enterprise Micro Pulse -->
+        <a href="/" class="logoWrap" aria-label="Barrios A2I Home">
+            <img
+                src="brand/barrios-a2i-logo.png"
+                alt="Barrios A2I"
+                class="logoImg"
+            >
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#stack" class="h-12 flex items-center text-[11px] font-medium uppercase tracking-wider text-muted hover:text-white transition-colors hover:scale-105 transform duration-200 font-mono">
+            [ STACK ]
+          </a>
+          <a href="#velocity" class="h-12 flex items-center text-[11px] font-medium uppercase tracking-wider text-muted hover:text-white transition-colors hover:scale-105 transform duration-200 font-mono">
+            [ VELOCITY ]
+          </a>
+          <a href="#architecture" class="h-12 flex items-center text-[11px] font-medium uppercase tracking-wider text-muted hover:text-white transition-colors hover:scale-105 transform duration-200 font-mono">
+            [ ARCHITECTURE ]
+          </a>
+          <a href="#pricing" class="h-12 flex items-center text-[11px] font-medium uppercase tracking-wider text-muted hover:text-white transition-colors hover:scale-105 transform duration-200 font-mono">
+            [ PRICING ]
+          </a>
+        </div>
+
+        <!-- CTA -->
+        <div class="flex items-center gap-6">
+          <button class="relative h-10 flex items-center justify-center rounded-[14px] bg-primary/10 border border-primary/30 px-6 text-[11px] font-bold tracking-wide text-primary hover:bg-primary/20 transition-all duration-300 overflow-hidden group shadow-neon-primary hover:shadow-[0_0_20px_rgba(0,194,255,0.5)]">
+            <span class="absolute inset-0 w-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shine_1s_ease-in-out]"></span>
+            <span class="relative z-10 uppercase flex items-center gap-2 font-mono">
+                [ INITIALIZE_LOGIC ]
+                <iconify-icon icon="lucide:terminal" width="14"></iconify-icon>
+            </span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-12 relative">
+      
+      <!-- HERO SECTION -->
+      <section class="flex flex-col lg:flex-row items-center w-full max-w-7xl mx-auto z-10 mt-24 mb-24 px-6 gap-16 relative" id="hero">
+        
+        <!-- Left Side: Content -->
+        <div class="w-full lg:w-1/2 flex flex-col gap-10 z-20 animate-on-scroll animate">
+            
+            <!-- Manifesto (Call & Response) -->
+            <div class="font-sans font-medium text-sm md:text-base tracking-wide [animation:animationIn_0.5s_ease-out_both]">
+                <div class="text-white/50 uppercase tracking-widest text-xs mb-2 font-mono">[ SYSTEM_MANIFESTO ]</div>
+                <div class="text-white/60">This is not automation.</div>
+                <div class="text-primary drop-shadow-[0_0_8px_rgba(0,194,255,0.5)]">
+                    This is operational intelligence.
+                </div>
+            </div>
+
+            <!-- HEADLINE - RESTORED TO SERIF -->
+            <div class="[animation:animationIn_0.6s_ease-out_0.1s_both]">
+                <h1 class="text-6xl md:text-7xl lg:text-8xl font-serif font-semibold tracking-tight leading-[0.95] text-white">
+                    Your Business.
+                    <br>
+                    <span class="relative inline-block">
+                        With a 
+                        <span class="italic text bg-clip-text bg-gradient-to-r from-white via-white to-primary opacity-90"> Nervous System.</span>
+                        <!-- Micro-Accent: Underline -->
+                        <div class="absolute bottom-2 left-0 h-[2px] bg-primary/50 w-full animate-underline-grow"></div>
+                    </span>
+                </h1>
+            </div>
+
+            <!-- Subhead -->
+            <p class="text-lg md:text-xl text-white/90 font-sans font-normal max-w-[48ch] leading-relaxed [animation:animationIn_0.6s_ease-out_0.2s_both]">
+                Barrios A2I installs <span class="text-white font-medium">autonomous intelligence</span> that senses, decides, and acts across your entire operation—continuously.
+            </p>
+
+            <!-- Buttons -->
+            <div class="flex flex-wrap gap-4 [animation:animationIn_0.6s_ease-out_0.3s_both]">
+                <button class="group relative px-8 py-4 bg-primary text-[#0a0a1e] text-sm font-bold font-mono rounded overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(0,194,255,0.4)] hover:-translate-y-0.5">
+                  <span class="relative z-10 flex items-center gap-2">
+                    BUILD_WORKFORCE <iconify-icon icon="lucide:arrow-right" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+                  </span>
+                </button>
+                
+                <button class="px-8 py-4 border border-white/10 bg-white/5 text-white text-sm font-mono rounded hover:bg-white/10 transition-all flex items-center gap-2 backdrop-blur-md hover:border-white/20">
+                  <iconify-icon icon="lucide:terminal" class="text-white/50"></iconify-icon>
+                  VIEW_ARCHITECTURE
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Side: Terminal Visual with Glow -->
+        <div class="w-full lg:w-1/2 relative z-20 flex justify-center lg:justify-end [animation:animationIn_0.8s_ease-out_0.4s_both] animate-on-scroll animate">
+            <!-- Ambient Glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/10 blur-[100px] -z-10 rounded-full pointer-events-none mix-blend-screen"></div>
+
+            <div class="relative w-full max-w-lg group">
+                <!-- Enhanced Glow behind -->
+                <div class="absolute -inset-1 bg-gradient-to-r from-primary via-blue-600 to-purple-600 opacity-20 blur-2xl group-hover:opacity-30 transition duration-1000 animate-pulse-glow"></div>
+                
+                <!-- Terminal Card -->
+                <div class="relative bg-void/90 backdrop-blur-xl border border-white/10 rounded-[18px] p-1 overflow-hidden shadow-2xl">
+                    <!-- Title Bar -->
+                    <div class="bg-white/[0.03] px-4 py-3 flex items-center gap-2 border-b border-white/5">
+                        <div class="flex gap-2">
+                            <div class="w-2.5 h-2.5 rounded-full bg-white/10 border border-white/20"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-white/10 border border-white/20"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-white/10 border border-white/20"></div>
+                        </div>
+                        <div class="ml-auto text-[11px] font-mono text-muted/60 flex items-center gap-2 tracking-wide uppercase">
+                             <iconify-icon icon="lucide:lock" width="10"></iconify-icon>
+                             [ ADMIN@BARRIOSA2I:~ ]
+                        </div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="p-6 font-mono text-sm leading-7 min-h-[300px] relative">
+                         <!-- Scanline overlay on terminal -->
+                         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent bg-[length:100%_4px] pointer-events-none"></div>
+
+                        <div class="text-muted mb-4 flex gap-2">
+                            <span class="text-primary font-bold">$</span> 
+                            <span class="text-white">./initialize_brain_os.sh --force</span>
+                        </div>
+                        
+                        <div class="flex flex-col gap-3">
+                            <div class="flex justify-between items-center text-primary bg-primary/5 p-3 rounded border border-primary/20 shadow-[0_0_15px_rgba(0,194,255,0.1)_inset]">
+                                <span class="text-[11px] tracking-wide font-bold">[ AGENTS_ACTIVE ]</span>
+                                <span class="animate-pulse font-bold text-sm">59 NODES</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center text-accent bg-accent/5 p-3 rounded border border-accent/20 shadow-[0_0_15px_rgba(245,158,11,0.1)_inset]">
+                                <span class="text-[11px] tracking-wide font-bold">[ MEMORY_ALLOC ]</span>
+                                <span class="animate-cursor text-sm">12TB (EXPANDING)</span>
+                            </div>
+
+                            <div class="flex justify-between items-center text-white bg-white/5 p-3 rounded border border-white/10">
+                                <span class="text-[11px] tracking-wide font-bold">[ SYSTEM_UPTIME ]</span>
+                                <span class="text-sm">99.999%</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 mt-2">
+                                <div class="bg-black/30 p-3 rounded border border-white/5 text-[10px] text-muted">
+                                    PARSING_DATA...
+                                    <div class="h-0.5 bg-white/10 mt-2 rounded overflow-hidden"><div class="h-full bg-primary w-2/3 animate-[typewriter_2s_infinite]"></div></div>
+                                </div>
+                                <div class="bg-black/30 p-3 rounded border border-white/5 text-[10px] text-muted">
+                                    OPTIMIZING_ADS...
+                                    <div class="h-0.5 bg-white/10 mt-2 rounded overflow-hidden"><div class="h-full bg-accent w-full animate-pulse"></div></div>
+                                </div>
+                            </div>
+
+                            <div class="text-muted mt-4 text-[11px] pl-2 border-l border-primary/30">
+                                &gt; Neural pathways optimized.
+                                
+                                <span class="text-void bg-primary px-1 font-bold mt-1 inline-block">[ CONNECTION ESTABLISHED ]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <!-- INFINITE LOGO MARQUEE (TECH STACK) -->
+      <section class="w-full border-y border-white/[0.08] bg-black/[0.2] py-8 mb-0 relative overflow-hidden">
+          <div class="absolute inset-0 z-10 marquee-mask pointer-events-none"></div>
+          <div class="max-w-7xl mx-auto px-6 flex overflow-hidden">
+              <div class="flex gap-16 animate-marquee items-center min-w-full shrink-0">
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:openai-icon" width="20"></iconify-icon> [ GPT-4o ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:python" width="20"></iconify-icon> [ PYTHON_NATIVE ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:stripe" width="28"></iconify-icon> [ PAYMENTS ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:react" width="20"></iconify-icon> [ REACT ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="simple-icons:anthropic" width="20"></iconify-icon> [ ANTHROPIC ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:aws" width="28"></iconify-icon> [ INFRASTRUCTURE ]
+                  </div>
+                   <!-- Set 2 -->
+                   <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:openai-icon" width="20"></iconify-icon> [ GPT-4o ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:python" width="20"></iconify-icon> [ PYTHON_NATIVE ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:stripe" width="28"></iconify-icon> [ PAYMENTS ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:react" width="20"></iconify-icon> [ REACT ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="simple-icons:anthropic" width="20"></iconify-icon> [ ANTHROPIC ]
+                  </div>
+                  <div class="flex items-center gap-2 text-muted font-mono text-[11px] uppercase tracking-wider font-bold opacity-50 grayscale hover:grayscale-0 transition-all duration-300 hover:text-white">
+                      <iconify-icon icon="logos:aws" width="28"></iconify-icon> [ INFRASTRUCTURE ]
+                  </div>
+              </div>
+          </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════════ -->
+      <!-- LIVE AUTONOMY SIGNAL SECTION (NEW) -->
+      <!-- ═══════════════════════════════════════════════════════════════════════ -->
+      <section class="relative w-full py-32 px-6 lg:px-8 z-10">
+        <div class="max-w-5xl mx-auto relative">
+          
+          <!-- [ SECTION LABEL ] - Top Left -->
+          <div class="absolute -top-12 left-0 md:left-4 flex items-center gap-3 animate-on-scroll [animation:animationIn_0.6s_ease-out_both] animate">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            <span class="font-mono text-xs text-white/40 tracking-widest uppercase">
+              [ LIVE_SIGNAL ]
+            </span>
+          </div>
+
+          <!-- [ CENTERPIECE ] - The Dominant Glass Panel -->
+          <div class="relative rounded-3xl border border-white/10 bg-[#0B1220]/60xl overflow-hidden shadow-2xl animate-on-scroll [animation:animationIn_0.8s_ease-out_0.1s_both] animate">
+            
+            <!-- Subtle Scanline Background -->
+            <div class="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(0,194,255,0.03)_50%,transparent_100%)] opacity-20 pointer-events-none"></div>
+            
+            <div class="p-8 md:p-12 lg:p-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              
+              <!-- LEFT: The Narrative -->
+              <div>
+                <h2 class="text-4xl md:text-5xl font-sans font-medium tracking-tight text-white leading-[1.1] mb-6">
+                  Your business is emitting signals.
+                  
+                  <span class="text-white/40">We turn them into </span>
+                  <span class="text-primary">decisions.</span>
+                </h2>
+                
+                <div class="flex items-center gap-3 text-white/50 font-mono text-xs md:text-sm tracking-wide">
+                  <iconify-icon icon="lucide:activity" width="16" class="text-primary"></iconify-icon>
+                  <span>NEURAL ACTIVITY DETECTED ACROSS SYSTEMS</span>
+                </div>
+              </div>
+
+              <!-- RIGHT: The Live Signal Rows (Diagnostics) -->
+              <div class="space-y-6">
+                
+                <!-- Row 1: Request Flow -->
+                <div class="group relative flex items-center justify-between p-4 rounded-lg border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors animate-on-scroll [animation:animationIn_0.6s_ease-out_0.2s_both] animate">
+                  <!-- Label Side -->
+                  <div class="flex items-center gap-4">
+                    <div class="p-2 rounded bg-white/5 text-white/40">
+                      <iconify-icon icon="lucide:zap" width="16"></iconify-icon>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-[10px] text-white/30 font-mono tracking-widest mb-1">SIGNAL:</span>
+                      <span class="text-sm font-mono text-white/80 tracking-tight">REQUEST FLOW</span>
+                    </div>
+                  </div>
+
+                  <!-- Animated Connector (The "Live") -->
+                  <div class="flex-1 mx-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent signal-line"></div>
+
+                  <!-- Value Side -->
+                  <div class="font-sans font-bold text-lg text-white">
+                    230,000+
+                  </div>
+                </div>
+
+                <!-- Row 2: Accuracy (Highlighted) -->
+                <div class="group relative flex items-center justify-between p-4 rounded-lg border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors animate-on-scroll [animation:animationIn_0.6s_ease-out_0.4s_both] animate">
+                  <!-- Label Side -->
+                  <div class="flex items-center gap-4">
+                    <div class="p-2 rounded bg-white/5 text-primary">
+                      <iconify-icon icon="lucide:activity" width="16"></iconify-icon>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-[10px] text-white/30 font-mono tracking-widest mb-1">SIGNAL:</span>
+                      <span class="text-sm font-mono text-white/80 tracking-tight">DECISION ACCURACY</span>
+                    </div>
+                  </div>
+
+                  <!-- Animated Connector (The "Live" Part) -->
+                  <div class="flex-1 mx-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent signal-line signal-line-delay-1"></div>
+
+                  <!-- Value Side -->
+                  <div class="font-sans font-bold text-lg text-primary drop-shadow-[0_0_8px_rgba(0,194,255,0.5)]">
+                    97.5%
+                  </div>
+                </div>
+
+                <!-- Row 3: Cost Compression -->
+                <div class="group relative flex items-center justify-between p-4 rounded-lg border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors animate-on-scroll [animation:animationIn_0.6s_ease-out_0.6s_both] animate">
+                  <!-- Label Side -->
+                  <div class="flex items-center gap-4">
+                    <div class="p-2 rounded bg-white/5 text-white/40">
+                      <iconify-icon icon="lucide:trending-down" width="16"></iconify-icon>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-[10px] text-white/30 font-mono tracking-widest mb-1">SIGNAL:</span>
+                      <span class="text-sm font-mono text-white/80 tracking-tight">COST COMPRESSION</span>
+                    </div>
+                  </div>
+
+                  <!-- Animated Connector (The "Live" Part) -->
+                  <div class="flex-1 mx-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent signal-line signal-line-delay-2"></div>
+
+                  <!-- Value Side -->
+                  <div class="font-sans font-bold text-lg text-white">
+                    -70%
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- BOTTOM BAR: The Micro-Copy & CTA -->
+            <div class="border-t border-white/5 bg-black/20 p-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+              <p class="font-serif italic text-white/60 text-sm md:text-base">
+                "Autonomy compounds. Manual effort decays."
+              </p>
+              
+              <button class="group flex items-center gap-2 text-xs font-mono text-white/40 hover:text-primary transition-colors tracking-widest uppercase">
+                View Signal Map
+                <iconify-icon icon="lucide:arrow-right" width="12" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+            <!-- NEURAL LATTICE: INTELLIGENCE TOPOLOGY -->
+      <section class="relative py-24 md:py-32 overflow-hidden" id="stack">
+
+        <!-- Background: Deep Grid -->
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(0,194,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,194,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] opacity-20 pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[150px] rounded-full pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-6 z-10">
+
+          <!-- Header -->
+          <div class="text-center mb-16 md:mb-24">
+            <p class="text-primary text-xs font-mono uppercase tracking-[0.3em] mb-4 animate-pulse">
+              [ Neural_Topology ]
+            </p>
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif text-white tracking-tight mb-4">
+              The Architecture of <span class="italic text-primary">Autonomy</span>.
+            </h2>
+            <p class="text-white/50 text-sm md:text-base uppercase tracking-widest font-mono">
+              // Modular intelligence nodes working in unison
+            </p>
+          </div>
+
+          <!-- LATTICE CONTAINER -->
+          <div class="relative flex flex-col items-center justify-center min-h-[700px] md:min-h-[650px] w-full">
+
+            <!-- VISUAL CONNECTORS (Desktop SVG Layer) -->
+            <svg class="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-10" style="opacity: 0.4;">
+              <!-- Animated pulse lines -->
+              <defs>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#00c2ff;stop-opacity:0" />
+                  <stop offset="50%" style="stop-color:#00c2ff;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#00c2ff;stop-opacity:0" />
+                </linearGradient>
+              </defs>
+              <!-- Top Left to Center -->
+              <line x1="18%" y1="18%" x2="50%" y2="50%" stroke="#00c2ff" stroke-width="1" stroke-dasharray="8,4" class="animate-dash" />
+              <!-- Top Right to Center -->
+              <line x1="82%" y1="18%" x2="50%" y2="50%" stroke="#00c2ff" stroke-width="1" stroke-dasharray="8,4" class="animate-dash" />
+              <!-- Bottom Left to Center -->
+              <line x1="18%" y1="82%" x2="50%" y2="50%" stroke="#00c2ff" stroke-width="1" stroke-dasharray="8,4" class="animate-dash" />
+              <!-- Bottom Right to Center -->
+              <line x1="82%" y1="82%" x2="50%" y2="50%" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8,4" class="animate-dash" />
+
+              <!-- Data packet pulses traveling on lines -->
+              <circle r="3" fill="#00c2ff" class="animate-packet-tl">
+                <animateMotion dur="3s" repeatCount="indefinite" path="M 18 18 L 50 50" />
+              </circle>
+              <circle r="3" fill="#00c2ff" class="animate-packet-tr">
+                <animateMotion dur="3.5s" repeatCount="indefinite" path="M 82 18 L 50 50" />
+              </circle>
+              <circle r="3" fill="#00c2ff" class="animate-packet-bl">
+                <animateMotion dur="2.8s" repeatCount="indefinite" path="M 18 82 L 50 50" />
+              </circle>
+              <circle r="3" fill="#fbbf24" class="animate-packet-br">
+                <animateMotion dur="4s" repeatCount="indefinite" path="M 82 82 L 50 50" />
+              </circle>
+            </svg>
+
+            <!-- THE CORE: RAGNAROK BRAIN (Center) -->
+            <div class="relative z-20 w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 flex items-center justify-center mb-8 md:mb-0">
+              <!-- Core Glows -->
+              <div class="absolute inset-0 bg-primary/10 blur-[80px] rounded-full animate-pulse-slow"></div>
+              <div class="absolute inset-[-10px] border border-primary/20 rounded-full"></div>
+              <div class="absolute inset-[-20px] border border-primary/10 rounded-full"></div>
+
+              <!-- The "Brain" Visual -->
+              <div class="relative w-full h-full bg-[#0b0d1a] border-2 border-primary/50 rounded-full flex flex-col items-center justify-center text-center p-6 shadow-[0_0_60px_rgba(0,194,255,0.2)] overflow-hidden group hover:border-primary hover:shadow-[0_0_80px_rgba(0,194,255,0.3)] transition-all duration-500">
+                <!-- Internal Texture -->
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.15),transparent_70%)]"></div>
+
+                <!-- Video Background (optional) -->
+                <div class="absolute inset-0 overflow-hidden rounded-full opacity-30">
+                  <video autoplay loop muted playsinline class="w-full h-full object-cover scale-150">
+                    <source src="https://barrios-a2i-website-yvh6.vercel.app/video/ragnarok-brain.mp4" type="video/mp4">
+                  </video>
+                </div>
+
+                <h3 class="relative z-10 text-3xl md:text-4xl font-serif text-white mb-2 drop-shadow-lg">
+                  Ragnarok
+                </h3>
+                <div class="relative z-10 text-[10px] font-mono text-primary uppercase tracking-[0.2em] mb-4">
+                  [ Core_Orchestrator ]
+                </div>
+                <div class="relative z-10 flex gap-4 text-[10px] font-mono text-white/60">
+                  <span class="border border-white/10 px-2 py-1 bg-black/40">59 AGENTS</span>
+                  <span class="border border-white/10 px-2 py-1 bg-black/40">∞ MEMORY</span>
+                </div>
+
+                <!-- Spinning dashed ring -->
+                <div class="absolute inset-2 border-2 border-dashed border-primary/30 rounded-full animate-spin-slow pointer-events-none"></div>
+              </div>
+            </div>
+
+            <!-- SATELLITE NODES -->
+            <!-- Mobile: Stacked below | Desktop: Positioned at corners -->
+
+            <!-- TOP LEFT: Marketing Overlord -->
+            <div class="node-card w-full md:w-72 lg:w-80 md:absolute md:top-0 md:left-0 lg:left-8 z-30 my-3 md:my-0 group">
+              <div class="relative bg-[#0b0d1a]/95 backdrop-blur-md border border-white/10 rounded-xl p-6 hover:border-primary/50 hover:shadow-[0_0_30px_rgba(0,194,255,0.15)] transition-all duration-300 hover:scale-[1.02]">
+                <!-- Corner dot -->
+                <div class="absolute top-3 right-3">
+                  <div class="w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(0,194,255,0.8)]"></div>
+                </div>
+                <h4 class="text-xl font-serif text-white mb-1 group-hover:text-primary transition-colors">Marketing Overlord</h4>
+                <div class="text-[10px] font-mono text-white/40 uppercase tracking-wider mb-3">/// CAMPAIGN_ORCHESTRATOR</div>
+                <p class="text-sm text-white/50 leading-relaxed">Autonomous campaign management & copy generation across all channels.</p>
+                <div class="mt-4 text-[10px] font-mono text-primary/70 border border-primary/20 inline-block px-2 py-1 bg-primary/5">[ $199/MO ]</div>
+              </div>
+            </div>
+
+            <!-- TOP RIGHT: Neural Ad Forge -->
+            <div class="node-card w-full md:w-72 lg:w-80 md:absolute md:top-0 md:right-0 lg:right-8 z-30 my-3 md:my-0 group">
+              <div class="relative bg-[#0b0d1a]/95 backdrop-blur-md border border-white/10 rounded-xl p-6 hover:border-purple-500/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-300 hover:scale-[1.02]">
+                <div class="absolute top-3 right-3">
+                  <div class="w-2 h-2 bg-purple-500 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.8)]"></div>
+                </div>
+                <h4 class="text-xl font-serif text-white mb-1 group-hover:text-purple-400 transition-colors">Neural Ad Forge</h4>
+                <div class="text-[10px] font-mono text-white/40 uppercase tracking-wider mb-3">/// MEDIA_SYNTHESIS</div>
+                <p class="text-sm text-white/50 leading-relaxed">High-conversion video ads generated single-shot from raw text.</p>
+                <div class="mt-4 text-[10px] font-mono text-purple-400/70 border border-purple-500/20 inline-block px-2 py-1 bg-purple-500/5">[ $500/VID ]</div>
+              </div>
+            </div>
+
+            <!-- BOTTOM LEFT: Cinesite Autopilot -->
+            <div class="node-card w-full md:w-72 lg:w-80 md:absolute md:bottom-0 md:left-0 lg:left-8 z-30 my-3 md:my-0 group">
+              <div class="relative bg-[#0b0d1a]/95 backdrop-blur-md border border-white/10 rounded-xl p-6 hover:border-green-500/50 hover:shadow-[0_0_30px_rgba(34,197,94,0.15)] transition-all duration-300 hover:scale-[1.02]">
+                <div class="absolute top-3 right-3">
+                  <div class="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.8)]"></div>
+                </div>
+                <h4 class="text-xl font-serif text-white mb-1 group-hover:text-green-400 transition-colors">Cinesite Autopilot</h4>
+                <div class="text-[10px] font-mono text-white/40 uppercase tracking-wider mb-3">/// CONVERSION_SURFACE</div>
+                <p class="text-sm text-white/50 leading-relaxed">Self-optimizing landing pages that A/B test themselves in real-time.</p>
+                <div class="mt-4 text-[10px] font-mono text-green-400/70 border border-green-500/20 inline-block px-2 py-1 bg-green-500/5">[ $1,500 ]</div>
+              </div>
+            </div>
+
+            <!-- BOTTOM RIGHT: Pet Cypher (Beta) -->
+            <div class="node-card w-full md:w-72 lg:w-80 md:absolute md:bottom-0 md:right-0 lg:right-8 z-30 my-3 md:my-0 group">
+              <div class="relative bg-[#0b0d1a]/95 backdrop-blur-md border border-white/10 rounded-xl p-6 hover:border-accent/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 hover:scale-[1.02]">
+                <!-- Beta badge -->
+                <span class="absolute -top-3 left-4 bg-accent/20 border border-accent/50 text-accent text-[9px] font-bold uppercase px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.3)]">Beta_Node</span>
+                <div class="absolute top-3 right-3">
+                  <div class="w-2 h-2 bg-accent rounded-full shadow-[0_0_8px_rgba(251,191,36,0.8)] animate-pulse"></div>
+                </div>
+                <h4 class="text-xl font-serif text-white mb-1 group-hover:text-accent transition-colors">Pet Cypher</h4>
+                <div class="text-[10px] font-mono text-white/40 uppercase tracking-wider mb-3">/// LINGUISTIC_DECODE</div>
+                <p class="text-sm text-white/50 leading-relaxed">Experimental companion node. Inter-species translation protocols.</p>
+                <div class="mt-4 text-[10px] font-mono text-accent/70 border border-accent/20 inline-block px-2 py-1 bg-accent/5">[ BETA ]</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      <!-- OPERATIONAL VELOCITY SECTION -->
+      <section class="w-full max-w-7xl mx-auto px-6 mb-32 relative z-20" id="velocity">
+
+        <!-- Section Header -->
+        <div class="flex flex-col gap-2 mb-12 [animation:animationIn_0.8s_ease-out_0.2s_both] animate-on-scroll animate">
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+            <span class="text-[11px] font-mono text-primary uppercase tracking-[0.2em] font-bold">[ LIVE_METRICS ]</span>
+          </div>
+          <h2 class="text-4xl md:text-6xl font-serif text-white tracking-tighter">
+            Operational <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">Velocity</span>
+          </h2>
+          <p class="text-white/70 font-sans border-l-2 border-primary pl-3 mt-2">Real-time performance metrics of your autonomous digital workforce.</p>
+        </div>
+
+        <!-- Main HUD Card Container -->
+        <div class="hud-card rounded-[20px] border-primary/20 hover:border-primary/40 p-0 overflow-hidden relative group corner-accent">
+
+          <!-- Radial hover glow -->
+          <div class="absolute inset-0 bg-[radial-gradient(800px_at_50%_50%,rgba(0,194,255,0.08),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+          <!-- Containment Grid Overlay -->
+          <div class="containment-grid absolute inset-0 pointer-events-none z-0"></div>
+
+          <!-- Scanline overlay -->
+          <div class="absolute inset-0 pointer-events-none z-10 opacity-30" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 194, 255, 0.03) 2px, rgba(0, 194, 255, 0.03) 4px);"></div>
+
+          <!-- Inner Content -->
+          <div class="relative z-20 p-8 md:p-12">
+
+            <!-- Live Status Bar -->
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                  <span class="relative flex h-2.5 w-2.5">
+                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500"></span>
+                  </span>
+                  <span class="text-green-400 text-xs font-mono uppercase tracking-widest">Realtime</span>
+                </div>
+                <span class="text-white/30 hidden md:inline">|</span>
+                <span class="text-xs font-mono text-white/50 uppercase tracking-wider hidden md:inline">Neural pathways optimized</span>
+              </div>
+
+              <!-- Ticker -->
+              <div class="overflow-hidden flex-1 max-w-xl relative hidden md:block">
+                <div class="flex whitespace-nowrap gap-8 text-xs font-mono text-primary/70 animate-marquee">
+                  <span>/// LEAD_QUALIFIED: $18.4K OPPORTUNITY</span>
+                  <span>/// SUPPORT_RESOLVED: 420ms</span>
+                  <span>/// AD_SPEND_OPTIMIZED: -23% CPA</span>
+                  <span>/// CHURN_RISK: ROUTED TO SUCCESS</span>
+                  <span>/// LEAD_QUALIFIED: $18.4K OPPORTUNITY</span>
+                  <span>/// SUPPORT_RESOLVED: 420ms</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+              <!-- Metric 1 -->
+              <div class="group/card relative flex flex-col p-6 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/30 hover:bg-white/[0.04] transition-all duration-300">
+                <div class="text-4xl md:text-5xl font-serif text-white group-hover/card:text-primary transition-colors drop-shadow-[0_0_20px_rgba(0,194,255,0.15)]">230k+</div>
+                <p class="mt-3 text-[10px] font-bold font-mono uppercase tracking-[0.2em] text-primary/80">Monthly Decisions</p>
+                <p class="mt-2 text-xs text-white/40 leading-relaxed">High-volume actions across sales, support, and ops.</p>
+                <div class="absolute -bottom-2 -right-2 h-16 w-16 rounded-full bg-primary/10 blur-xl opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+              </div>
+
+              <!-- Metric 2 -->
+              <div class="group/card relative flex flex-col p-6 rounded-xl bg-white/[0.02] border border-white/5 hover:border-accent/30 hover:bg-white/[0.04] transition-all duration-300">
+                <div class="text-4xl md:text-5xl font-serif text-white group-hover/card:text-accent transition-colors drop-shadow-[0_0_20px_rgba(245,158,11,0.15)]">97.5%</div>
+                <p class="mt-3 text-[10px] font-bold font-mono uppercase tracking-[0.2em] text-accent/80">Autonomous Accuracy</p>
+                <p class="mt-2 text-xs text-white/40 leading-relaxed">Tasks completed correctly without human intervention.</p>
+                <div class="absolute -bottom-2 -right-2 h-16 w-16 rounded-full bg-accent/10 blur-xl opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+              </div>
+
+              <!-- Metric 3 -->
+              <div class="group/card relative flex flex-col p-6 rounded-xl bg-white/[0.02] border border-white/5 hover:border-green-500/30 hover:bg-white/[0.04] transition-all duration-300">
+                <div class="text-4xl md:text-5xl font-serif text-white group-hover/card:text-green-400 transition-colors drop-shadow-[0_0_20px_rgba(34,197,94,0.15)]">&lt;2s</div>
+                <p class="mt-3 text-[10px] font-bold font-mono uppercase tracking-[0.2em] text-green-500/80">Signal-to-Action</p>
+                <p class="mt-2 text-xs text-white/40 leading-relaxed">Average time from business signal to executed response.</p>
+                <div class="absolute -bottom-2 -right-2 h-16 w-16 rounded-full bg-green-500/10 blur-xl opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+              </div>
+
+              <!-- Metric 4 -->
+              <div class="group/card relative flex flex-col p-6 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/30 hover:bg-white/[0.04] transition-all duration-300">
+                <div class="text-4xl md:text-5xl font-serif text-white group-hover/card:text-white transition-colors drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">59</div>
+                <p class="mt-3 text-[10px] font-bold font-mono uppercase tracking-[0.2em] text-white/60">Active AI Agents</p>
+                <p class="mt-2 text-xs text-white/40 leading-relaxed">Specialized workers running in parallel in your cloud.</p>
+                <div class="absolute -bottom-2 -right-2 h-16 w-16 rounded-full bg-white/5 blur-xl opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+              </div>
+
+            </div>
+
+            <!-- Footer Explanation -->
+            <div class="mt-10 pt-8 border-t border-white/5">
+              <p class="text-white/50 font-sans text-sm leading-relaxed max-w-2xl">
+                Stop staring at static dashboards. The Barrios A2I nervous system is always on—<span class="text-white">sensing data, making micro-decisions, and executing workflows.</span> While your competitors analyze reports, your system has already acted.
+              </p>
+              <div class="mt-6 flex items-center gap-3">
+                <div class="h-px w-8 bg-gradient-to-r from-transparent to-primary/50"></div>
+                <span class="text-[10px] font-mono uppercase tracking-[0.3em] text-primary/70">Intelligence that never sleeps</span>
+                <div class="h-px w-8 bg-gradient-to-l from-transparent to-primary/50"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+<!-- REALITY GAP SECTION (System Diagnostics) -->
+      <section class="relative py-24 overflow-hidden" id="architecture">
+
+        <!-- Background Grid & Ambience -->
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 pointer-events-none"></div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div class="relative max-w-6xl mx-auto px-6">
+
+          <!-- Header -->
+          <div class="text-center mb-16">
+            <p class="text-xs font-mono uppercase tracking-[0.3em] text-primary mb-3 animate-pulse">
+              [ System_Diagnostics ]
+            </p>
+            <h2 class="text-4xl md:text-5xl font-serif text-white font-medium tracking-tight">
+              The <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-primary">Honest Truth</span>.
+            </h2>
+            <p class="mt-4 text-white/60 max-w-xl mx-auto font-sans">
+              Humans sleep. Humans make mistakes. The Barrios A2I system does neither.
+            </p>
+          </div>
+
+          <!-- The Comparison Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 items-start">
+
+            <!-- LABELS COLUMN (Desktop) -->
+            <div class="hidden md:flex md:col-span-3 flex-col gap-0 pr-8 text-right pt-14">
+              <div class="h-20 flex items-center justify-end">
+                <span class="text-xs font-bold uppercase tracking-[0.2em] text-white/40 font-mono">Monthly Cost</span>
+              </div>
+              <div class="h-20 flex items-center justify-end">
+                <span class="text-xs font-bold uppercase tracking-[0.2em] text-white/40 font-mono">Turnaround</span>
+              </div>
+              <div class="h-20 flex items-center justify-end">
+                <span class="text-xs font-bold uppercase tracking-[0.2em] text-white/40 font-mono">Context Window</span>
+              </div>
+              <div class="h-20 flex items-center justify-end">
+                <span class="text-xs font-bold uppercase tracking-[0.2em] text-white/40 font-mono">Availability</span>
+              </div>
+            </div>
+
+            <!-- LEGACY COLUMNS (The "Old Way") -->
+            <div class="md:col-span-5 relative">
+              <!-- Vertical divider -->
+              <div class="absolute top-0 bottom-0 right-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent hidden md:block"></div>
+
+              <!-- Header Labels -->
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="text-center text-white/40 font-mono text-[10px] uppercase tracking-widest">Traditional Agency</div>
+                <div class="text-center text-white/40 font-mono text-[10px] uppercase tracking-widest">Freelancer</div>
+              </div>
+
+              <!-- Data Rows -->
+              <div class="grid grid-cols-2 gap-4">
+                <!-- Row 1: Cost -->
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
+                  <span class="text-white/30 font-mono text-sm line-through">$2,000+</span>
+                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Monthly</span>
+                </div>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
+                  <span class="text-white/30 font-mono text-sm line-through">$3,500+</span>
+                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Monthly</span>
+                </div>
+
+                <!-- Row 2: Time -->
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
+                  <span class="text-white/30 font-mono text-sm line-through">5-7 Days</span>
+                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Turnaround</span>
+                </div>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
+                  <span class="text-white/30 font-mono text-sm line-through">48 Hours</span>
+                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Turnaround</span>
+                </div>
+
+                <!-- Row 3: Context -->
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
+                  <span class="text-white/30 font-mono text-sm line-through">Fragmented</span>
+                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Context</span>
+                </div>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
+                  <span class="text-white/30 font-mono text-sm line-through">Zero</span>
+                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Context</span>
+                </div>
+
+                <!-- Row 4: Availability -->
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
+                  <span class="text-white/30 font-mono text-sm line-through">9-5 EST</span>
+                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Hours</span>
+                </div>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
+                  <span class="text-white/30 font-mono text-sm line-through">Irregular</span>
+                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Hours</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- THE BARRIOS COLUMN (The "Winner") -->
+            <div class="md:col-span-4 relative mt-8 md:mt-0 md:pl-6">
+              <!-- Glowing Backdrop -->
+              <div class="absolute -inset-4 bg-primary/20 blur-xl rounded-xl opacity-50"></div>
+
+              <div class="relative bg-[#0a0a1e]/90 border border-primary/50 rounded-xl p-6 shadow-[0_0_50px_rgba(0,194,255,0.15)] backdrop-blur-xl overflow-hidden">
+
+                <!-- Scanline Effect -->
+                <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent h-20 w-full animate-scan"></div>
+                </div>
+
+                <!-- Header -->
+                <div class="text-center mb-6 border-b border-primary/30 pb-4 relative z-10">
+                  <h3 class="text-xl font-serif italic text-white">Barrios A2I</h3>
+                  <div class="flex items-center justify-center gap-2 mt-2">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                    <span class="text-[10px] font-mono text-primary uppercase tracking-widest">System Active</span>
+                  </div>
+                </div>
+
+                <!-- Values -->
+                <div class="flex flex-col gap-6 relative z-10">
+                  <!-- Cost -->
+                  <div class="h-20 flex flex-col items-center justify-center">
+                    <span class="text-3xl md:text-4xl font-bold text-primary drop-shadow-[0_0_15px_rgba(0,194,255,0.5)]">$199</span>
+                    <span class="text-[9px] text-primary/50 uppercase tracking-wider mt-1 font-mono">Monthly Cost</span>
+                  </div>
+                  <!-- Time -->
+                  <div class="h-20 flex flex-col items-center justify-center">
+                    <span class="text-3xl md:text-4xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">&lt; 2s</span>
+                    <span class="text-[9px] text-primary/50 uppercase tracking-wider mt-1 font-mono">Turnaround</span>
+                  </div>
+                  <!-- Context -->
+                  <div class="h-20 flex flex-col items-center justify-center">
+                    <span class="text-3xl md:text-4xl font-bold text-accent drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">12TB</span>
+                    <span class="text-[9px] text-primary/50 uppercase tracking-wider mt-1 font-mono">Context Window</span>
+                  </div>
+                  <!-- Availability -->
+                  <div class="h-20 flex flex-col items-center justify-center">
+                    <span class="text-3xl md:text-4xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">24/7/365</span>
+                    <span class="text-[9px] text-primary/50 uppercase tracking-wider mt-1 font-mono">Availability</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+            <!-- DEPLOYMENT PROTOCOLS SECTION -->
+      <section id="pricing" class="relative py-24 mb-32 overflow-hidden">
+
+        <!-- Background Ambience -->
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(0,194,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,194,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-6">
+
+          <!-- Header -->
+          <div class="text-center mb-20">
+            <p class="text-primary text-xs font-mono uppercase tracking-[0.3em] mb-4">
+              [ Initialization_Paths ]
+            </p>
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif text-white tracking-tight mb-4">
+              Choose Your <span class="italic text-white/60">Deployment Path</span>.
+            </h2>
+            <p class="text-white/50 max-w-xl mx-auto text-sm md:text-base font-sans">
+              Start with a single mission or hand us your entire nervous system.
+            </p>
+          </div>
+
+          <!-- The 3-Card Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+
+            <!-- CARD 1: NEURAL AD FORGE (Quick Strike) -->
+            <div class="group relative flex flex-col rounded-3xl bg-white/[0.02] border border-white/10 p-[1px] transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(0,194,255,0.15)]">
+              <div class="relative flex flex-col h-full bg-[#0b0d1a] rounded-[22px] p-8 overflow-hidden">
+
+                <!-- Hover gradient -->
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+                <!-- Top Label -->
+                <div class="text-[10px] font-mono uppercase tracking-[0.2em] mb-6 text-primary/80">
+                  QUICK STRIKE
+                </div>
+
+                <!-- Header -->
+                <div class="mb-8">
+                  <h3 class="text-2xl font-serif text-white mb-2">Neural Ad Forge</h3>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-bold text-primary">$500</span>
+                    <span class="text-xs font-mono text-white/40">/ VIDEO_ASSET</span>
+                  </div>
+                  <p class="mt-4 text-white/50 text-sm leading-relaxed border-t border-white/5 pt-4 font-sans">
+                    Single-shot, high-performance video assets generated from raw text.
+                  </p>
+                </div>
+
+                <!-- Features -->
+                <div class="space-y-3 mb-8 flex-grow">
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,194,255,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-primary/70">SCRIPT_GEN</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,194,255,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-primary/70">AI_VOICEOVER</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,194,255,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-primary/70">STOCK_SYNC</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,194,255,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-primary/70">AUTO_CAPTIONS</span>
+                  </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-auto">
+                  <p class="text-[11px] text-white/40 italic mb-6 leading-relaxed">
+                    "Built for launches, promos, and tests where you need results next week—not next quarter."
+                  </p>
+                  <button onclick="openIntakeTerminal('Neural Ad Forge')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
+                    [ Initialize Ad Forge ]
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD 2: MARKETING OVERLORD (Campaign Autopilot) -->
+            <div class="group relative flex flex-col rounded-3xl bg-white/[0.02] border border-white/10 p-[1px] transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(0,194,255,0.15)]">
+              <div class="relative flex flex-col h-full bg-[#0b0d1a] rounded-[22px] p-8 overflow-hidden">
+
+                <!-- Hover gradient -->
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+                <!-- Top Label -->
+                <div class="text-[10px] font-mono uppercase tracking-[0.2em] mb-6 text-primary/80">
+                  CAMPAIGN AUTOPILOT
+                </div>
+
+                <!-- Header -->
+                <div class="mb-8">
+                  <h3 class="text-2xl font-serif text-white mb-2">Marketing Overlord</h3>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-bold text-primary">$199</span>
+                    <span class="text-xs font-mono text-white/40">/ MO + Setup</span>
+                  </div>
+                  <p class="mt-4 text-white/50 text-sm leading-relaxed border-t border-white/5 pt-4 font-sans">
+                    Your always-on campaign brain: plans, writes, launches, and optimizes while you sleep.
+                  </p>
+                </div>
+
+                <!-- Features -->
+                <div class="space-y-3 mb-8 flex-grow">
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,194,255,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-primary/70">FUNNEL_MAP</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,194,255,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-primary/70">MULTI_CHANNEL_DEPLOY</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,194,255,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-primary/70">LIVE_OPTIMIZATION</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_rgba(0,194,255,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-primary/70">PERFORMANCE_REPORTS</span>
+                  </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-auto">
+                  <p class="text-[11px] text-white/40 italic mb-6 leading-relaxed">
+                    "Built for founders who want a consistent pipeline without hiring a full marketing team."
+                  </p>
+                  <button onclick="openIntakeTerminal('Marketing Overlord')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
+                    [ Initialize Marketing Overlord ]
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD 3: TOTAL COMMAND (Enterprise - Highlighted) -->
+            <div class="group relative flex flex-col rounded-3xl bg-white/[0.02] border border-accent/30 p-[1px] transition-all duration-500 hover:border-accent/60 hover:shadow-[0_0_40px_rgba(251,191,36,0.15)] lg:-mt-4 lg:mb-4 lg:scale-105 z-10">
+
+              <!-- Enterprise Badge -->
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-[#0a0a1e] px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(251,191,36,0.4)] z-20">
+                Enterprise Choice
+              </div>
+
+              <div class="relative flex flex-col h-full bg-[#0b0d1a] rounded-[22px] p-8 overflow-hidden">
+
+                <!-- Hover gradient -->
+                <div class="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+                <!-- Top Label -->
+                <div class="text-[10px] font-mono uppercase tracking-[0.2em] mb-6 text-accent/80">
+                  TOTAL COMMAND
+                </div>
+
+                <!-- Header -->
+                <div class="mb-8">
+                  <h3 class="text-2xl font-serif text-white mb-2">Total Command</h3>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-bold text-white">Custom</span>
+                  </div>
+                  <p class="mt-4 text-white/50 text-sm leading-relaxed border-t border-white/5 pt-4 font-sans">
+                    Enterprise-grade logic architecture. We wire your entire operation into a single nervous system.
+                  </p>
+                </div>
+
+                <!-- Features -->
+                <div class="space-y-3 mb-8 flex-grow">
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_6px_rgba(251,191,36,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-accent/70">PRIVATE_LLM</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_6px_rgba(251,191,36,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-accent/70">FULL_AUTONOMY</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_6px_rgba(251,191,36,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-accent/70">ON_PREMISE_DEPLOY</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_6px_rgba(251,191,36,0.8)]"></div>
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-accent/70">DEDICATED_SUPPORT</span>
+                  </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-auto">
+                  <p class="text-[11px] text-white/40 italic mb-6 leading-relaxed">
+                    "Built for teams who want Barrios A2I as the brain of the company, not just another tool."
+                  </p>
+                  <button onclick="openIntakeTerminal('Total Command')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest font-bold bg-gradient-to-r from-amber-600 to-accent text-[#0a0a1e] shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] transition-all duration-300">
+                    [ Contact Engineering ]
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+<!-- COMMAND FOOTER -->
+      <footer class="relative bg-[#02040a] border-t border-white/10 overflow-hidden">
+
+        <!-- Background: Subtle Termination Grid -->
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] opacity-20 pointer-events-none"></div>
+
+        <!-- Cyan Glow at bottom (The "hum" of the machine) -->
+        <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-cyan-900/10 to-transparent pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-6 pt-20 pb-12">
+
+          <!-- TOP ROW: Identity & Status -->
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
+
+            <!-- Brand Identity -->
+            <div class="flex flex-col gap-4">
+              <!-- Large Logo -->
+              <a href="/" class="block w-full max-w-[360px]">
+                <img src="brand/barrios-a2i-logo.png" alt="Barrios A2I" class="w-full h-auto drop-shadow-[0_0_14px_rgba(0,194,255,0.3)] hover:drop-shadow-[0_0_20px_rgba(0,194,255,0.45)] transition-all duration-300">
+              </a>
+              <p class="text-white/40 text-sm max-w-xs leading-relaxed font-sans">
+                Autonomous intelligence infrastructure for the next generation of enterprise.
+              </p>
+            </div>
+
+            <!-- Live System Status -->
+            <div class="flex items-center gap-3 bg-white/5 border border-white/5 rounded-full px-4 py-2 backdrop-blur-sm">
+              <div class="relative flex h-2.5 w-2.5">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+              </div>
+              <span class="text-xs font-mono text-emerald-400 tracking-widest uppercase">
+                Systems Nominal
+              </span>
+            </div>
+          </div>
+
+          <!-- MIDDLE ROW: Navigation Matrix -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 border-t border-white/5 pt-12 mb-20">
+
+            <!-- Column 1: System -->
+            <div class="flex flex-col gap-4">
+              <h4 class="text-xs font-mono text-primary uppercase tracking-widest mb-2">[ System ]</h4>
+              <a href="#stack" class="text-sm text-white/40 hover:text-white transition-colors font-sans">Network Topology</a>
+              <a href="#velocity" class="text-sm text-white/40 hover:text-white transition-colors font-sans">Velocity Metrics</a>
+              <a href="#pricing" class="text-sm text-white/40 hover:text-white transition-colors font-sans">Deployment Paths</a>
+            </div>
+
+            <!-- Column 2: Protocol -->
+            <div class="flex flex-col gap-4">
+              <h4 class="text-xs font-mono text-primary uppercase tracking-widest mb-2">[ Protocol ]</h4>
+              <a href="#" class="text-sm text-white/40 hover:text-white transition-colors font-sans">Privacy Directive</a>
+              <a href="#" class="text-sm text-white/40 hover:text-white transition-colors font-sans">Terms of Service</a>
+              <a href="#" class="text-sm text-white/40 hover:text-white transition-colors font-sans">Data Sovereignty</a>
+            </div>
+
+            <!-- Column 3: Uplink -->
+            <div class="flex flex-col gap-4">
+              <h4 class="text-xs font-mono text-primary uppercase tracking-widest mb-2">[ Uplink ]</h4>
+              <a href="#" class="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors font-sans group">
+                <span>Twitter / X</span>
+                <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+              </a>
+              <a href="#" class="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors font-sans group">
+                <span>LinkedIn</span>
+                <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+              </a>
+              <a href="#" class="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors font-sans group">
+                <span>GitHub</span>
+                <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+              </a>
+            </div>
+
+            <!-- Column 4: Signal Input -->
+            <div class="flex flex-col gap-4">
+              <h4 class="text-xs font-mono text-primary uppercase tracking-widest mb-2">[ Signal_Input ]</h4>
+              <p class="text-xs text-white/30 mb-2 font-sans">Receive intelligence briefings.</p>
+              <div class="flex gap-2">
+                <input
+                  type="email"
+                  placeholder="Enter frequency..."
+                  class="bg-white/5 border border-white/10 rounded px-3 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 w-full font-mono transition-all"
+                />
+                <button class="bg-primary/10 border border-primary/20 text-primary px-3 py-2 rounded hover:bg-primary/20 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTTOM ROW: Signature & Copyright -->
+          <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 gap-4">
+
+            <div class="text-xs text-white/30 font-mono uppercase tracking-wider">
+              <span id="footer-year"></span> BARRIOS A2I INC. ALL RIGHTS RESERVED.
+            </div>
+
+            <div class="flex items-center gap-6">
+              <!-- The Architect Signature -->
+              <div class="group flex items-center gap-2 text-xs text-white/40 hover:text-primary transition-colors cursor-default">
+                <span class="opacity-50">Architected by</span>
+                <span class="font-semibold text-white/70 group-hover:text-white transition-colors">Gary Barrios</span>
+                <span class="hidden md:inline-block text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded text-primary/80 border border-primary/10">
+                  [ The Accidental Genius ]
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Footer Year Script -->
+        <script>
+          document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear();
+        </script>
+      </footer>
+
+
+    </main>
+
+    <!-- Interactive JS for Mouse Effects -->
+    <script>
+      const body = document.getElementById('main-body');
+      document.addEventListener('mousemove', (e) => {
+          const x = e.clientX;
+          const y = e.clientY;
+          const blobs = document.querySelectorAll('.aurora-blob');
+          blobs.forEach((blob, index) => {
+              const speed = (index + 1) * 20;
+              const moveX = (window.innerWidth - x) / speed;
+              const moveY = (window.innerHeight - y) / speed;
+              blob.style.transform = `translate(${moveX}px, ${moveY}px)`;
+          });
+      });
+    </script>
+    <script src="js/intake-terminal.js"></script>
+</body></html>

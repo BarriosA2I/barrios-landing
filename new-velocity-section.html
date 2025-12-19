@@ -1,0 +1,149 @@
+<!-- SYSTEM VELOCITY SECTION -->
+      <section class="w-full max-w-7xl mx-auto px-6 mb-32 relative z-20" id="velocity">
+
+        <!-- Section Header (matches other sections) -->
+        <div class="flex flex-col gap-2 mb-12 [animation:animationIn_0.8s_ease-out_0.2s_both] animate-on-scroll animate">
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+            <span class="text-[11px] font-mono text-primary uppercase tracking-[0.2em] font-bold">[ SYSTEM_METRICS ]</span>
+          </div>
+          <h2 class="text-4xl md:text-6xl font-serif text-white tracking-tighter">
+            System <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">Velocity</span>
+          </h2>
+          <p class="text-white/70 font-sans border-l-2 border-primary pl-3 mt-2">Real-time autonomous operation metrics.</p>
+        </div>
+
+        <!-- Main HUD Card Container (matches site pattern) -->
+        <div class="hud-card rounded-[20px] border-primary/20 hover:border-primary/40 p-0 overflow-hidden relative group corner-accent">
+
+          <!-- Radial hover glow (same as other cards) -->
+          <div class="absolute inset-0 bg-[radial-gradient(800px_at_50%_50%,rgba(0,194,255,0.08),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+          <!-- Containment Grid Overlay -->
+          <div class="containment-grid absolute inset-0 pointer-events-none z-0"></div>
+
+          <!-- Scanline overlay -->
+          <div class="absolute inset-0 pointer-events-none z-10 opacity-30" style="background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 194, 255, 0.03) 2px, rgba(0, 194, 255, 0.03) 4px);"></div>
+
+          <!-- Inner Content -->
+          <div class="relative z-20 p-8 md:p-12">
+
+            <!-- Status Bar -->
+            <div class="flex items-center justify-between mb-8 pb-6 border-b border-white/10">
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                  <span class="text-green-500 text-xs font-mono uppercase tracking-wider">ONLINE</span>
+                </div>
+                <span class="text-white/30">|</span>
+                <span class="text-xs font-mono text-white/50 uppercase tracking-wider">Autonomous Mode Active</span>
+              </div>
+              <div class="hidden md:flex items-center gap-4 text-xs font-mono text-white/40">
+                <span>CPU: 12%</span>
+                <span>MEM: 12TB</span>
+                <span>UPTIME: 99.99%</span>
+              </div>
+            </div>
+
+            <!-- CORTEX LENS (HUD Module) -->
+            <div class="relative w-full h-32 md:h-40 rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm overflow-hidden flex items-center justify-between px-8 md:px-16 group/lens hover:border-primary/30 transition-all duration-500">
+
+              <!-- Scanning Beam -->
+              <div class="pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-transparent via-primary to-transparent opacity-60 blur-[1px]" style="animation: cortex-scan 4s linear infinite;"></div>
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent" style="animation: cortex-scan 4s linear infinite;"></div>
+
+              <!-- Corner brackets (manual, matching site style) -->
+              <div class="absolute top-2 left-2 w-4 h-4 border-t border-l border-white/20"></div>
+              <div class="absolute top-2 right-2 w-4 h-4 border-t border-r border-white/20"></div>
+              <div class="absolute bottom-2 left-2 w-4 h-4 border-b border-l border-white/20"></div>
+              <div class="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-white/20"></div>
+
+              <!-- Left Node -->
+              <div class="flex flex-col items-start gap-1 z-10">
+                <span class="text-[10px] text-white/40 tracking-widest uppercase font-mono">[ LATENCY ]</span>
+                <div class="flex items-baseline gap-2">
+                  <span class="text-2xl md:text-3xl text-white font-serif tracking-tight">Realtime</span>
+                  <span class="relative flex h-2 w-2">
+                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/70"></span>
+                    <span class="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Center Node -->
+              <div class="hidden md:flex flex-col items-center justify-center absolute inset-0 pointer-events-none">
+                <div class="h-px w-16 bg-gradient-to-r from-transparent via-white/20 to-transparent mb-2"></div>
+                <span id="cortex-status" class="text-accent font-mono text-xs tracking-[0.15em] drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]" style="transition: opacity 0.15s;">
+                  OPTIMIZING NEURAL PATHWAYS...
+                </span>
+                <div class="h-px w-16 bg-gradient-to-r from-transparent via-white/20 to-transparent mt-2"></div>
+              </div>
+
+              <!-- Right Node -->
+              <div class="flex flex-col items-end gap-1 z-10">
+                <span class="text-[10px] text-white/40 tracking-widest uppercase font-mono">[ THROUGHPUT ]</span>
+                <div class="flex items-end gap-1 h-8">
+                  <div class="w-1.5 bg-primary rounded-sm" style="animation: bar-pulse-1 1.4s ease-in-out infinite; opacity: 0.5;"></div>
+                  <div class="w-1.5 bg-primary rounded-sm" style="animation: bar-pulse-2 1.4s ease-in-out infinite 0.2s; opacity: 0.6;"></div>
+                  <div class="w-1.5 bg-primary rounded-sm" style="animation: bar-pulse-3 1.4s ease-in-out infinite 0.4s; opacity: 0.7;"></div>
+                  <div class="w-1.5 bg-primary rounded-sm" style="animation: bar-pulse-4 1.4s ease-in-out infinite 0.6s; opacity: 0.8;"></div>
+                  <div class="w-1.5 bg-primary rounded-sm" style="animation: bar-pulse-5 1.4s ease-in-out infinite 0.8s; opacity: 0.9;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Row (matches site card pattern) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-white/10">
+              <div class="text-center md:text-left">
+                <div class="text-2xl md:text-3xl font-serif text-primary font-bold tracking-tight">230k+</div>
+                <p class="text-[10px] font-mono text-white/40 uppercase tracking-wider mt-1">[ REQUESTS/MO ]</p>
+              </div>
+              <div class="text-center md:text-left">
+                <div class="text-2xl md:text-3xl font-serif text-accent font-bold tracking-tight">97.5%</div>
+                <p class="text-[10px] font-mono text-white/40 uppercase tracking-wider mt-1">[ SUCCESS_RATE ]</p>
+              </div>
+              <div class="text-center md:text-left">
+                <div class="text-2xl md:text-3xl font-serif text-green-500 font-bold tracking-tight">&lt;2s</div>
+                <p class="text-[10px] font-mono text-white/40 uppercase tracking-wider mt-1">[ AVG_RESPONSE ]</p>
+              </div>
+              <div class="text-center md:text-left">
+                <div class="text-2xl md:text-3xl font-serif text-white font-bold tracking-tight">59</div>
+                <p class="text-[10px] font-mono text-white/40 uppercase tracking-wider mt-1">[ ACTIVE_AGENTS ]</p>
+              </div>
+            </div>
+
+            <!-- Bottom copy -->
+            <div class="mt-8 pt-6 border-t border-white/5">
+              <p class="text-white/50 font-sans text-sm leading-relaxed max-w-2xl">
+                The dashboard is dead. Barrios A2I installs a <span class="text-white">self-healing neural network</span> that monitors, adapts, and executes business logic faster than human perception.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Rotation Script -->
+        <script>
+          (function() {
+            var states = [
+              "OPTIMIZING NEURAL PATHWAYS...",
+              "SYNCHRONIZING AGENT SWARM...",
+              "DETECTING MARKET ANOMALIES...",
+              "CALIBRATING DECISION LOGIC...",
+              "PROCESSING CONTEXT VECTORS..."
+            ];
+            var idx = 0;
+            var el = document.getElementById('cortex-status');
+            if (el) {
+              setInterval(function() {
+                idx = (idx + 1) % states.length;
+                el.style.opacity = '0';
+                setTimeout(function() {
+                  el.textContent = states[idx];
+                  el.style.opacity = '1';
+                }, 150);
+              }, 3000);
+            }
+          })();
+        </script>
+      </section>
+
