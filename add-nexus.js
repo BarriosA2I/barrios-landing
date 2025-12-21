@@ -138,13 +138,23 @@ const nexusCSS = `
       transform: translateY(0);
     }
 
-    /* Mobile positioning */
+    /* Mobile positioning - prevent cutoff on right edge */
     @media (max-width: 768px) {
       .nexus-launcher {
         bottom: 16px;
-        right: 16px;
-        width: 52px;
-        height: 52px;
+        right: 12px;
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    /* Extra small screens - even more breathing room */
+    @media (max-width: 380px) {
+      .nexus-launcher {
+        bottom: 12px;
+        right: 8px;
+        width: 44px;
+        height: 44px;
       }
     }
 
