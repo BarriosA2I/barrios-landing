@@ -109,6 +109,7 @@
   async function stream(message, messageElement) {
     const contentEl = messageElement.querySelector('.nexus-message-content');
     let accumulatedContent = '';
+    let messageStored = false; // P0-E: Guard against duplicate storage
 
     try {
       const response = await fetch(`${NEXUS_API_BASE}/chat`, {
@@ -164,9 +165,10 @@
                 case 'final':
                   // Stream complete - ALWAYS cleanup
                   cleanup();
-                  // P0-E: Store assistant message
-                  if (accumulatedContent) {
+                  // P0-E: Store assistant message (only once)
+                  if (accumulatedContent && !messageStored) {
                     addMessageToStore('assistant', accumulatedContent);
+                    messageStored = true;
                   }
                   // Store support code for reference (internal)
                   if (data.support_code) {
@@ -196,7 +198,10 @@
       if (accumulatedContent) {
         contentEl.innerHTML = parseMarkdown(accumulatedContent);
         // P0-E: Fallback storage if 'final' event was missed
-        addMessageToStore('assistant', accumulatedContent);
+        if (!messageStored) {
+          addMessageToStore('assistant', accumulatedContent);
+          messageStored = true;
+        }
       }
 
     } catch (error) {
@@ -205,8 +210,10 @@
 
       if (accumulatedContent && accumulatedContent.length > 10) {
         contentEl.innerHTML = parseMarkdown(accumulatedContent);
-        // P0-E: Store partial response on error
-        addMessageToStore('assistant', accumulatedContent);
+        // P0-E: Store partial response on error (only if not already stored)
+        if (!messageStored) {
+          addMessageToStore('assistant', accumulatedContent);
+        }
       } else {
         contentEl.innerHTML = `
           <div class="nexus-error">
