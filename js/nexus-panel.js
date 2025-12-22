@@ -1,12 +1,14 @@
 /**
  * Nexus Panel - Glassmorphism Chat Drawer
  * Right-side sliding panel with focus trap and mobile support
+ * P0-E: Session persistence - restores messages on load
  */
 (function() {
   'use strict';
 
   // API Base URL - same as nexus-chat.js
   const NEXUS_API_BASE = window.NEXUS_API_BASE || 'https://nexus-api-wud4.onrender.com/api/nexus';
+  let hasRestoredMessages = false;
 
   const PANEL_ID = 'nexus-panel';
   const BACKDROP_ID = 'nexus-backdrop';
@@ -59,6 +61,11 @@
             <span class="nexus-status-text">CONNECTING...</span>
           </div>
         </div>
+        <button class="nexus-clear" aria-label="Clear history" id="nexus-clear" title="Clear chat history" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+          </svg>
+        </button>
         <button class="nexus-close" aria-label="Close panel" id="nexus-close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12" />
@@ -113,6 +120,9 @@
 
     // Event listeners
     panelElement.querySelector('#nexus-close').addEventListener('click', close);
+
+    // P0-E: Clear history button
+    panelElement.querySelector('#nexus-clear').addEventListener('click', clearChatHistory);
 
     const input = panelElement.querySelector('#nexus-input');
     const sendBtn = panelElement.querySelector('#nexus-send');
@@ -174,6 +184,9 @@
     const input = panelElement.querySelector('#nexus-input');
     const messagesContainer = panelElement.querySelector('#nexus-messages');
 
+    // Set status to connecting
+    updateStatus('connecting');
+
     // Hide welcome if visible
     const welcome = messagesContainer.querySelector('.nexus-welcome');
     if (welcome) welcome.style.display = 'none';
@@ -186,25 +199,27 @@
     `;
     messagesContainer.appendChild(userMsg);
 
+    // P0-E: Store user message and show clear button
+    window.NexusChat?.addMessageToStore('user', message);
+    updateClearButton();
+
     // Clear input
     input.value = '';
     input.disabled = true;
     panelElement.querySelector('#nexus-send').disabled = true;
 
-    // Add assistant message placeholder
+    // Add assistant message placeholder (Sales-Safe - no trace_id, no citations)
     const assistantMsg = document.createElement('div');
     assistantMsg.className = 'nexus-message nexus-message--assistant';
     assistantMsg.innerHTML = `
       <div class="nexus-message-header">
         <span class="nexus-message-label">NEXUS</span>
-        <span class="nexus-message-trace" id="nexus-trace"></span>
       </div>
       <div class="nexus-message-content nexus-message--streaming">
         <span class="nexus-typing-indicator">
           <span></span><span></span><span></span>
         </span>
       </div>
-      <div class="nexus-citations" id="nexus-citations" style="display: none;"></div>
     `;
     messagesContainer.appendChild(assistantMsg);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -223,16 +238,50 @@
       const data = await response.json();
 
       statusEl.className = 'nexus-status';
-      if (data.degraded) {
+      if (data.status === 'DEGRADED') {
         statusEl.classList.add('nexus-status--degraded');
         statusEl.querySelector('.nexus-status-text').textContent = 'DEGRADED';
-      } else if (data.healthy) {
+      } else if (data.status === 'ONLINE' || response.ok) {
         statusEl.classList.add('nexus-status--online');
         statusEl.querySelector('.nexus-status-text').textContent = 'ONLINE';
+      } else {
+        statusEl.classList.add('nexus-status--offline');
+        statusEl.querySelector('.nexus-status-text').textContent = 'OFFLINE';
       }
     } catch (error) {
       statusEl.className = 'nexus-status nexus-status--offline';
       statusEl.querySelector('.nexus-status-text').textContent = 'OFFLINE';
+    }
+  }
+
+  // Update status display (Sales-Safe states)
+  function updateStatus(status) {
+    const statusEl = document.getElementById('nexus-status');
+    if (!statusEl) return;
+
+    statusEl.className = 'nexus-status';
+    const textEl = statusEl.querySelector('.nexus-status-text');
+
+    switch (status) {
+      case 'online':
+        statusEl.classList.add('nexus-status--online');
+        textEl.textContent = 'ONLINE';
+        break;
+      case 'thinking':
+        statusEl.classList.add('nexus-status--loading');
+        textEl.textContent = 'THINKING...';
+        break;
+      case 'working':
+        statusEl.classList.add('nexus-status--loading');
+        textEl.textContent = 'WORKING...';
+        break;
+      case 'connecting':
+        statusEl.classList.add('nexus-status--loading');
+        textEl.textContent = 'CONNECTING...';
+        break;
+      default:
+        statusEl.classList.add('nexus-status--online');
+        textEl.textContent = 'ONLINE';
     }
   }
 
@@ -250,6 +299,10 @@
     document.body.style.overflow = 'hidden';
 
     window.NexusLauncher?.setExpanded(true);
+
+    // P0-E: Restore messages from previous session
+    restoreMessages();
+    updateClearButton();
 
     // Focus input after animation
     setTimeout(() => {
@@ -293,17 +346,103 @@
     return div.innerHTML;
   }
 
+  // P0-E: Restore messages from localStorage
+  function restoreMessages() {
+    if (hasRestoredMessages) return;
+    hasRestoredMessages = true;
+
+    const messages = window.NexusChat?.getStoredMessages() || [];
+    if (messages.length === 0) return;
+
+    const messagesContainer = panelElement?.querySelector('#nexus-messages');
+    if (!messagesContainer) return;
+
+    // Hide welcome message
+    const welcome = messagesContainer.querySelector('.nexus-welcome');
+    if (welcome) welcome.style.display = 'none';
+
+    // Render stored messages
+    messages.forEach(msg => {
+      const msgEl = document.createElement('div');
+      if (msg.role === 'user') {
+        msgEl.className = 'nexus-message nexus-message--user';
+        msgEl.innerHTML = `<div class="nexus-message-content">${escapeHtml(msg.content)}</div>`;
+      } else {
+        msgEl.className = 'nexus-message nexus-message--assistant';
+        msgEl.innerHTML = `
+          <div class="nexus-message-header">
+            <span class="nexus-message-label">NEXUS</span>
+          </div>
+          <div class="nexus-message-content">${parseMarkdownSimple(msg.content)}</div>
+        `;
+      }
+      messagesContainer.appendChild(msgEl);
+    });
+
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    // Show clear button
+    const clearBtn = panelElement?.querySelector('#nexus-clear');
+    if (clearBtn) clearBtn.style.display = 'block';
+  }
+
+  // Simple markdown parser (duplicate from nexus-chat for independence)
+  function parseMarkdownSimple(text) {
+    if (!text) return '';
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/`(.+?)`/g, '<code class="nexus-inline-code">$1</code>')
+      .replace(/\n/g, '<br>');
+  }
+
+  // P0-E: Clear chat history
+  function clearChatHistory() {
+    // Clear storage
+    window.NexusChat?.clearHistory();
+
+    // Reset UI
+    const messagesContainer = panelElement?.querySelector('#nexus-messages');
+    if (messagesContainer) {
+      // Remove all messages
+      messagesContainer.querySelectorAll('.nexus-message').forEach(m => m.remove());
+
+      // Show welcome
+      const welcome = messagesContainer.querySelector('.nexus-welcome');
+      if (welcome) welcome.style.display = '';
+    }
+
+    // Hide clear button
+    const clearBtn = panelElement?.querySelector('#nexus-clear');
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    hasRestoredMessages = false;
+  }
+
+  // P0-E: Update clear button visibility
+  function updateClearButton() {
+    const messages = window.NexusChat?.getStoredMessages() || [];
+    const clearBtn = panelElement?.querySelector('#nexus-clear');
+    if (clearBtn) {
+      clearBtn.style.display = messages.length > 0 ? 'block' : 'none';
+    }
+  }
+
   // Public API
   window.NexusPanel = {
     open,
     close,
     toggle,
     isOpen: () => isOpen,
+    updateStatus,
     enableInput: function() {
       if (panelElement) {
         const input = panelElement.querySelector('#nexus-input');
         input.disabled = false;
         input.focus();
+        // Reset status to online after response
+        updateStatus('online');
       }
     }
   };
