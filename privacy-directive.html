@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Directive | Barrios A2I</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    serif: ['Playfair Display', 'serif'],
+                    mono: ['JetBrains Mono', 'monospace'],
+                },
+                colors: {
+                    void: '#0a0a0f',
+                    obsidian: '#0a0a1e',
+                    primary: '#00C2FF',
+                    accent: '#F59E0B',
+                    muted: '#94a3b8',
+                    'brand-blue': '#00C2FF',
+                    'brand-gold': '#ffd700',
+                },
+            }
+        }
+    }
+    </script>
+</head>
+<body class="bg-obsidian min-h-screen text-white">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-obsidian/80 backdrop-blur-xl border-b border-white/5">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="w-8 h-8 object-contain">
+                <span class="text-white font-black tracking-tighter text-xl">BARRIOS <span class="text-brand-gold">A2I</span></span>
+            </a>
+            <a href="/" class="text-[11px] font-mono text-gray-400 hover:text-white transition-colors">[ RETURN_HOME ]</a>
+        </nav>
+    </header>
+
+    <!-- Content -->
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="mb-8">
+                <span class="text-brand-blue font-mono text-[10px] tracking-widest">[ PROTOCOL ]</span>
+                <h1 class="text-4xl md:text-5xl font-serif text-white mt-2">Privacy Directive</h1>
+                <p class="text-gray-400 mt-4 font-mono text-sm">Last updated: December 2024</p>
+            </div>
+
+            <div class="prose prose-invert max-w-none space-y-8 text-gray-300">
+                <section>
+                    <h2 class="text-xl font-serif text-white mb-4">1. Data Collection</h2>
+                    <p>Barrios A2I collects information you provide directly to us, such as when you create an account, request our services, or communicate with us. This may include your name, email address, company information, and project requirements.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-serif text-white mb-4">2. Use of Information</h2>
+                    <p>We use the information we collect to provide, maintain, and improve our AI automation services, to communicate with you about products, services, and events, and to protect our users and business operations.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-serif text-white mb-4">3. Data Security</h2>
+                    <p>We implement industry-standard security measures to protect your data. All data transmissions are encrypted using TLS, and we maintain strict access controls to personal information.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-serif text-white mb-4">4. Third-Party Services</h2>
+                    <p>We may use third-party services that collect, monitor and analyze data. These services have their own privacy policies addressing how they use such information.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-serif text-white mb-4">5. Contact</h2>
+                    <p>For privacy-related inquiries, contact us at <a href="mailto:privacy@barriosa2i.com" class="text-brand-blue hover:underline">privacy@barriosa2i.com</a></p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] font-mono text-gray-600 tracking-widest">
+                &copy; <span id="footer-year">2025</span> BARRIOS A2I INC. ALL RIGHTS RESERVED.
+            </p>
+            <div class="flex gap-6 text-sm text-gray-400">
+                <a href="/privacy-directive" class="hover:text-white transition-colors">Privacy</a>
+                <a href="/terms-of-service" class="hover:text-white transition-colors">Terms</a>
+                <a href="/data-sovereignty" class="hover:text-white transition-colors">Data</a>
+            </div>
+        </div>
+    </footer>
+    <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

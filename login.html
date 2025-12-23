@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Barrios A2I</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    serif: ['Playfair Display', 'serif'],
+                    mono: ['JetBrains Mono', 'monospace'],
+                },
+                colors: {
+                    void: '#0a0a0f',
+                    obsidian: '#0a0a1e',
+                    primary: '#00C2FF',
+                    accent: '#F59E0B',
+                    muted: '#94a3b8',
+                    'brand-blue': '#00C2FF',
+                    'brand-gold': '#ffd700',
+                },
+            }
+        }
+    }
+    </script>
+</head>
+<body class="bg-obsidian min-h-screen text-white">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-obsidian/80 backdrop-blur-xl border-b border-white/5">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="w-8 h-8 object-contain">
+                <span class="text-white font-black tracking-tighter text-xl">BARRIOS <span class="text-brand-gold">A2I</span></span>
+            </a>
+            <a href="/" class="text-[11px] font-mono text-gray-400 hover:text-white transition-colors">[ RETURN_HOME ]</a>
+        </nav>
+    </header>
+
+    <!-- Content -->
+    <main class="pt-32 pb-20 px-6 min-h-screen flex items-center justify-center">
+        <div class="max-w-md w-full mx-auto text-center">
+            <div class="mb-8">
+                <span class="text-brand-blue font-mono text-[10px] tracking-widest">[ SYSTEM_STATUS ]</span>
+                <h1 class="text-4xl md:text-5xl font-serif text-white mt-2">Client Portal</h1>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-lg p-8 backdrop-blur-sm">
+                <div class="mb-6">
+                    <iconify-icon icon="mdi:rocket-launch" class="text-brand-gold text-5xl"></iconify-icon>
+                </div>
+
+                <h2 class="text-2xl font-serif text-white mb-4">Coming Soon</h2>
+
+                <p class="text-gray-400 mb-6">
+                    Our client portal is currently under construction. Soon you'll be able to access your AI workforce dashboard, monitor agent performance, and manage your automation systems.
+                </p>
+
+                <div class="space-y-3 text-left text-sm text-gray-500 font-mono">
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="mdi:check-circle" class="text-brand-blue"></iconify-icon>
+                        <span>Real-time agent monitoring</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="mdi:check-circle" class="text-brand-blue"></iconify-icon>
+                        <span>Performance analytics dashboard</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="mdi:check-circle" class="text-brand-blue"></iconify-icon>
+                        <span>Secure data management</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="mdi:check-circle" class="text-brand-blue"></iconify-icon>
+                        <span>Direct support channel</span>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-white/10">
+                    <p class="text-gray-500 text-sm mb-4">Want early access?</p>
+                    <a href="/contact" class="inline-block px-6 py-2 bg-brand-blue/20 border border-brand-blue/50 text-brand-blue font-mono text-sm rounded hover:bg-brand-blue/30 transition-colors">
+                        [ CONTACT_US ]
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] font-mono text-gray-600 tracking-widest">
+                &copy; <span id="footer-year">2025</span> BARRIOS A2I INC. ALL RIGHTS RESERVED.
+            </p>
+            <div class="flex gap-6 text-sm text-gray-400">
+                <a href="/privacy-directive" class="hover:text-white transition-colors">Privacy</a>
+                <a href="/terms-of-service" class="hover:text-white transition-colors">Terms</a>
+                <a href="/data-sovereignty" class="hover:text-white transition-colors">Data</a>
+            </div>
+        </div>
+    </footer>
+    <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
