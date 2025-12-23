@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "functions": {
     "api/terminal-intake.js": {
       "memory": 128,
