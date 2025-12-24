@@ -17,15 +17,18 @@ const BARRIOS_CONFIG = {
   // Nexus Personal - $299 house call (one-time)
   STRIPE_HOUSE_CALL_URL: 'https://buy.stripe.com/cNi00kbh7bW1g1727HeME04',
 
+  // Neural Ad Forge - $499 (one-time)
+  STRIPE_ADFORGE_URL: 'https://buy.stripe.com/00w4gA84Ve498yF27HeME05',
+
   // ========================================
   // CALENDLY BOOKING LINKS
   // ========================================
 
   // Nexus Personal - Install scheduling
-  CALENDLY_INSTALL_URL: 'https://calendly.com/barriosa2i/nexus-install',
+  CALENDLY_INSTALL_URL: 'https://calendly.com/alienation2innovation/new-meeting',
 
   // Business/Enterprise - Demo booking
-  CALENDLY_DEMO_URL: 'https://calendly.com/barriosa2i/demo',
+  CALENDLY_DEMO_URL: 'https://calendly.com/alienation2innovation/nexus-demo',
 
   // ========================================
   // FORM ENDPOINTS

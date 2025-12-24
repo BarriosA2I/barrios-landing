@@ -1247,6 +1247,11 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
                     </span>
                     <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
                 </a>
+                <a href="/creative-director" class="nav-link group flex items-center px-3 py-1.5 transition-all">
+                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
+                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">AD_FORGE</span>
+                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
+                </a>
             </div>
 
             <!-- Action Buttons -->
@@ -2097,19 +2102,23 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
                   <p class="text-[11px] text-white/40 italic mb-6 leading-relaxed">
                     "Built for launches, promos, and tests where you need results next week—not next quarter."
                   </p>
-                  <button onclick="openIntakeTerminal('Neural Ad Forge')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
-                    [ Initialize Ad Forge ]
+                  <button class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
+                    [ INITIALIZE AD FORGE ]
                   </button>
                 </div>
               </div>
             </div>
 
             <!-- CARD 2: MARKETING OVERLORD (Campaign Autopilot) -->
-            <div class="group relative flex flex-col rounded-3xl bg-white/[0.02] border border-white/10 p-[1px] transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_40px_rgba(0,194,255,0.15)]">
-              <div class="relative flex flex-col h-full bg-[#0b0d1a] rounded-[22px] p-8 overflow-hidden">
+            <div class="group relative flex flex-col rounded-3xl bg-white/[0.02] border border-white/10 p-[1px] transition-all duration-500">
+              <!-- Coming Soon Badge -->
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-white/20 text-white/70 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest z-20">
+                COMING SOON
+              </div>
+              <div class="relative flex flex-col h-full bg-[#0b0d1a] rounded-[22px] p-8 overflow-hidden opacity-60">
 
                 <!-- Hover gradient -->
-                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 pointer-events-none"></div>
 
                 <!-- Top Label -->
                 <div class="text-[10px] font-mono uppercase tracking-[0.2em] mb-6 text-primary/80">
@@ -2153,8 +2162,8 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
                   <p class="text-[11px] text-white/40 italic mb-6 leading-relaxed">
                     "Built for founders who want a consistent pipeline without hiring a full marketing team."
                   </p>
-                  <button onclick="openIntakeTerminal('Marketing Overlord')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
-                    [ Initialize Marketing Overlord ]
+                  <button disabled class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white/50 opacity-50 cursor-not-allowed">
+                    [ COMING_SOON ]
                   </button>
                 </div>
               </div>

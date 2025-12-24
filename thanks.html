@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>You're In - Barrios A2I</title>
-    <meta name="description" content="Thank you for reaching out. Book your time to get started.">
+    <title>Payment Confirmed | Barrios A2I</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,212 +26,148 @@
                         primary: '#00C2FF',
                         accent: '#F59E0B',
                         muted: '#94a3b8',
-                    }
+                    },
                 }
             }
         }
     </script>
-
-    <!-- Iconify -->
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
     <style>
         html { scroll-behavior: smooth; }
         body { background-color: #0a0a0f; color: #94a3b8; }
-        ::selection { background-color: rgba(0, 194, 255, 0.2); color: #ffffff; }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
+        @keyframes checkmark {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
         }
-        .animate-float { animation: float 4s ease-in-out infinite; }
 
         @keyframes pulse-ring {
             0% { transform: scale(0.8); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; }
+            100% { transform: scale(2); opacity: 0; }
         }
+
+        .checkmark-animate {
+            animation: checkmark 0.6s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+
         .pulse-ring {
             animation: pulse-ring 2s ease-out infinite;
-        }
-
-        @keyframes check-draw {
-            0% { stroke-dashoffset: 24; }
-            100% { stroke-dashoffset: 0; }
-        }
-        .check-animate {
-            stroke-dasharray: 24;
-            stroke-dashoffset: 24;
-            animation: check-draw 0.6s ease-out 0.3s forwards;
-        }
-
-        /* HUD Brackets */
-        .hud-bracket-left::before,
-        .hud-bracket-right::after {
-            content: '';
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-color: rgba(0, 194, 255, 0.3);
-            border-style: solid;
-        }
-        .hud-bracket-left::before {
-            left: -1px;
-            top: -1px;
-            border-width: 2px 0 0 2px;
-        }
-        .hud-bracket-right::after {
-            right: -1px;
-            bottom: -1px;
-            border-width: 0 2px 2px 0;
         }
     </style>
 </head>
 
 <body class="bg-void text-muted font-sans antialiased min-h-screen flex flex-col">
 
-    <!-- Background effects -->
-    <div class="fixed inset-0 pointer-events-none z-0">
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]"></div>
-        <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]"></div>
-    </div>
-
     <!-- Top border line -->
     <div class="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent z-50"></div>
 
+    <!-- Navigation -->
+    <nav class="border-b border-white/5 bg-void/80 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center gap-3">
+                    <img src="brand/barrios-a2i-logo.png" alt="Barrios A2I" class="h-8 w-auto opacity-90">
+                </a>
+            </div>
+        </div>
+    </nav>
+
     <!-- Main Content -->
-    <main class="flex-1 flex items-center justify-center px-6 py-20 relative z-10">
-        <div class="max-w-xl w-full text-center">
+    <main class="flex-1 flex items-center justify-center px-6 py-20">
+        <div class="max-w-2xl w-full text-center">
 
             <!-- Success Icon -->
             <div class="relative inline-flex items-center justify-center mb-8">
-                <!-- Pulse rings -->
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="w-24 h-24 rounded-full border border-primary/20 pulse-ring"></div>
-                </div>
-                <div class="absolute inset-0 flex items-center justify-center" style="animation-delay: 0.5s;">
-                    <div class="w-24 h-24 rounded-full border border-primary/10 pulse-ring" style="animation-delay: 0.5s;"></div>
-                </div>
-
-                <!-- Icon container -->
-                <div class="relative w-20 h-20 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center animate-float">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00C2FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12" class="check-animate"></polyline>
-                    </svg>
+                <div class="absolute w-32 h-32 rounded-full bg-primary/20 pulse-ring"></div>
+                <div class="relative w-24 h-24 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center">
+                    <iconify-icon icon="lucide:check" width="48" class="text-primary checkmark-animate"></iconify-icon>
                 </div>
             </div>
 
-            <!-- Status Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 mb-6">
+            <!-- Confirmation Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/30 text-primary text-xs font-mono mb-6">
                 <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                <span class="text-[10px] font-mono text-primary tracking-[0.2em] uppercase">Signal Received</span>
+                PAYMENT_CONFIRMED
             </div>
 
             <!-- Headline -->
-            <h1 class="text-4xl md:text-5xl font-serif text-white tracking-tight mb-4">
-                You're <span class="italic text-muted/60">In.</span>
+            <h1 class="text-4xl md:text-5xl font-serif text-white mb-4">
+                <span class="block">You're in.</span>
+                <span class="block italic text-muted/50">Welcome to Nexus.</span>
             </h1>
 
-            <!-- Subhead -->
+            <!-- Subtext -->
             <p class="text-lg text-muted mb-12 max-w-md mx-auto">
-                We received your message. <strong class="text-white">Next step:</strong> book your time so we can get started.
+                Your payment has been processed successfully. Let's get your private intelligence system installed.
             </p>
 
+            <!-- Next Steps Card -->
+            <div class="bg-obsidian/50 border border-white/10 p-8 mb-8 text-left">
+                <div class="flex items-center gap-3 mb-6">
+                    <iconify-icon icon="lucide:clipboard-list" width="24" class="text-primary"></iconify-icon>
+                    <h2 class="text-xl font-serif text-white">Next Steps</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 font-mono text-primary text-sm">1</div>
+                        <div>
+                            <h3 class="text-white font-medium mb-1">Book Your Install Time</h3>
+                            <p class="text-sm text-muted">Select a 60-minute window that works for you. We'll handle everything remotely.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 bg-white/5 border border-white/10 flex items-center justify-center shrink-0 font-mono text-muted text-sm">2</div>
+                        <div>
+                            <h3 class="text-white/70 font-medium mb-1">Receive Confirmation Email</h3>
+                            <p class="text-sm text-muted/70">Check your inbox for receipt and calendar invite.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 bg-white/5 border border-white/10 flex items-center justify-center shrink-0 font-mono text-muted text-sm">3</div>
+                        <div>
+                            <h3 class="text-white/70 font-medium mb-1">Install Day</h3>
+                            <p class="text-sm text-muted/70">We connect, configure your folders, and train you on Nexus.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- CTA Buttons -->
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                <a href="#" id="book-install-btn" class="group relative inline-flex items-center gap-3 px-8 py-4 bg-primary text-void font-mono text-sm font-semibold uppercase tracking-wider transition-all hover:bg-primary/90 hover:shadow-[0_0_40px_rgba(0,194,255,0.4)] hud-bracket-left hud-bracket-right">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="https://calendly.com/alienation2innovation/new-meeting" target="_blank" class="w-full sm:w-auto h-14 px-10 bg-primary text-void font-mono font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                    [ BOOK_INSTALL_TIME ]
                     <iconify-icon icon="lucide:calendar" width="18"></iconify-icon>
-                    Book Install Time
                 </a>
-
-                <a href="#" id="book-demo-btn" class="group inline-flex items-center gap-3 px-8 py-4 bg-white/5 border border-white/10 text-white font-mono text-sm uppercase tracking-wider transition-all hover:bg-white/10 hover:border-primary/30">
-                    <iconify-icon icon="lucide:play-circle" width="18"></iconify-icon>
-                    Book a Demo
+                <a href="/nexus-personal" class="w-full sm:w-auto h-14 px-10 bg-transparent border border-white/10 text-muted font-mono hover:bg-white/5 hover:text-white transition-colors flex items-center justify-center gap-2">
+                    [ RETURN_TO_NEXUS ]
+                    <iconify-icon icon="lucide:arrow-left" width="18"></iconify-icon>
                 </a>
             </div>
 
-            <!-- What happens next -->
-            <div class="bg-white/[0.02] border border-white/10 p-8 text-left relative">
-                <div class="absolute -top-3 left-6 px-3 py-1 bg-obsidian border border-white/10 text-[10px] font-mono text-primary uppercase tracking-widest">
-                    What Happens Next
-                </div>
+            <!-- Support Note -->
+            <p class="text-xs text-muted/50 mt-12 font-mono">
+                Questions? Email <a href="mailto:support@barriosa2i.com" class="text-primary/70 hover:text-primary">support@barriosa2i.com</a>
+            </p>
 
-                <div class="space-y-4 mt-4">
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 text-primary text-xs font-mono">1</div>
-                        <div>
-                            <p class="text-white text-sm font-medium mb-1">Book Your Slot</p>
-                            <p class="text-muted/70 text-sm">Pick a time that works for you. Most installs take 45-60 minutes.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 text-primary text-xs font-mono">2</div>
-                        <div>
-                            <p class="text-white text-sm font-medium mb-1">We Connect & Configure</p>
-                            <p class="text-muted/70 text-sm">Our engineer joins via secure remote desktop (or visits in person) to set up your system.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 text-primary text-xs font-mono">3</div>
-                        <div>
-                            <p class="text-white text-sm font-medium mb-1">You're Live</p>
-                            <p class="text-muted/70 text-sm">Start using your private AI assistant immediately. We'll walk you through everything.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Back link -->
-            <div class="mt-12">
-                <a href="/" class="inline-flex items-center gap-2 text-sm text-muted/50 hover:text-white transition-colors font-mono">
-                    <iconify-icon icon="lucide:arrow-left" width="14"></iconify-icon>
-                    Back to Home
-                </a>
-            </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="relative z-10 py-8 px-6 border-t border-white/5">
-        <div class="max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="text-[10px] font-mono text-muted/40 tracking-widest">
-                &copy; <span id="year">2025</span> BARRIOS A2I INC.
-            </p>
-            <div class="flex items-center gap-4">
-                <a href="https://www.linkedin.com/in/gary-barrios-3953b2390/" target="_blank" class="text-muted/40 hover:text-primary transition-colors">
-                    <iconify-icon icon="mdi:linkedin" width="18"></iconify-icon>
-                </a>
-                <a href="https://www.instagram.com/barrios.ai.gary/" target="_blank" class="text-muted/40 hover:text-primary transition-colors">
-                    <iconify-icon icon="mdi:instagram" width="18"></iconify-icon>
-                </a>
+    <footer class="border-t border-white/5 py-8 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-xs text-muted/50 font-mono">© 2025 BARRIOS A2I INC.</div>
+            <div class="flex items-center gap-2 text-xs font-mono text-primary/70">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                ALL_SYSTEMS_OPERATIONAL
             </div>
         </div>
     </footer>
 
-    <!-- Config & Scripts -->
-    <script src="js/config.js"></script>
-    <script>
-        document.getElementById('year').textContent = new Date().getFullYear();
-
-        const CONFIG = window.BARRIOS_CONFIG || {};
-
-        document.getElementById('book-install-btn').href = CONFIG.CALENDLY_INSTALL_URL || '#';
-        document.getElementById('book-demo-btn').href = CONFIG.CALENDLY_DEMO_URL || '#';
-
-        document.getElementById('book-install-btn').addEventListener('click', (e) => {
-            if (CONFIG.CALENDLY_INSTALL_URL) {
-                e.preventDefault();
-                window.open(CONFIG.CALENDLY_INSTALL_URL, '_blank');
-            }
-        });
-
-        document.getElementById('book-demo-btn').addEventListener('click', (e) => {
-            if (CONFIG.CALENDLY_DEMO_URL) {
-                e.preventDefault();
-                window.open(CONFIG.CALENDLY_DEMO_URL, '_blank');
-            }
-        });
-    </script>
 </body>
 </html>

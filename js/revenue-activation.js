@@ -45,6 +45,15 @@
         el.style.cursor = 'pointer';
       }
 
+      // INITIALIZE AD FORGE → Stripe $499
+      if (text.includes('INITIALIZE AD FORGE') || text.includes('INITIALIZE_AD_FORGE')) {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.open(CONFIG.STRIPE_ADFORGE_URL, '_blank');
+        });
+        el.style.cursor = 'pointer';
+      }
+
       // BOOK_DEMO / Book Demo → Calendly demo
       if (text.includes('BOOK_DEMO') || text.includes('BOOK DEMO') || text.includes('BOOK A DEMO')) {
         el.addEventListener('click', (e) => {

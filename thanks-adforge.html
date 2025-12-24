@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neural Ad Forge | Creative Director | Barrios A2I</title>
+  <meta name="description" content="Your AI Creative Director is ready. Let's craft your perfect 96-second commercial together.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       BARRIOS A2I DESIGN SYSTEM - NEURAL AD FORGE EDITION
+       ═══════════════════════════════════════════════════════════════ */
+    
+    :root {
+      /* Core Palette */
+      --void: #0a0a0f;
+      --obsidian: #0a0a1e;
+      --obsidian-light: #12122a;
+      --primary: #00C2FF;
+      --primary-dim: #00C2FF40;
+      --accent: #F59E0B;
+      --accent-dim: #F59E0B40;
+      --success: #22C55E;
+      --warning: #EAB308;
+      --error: #EF4444;
+      --muted: #94a3b8;
+      --white: #ffffff;
+      
+      /* Gradients */
+      --gradient-primary: linear-gradient(135deg, #00C2FF 0%, #0066FF 100%);
+      --gradient-accent: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      --gradient-glow: radial-gradient(ellipse at center, rgba(0, 194, 255, 0.15) 0%, transparent 70%);
+      
+      /* Spacing */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-2xl: 48px;
+      
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --font-display: 'Playfair Display', Georgia, serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-sans);
+      background: var(--void);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       BACKGROUND EFFECTS
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 194, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 194, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .bg-glow {
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150%;
+      height: 60%;
+      background: var(--gradient-glow);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .bg-vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 0%, var(--void) 85%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       MAIN LAYOUT
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+      padding-top: var(--spacing-xl);
+    }
+    
+    .header__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-xs) var(--spacing-md);
+      background: var(--success);
+      color: var(--void);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 2px;
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .header__badge::before {
+      content: '✓';
+      font-weight: 700;
+    }
+    
+    .header__title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: var(--spacing-sm);
+      line-height: 1.2;
+    }
+    
+    .header__title span {
+      color: var(--primary);
+    }
+    
+    .header__subtitle {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       CHAT WIDGET
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--obsidian);
+      border: 1px solid var(--primary-dim);
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 500px;
+      max-height: 70vh;
+    }
+    
+    /* Chat Header */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: var(--obsidian-light);
+      border-bottom: 1px solid var(--primary-dim);
+    }
+    
+    .chat-header__info {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    
+    .chat-header__avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .chat-header__text h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+    
+    .chat-header__status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .chat-header__status::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Progress Bar */
+    .progress-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    
+    .progress-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--primary);
+    }
+    
+    .progress-bar {
+      width: 120px;
+      height: 4px;
+      background: var(--primary-dim);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress-bar__fill {
+      height: 100%;
+      background: var(--gradient-primary);
+      transition: width 0.5s ease;
+    }
+    
+    /* Phase Badge */
+    .phase-badge {
+      padding: 4px 10px;
+      background: var(--primary-dim);
+      color: var(--primary);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 2px;
+      margin-top: 6px;
+    }
+    
+    /* Messages Area */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+    
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .chat-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: var(--primary-dim);
+      border-radius: 3px;
+    }
+    
+    /* Message Bubbles */
+    .message {
+      max-width: 85%;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message--assistant {
+      align-self: flex-start;
+    }
+    
+    .message--user {
+      align-self: flex-end;
+    }
+    
+    .message__bubble {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: 16px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    
+    .message--assistant .message__bubble {
+      background: var(--obsidian-light);
+      border: 1px solid var(--primary-dim);
+      color: var(--white);
+      border-bottom-left-radius: 4px;
+    }
+    
+    .message--user .message__bubble {
+      background: var(--gradient-primary);
+      color: var(--void);
+      border-bottom-right-radius: 4px;
+    }
+    
+    .message__time {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-family: var(--font-mono);
+    }
+    
+    .message--user .message__time {
+      text-align: right;
+    }
+    
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: var(--spacing-md);
+    }
+    
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: typing 1.4s ease-in-out infinite;
+    }
+    
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typing {
+      0%, 100% { transform: translateY(0); opacity: 0.5; }
+      50% { transform: translateY(-6px); opacity: 1; }
+    }
+    
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      background: var(--obsidian-light);
+      border-top: 1px solid var(--primary-dim);
+    }
+    
+    .quick-action {
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: transparent;
+      border: 1px solid var(--primary-dim);
+      color: var(--primary);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 4px;
+    }
+    
+    .quick-action:hover {
+      background: var(--primary-dim);
+      border-color: var(--primary);
+    }
+    
+    /* Input Area */
+    .chat-input {
+      display: flex;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: var(--obsidian-light);
+      border-top: 1px solid var(--primary-dim);
+    }
+    
+    .chat-input__field {
+      flex: 1;
+      padding: var(--spacing-md);
+      background: var(--void);
+      border: 1px solid var(--primary-dim);
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .chat-input__field:focus {
+      border-color: var(--primary);
+    }
+    
+    .chat-input__field::placeholder {
+      color: var(--muted);
+    }
+    
+    .chat-input__send {
+      padding: var(--spacing-md) var(--spacing-xl);
+      background: var(--gradient-primary);
+      border: none;
+      color: var(--void);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    
+    .chat-input__send:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px var(--primary-dim);
+    }
+    
+    .chat-input__send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       COMPLETION STATE
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .completion-card {
+      padding: var(--spacing-xl);
+      background: linear-gradient(135deg, var(--obsidian-light) 0%, var(--obsidian) 100%);
+      border: 2px solid var(--success);
+      border-radius: 8px;
+      text-align: center;
+      animation: glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px var(--success); }
+      50% { box-shadow: 0 0 40px var(--success); }
+    }
+    
+    .completion-card__icon {
+      font-size: 48px;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .completion-card__title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--success);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .completion-card__text {
+      color: var(--muted);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .completion-card__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      background: var(--accent);
+      color: var(--void);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 4px;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       ERROR STATE
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .error-banner {
+      padding: var(--spacing-md);
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--error);
+      border-radius: 6px;
+      color: var(--error);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin: var(--spacing-md);
+    }
+    
+    .error-banner__retry {
+      margin-left: auto;
+      padding: var(--spacing-xs) var(--spacing-md);
+      background: transparent;
+      border: 1px solid var(--error);
+      color: var(--error);
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    
+    .error-banner__retry:hover {
+      background: var(--error);
+      color: var(--white);
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .footer {
+      text-align: center;
+      padding: var(--spacing-lg);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════════════ */
+    
+    @media (max-width: 640px) {
+      .container {
+        padding: var(--spacing-md);
+      }
+      
+      .header {
+        padding-top: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+      }
+      
+      .chat-container {
+        max-height: 60vh;
+      }
+      
+      .chat-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+      
+      .progress-container {
+        align-items: center;
+        width: 100%;
+      }
+      
+      .progress-bar {
+        width: 100%;
+      }
+      
+      .chat-input {
+        flex-direction: column;
+      }
+      
+      .chat-input__send {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-vignette"></div>
+  
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header__badge">Payment Confirmed</div>
+      <h1 class="header__title">Meet Your <span>AI Creative Director</span></h1>
+      <p class="header__subtitle">
+        I'll guide you through crafting the perfect brief for your 96-second commercial. 
+        Just answer a few questions, and let's create something legendary together.
+      </p>
+    </header>
+    
+    <!-- Chat Widget -->
+    <div class="chat-container" id="chat-container">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="chat-header__info">
+          <div class="chat-header__avatar">🎬</div>
+          <div class="chat-header__text">
+            <h3>Creative Director AI</h3>
+            <div class="chat-header__status">Online</div>
+            <div class="phase-badge" id="phase-badge">GREETING</div>
+          </div>
+        </div>
+        <div class="progress-container">
+          <span class="progress-label" id="progress-label">0% Complete</span>
+          <div class="progress-bar">
+            <div class="progress-bar__fill" id="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Messages -->
+      <div class="chat-messages" id="chat-messages">
+        <!-- Messages will be injected here -->
+      </div>
+      
+      <!-- Quick Actions (shown contextually) -->
+      <div class="quick-actions" id="quick-actions" style="display: none;">
+        <!-- Quick action buttons injected here -->
+      </div>
+      
+      <!-- Error Banner (hidden by default) -->
+      <div class="error-banner" id="error-banner" style="display: none;">
+        <span>⚠️</span>
+        <span id="error-message">Connection error</span>
+        <button class="error-banner__retry" onclick="startSession()">Retry</button>
+      </div>
+      
+      <!-- Input Area -->
+      <div class="chat-input">
+        <input 
+          type="text" 
+          class="chat-input__field" 
+          id="message-input"
+          placeholder="Type your response..."
+          autocomplete="off"
+        >
+        <button class="chat-input__send" id="send-button">
+          Send
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <p>
+        Powered by <a href="https://barriosa2i.com" target="_blank">Barrios A2I</a> | 
+        Neural Ad Forge • RAGNAROK v7.0
+      </p>
+    </footer>
+  </div>
+  
+  <!-- ═══════════════════════════════════════════════════════════════
+       CREATIVE DIRECTOR CHAT - VANILLA JS ENGINE
+       ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // ========== CONFIGURATION ==========
+      const CONFIG = {
+        // API endpoint - Render production
+        apiUrl: 'https://barrios-creative-director.onrender.com',
+        
+        // Session management
+        sessionStorageKey: 'creative_director_session',
+        
+        // Timeouts
+        requestTimeout: 30000,
+        
+        // Quick actions by phase
+        quickActions: {
+          video_goal: ['Brand Awareness', 'Lead Generation', 'Direct Sales', 'Build Trust', 'Product Launch'],
+          tone_style: ['Professional', 'Bold & Energetic', 'Friendly', 'Luxury', 'Urgent'],
+        },
+        
+        // Phase labels
+        phaseLabels: {
+          greeting: 'GREETING',
+          business_core: 'BUSINESS DETAILS',
+          offering: 'YOUR OFFERING',
+          audience: 'TARGET AUDIENCE',
+          pain_points: 'PAIN POINTS',
+          video_goal: 'VIDEO GOAL',
+          tone_style: 'TONE & STYLE',
+          call_to_action: 'CALL TO ACTION',
+          special_requests: 'SPECIAL REQUESTS',
+          confirm: 'CONFIRMATION',
+          complete: 'COMPLETE',
+        },
+      };
+      
+      // ========== STATE ==========
+      let state = {
+        sessionId: null,
+        phase: 'greeting',
+        completionPercentage: 0,
+        isComplete: false,
+        isLoading: false,
+        error: null,
+        messages: [],
+      };
+      
+      // ========== DOM ELEMENTS ==========
+      const elements = {
+        messagesContainer: document.getElementById('chat-messages'),
+        messageInput: document.getElementById('message-input'),
+        sendButton: document.getElementById('send-button'),
+        progressFill: document.getElementById('progress-fill'),
+        progressLabel: document.getElementById('progress-label'),
+        phaseBadge: document.getElementById('phase-badge'),
+        quickActions: document.getElementById('quick-actions'),
+        errorBanner: document.getElementById('error-banner'),
+        errorMessage: document.getElementById('error-message'),
+      };
+      
+      // ========== UTILITY FUNCTIONS ==========
+      
+      function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          minute: '2-digit',
+          hour12: true 
+        });
+      }
+      
+      function scrollToBottom() {
+        elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
+      }
+      
+      function setLoading(loading) {
+        state.isLoading = loading;
+        elements.sendButton.disabled = loading;
+        elements.messageInput.disabled = loading;
+        
+        if (loading) {
+          showTypingIndicator();
+        } else {
+          hideTypingIndicator();
+        }
+      }
+      
+      function showError(message) {
+        state.error = message;
+        elements.errorMessage.textContent = message;
+        elements.errorBanner.style.display = 'flex';
+      }
+      
+      function hideError() {
+        state.error = null;
+        elements.errorBanner.style.display = 'none';
+      }
+      
+      // ========== MESSAGE RENDERING ==========
+      
+      function createMessageElement(message) {
+        const div = document.createElement('div');
+        div.className = `message message--${message.role}`;
+        
+        div.innerHTML = `
+          <div class="message__bubble">${escapeHtml(message.content)}</div>
+          <div class="message__time">${formatTime(message.timestamp)}</div>
+        `;
+        
+        return div;
+      }
+      
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML.replace(/\n/g, '<br>');
+      }
+      
+      function addMessage(role, content) {
+        const message = {
+          role,
+          content,
+          timestamp: Date.now(),
+        };
+        
+        state.messages.push(message);
+        elements.messagesContainer.appendChild(createMessageElement(message));
+        scrollToBottom();
+      }
+      
+      function showTypingIndicator() {
+        // Remove existing indicator if present
+        hideTypingIndicator();
+        
+        const indicator = document.createElement('div');
+        indicator.id = 'typing-indicator';
+        indicator.className = 'message message--assistant';
+        indicator.innerHTML = `
+          <div class="typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        `;
+        
+        elements.messagesContainer.appendChild(indicator);
+        scrollToBottom();
+      }
+      
+      function hideTypingIndicator() {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) {
+          indicator.remove();
+        }
+      }
+      
+      function showCompletionCard() {
+        const card = document.createElement('div');
+        card.className = 'completion-card';
+        card.innerHTML = `
+          <div class="completion-card__icon">🎬</div>
+          <h2 class="completion-card__title">Brief Complete!</h2>
+          <p class="completion-card__text">
+            Your creative brief has been submitted to our production team. 
+            Your legendary 96-second commercial is now in the pipeline!
+          </p>
+          <div class="completion-card__badge">
+            ⚡ RAGNAROK PROCESSING
+          </div>
+        `;
+        
+        elements.messagesContainer.appendChild(card);
+        scrollToBottom();
+      }
+      
+      // ========== UI UPDATES ==========
+      
+      function updateProgress(percentage) {
+        state.completionPercentage = percentage;
+        elements.progressFill.style.width = `${percentage}%`;
+        elements.progressLabel.textContent = `${Math.round(percentage)}% Complete`;
+      }
+      
+      function updatePhase(phase) {
+        state.phase = phase;
+        const label = CONFIG.phaseLabels[phase] || phase.toUpperCase();
+        elements.phaseBadge.textContent = label;
+        
+        // Show/hide quick actions based on phase
+        updateQuickActions(phase);
+      }
+      
+      function updateQuickActions(phase) {
+        const actions = CONFIG.quickActions[phase];
+        
+        if (actions && actions.length > 0) {
+          elements.quickActions.innerHTML = actions.map(action => 
+            `<button class="quick-action" onclick="handleQuickAction('${action}')">${action}</button>`
+          ).join('');
+          elements.quickActions.style.display = 'flex';
+        } else {
+          elements.quickActions.style.display = 'none';
+        }
+      }
+      
+      // ========== API CALLS ==========
+      
+      async function startSession() {
+        setLoading(true);
+        hideError();
+        
+        try {
+          // Check for stored session
+          const storedSession = sessionStorage.getItem(CONFIG.sessionStorageKey);
+          if (storedSession) {
+            const parsed = JSON.parse(storedSession);
+            // Verify session is still valid (could add server check here)
+            state.sessionId = parsed.sessionId;
+          }
+          
+          const response = await fetchWithTimeout(`${CONFIG.apiUrl}/api/session/start`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              email: getEmailFromUrl(),
+              existing_session_id: state.sessionId,
+            }),
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          state.sessionId = data.session_id;
+          state.phase = data.phase || 'greeting';
+          
+          // Store session
+          sessionStorage.setItem(CONFIG.sessionStorageKey, JSON.stringify({
+            sessionId: state.sessionId,
+            startedAt: Date.now(),
+          }));
+          
+          // Add greeting message
+          addMessage('assistant', data.greeting);
+          updatePhase(state.phase);
+          
+        } catch (error) {
+          console.error('Session start error:', error);
+          showError('Unable to connect to Creative Director. Please try again.');
+          
+          // Show fallback message
+          addMessage('assistant', 
+            "Welcome to Neural Ad Forge! I'm your AI Creative Director, and I'm excited to help craft your perfect video brief. " +
+            "It looks like we're having some connection issues right now. Please click 'Retry' to reconnect, or refresh the page."
+          );
+        } finally {
+          setLoading(false);
+          elements.messageInput.focus();
+        }
+      }
+      
+      async function sendMessage(content) {
+        if (!content.trim() || state.isLoading) return;
+        
+        // Don't send if no session (will show error)
+        if (!state.sessionId) {
+          showError('Session not started. Please refresh the page.');
+          return;
+        }
+        
+        // Add user message
+        addMessage('user', content);
+        elements.messageInput.value = '';
+        setLoading(true);
+        hideError();
+        
+        try {
+          const response = await fetchWithTimeout(`${CONFIG.apiUrl}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session_id: state.sessionId,
+              message: content,
+            }),
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Update state
+          state.phase = data.phase;
+          state.completionPercentage = data.completion_percentage;
+          state.isComplete = data.is_complete;
+          
+          // Update UI
+          updateProgress(data.completion_percentage);
+          updatePhase(data.phase);
+          
+          // Add assistant response
+          addMessage('assistant', data.response);
+          
+          // Handle completion
+          if (data.is_complete && data.ragnarok_ready) {
+            elements.quickActions.style.display = 'none';
+            setTimeout(showCompletionCard, 500);
+            
+            // Track completion (if analytics present)
+            if (typeof gtag === 'function') {
+              gtag('event', 'brief_completed', {
+                event_category: 'Neural Ad Forge',
+                event_label: state.sessionId,
+              });
+            }
+          }
+          
+        } catch (error) {
+          console.error('Send message error:', error);
+          showError('Message failed to send. Please try again.');
+        } finally {
+          setLoading(false);
+          elements.messageInput.focus();
+        }
+      }
+      
+      async function fetchWithTimeout(url, options) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), CONFIG.requestTimeout);
+        
+        try {
+          const response = await fetch(url, {
+            ...options,
+            signal: controller.signal,
+          });
+          return response;
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+      
+      // ========== HELPERS ==========
+      
+      function getEmailFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('email') || params.get('customer_email') || null;
+      }
+      
+      // ========== EVENT HANDLERS ==========
+      
+      function handleSend() {
+        const content = elements.messageInput.value.trim();
+        if (content) {
+          sendMessage(content);
+        }
+      }
+      
+      function handleKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          handleSend();
+        }
+      }
+      
+      // Global function for quick action buttons
+      window.handleQuickAction = function(action) {
+        elements.messageInput.value = action;
+        handleSend();
+      };
+      
+      // Global function for retry button
+      window.startSession = startSession;
+      
+      // ========== INITIALIZATION ==========
+      
+      function init() {
+        // Event listeners
+        elements.sendButton.addEventListener('click', handleSend);
+        elements.messageInput.addEventListener('keypress', handleKeyPress);
+        
+        // Start session
+        startSession();
+        
+        // Console branding
+        console.log('%c🎬 Neural Ad Forge | Creative Director AI', 
+          'font-size: 16px; font-weight: bold; color: #00C2FF;');
+        console.log('%cPowered by Barrios A2I • RAGNAROK v7.0', 
+          'font-size: 12px; color: #94a3b8;');
+      }
+      
+      // Start when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+      
+    })();
+  </script>
+</body>
+</html>
