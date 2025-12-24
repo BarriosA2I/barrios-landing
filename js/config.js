@@ -9,13 +9,13 @@ const BARRIOS_CONFIG = {
   // ========================================
 
   // Nexus Personal - $49/month subscription
-  STRIPE_SUBSCRIBE_URL: 'https://buy.stripe.com/YOUR_SUBSCRIBE_LINK',
+  STRIPE_SUBSCRIBE_URL: 'https://buy.stripe.com/6oU4gAclb0djbKRcMleME02',
 
   // Nexus Personal - $199 remote install (one-time)
-  STRIPE_REMOTE_INSTALL_URL: 'https://buy.stripe.com/YOUR_REMOTE_INSTALL_LINK',
+  STRIPE_REMOTE_INSTALL_URL: 'https://buy.stripe.com/bJedRagBr8JP3el5jTeME03',
 
   // Nexus Personal - $299 house call (one-time)
-  STRIPE_HOUSE_CALL_URL: 'https://buy.stripe.com/YOUR_HOUSE_CALL_LINK',
+  STRIPE_HOUSE_CALL_URL: 'https://buy.stripe.com/cNi00kbh7bW1g1727HeME04',
 
   // ========================================
   // CALENDLY BOOKING LINKS
