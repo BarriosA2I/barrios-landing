@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Creative Director | Neural Ad Forge | Barrios A2I</title>
-    <meta name="description" content="Your AI Creative Director is ready. Build a production-ready commercial brief in minutes with guided questions.">
+    <title>AI Creative Director | LEGENDARY Pipeline | Neural Ad Forge | Barrios A2I</title>
+    <meta name="description" content="LEGENDARY 6-Agent AI Creative Director. Full pipeline from intake to video delivery. Trinity MCP research, Graph-of-Thoughts ideation, Self-RAG scripts, RAGNAROK v7.0 production.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- LEGENDARY Styles -->
+    <link rel="stylesheet" href="css/creative-director.css">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -36,551 +39,425 @@
             }
         }
     </script>
-    <style>
-        body { background-color: #0a0a0f; color: white; margin: 0; overflow-x: hidden; }
-        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a0f; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00F3FF; }
-        .neon-text-shadow { text-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3); }
-        @keyframes fadeSlideIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-        .chat-container::-webkit-scrollbar { width: 4px; }
-        .chat-container::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 2px; }
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 5px rgba(0, 243, 255, 0.3); } 50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); } }
-        .typing-indicator span { animation: bounce 1.4s infinite ease-in-out both; }
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-
-        /* Nav Link Styles (from landing page) */
-        .nav-link { position: relative; }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 1px;
-            background: #ffd700;
-            box-shadow: 0 0 8px #ffd700;
-            transition: width 0.3s ease;
-        }
-        .nav-link:hover::after { width: 75%; }
-        .nav-link:hover .bracket { color: #ffd700; }
-        .nav-link.active::after { width: 75%; }
-        .nav-link.active .bracket { color: #ffd700; }
-
-        /* Scanline Effect */
-        .scanline-overlay {
-            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.15) 50%),
-                        linear-gradient(90deg, rgba(255,0,0,0.02), rgba(0,255,0,0.01), rgba(0,0,255,0.02));
-            background-size: 100% 2px, 3px 100%;
-        }
-
-        /* Volumetric Glow */
-        .volumetric-glow {
-            filter: drop-shadow(0 0 8px rgba(0, 194, 255, 0.5));
-        }
-        .volumetric-glow:hover {
-            filter: drop-shadow(0 0 15px rgba(0, 194, 255, 0.7));
-        }
-    </style>
 </head>
 <body class="antialiased font-sans selection:bg-neon selection:text-white">
+    <!-- Canvas Background -->
     <div id="canvas-container"></div>
 
-    <!-- ========== GLOBAL HEADER (REMASTERED) ========== -->
-    <header id="global-header" class="fixed top-0 left-0 right-0 z-[100] px-6 py-6 transition-all duration-300">
-        <!-- Glassmorphism Background -->
-        <div class="absolute inset-0 bg-transparent backdrop-blur-none transition-all duration-300" id="header-bg"></div>
+    <!-- ========== LEGENDARY HEADER ========== -->
+    <header id="global-header" class="legendary-header">
+        <div class="header-bg" id="header-bg"></div>
 
-        <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
-            <!-- Brand Section with Status Indicator -->
-            <a href="/" class="flex items-center gap-4 group">
-                <div class="relative">
-                    <!-- Shard Logo with Volumetric Glow -->
-                    <div class="relative w-10 h-10 flex items-center justify-center">
-                        <div class="absolute inset-0 bg-brand-blue blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
-                        <img
-                            src="brand/barrios-a2i-shard-logo.png"
-                            alt="Barrios A2I"
-                            class="relative w-8 h-8 object-contain volumetric-glow transition-all duration-300"
-                        >
-                    </div>
-                    <!-- Active Status Dot -->
-                    <div class="absolute -top-1 -right-1 w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+        <nav class="header-nav">
+            <!-- Brand Section -->
+            <a href="/" class="brand-section">
+                <div class="brand-logo">
+                    <div class="logo-glow"></div>
+                    <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="logo-img">
+                    <div id="connection-status" class="status-dot"></div>
                 </div>
-                <div class="hidden md:flex flex-col">
-                    <span class="text-brand-blue font-mono text-[10px] tracking-[0.2em] leading-none mb-1">SYSTEM_CONNECTED</span>
-                    <span class="text-white font-black tracking-tighter text-xl leading-none">
-                        BARRIOS <span class="text-brand-gold">A2I</span>
-                    </span>
+                <div class="brand-text">
+                    <span class="brand-system">LEGENDARY_PIPELINE</span>
+                    <span class="brand-name">BARRIOS <span class="text-brand-gold">A2I</span></span>
                 </div>
             </a>
 
-            <!-- Center Navigation with Gold Trace -->
-            <div class="hidden lg:flex items-center gap-2">
-                <a href="/#stack" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">STACK</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/#velocity" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">VELOCITY</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/#architecture" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">ARCHITECTURE</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/#pricing" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">PRICING</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/nexus-personal" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-white transition-colors flex items-center gap-2">
-                        NEXUS
-                        <span class="w-1.5 h-1.5 bg-brand-blue rounded-full shadow-[0_0_8px_#00C2FF]"></span>
-                    </span>
-                    <span class="bracket text-brand-blue/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/creative-director" class="nav-link active group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-gold font-mono text-sm">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-white transition-colors">AD_FORGE</span>
-                    <span class="bracket text-brand-gold font-mono text-sm">]</span>
-                </a>
+            <!-- Title & Badge -->
+            <div class="header-title">
+                <h1>AI Creative Director</h1>
+                <span class="legendary-badge">
+                    <iconify-icon icon="lucide:crown" width="12"></iconify-icon>
+                    LEGENDARY
+                </span>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-6">
-                <a href="/login" class="hidden sm:block text-[10px] font-mono text-gray-500 hover:text-brand-gold transition-colors tracking-widest">
-                    AUTH_LOGIN
-                </a>
-
-                <a href="#chat" onclick="focusChatInput()" class="group relative px-5 py-2 bg-white/5 border border-brand-blue/30 backdrop-blur-md overflow-hidden hover:border-brand-gold transition-all duration-300">
-                    <!-- Volumetric Glow -->
-                    <div class="absolute inset-0 bg-brand-blue/5 group-hover:bg-brand-gold/10 transition-colors"></div>
-                    <!-- Top Gradient Line -->
-                    <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-blue to-transparent"></div>
-                    <!-- Scanline Effect -->
-                    <div class="absolute inset-0 pointer-events-none scanline-overlay opacity-30"></div>
-
-                    <div class="relative flex items-center gap-3">
-                        <iconify-icon icon="lucide:terminal" width="14" class="text-brand-blue group-hover:text-brand-gold transition-colors"></iconify-icon>
-                        <span class="text-[11px] font-mono font-bold text-white tracking-[0.15em]">
-                            BEGIN_INTAKE
-                        </span>
-                    </div>
-
-                    <!-- Micro-Interaction Corners -->
-                    <div class="absolute top-0 left-0 w-1 h-1 border-t border-l border-brand-blue/50 group-hover:border-brand-gold transition-colors"></div>
-                    <div class="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-brand-blue/50 group-hover:border-brand-gold transition-colors"></div>
-                </a>
+            <!-- Session Info -->
+            <div class="session-info">
+                <span class="session-label">SESSION</span>
+                <span id="session-id-display" class="session-id">--</span>
             </div>
         </nav>
     </header>
 
-    <!-- Header Scroll Behavior Script -->
-    <script>
-    (function() {
-        const header = document.getElementById('global-header');
-        const headerBg = document.getElementById('header-bg');
-        let lastScroll = 0;
+    <!-- ========== PIPELINE PROGRESS BAR ========== -->
+    <div class="pipeline-progress">
+        <div class="pipeline-track">
+            <div id="progress-bar" class="pipeline-fill"></div>
+        </div>
+        <div id="phase-indicators" class="phase-indicators">
+            <div class="phase-dot active" data-phase="intake">
+                <span class="phase-icon"><iconify-icon icon="lucide:message-square" width="14"></iconify-icon></span>
+                <span class="phase-label">INTAKE</span>
+            </div>
+            <div class="phase-dot" data-phase="research">
+                <span class="phase-icon"><iconify-icon icon="lucide:search" width="14"></iconify-icon></span>
+                <span class="phase-label">RESEARCH</span>
+            </div>
+            <div class="phase-dot" data-phase="ideation">
+                <span class="phase-icon"><iconify-icon icon="lucide:lightbulb" width="14"></iconify-icon></span>
+                <span class="phase-label">IDEATION</span>
+            </div>
+            <div class="phase-dot" data-phase="script">
+                <span class="phase-icon"><iconify-icon icon="lucide:file-text" width="14"></iconify-icon></span>
+                <span class="phase-label">SCRIPT</span>
+            </div>
+            <div class="phase-dot" data-phase="review">
+                <span class="phase-icon"><iconify-icon icon="lucide:check-circle" width="14"></iconify-icon></span>
+                <span class="phase-label">REVIEW</span>
+            </div>
+            <div class="phase-dot" data-phase="production">
+                <span class="phase-icon"><iconify-icon icon="lucide:video" width="14"></iconify-icon></span>
+                <span class="phase-label">PRODUCTION</span>
+            </div>
+            <div class="phase-dot" data-phase="delivery">
+                <span class="phase-icon"><iconify-icon icon="lucide:download" width="14"></iconify-icon></span>
+                <span class="phase-label">DELIVERY</span>
+            </div>
+        </div>
+    </div>
 
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.scrollY;
-
-            if (currentScroll > 10) {
-                header.classList.remove('py-6');
-                header.classList.add('py-3');
-                headerBg.classList.remove('bg-transparent', 'backdrop-blur-none');
-                headerBg.classList.add('bg-obsidian/80', 'backdrop-blur-xl', 'border-b', 'border-white/10');
-            } else {
-                header.classList.remove('py-3');
-                header.classList.add('py-6');
-                headerBg.classList.remove('bg-obsidian/80', 'backdrop-blur-xl', 'border-b', 'border-white/10');
-                headerBg.classList.add('bg-transparent', 'backdrop-blur-none');
-            }
-
-            lastScroll = currentScroll;
-        });
-    })();
-    </script>
-
-    <main class="relative z-10 w-full">
-        <!-- HERO -->
-        <section class="min-h-screen w-full flex flex-col lg:flex-row justify-center items-center px-4 lg:px-6 relative pt-24 pb-12 gap-8 lg:gap-12">
-            <div class="max-w-xl space-y-6 text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm" style="animation: fadeSlideIn 0.8s ease-out 0.8s both;">
-                    <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
-                    <span class="text-neon text-xs font-medium tracking-widest uppercase">AI Creative Director &bull; No Signup Required</span>
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content">
+        <!-- Chat Container -->
+        <div class="chat-section">
+            <div id="chat-container" class="chat-container">
+                <!-- Welcome Screen (shown initially) -->
+                <div id="welcome-screen" class="welcome-screen">
+                    <div class="welcome-icon">
+                        <iconify-icon icon="lucide:sparkles" width="48"></iconify-icon>
+                    </div>
+                    <h2>Welcome to the LEGENDARY Pipeline</h2>
+                    <p>I'm your AI Creative Director powered by a 6-agent system. Tell me about your business and I'll guide you through creating a production-ready commercial.</p>
+                    <div class="welcome-features">
+                        <div class="feature">
+                            <iconify-icon icon="lucide:brain" width="20"></iconify-icon>
+                            <span>Trinity MCP Market Research</span>
+                        </div>
+                        <div class="feature">
+                            <iconify-icon icon="lucide:network" width="20"></iconify-icon>
+                            <span>Graph-of-Thoughts Ideation</span>
+                        </div>
+                        <div class="feature">
+                            <iconify-icon icon="lucide:file-code" width="20"></iconify-icon>
+                            <span>Self-RAG Script Writing</span>
+                        </div>
+                        <div class="feature">
+                            <iconify-icon icon="lucide:video" width="20"></iconify-icon>
+                            <span>RAGNAROK v7.0 Production</span>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tighter leading-none" style="animation: fadeSlideIn 0.8s ease-out 1s both;">
-                    Your Commercial Brief<span class="text-neon">.</span>
-                    <br><span class="text-white/50 font-serif italic font-normal">Built in Minutes.</span>
-                </h1>
-                <p class="text-base text-white/60 max-w-md mx-auto lg:mx-0" style="animation: fadeSlideIn 0.8s ease-out 1.2s both;">
-                    Answer guided questions. Receive a production-ready brief optimized for AI video generation. No guesswork. No blank page.
-                </p>
-                <div class="space-y-3 text-left max-w-md mx-auto lg:mx-0" style="animation: fadeSlideIn 0.8s ease-out 1.3s both;">
-                    <div class="flex items-center gap-3">
-                        <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                        <span class="text-sm text-white/70">Structured 10-phase intake &mdash; we ask, you answer</span>
+
+                <!-- Chat Messages -->
+                <div id="chat-messages" class="chat-messages"></div>
+
+                <!-- Typing Indicator Template -->
+                <div id="typing-indicator" class="typing-indicator hidden">
+                    <div class="typing-avatar">
+                        <iconify-icon icon="lucide:bot" width="16"></iconify-icon>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                        <span class="text-sm text-white/70">Captures offer, audience, hook, tone &amp; CTA</span>
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                        <span class="text-sm text-white/70">Output ready for Veo, Runway &amp; AI production</span>
-                    </div>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4" style="animation: fadeSlideIn 0.8s ease-out 1.4s both;">
-                    <a href="#chat" onclick="focusChatInput()" class="group relative px-8 py-4 bg-transparent overflow-hidden border border-neon text-white transition-all hover:border-neon cursor-pointer">
-                        <div class="absolute inset-0 w-0 bg-neon transition-all duration-[250ms] ease-out group-hover:w-full opacity-80"></div>
-                        <span class="relative flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-widest group-hover:text-white">
-                            Begin Your Brief
-                            <i data-lucide="arrow-right" class="w-4 h-4" stroke-width="1.5"></i>
-                        </span>
-                    </a>
-                    <a href="#how-it-works" class="group relative px-8 py-4 bg-transparent overflow-hidden border border-white/30 text-white transition-all hover:border-white/60">
-                        <span class="relative flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-widest">
-                            See the Process
-                        </span>
-                    </a>
                 </div>
             </div>
 
-            <!-- Chat Widget -->
-            <div id="chat" class="w-full max-w-xl lg:max-w-lg" style="animation: fadeSlideIn 0.8s ease-out 1.2s both;">
-                <div class="relative p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden group">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-50"></div>
-                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-neon/10 rounded-full blur-3xl pointer-events-none"></div>
+            <!-- Generative UI Container -->
+            <div id="generative-ui" class="generative-ui hidden">
+                <!-- Concept Cards Container -->
+                <div id="concept-cards-container" class="concept-cards-container hidden"></div>
 
-                    <div class="relative z-10">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-lg font-medium text-white tracking-tight">AI Creative Director</h3>
-                                <p class="text-xs text-white/50 mt-1">I'll guide you through each step. Just answer naturally.</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-neon"></span>
-                                </span>
-                                <span class="text-xs text-neon uppercase tracking-wider font-medium">Ready</span>
-                            </div>
-                        </div>
+                <!-- Script Preview Container -->
+                <div id="script-preview-container" class="script-preview-container hidden"></div>
 
-                        <!-- Progress Bar -->
-                        <div class="mb-4 p-3 rounded-lg bg-black/40 border border-white/5">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs text-white/50 uppercase tracking-wider">Brief Progress</span>
-                                <span id="phase-tag" class="text-xs text-neon font-mono">Phase 1: Introduction</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                <div id="progress-bar" class="h-full bg-gradient-to-r from-neon to-cyan-400 rounded-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                            <div class="flex justify-between mt-1">
-                                <span id="progress-percent" class="text-xs text-white/40 font-mono">0%</span>
-                                <span id="completion-status" class="text-xs text-white/40">10 phases remaining</span>
-                            </div>
-                        </div>
+                <!-- Production Progress Container -->
+                <div id="production-progress-container" class="production-progress-container hidden"></div>
+            </div>
 
-                        <!-- Chat Messages -->
-                        <div id="chat-messages" class="chat-container h-64 overflow-y-auto space-y-4 mb-4 pr-2">
-                            <div class="flex gap-3">
-                                <div class="w-8 h-8 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center flex-shrink-0">
-                                    <i data-lucide="bot" class="w-4 h-4 text-neon" stroke-width="1.5"></i>
-                                </div>
-                                <div class="flex-1 p-3 rounded-lg bg-white/5 border border-white/10">
-                                    <p class="text-sm text-white/80">Hello! I'm your AI Creative Director. Let's build your commercial brief together. What's your business name, and what product or service are we creating this commercial for?</p>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Error Container -->
+            <div id="error-container" class="error-container hidden">
+                <iconify-icon icon="lucide:alert-circle" width="16"></iconify-icon>
+                <span id="error-message"></span>
+                <button onclick="retryLastMessage()">Retry</button>
+            </div>
 
-                        <!-- Quick Actions -->
-                        <div id="quick-actions" class="flex flex-wrap gap-2 mb-4 hidden"></div>
+            <!-- Quick Actions -->
+            <div id="quick-actions" class="quick-actions hidden"></div>
 
-                        <!-- Error Message -->
-                        <div id="error-container" class="hidden mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30">
-                            <div class="flex items-center justify-between">
-                                <span id="error-message" class="text-xs text-red-400"></span>
-                                <button onclick="retryLastMessage()" class="text-xs text-red-400 hover:text-red-300 underline">Retry</button>
-                            </div>
-                        </div>
-
-                        <!-- Input -->
-                        <div class="flex gap-3">
-                            <input type="text" id="chat-input" placeholder="Type your answer here..." class="flex-1 bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-neon/50 transition-colors" onkeypress="if(event.key==='Enter')sendMessage()">
-                            <button id="send-btn" onclick="sendMessage()" class="px-4 py-3 bg-neon/20 border border-neon/50 rounded-lg hover:bg-neon/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i data-lucide="send" class="w-4 h-4 text-neon" stroke-width="1.5"></i>
-                            </button>
-                        </div>
-                    </div>
+            <!-- Input Area -->
+            <div class="input-area">
+                <form id="chat-input-form" class="chat-input-form">
+                    <input
+                        type="text"
+                        id="chat-input"
+                        placeholder="Describe your business or answer the question..."
+                        autocomplete="off"
+                    >
+                    <button type="submit" id="send-btn" class="send-btn">
+                        <iconify-icon icon="lucide:send" width="18"></iconify-icon>
+                    </button>
+                </form>
+                <div class="input-hints">
+                    <span>Press Enter to send</span>
+                    <span class="divider">|</span>
+                    <span id="phase-hint">Phase 1: Business Information</span>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- HOW IT WORKS -->
-        <section id="how-it-works" class="flex flex-col z-10 w-full pt-24 px-6 pb-24 relative items-center">
-            <div class="max-w-7xl mx-auto w-full space-y-12">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-8">
-                    <div>
-                        <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">The Process &bull; 3 Steps</span>
-                        <h2 class="text-3xl md:text-5xl font-medium tracking-tight text-white max-w-2xl">
-                            How It Works<span class="text-neon">.</span>
-                            <br><span class="text-white/50">We guide. You answer. Done.</span>
-                        </h2>
-                    </div>
-                    <p class="text-sm text-white/60 max-w-md text-right hidden md:block">
-                        No blank prompts. No creative guesswork. Our AI walks you through a proven structure that captures everything production needs.
-                    </p>
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <!-- Brief Summary -->
+            <div class="sidebar-section brief-summary">
+                <div class="section-header">
+                    <iconify-icon icon="lucide:file-text" width="16"></iconify-icon>
+                    <span>Brief Summary</span>
                 </div>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 bg-gradient-to-b from-neon/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-[10px] uppercase tracking-widest text-white/40">Step One</span>
-                                <span class="text-[10px] font-mono text-neon">01</span>
-                            </div>
-                            <div class="h-24 rounded-lg bg-black/50 border border-white/5 mb-6 flex items-center justify-center">
-                                <i data-lucide="building-2" class="w-12 h-12 text-neon/50" stroke-width="1"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-white mb-2">Define Your Business</h3>
-                            <p class="text-xs text-white/50 leading-relaxed mb-4">Tell us your business name, what you offer, and the core value you deliver to customers.</p>
-                            <div class="flex items-center gap-2 text-[10px] text-neon uppercase tracking-wider">
-                                <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                                Phases 1&ndash;3
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 bg-gradient-to-b from-neon/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-[10px] uppercase tracking-widest text-white/40">Step Two</span>
-                                <span class="text-[10px] font-mono text-neon">02</span>
-                            </div>
-                            <div class="h-24 rounded-lg bg-black/50 border border-white/5 mb-6 flex items-center justify-center">
-                                <i data-lucide="users" class="w-12 h-12 text-neon/50" stroke-width="1"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-white mb-2">Identify Your Audience</h3>
-                            <p class="text-xs text-white/50 leading-relaxed mb-4">Describe who you're speaking to, what problems they face, and what outcome they want.</p>
-                            <div class="flex items-center gap-2 text-[10px] text-neon uppercase tracking-wider">
-                                <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                                Phases 4&ndash;6
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 bg-gradient-to-b from-neon/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-[10px] uppercase tracking-widest text-white/40">Step Three</span>
-                                <span class="text-[10px] font-mono text-neon">03</span>
-                            </div>
-                            <div class="h-24 rounded-lg bg-black/50 border border-white/5 mb-6 flex items-center justify-center">
-                                <i data-lucide="sparkles" class="w-12 h-12 text-neon/50" stroke-width="1"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-white mb-2">Set the Creative Direction</h3>
-                            <p class="text-xs text-white/50 leading-relaxed mb-4">Choose your tone, confirm your call-to-action, and receive your complete production brief.</p>
-                            <div class="flex items-center gap-2 text-[10px] text-neon uppercase tracking-wider">
-                                <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                                Phases 7&ndash;10
-                            </div>
-                        </div>
-                    </div>
+                <div id="brief-content" class="section-content">
+                    <p class="placeholder">Complete the intake to see your brief summary...</p>
                 </div>
             </div>
-        </section>
 
-        <!-- WHAT YOU GET -->
-        <section id="deliverables" class="min-h-screen w-full relative z-10 py-24 px-6 flex flex-col items-center">
-            <div class="max-w-7xl mx-auto w-full">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-8 mb-12">
-                    <div>
-                        <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">Deliverables &bull; Your Output</span>
-                        <h2 class="text-3xl md:text-5xl font-medium tracking-tight text-white max-w-2xl">
-                            What You Receive<span class="text-neon">.</span>
-                            <br><span class="text-white/50">Ready for production.</span>
-                        </h2>
-                    </div>
-                    <p class="text-sm text-white/60 max-w-md text-right hidden md:block">
-                        Your completed intake generates a comprehensive brief formatted for AI video tools and production teams.
-                    </p>
+            <!-- Research Insights -->
+            <div class="sidebar-section research-insights hidden" id="research-section">
+                <div class="section-header">
+                    <iconify-icon icon="lucide:search" width="16"></iconify-icon>
+                    <span>Research Insights</span>
+                    <span class="badge">Trinity MCP</span>
                 </div>
-
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
-                                <i data-lucide="briefcase" class="w-5 h-5 text-neon" stroke-width="1.5"></i>
-                            </div>
-                            <h3 class="text-base font-medium text-white">Brand &amp; Offer Summary</h3>
-                        </div>
-                        <p class="text-sm text-white/50 leading-relaxed">Clear articulation of your business identity, what you sell, and why it matters.</p>
-                    </div>
-
-                    <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
-                                <i data-lucide="target" class="w-5 h-5 text-neon" stroke-width="1.5"></i>
-                            </div>
-                            <h3 class="text-base font-medium text-white">Target Audience Profile</h3>
-                        </div>
-                        <p class="text-sm text-white/50 leading-relaxed">Detailed description of who you're reaching and the specific problems they need solved.</p>
-                    </div>
-
-                    <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
-                                <i data-lucide="zap" class="w-5 h-5 text-neon" stroke-width="1.5"></i>
-                            </div>
-                            <h3 class="text-base font-medium text-white">Hook &amp; Call-to-Action</h3>
-                        </div>
-                        <p class="text-sm text-white/50 leading-relaxed">Attention-grabbing opener and clear next step designed to drive viewer action.</p>
-                    </div>
-
-                    <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
-                                <i data-lucide="palette" class="w-5 h-5 text-neon" stroke-width="1.5"></i>
-                            </div>
-                            <h3 class="text-base font-medium text-white">Tone &amp; Style Direction</h3>
-                        </div>
-                        <p class="text-sm text-white/50 leading-relaxed">Creative guidance covering voice, pacing, and visual treatment for your commercial.</p>
-                    </div>
-
-                    <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
-                                <i data-lucide="monitor-play" class="w-5 h-5 text-neon" stroke-width="1.5"></i>
-                            </div>
-                            <h3 class="text-base font-medium text-white">AI Video Optimization</h3>
-                        </div>
-                        <p class="text-sm text-white/50 leading-relaxed">Brief structured for direct use with Veo, Runway, and other AI generation platforms.</p>
-                    </div>
-
-                    <div class="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
-                                <i data-lucide="file-text" class="w-5 h-5 text-neon" stroke-width="1.5"></i>
-                            </div>
-                            <h3 class="text-base font-medium text-white">Complete Brief Document</h3>
-                        </div>
-                        <p class="text-sm text-white/50 leading-relaxed">Everything consolidated into one production-ready document you can use immediately.</p>
-                    </div>
+                <div id="research-content" class="section-content">
+                    <p class="placeholder">Market research results will appear here...</p>
                 </div>
             </div>
-        </section>
 
-        <!-- TESTIMONIAL -->
-        <section class="flex flex-col w-full py-24 px-6 relative z-10">
-            <div class="max-w-7xl mx-auto w-full">
-                <div class="border border-white/10 bg-white/5 backdrop-blur-xl rounded-3xl p-8 md:p-12 overflow-hidden relative group">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div class="absolute -top-24 -right-24 w-96 h-96 bg-neon/10 rounded-full blur-3xl pointer-events-none"></div>
-                    <div class="flex flex-col md:flex-row gap-12 relative z-10">
-                        <div class="flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-8">Early Feedback</div>
-                                <h2 class="text-2xl md:text-4xl font-medium tracking-tight text-white mb-8 leading-snug">
-                                    "I came in with a vague idea. The guided questions pulled out details I hadn't thought to include. Walked away with a brief I could actually hand to production."
-                                </h2>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/10 bg-gradient-to-br from-neon/20 to-cyan-500/20 flex items-center justify-center">
-                                    <i data-lucide="user" class="w-6 h-6 text-white/60" stroke-width="1.5"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-medium text-white">Founder</div>
-                                    <div class="text-xs text-white/40 uppercase tracking-wider">Local Services Company</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-80 bg-black/40 rounded-2xl p-6 border border-white/10 flex flex-col justify-center gap-6">
-                            <div class="text-xs font-semibold tracking-widest text-white/30 uppercase">Intake Stats</div>
-                            <div class="space-y-1">
-                                <div class="text-4xl font-mono text-neon font-medium">10</div>
-                                <div class="text-sm text-white/50">Guided Phases</div>
-                            </div>
-                            <div class="w-full h-px bg-white/10"></div>
-                            <div class="space-y-1">
-                                <div class="text-4xl font-mono text-neon font-medium">&lt;5min</div>
-                                <div class="text-sm text-white/50">Average Completion</div>
-                            </div>
-                            <div class="w-full h-px bg-white/10"></div>
-                            <div class="space-y-1">
-                                <div class="text-4xl font-mono text-neon font-medium">100%</div>
-                                <div class="text-sm text-white/50">Production Ready</div>
-                            </div>
-                        </div>
+            <!-- Quality Score -->
+            <div class="sidebar-section quality-score hidden" id="quality-section">
+                <div class="section-header">
+                    <iconify-icon icon="lucide:gauge" width="16"></iconify-icon>
+                    <span>Quality Score</span>
+                    <span class="badge">PRM</span>
+                </div>
+                <div id="quality-content" class="section-content">
+                    <div class="score-display">
+                        <span id="quality-score-value" class="score-value">--</span>
+                        <span class="score-label">/ 100</span>
                     </div>
+                    <div id="quality-breakdown" class="quality-breakdown"></div>
                 </div>
             </div>
-        </section>
 
-        <!-- FINAL CTA -->
-        <section class="w-full py-24 px-6 relative z-10">
-            <div class="max-w-4xl mx-auto text-center">
-                <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-4 block">No Signup Required</span>
-                <h2 class="text-4xl md:text-6xl font-semibold tracking-tight text-white mb-6">
-                    Start your brief<span class="text-neon">.</span>
-                    <br><span class="font-serif italic font-normal text-white/50">Right now.</span>
-                </h2>
-                <p class="text-base text-white/60 max-w-xl mx-auto mb-8">
-                    Just answer the questions. In a few minutes, you'll have a production-ready commercial brief &mdash; no account, no credit card, no friction.
-                </p>
-                <a href="#chat" onclick="focusChatInput()" class="inline-flex group relative px-10 py-4 bg-white text-black font-semibold uppercase tracking-widest text-xs hover:bg-neon hover:text-black transition-all duration-300 cursor-pointer">
-                    <span class="relative z-10 flex items-center gap-3">
-                        Begin Intake
-                        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1" stroke-width="1.5"></i>
-                    </span>
-                </a>
+            <!-- Actions -->
+            <div class="sidebar-actions">
+                <button id="download-brief-btn" class="action-btn secondary" onclick="downloadBrief()" disabled>
+                    <iconify-icon icon="lucide:download" width="16"></iconify-icon>
+                    Download Brief
+                </button>
+                <button id="run-pipeline-btn" class="action-btn primary" onclick="runFullPipeline()" disabled>
+                    <iconify-icon icon="lucide:play" width="16"></iconify-icon>
+                    Run Full Pipeline
+                </button>
             </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="border-t border-white/10 py-12 px-6 bg-black">
-            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-                <a href="/" class="flex items-center gap-2">
-                    <span class="font-semibold text-lg tracking-tighter uppercase text-white">BARRIOS<span class="text-neon">.</span>A2I</span>
-                </a>
-                <div class="text-xs text-white/40 uppercase tracking-widest">&copy; 2025 Barrios A2I. All rights reserved.</div>
-                <div class="flex gap-6">
-                    <a href="https://instagram.com" target="_blank" class="text-white/40 hover:text-neon transition-colors">
-                        <i data-lucide="instagram" class="w-5 h-5" stroke-width="1.5"></i>
-                    </a>
-                    <a href="https://twitter.com" target="_blank" class="text-white/40 hover:text-neon transition-colors">
-                        <i data-lucide="twitter" class="w-5 h-5" stroke-width="1.5"></i>
-                    </a>
-                    <a href="https://linkedin.com" target="_blank" class="text-white/40 hover:text-neon transition-colors">
-                        <i data-lucide="linkedin" class="w-5 h-5" stroke-width="1.5"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
+        </aside>
     </main>
+
+    <!-- ========== PAYMENT MODAL ========== -->
+    <div id="payment-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closePaymentModal()"></div>
+        <div class="modal-content payment-modal">
+            <button class="modal-close" onclick="closePaymentModal()">
+                <iconify-icon icon="lucide:x" width="20"></iconify-icon>
+            </button>
+
+            <div class="modal-header">
+                <iconify-icon icon="lucide:sparkles" width="32" class="text-neon"></iconify-icon>
+                <h2>Your AI Commercial Awaits</h2>
+                <p>Choose your package to begin production</p>
+            </div>
+
+            <div class="pricing-options">
+                <!-- Standard Package -->
+                <div class="pricing-card standard" onclick="startCheckout('standard')">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <iconify-icon icon="lucide:zap" width="24"></iconify-icon>
+                        </div>
+                        <div class="card-title">
+                            <h3>Standard Package</h3>
+                            <p>30-second AI commercial</p>
+                        </div>
+                        <div class="card-price">
+                            <span class="price">$499</span>
+                            <span class="term">one-time</span>
+                        </div>
+                    </div>
+                    <ul class="card-features">
+                        <li><iconify-icon icon="lucide:check" width="14"></iconify-icon> AI-generated video from your brief</li>
+                        <li><iconify-icon icon="lucide:check" width="14"></iconify-icon> 1 revision included</li>
+                        <li><iconify-icon icon="lucide:check" width="14"></iconify-icon> Delivered in 48-72 hours</li>
+                        <li><iconify-icon icon="lucide:check" width="14"></iconify-icon> Full commercial rights</li>
+                    </ul>
+                    <button class="card-btn">
+                        <iconify-icon icon="lucide:credit-card" width="16"></iconify-icon>
+                        Purchase Now
+                    </button>
+                </div>
+
+                <!-- Premium Package -->
+                <div class="pricing-card premium" onclick="startCheckout('premium')">
+                    <div class="popular-badge">MOST POPULAR</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <iconify-icon icon="lucide:crown" width="24"></iconify-icon>
+                        </div>
+                        <div class="card-title">
+                            <h3>Premium Package</h3>
+                            <p>Full campaign production</p>
+                        </div>
+                        <div class="card-price">
+                            <span class="price">Custom</span>
+                            <span class="term">from $2,500</span>
+                        </div>
+                    </div>
+                    <ul class="card-features">
+                        <li><iconify-icon icon="lucide:check" width="14"></iconify-icon> Multiple video lengths & formats</li>
+                        <li><iconify-icon icon="lucide:check" width="14"></iconify-icon> Unlimited revisions</li>
+                        <li><iconify-icon icon="lucide:check" width="14"></iconify-icon> Dedicated creative director</li>
+                        <li><iconify-icon icon="lucide:check" width="14"></iconify-icon> Priority 24-hour delivery</li>
+                    </ul>
+                    <button class="card-btn">
+                        <iconify-icon icon="lucide:calendar" width="16"></iconify-icon>
+                        Book Consultation
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="download-link" onclick="downloadBrief()">
+                    <iconify-icon icon="lucide:download" width="14"></iconify-icon>
+                    Download Brief as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== VIDEO DELIVERY MODAL ========== -->
+    <div id="delivery-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content delivery-modal">
+            <div class="modal-header success">
+                <iconify-icon icon="lucide:check-circle" width="48" class="text-green-400"></iconify-icon>
+                <h2>Your Video is Ready!</h2>
+                <p>Your AI-generated commercial has been produced by RAGNAROK v7.0</p>
+            </div>
+
+            <div class="video-preview">
+                <video id="delivery-video" controls></video>
+            </div>
+
+            <div class="delivery-stats">
+                <div class="stat">
+                    <span class="stat-label">Render Time</span>
+                    <span id="render-time" class="stat-value">--</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Quality Score</span>
+                    <span id="final-quality-score" class="stat-value">--</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Format</span>
+                    <span id="video-format" class="stat-value">MP4 1080p</span>
+                </div>
+            </div>
+
+            <div class="delivery-actions">
+                <button class="action-btn primary" onclick="downloadVideo()">
+                    <iconify-icon icon="lucide:download" width="16"></iconify-icon>
+                    Download Video
+                </button>
+                <button class="action-btn secondary" onclick="shareVideo()">
+                    <iconify-icon icon="lucide:share-2" width="16"></iconify-icon>
+                    Share
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TEMPLATES ========== -->
+
+    <!-- Concept Card Template -->
+    <template id="concept-card-template">
+        <div class="concept-card" data-concept-id="">
+            <div class="card-visual">
+                <div class="visual-placeholder">
+                    <iconify-icon icon="lucide:image" width="32"></iconify-icon>
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="concept-title"></h3>
+                <p class="concept-hook"></p>
+                <div class="concept-meta">
+                    <span class="meta-item">
+                        <iconify-icon icon="lucide:clock" width="12"></iconify-icon>
+                        <span class="concept-duration"></span>
+                    </span>
+                    <span class="meta-item">
+                        <iconify-icon icon="lucide:palette" width="12"></iconify-icon>
+                        <span class="concept-style"></span>
+                    </span>
+                </div>
+                <div class="concept-score">
+                    <div class="score-bar">
+                        <div class="score-fill"></div>
+                    </div>
+                    <span class="score-label"></span>
+                </div>
+            </div>
+            <button class="select-concept-btn">
+                <iconify-icon icon="lucide:check" width="16"></iconify-icon>
+                Select This Concept
+            </button>
+        </div>
+    </template>
+
+    <!-- Script Scene Template -->
+    <template id="scene-template">
+        <div class="scene-card" data-scene-id="">
+            <div class="scene-header">
+                <span class="scene-number"></span>
+                <span class="scene-duration"></span>
+            </div>
+            <div class="scene-content">
+                <div class="scene-visual">
+                    <iconify-icon icon="lucide:film" width="24"></iconify-icon>
+                </div>
+                <div class="scene-details">
+                    <p class="scene-action"></p>
+                    <p class="scene-voiceover"></p>
+                </div>
+            </div>
+            <div class="scene-notes"></div>
+        </div>
+    </template>
+
+    <!-- Production Step Template -->
+    <template id="production-step-template">
+        <div class="production-step" data-step="">
+            <div class="step-icon">
+                <iconify-icon icon="" width="20"></iconify-icon>
+            </div>
+            <div class="step-content">
+                <span class="step-name"></span>
+                <span class="step-status"></span>
+            </div>
+            <div class="step-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+    </template>
 
     <!-- Three.js Background -->
     <script type="importmap">
@@ -600,8 +477,6 @@
         import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-        lucide.createIcons();
-
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x050505, 0.02);
@@ -618,75 +493,50 @@
         const renderScene = new RenderPass(scene, camera);
         const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
         bloomPass.threshold = 0;
-        bloomPass.strength = 2.0;
+        bloomPass.strength = 1.5;
         bloomPass.radius = 0.5;
 
         const composer = new EffectComposer(renderer);
         composer.addPass(renderScene);
         composer.addPass(bloomPass);
 
-        const logoGroup = new THREE.Group();
-        const material = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 1.0, roughness: 0.1, emissive: 0x004444, emissiveIntensity: 0.2 });
-        const edgeMaterial = new THREE.MeshBasicMaterial({ color: 0x00F3FF });
-        const geometry = new THREE.SphereGeometry(1.2, 32, 32);
-        const mesh = new THREE.Mesh(geometry, material);
-        const wireframe = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), edgeMaterial);
-        mesh.add(wireframe);
-        logoGroup.add(mesh);
-        scene.add(logoGroup);
+        // Particle system
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1500;
+        const posArray = new Float32Array(particlesCount * 3);
+        for(let i = 0; i < particlesCount * 3; i++) { posArray[i] = (Math.random() - 0.5) * 25; }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({ size: 0.03, color: 0x00F3FF, transparent: true, opacity: 0.6 });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
 
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        // Ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
         scene.add(ambientLight);
 
-        const spotlight1 = new THREE.SpotLight(0x00F3FF, 50);
-        spotlight1.position.set(5, 5, 5);
-        spotlight1.angle = 0.3;
-        spotlight1.penumbra = 0.5;
-        scene.add(spotlight1);
-
-        const spotlight2 = new THREE.SpotLight(0xffffff, 10);
-        spotlight2.position.set(-5, 5, 5);
-        spotlight2.angle = 0.5;
-        scene.add(spotlight2);
-
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 2000;
-        const posArray = new Float32Array(particlesCount * 3);
-        for(let i = 0; i < particlesCount * 3; i++) { posArray[i] = (Math.random() - 0.5) * 20; }
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff, transparent: true, opacity: 0.8 });
-        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-        particlesMesh.position.y = -5;
-        scene.add(particlesMesh);
+        // Spotlight
+        const spotlight = new THREE.SpotLight(0x00F3FF, 30);
+        spotlight.position.set(5, 5, 5);
+        spotlight.angle = 0.3;
+        spotlight.penumbra = 0.5;
+        scene.add(spotlight);
 
         function animate() {
             requestAnimationFrame(animate);
-            const time = Date.now() * 0.002;
-            const scale = 1 + Math.sin(time * 2) * 0.02;
-            logoGroup.scale.set(scale, scale, scale);
-            logoGroup.rotation.y += 0.002;
+            const time = Date.now() * 0.0005;
+            particlesMesh.rotation.y = time * 0.1;
+            particlesMesh.rotation.x = Math.sin(time) * 0.05;
+
             const positions = particlesGeometry.attributes.position.array;
             for(let i = 0; i < particlesCount; i++) {
-                const x = positions[i * 3];
-                positions[i * 3 + 1] = Math.sin(Date.now() * 0.001 + x) * 0.5 - 2;
+                const i3 = i * 3;
+                positions[i3 + 1] += Math.sin(time + positions[i3]) * 0.001;
             }
             particlesGeometry.attributes.position.needsUpdate = true;
+
             composer.render();
         }
         animate();
-
-        gsap.registerPlugin(ScrollTrigger);
-        const tl = gsap.timeline({ scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 1 } });
-        tl.to(logoGroup.position, { z: -10, y: 5, duration: 2 }, 0)
-          .to(logoGroup.rotation, { x: 1, duration: 2 }, 0)
-          .to(camera.position, { z: 8, duration: 2 }, 0)
-          .to(particlesMesh.position, { y: 0, duration: 2 }, 0.5)
-          .to(particlesMaterial.color, { r: 0, g: 0.95, b: 1, duration: 1 }, 2)
-          .to(camera.rotation, { z: 0.2, duration: 2 }, 2)
-          .to(particlesMesh.scale, { x: 2, y: 2, z: 2, duration: 2 }, 4)
-          .to(scene.fog, { density: 0.05, duration: 2 }, 4)
-          .to(spotlight1, { intensity: 100, angle: 0.1, duration: 2 }, 6)
-          .to(bloomPass, { strength: 3, radius: 1, duration: 2 }, 6);
 
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -696,227 +546,15 @@
         });
     </script>
 
-    <!-- Chat API Integration -->
+    <!-- LEGENDARY Creative Director Logic -->
+    <script src="js/creative-director.js"></script>
+
+    <!-- Initialize Lucide Icons -->
     <script>
-        const API_URL = 'https://barrios-creative-director.onrender.com';
-        let sessionId = localStorage.getItem('barrios_creative_director_session');
-        let isLoading = false;
-        let lastMessage = '';
-        let currentPhase = 1;
-
-        async function initSession() {
-            try {
-                const res = await fetch(`${API_URL}/api/session/start`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                if (!res.ok) throw new Error('Session start failed');
-                const data = await res.json();
-                sessionId = data.session_id;
-                localStorage.setItem('barrios_creative_director_session', sessionId);
-
-                // Clear initial message and show API greeting
-                if (data.greeting) {
-                    const container = document.getElementById('chat-messages');
-                    container.innerHTML = '';
-                    addMessage(data.greeting, false, data.quick_actions || []);
-                }
-
-                if (data.phase) {
-                    updateProgress(data.completion_percentage || 0, data.phase, false);
-                }
-            } catch (e) {
-                console.error('Session init error:', e);
-                showError('Unable to connect. Please refresh and try again.');
-            }
-        }
-
-        function focusChatInput() {
-            setTimeout(() => {
-                document.getElementById('chat-input').focus();
-            }, 300);
-        }
-
-        function showError(msg) {
-            document.getElementById('error-container').classList.remove('hidden');
-            document.getElementById('error-message').textContent = msg;
-        }
-
-        function hideError() {
-            document.getElementById('error-container').classList.add('hidden');
-        }
-
-        function addMessage(content, isUser = false, quickActions = []) {
-            const container = document.getElementById('chat-messages');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'flex gap-3';
-
-            if (isUser) {
-                msgDiv.innerHTML = `
-                    <div class="flex-1 p-3 rounded-lg bg-neon/10 border border-neon/30 ml-8">
-                        <p class="text-sm text-white">${escapeHtml(content)}</p>
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="user" class="w-4 h-4 text-white/60" stroke-width="1.5"></i>
-                    </div>
-                `;
-            } else {
-                msgDiv.innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center flex-shrink-0">
-                        <i data-lucide="bot" class="w-4 h-4 text-neon" stroke-width="1.5"></i>
-                    </div>
-                    <div class="flex-1 p-3 rounded-lg bg-white/5 border border-white/10">
-                        <p class="text-sm text-white/80">${escapeHtml(content)}</p>
-                    </div>
-                `;
-            }
-
-            container.appendChild(msgDiv);
-            lucide.createIcons();
-            container.scrollTop = container.scrollHeight;
-
-            if (quickActions && quickActions.length > 0) {
-                renderQuickActions(quickActions);
-            } else {
-                document.getElementById('quick-actions').classList.add('hidden');
-            }
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML.replace(/\n/g, '<br>');
-        }
-
-        function addTypingIndicator() {
-            const container = document.getElementById('chat-messages');
-            const typingDiv = document.createElement('div');
-            typingDiv.id = 'typing-indicator';
-            typingDiv.className = 'flex gap-3';
-            typingDiv.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="bot" class="w-4 h-4 text-neon" stroke-width="1.5"></i>
-                </div>
-                <div class="flex-1 p-3 rounded-lg bg-white/5 border border-white/10">
-                    <div class="typing-indicator flex gap-1">
-                        <span class="w-2 h-2 bg-neon/60 rounded-full"></span>
-                        <span class="w-2 h-2 bg-neon/60 rounded-full"></span>
-                        <span class="w-2 h-2 bg-neon/60 rounded-full"></span>
-                    </div>
-                </div>
-            `;
-            container.appendChild(typingDiv);
-            lucide.createIcons();
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function removeTypingIndicator() {
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) indicator.remove();
-        }
-
-        function renderQuickActions(actions) {
-            const container = document.getElementById('quick-actions');
-            container.innerHTML = '';
-            container.classList.remove('hidden');
-
-            actions.forEach(action => {
-                const btn = document.createElement('button');
-                btn.className = 'px-3 py-1.5 text-xs bg-white/5 border border-white/20 rounded-full text-white/70 hover:bg-neon/20 hover:border-neon/50 hover:text-neon transition-all';
-                btn.textContent = action;
-                btn.onclick = () => {
-                    document.getElementById('chat-input').value = action;
-                    sendMessage();
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function updateProgress(percentage, phase, isComplete) {
-            const bar = document.getElementById('progress-bar');
-            const percent = document.getElementById('progress-percent');
-            const phaseTag = document.getElementById('phase-tag');
-            const status = document.getElementById('completion-status');
-
-            const pct = Math.round(percentage * 100);
-            bar.style.width = pct + '%';
-            percent.textContent = pct + '%';
-
-            if (phase) {
-                currentPhase = phase;
-                phaseTag.textContent = 'Phase ' + phase + ' of 10';
-            }
-
-            if (isComplete) {
-                status.textContent = 'Brief Complete!';
-                status.classList.add('text-neon');
-                phaseTag.textContent = 'Complete';
-            } else {
-                const remaining = 10 - (currentPhase || 1);
-                status.textContent = remaining + ' phase' + (remaining !== 1 ? 's' : '') + ' remaining';
-            }
-        }
-
-        async function sendMessage() {
-            if (isLoading) return;
-
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message) return;
-
-            lastMessage = message;
-            hideError();
-
-            if (!sessionId) {
-                await initSession();
-                if (!sessionId) return;
-            }
-
-            addMessage(message, true);
-            input.value = '';
-
-            isLoading = true;
-            document.getElementById('send-btn').disabled = true;
-            addTypingIndicator();
-
-            try {
-                const res = await fetch(`${API_URL}/api/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session_id: sessionId, message })
-                });
-
-                if (!res.ok) throw new Error('Chat request failed');
-
-                const data = await res.json();
-                removeTypingIndicator();
-
-                addMessage(data.response, false, data.quick_actions || []);
-                updateProgress(data.completion_percentage || 0, data.phase, data.is_complete);
-
-            } catch (e) {
-                console.error('Chat error:', e);
-                removeTypingIndicator();
-                showError('Message failed to send. Please try again.');
-            } finally {
-                isLoading = false;
-                document.getElementById('send-btn').disabled = false;
-                input.focus();
-            }
-        }
-
-        function retryLastMessage() {
-            if (lastMessage) {
-                document.getElementById('chat-input').value = lastMessage;
-                sendMessage();
-            }
-        }
-
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            // Start fresh session for clean state
-            initSession();
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         });
     </script>
 </body>
