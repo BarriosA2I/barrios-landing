@@ -86,6 +86,220 @@
         .volumetric-glow:hover {
             filter: drop-shadow(0 0 15px rgba(0, 194, 255, 0.7));
         }
+
+        /* Pipeline Phase Indicator */
+        .pipeline-phases {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .phase-dot {
+            font-size: 9px;
+            padding: 3px 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            color: rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .phase-dot.active {
+            background: rgba(0, 243, 255, 0.15);
+            color: #00F3FF;
+            border-color: rgba(0, 243, 255, 0.3);
+        }
+        .phase-dot.completed {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        /* Concept Cards */
+        .concept-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .concept-card {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .concept-card:hover {
+            border-color: #00F3FF;
+            background: rgba(0, 243, 255, 0.1);
+            transform: translateX(4px);
+        }
+        .concept-card.selected {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .concept-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 6px;
+        }
+        .concept-hook {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        .concept-score {
+            font-size: 10px;
+            color: #00F3FF;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Script Preview */
+        .script-preview {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: white;
+        }
+        .script-duration {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00F3FF;
+        }
+        .script-scenes {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        .script-scenes::-webkit-scrollbar { height: 4px; }
+        .script-scenes::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 2px; }
+        .scene-card {
+            min-width: 120px;
+            max-width: 140px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+        .scene-type {
+            font-weight: 600;
+            color: #00F3FF;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 9px;
+            letter-spacing: 0.05em;
+        }
+        .scene-content {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.3;
+        }
+        .script-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .btn-approve {
+            flex: 1;
+            padding: 8px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-approve:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        .btn-revise {
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-revise:hover {
+            border-color: rgba(255,255,255,0.4);
+            color: white;
+        }
+
+        /* Quality Score */
+        .quality-score {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        .quality-score.low {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        .quality-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: #10b981;
+        }
+        .quality-score.low .quality-value {
+            color: #ef4444;
+        }
+        .quality-label {
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* System Messages */
+        .system-message {
+            display: flex;
+            justify-content: center;
+            padding: 8px 0;
+        }
+        .system-message span {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.05);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        /* Pipeline Badge */
+        .pipeline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(16, 185, 129, 0.2));
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 4px;
+            font-size: 9px;
+            color: #00F3FF;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+        }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body class="antialiased font-sans selection:bg-neon selection:text-white">
@@ -270,13 +484,25 @@
                                 <h3 class="text-lg font-medium text-white tracking-tight">AI Creative Director</h3>
                                 <p class="text-xs text-white/50 mt-1">I'll guide you through each step. Just answer naturally.</p>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-neon"></span>
-                                </span>
-                                <span class="text-xs text-neon uppercase tracking-wider font-medium">Ready</span>
+                            <div class="flex items-center gap-3">
+                                <span id="pipeline-badge" class="pipeline-badge hidden">6-AGENT</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-neon"></span>
+                                    </span>
+                                    <span id="status-text" class="text-xs text-neon uppercase tracking-wider font-medium">Ready</span>
+                                </div>
                             </div>
+                        </div>
+
+                        <!-- Pipeline Phase Indicator -->
+                        <div id="pipeline-phases" class="pipeline-phases hidden">
+                            <span class="phase-dot active" data-phase="intake">Intake</span>
+                            <span class="phase-dot" data-phase="research">Research</span>
+                            <span class="phase-dot" data-phase="ideation">Concepts</span>
+                            <span class="phase-dot" data-phase="script">Script</span>
+                            <span class="phase-dot" data-phase="review">Review</span>
                         </div>
 
                         <!-- Progress Bar -->
@@ -303,6 +529,22 @@
                                 <div class="flex-1 p-3 rounded-lg bg-white/5 border border-white/10">
                                     <p class="text-sm text-white/80">Hello! I'm your AI Creative Director. Let's build your commercial brief together. What's your business name, and what product or service are we creating this commercial for?</p>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Concept Cards Container (for pipeline) -->
+                        <div id="concept-cards" class="concept-cards hidden"></div>
+
+                        <!-- Script Preview Container (for pipeline) -->
+                        <div id="script-preview" class="script-preview hidden">
+                            <div class="script-header">
+                                <span>📝 Your Script</span>
+                                <span id="script-duration" class="script-duration"></span>
+                            </div>
+                            <div id="script-scenes" class="script-scenes"></div>
+                            <div class="script-actions">
+                                <button onclick="approveScript()" class="btn-approve">✓ Approve & Produce</button>
+                                <button onclick="requestRevision()" class="btn-revise">↻ Revise</button>
                             </div>
                         </div>
 
@@ -696,7 +938,7 @@
         });
     </script>
 
-    <!-- Chat API Integration -->
+    <!-- Chat API Integration with 6-Agent Pipeline -->
     <script>
         const API_URL = 'https://barrios-creative-director.onrender.com';
         let sessionId = localStorage.getItem('barrios_creative_director_session');
@@ -704,7 +946,50 @@
         let lastMessage = '';
         let currentPhase = 1;
 
+        // Pipeline state
+        let PIPELINE_ENABLED = false;
+        let pipelinePhase = 'intake';
+        let concepts = [];
+        let selectedConceptId = null;
+        let currentScript = null;
+
+        const PHASES = ['intake', 'research', 'ideation', 'script', 'review', 'production', 'delivery'];
+
         async function initSession() {
+            try {
+                // Try pipeline session first
+                const pipelineRes = await fetch(`${API_URL}/api/legendary/session`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+
+                if (pipelineRes.ok) {
+                    const data = await pipelineRes.json();
+                    sessionId = data.session_id;
+                    localStorage.setItem('barrios_creative_director_session', sessionId);
+                    PIPELINE_ENABLED = true;
+
+                    // Show pipeline badge and phases
+                    document.getElementById('pipeline-badge').classList.remove('hidden');
+                    document.getElementById('pipeline-phases').classList.remove('hidden');
+                    document.getElementById('status-text').textContent = '6-Agent Pipeline';
+                    updatePhaseIndicator('intake');
+
+                    if (data.greeting) {
+                        const container = document.getElementById('chat-messages');
+                        container.innerHTML = '';
+                        addMessage(data.greeting, false, data.quick_actions || []);
+                    }
+
+                    console.log('🚀 Pipeline session started:', sessionId);
+                    return;
+                }
+            } catch (e) {
+                console.log('Pipeline not available, falling back to basic session');
+            }
+
+            // Fallback to basic session
             try {
                 const res = await fetch(`${API_URL}/api/session/start`, {
                     method: 'POST',
@@ -716,7 +1001,6 @@
                 sessionId = data.session_id;
                 localStorage.setItem('barrios_creative_director_session', sessionId);
 
-                // Clear initial message and show API greeting
                 if (data.greeting) {
                     const container = document.getElementById('chat-messages');
                     container.innerHTML = '';
@@ -881,7 +1165,12 @@
             addTypingIndicator();
 
             try {
-                const res = await fetch(`${API_URL}/api/chat`, {
+                // Use pipeline or basic endpoint
+                const endpoint = PIPELINE_ENABLED
+                    ? `${API_URL}/api/legendary/message`
+                    : `${API_URL}/api/chat`;
+
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ session_id: sessionId, message })
@@ -893,7 +1182,22 @@
                 removeTypingIndicator();
 
                 addMessage(data.response, false, data.quick_actions || []);
-                updateProgress(data.completion_percentage || 0, data.phase, data.is_complete);
+
+                if (PIPELINE_ENABLED) {
+                    // Handle pipeline phase transitions
+                    if (data.phase) {
+                        updatePhaseIndicator(data.phase);
+                        pipelinePhase = data.phase;
+                    }
+
+                    // Check for auto-trigger events
+                    if (data.ragnarok_ready || data.trigger_research) {
+                        addSystemMessage('🔬 Starting market research...');
+                        await runResearchPhase();
+                    }
+                } else {
+                    updateProgress(data.completion_percentage || 0, data.phase, data.is_complete);
+                }
 
             } catch (e) {
                 console.error('Chat error:', e);
@@ -911,6 +1215,245 @@
                 document.getElementById('chat-input').value = lastMessage;
                 sendMessage();
             }
+        }
+
+        // ============= PIPELINE PHASE FUNCTIONS =============
+
+        async function runResearchPhase() {
+            if (!PIPELINE_ENABLED) return;
+
+            updatePhaseIndicator('research');
+            addTypingIndicator();
+
+            try {
+                const res = await fetch(`${API_URL}/api/legendary/research/${sessionId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                removeTypingIndicator();
+
+                if (res.ok) {
+                    const data = await res.json();
+                    addSystemMessage('✅ Research complete! Analyzing market trends...');
+
+                    if (data.insights) {
+                        addMessage(data.insights, false);
+                    }
+
+                    // Auto-trigger ideation
+                    setTimeout(() => runIdeationPhase(), 1000);
+                }
+            } catch (e) {
+                removeTypingIndicator();
+                console.error('Research phase error:', e);
+            }
+        }
+
+        async function runIdeationPhase() {
+            if (!PIPELINE_ENABLED) return;
+
+            updatePhaseIndicator('ideation');
+            addSystemMessage('💡 Generating creative concepts...');
+            addTypingIndicator();
+
+            try {
+                const res = await fetch(`${API_URL}/api/legendary/ideation/${sessionId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                removeTypingIndicator();
+
+                if (res.ok) {
+                    const data = await res.json();
+                    concepts = data.concepts || [];
+
+                    if (concepts.length > 0) {
+                        addSystemMessage('🎨 Here are your creative concepts:');
+                        renderConceptCards(concepts);
+                    } else {
+                        addMessage(data.response || 'Concepts generated.', false);
+                    }
+                }
+            } catch (e) {
+                removeTypingIndicator();
+                console.error('Ideation phase error:', e);
+            }
+        }
+
+        async function selectConcept(conceptId) {
+            if (!PIPELINE_ENABLED) return;
+
+            selectedConceptId = conceptId;
+            hideConceptCards();
+            addSystemMessage(`✅ Concept ${conceptId} selected!`);
+
+            try {
+                const res = await fetch(`${API_URL}/api/legendary/select-concept`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        concept_id: conceptId
+                    })
+                });
+
+                if (res.ok) {
+                    setTimeout(() => runScriptPhase(), 500);
+                }
+            } catch (e) {
+                console.error('Concept selection error:', e);
+            }
+        }
+
+        async function runScriptPhase() {
+            if (!PIPELINE_ENABLED) return;
+
+            updatePhaseIndicator('script');
+            addSystemMessage('📝 Writing your commercial script...');
+            addTypingIndicator();
+
+            try {
+                const res = await fetch(`${API_URL}/api/legendary/script/${sessionId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                removeTypingIndicator();
+
+                if (res.ok) {
+                    const data = await res.json();
+                    currentScript = data.script;
+
+                    if (currentScript) {
+                        renderScriptPreview(currentScript);
+                    } else {
+                        addMessage(data.response || 'Script generated.', false);
+                    }
+                }
+            } catch (e) {
+                removeTypingIndicator();
+                console.error('Script phase error:', e);
+            }
+        }
+
+        async function runReviewPhase() {
+            if (!PIPELINE_ENABLED) return;
+
+            updatePhaseIndicator('review');
+            addSystemMessage('🔍 Running compliance review...');
+            addTypingIndicator();
+
+            try {
+                const res = await fetch(`${API_URL}/api/legendary/review/${sessionId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                removeTypingIndicator();
+
+                if (res.ok) {
+                    const data = await res.json();
+                    addMessage(data.response || '✅ Review complete!', false);
+
+                    if (data.approved) {
+                        updatePhaseIndicator('production');
+                        addSystemMessage('🎬 Your commercial is being produced...');
+                    }
+                }
+            } catch (e) {
+                removeTypingIndicator();
+                console.error('Review phase error:', e);
+            }
+        }
+
+        async function approveScript() {
+            if (!currentScript) return;
+
+            document.getElementById('script-preview').classList.add('hidden');
+            addSystemMessage('✅ Script approved! Starting review...');
+            await runReviewPhase();
+        }
+
+        async function requestRevision() {
+            document.getElementById('script-preview').classList.add('hidden');
+            addMessage("I'd like to revise the script. What changes would you like?", false);
+        }
+
+        // ============= RENDER FUNCTIONS =============
+
+        function renderConceptCards(conceptsArray) {
+            const container = document.getElementById('concept-cards');
+            container.innerHTML = '';
+            container.classList.remove('hidden');
+
+            conceptsArray.forEach((concept, idx) => {
+                const card = document.createElement('div');
+                card.className = 'concept-card';
+                card.onclick = () => selectConcept(concept.id || idx + 1);
+
+                card.innerHTML = `
+                    <div class="concept-title">${concept.title || 'Concept ' + (idx + 1)}</div>
+                    <div class="concept-description">${concept.description || concept.hook || ''}</div>
+                    ${concept.score ? `<div class="concept-score">Score: ${concept.score}/100</div>` : ''}
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function hideConceptCards() {
+            document.getElementById('concept-cards').classList.add('hidden');
+        }
+
+        function renderScriptPreview(script) {
+            const container = document.getElementById('script-preview');
+            container.classList.remove('hidden');
+
+            const duration = document.getElementById('script-duration');
+            duration.textContent = script.duration || '30s';
+
+            const scenesContainer = document.getElementById('script-scenes');
+            scenesContainer.innerHTML = '';
+
+            if (script.scenes) {
+                script.scenes.forEach((scene, idx) => {
+                    const sceneDiv = document.createElement('div');
+                    sceneDiv.className = 'scene';
+                    sceneDiv.innerHTML = `
+                        <div class="scene-number">Scene ${idx + 1}</div>
+                        <div class="scene-visual">${scene.visual || ''}</div>
+                        <div class="scene-audio">${scene.voiceover || scene.audio || ''}</div>
+                    `;
+                    scenesContainer.appendChild(sceneDiv);
+                });
+            } else if (script.content) {
+                scenesContainer.innerHTML = `<div class="scene">${script.content}</div>`;
+            }
+        }
+
+        function updatePhaseIndicator(phase) {
+            const phases = document.querySelectorAll('.phase-dot');
+            const phaseIndex = PHASES.indexOf(phase);
+
+            phases.forEach((dot, idx) => {
+                dot.classList.remove('active', 'completed');
+                if (idx < phaseIndex) {
+                    dot.classList.add('completed');
+                } else if (idx === phaseIndex) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        function addSystemMessage(text) {
+            const container = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'system-message';
+            msgDiv.innerHTML = `<span class="system-icon">⚡</span>${text}`;
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
         }
 
         // Initialize on page load
