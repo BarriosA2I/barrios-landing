@@ -27,20 +27,20 @@
         el.style.cursor = 'pointer';
       }
 
-      // START_INSTALL / Remote install → Calendly
+      // START_INSTALL / Remote install → Stripe $199
       if (text.includes('START_INSTALL') || text.includes('START INSTALL')) {
         el.addEventListener('click', (e) => {
           e.preventDefault();
-          window.open(CONFIG.CALENDLY_INSTALL_URL, '_blank');
+          window.open(CONFIG.STRIPE_REMOTE_INSTALL_URL, '_blank');
         });
         el.style.cursor = 'pointer';
       }
 
-      // BOOK_VISIT / House call → Calendly
+      // BOOK_VISIT / House call → Stripe $299
       if (text.includes('BOOK_VISIT') || text.includes('BOOK VISIT')) {
         el.addEventListener('click', (e) => {
           e.preventDefault();
-          window.open(CONFIG.CALENDLY_INSTALL_URL, '_blank');
+          window.open(CONFIG.STRIPE_HOUSE_CALL_URL, '_blank');
         });
         el.style.cursor = 'pointer';
       }
