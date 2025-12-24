@@ -28,29 +28,35 @@ let state = {
     pollTimer: null,
 };
 
-// DOM Elements
+// DOM Elements (IDs match the HTML)
 const elements = {
-    statusIndicator: document.getElementById('statusIndicator'),
-    sessionInfo: document.getElementById('sessionInfo'),
-    pipelineProgress: document.getElementById('pipelineProgress'),
-    messagesContainer: document.getElementById('messagesContainer'),
-    welcomeScreen: document.getElementById('welcomeScreen'),
-    generativeUI: document.getElementById('generativeUI'),
-    messageForm: document.getElementById('messageForm'),
-    messageInput: document.getElementById('messageInput'),
-    sendButton: document.getElementById('sendButton'),
-    inputHint: document.getElementById('inputHint'),
-    loadingOverlay: document.getElementById('loadingOverlay'),
-    loadingText: document.getElementById('loadingText'),
+    statusIndicator: document.getElementById('connection-status'),
+    sessionIdDisplay: document.getElementById('session-id-display'),
+    pipelineProgress: document.getElementById('progress-bar'),
+    phaseIndicators: document.getElementById('phase-indicators'),
+    messagesContainer: document.getElementById('chat-messages'),
+    welcomeScreen: document.getElementById('welcome-screen'),
+    generativeUI: document.getElementById('generative-ui'),
+    messageForm: document.getElementById('chat-input-form'),
+    messageInput: document.getElementById('chat-input'),
+    sendButton: document.getElementById('send-btn'),
+    inputHint: document.getElementById('phase-hint'),
+    typingIndicator: document.getElementById('typing-indicator'),
     sidebar: document.getElementById('sidebar'),
-    briefSummary: document.getElementById('briefSummary'),
-    briefContent: document.getElementById('briefContent'),
-    researchInsights: document.getElementById('researchInsights'),
-    insightsContent: document.getElementById('insightsContent'),
-    qualityScore: document.getElementById('qualityScore'),
-    scoreContent: document.getElementById('scoreContent'),
-    paymentModal: document.getElementById('paymentModal'),
-    deliveryModal: document.getElementById('deliveryModal'),
+    briefSummary: document.querySelector('.brief-summary'),
+    briefContent: document.getElementById('brief-content'),
+    researchSection: document.getElementById('research-section'),
+    researchContent: document.getElementById('research-content'),
+    qualitySection: document.getElementById('quality-section'),
+    qualityScoreValue: document.getElementById('quality-score-value'),
+    qualityBreakdown: document.getElementById('quality-breakdown'),
+    downloadBriefBtn: document.getElementById('download-brief-btn'),
+    runPipelineBtn: document.getElementById('run-pipeline-btn'),
+    paymentModal: document.getElementById('payment-modal'),
+    deliveryModal: document.getElementById('delivery-modal'),
+    errorContainer: document.getElementById('error-container'),
+    errorMessage: document.getElementById('error-message'),
+    quickActions: document.getElementById('quick-actions'),
 };
 
 // ================================================================================
@@ -129,7 +135,9 @@ async function initLegendarySession() {
         state.phase = data.phase;
 
         // Update UI
-        document.querySelector('.session-id').textContent = state.sessionId.slice(0, 8);
+        if (elements.sessionIdDisplay) {
+            elements.sessionIdDisplay.textContent = state.sessionId.slice(0, 8);
+        }
         updateStatus('active', state.phase);
         updatePipelineProgress(state.phase);
 
@@ -165,7 +173,9 @@ async function initStandardSession() {
         state.phase = 'intake';
 
         // Update UI
-        document.querySelector('.session-id').textContent = state.sessionId.slice(0, 8);
+        if (elements.sessionIdDisplay) {
+            elements.sessionIdDisplay.textContent = state.sessionId.slice(0, 8);
+        }
         updateStatus('active', 'intake');
         updatePipelineProgress('intake');
 
@@ -768,14 +778,19 @@ function removeTypingIndicator(id) {
 }
 
 function updateStatus(type, text) {
-    const dot = elements.statusIndicator.querySelector('.status-dot');
-    const textEl = elements.statusIndicator.querySelector('.status-text');
+    const dot = elements.statusIndicator;
+    if (!dot) return;
 
     dot.className = 'status-dot';
     if (type === 'active') dot.classList.add('active');
     if (type === 'processing') dot.classList.add('processing');
+    if (type === 'error') dot.classList.add('error');
+    if (type === 'connecting') dot.classList.add('connecting');
 
-    textEl.textContent = text.replace('_', ' ');
+    // Update hint text if available
+    if (elements.inputHint) {
+        elements.inputHint.textContent = text.replace(/_/g, ' ');
+    }
 }
 
 function updatePipelineProgress(currentPhase) {
@@ -786,80 +801,107 @@ function updatePipelineProgress(currentPhase) {
 
     const currentIndex = phases.indexOf(currentPhase);
 
-    document.querySelectorAll('.pipeline-step').forEach((step, index) => {
-        step.classList.remove('active', 'completed');
+    // Update phase dots
+    document.querySelectorAll('.phase-dot').forEach((dot, index) => {
+        dot.classList.remove('active', 'completed');
 
         if (index < currentIndex) {
-            step.classList.add('completed');
+            dot.classList.add('completed');
         } else if (index === currentIndex) {
-            step.classList.add('active');
+            dot.classList.add('active');
         }
     });
 
-    // Update connectors
-    document.querySelectorAll('.pipeline-connector').forEach((connector, index) => {
-        connector.classList.remove('completed');
-        if (index < currentIndex) {
-            connector.classList.add('completed');
-        }
-    });
+    // Update progress bar width
+    if (elements.pipelineProgress) {
+        const percentage = ((currentIndex + 1) / phases.length) * 100;
+        elements.pipelineProgress.style.width = `${percentage}%`;
+    }
 }
 
 function showLoading(text = 'Processing...') {
-    elements.loadingText.textContent = text;
-    elements.loadingOverlay.style.display = 'flex';
+    // Add loading state to send button
+    if (elements.sendButton) {
+        elements.sendButton.disabled = true;
+        elements.sendButton.classList.add('loading');
+    }
+    // Show system message for loading state
+    addSystemMessage(text);
 }
 
 function setLoadingText(text) {
-    elements.loadingText.textContent = text;
+    // Update with system message
+    addSystemMessage(text);
 }
 
 function hideLoading() {
-    elements.loadingOverlay.style.display = 'none';
+    // Remove loading state from send button
+    if (elements.sendButton) {
+        elements.sendButton.disabled = false;
+        elements.sendButton.classList.remove('loading');
+    }
 }
 
 function updateBriefSummary() {
     if (!state.brief) return;
 
-    elements.briefSummary.style.display = 'block';
-    elements.briefContent.innerHTML = `
-        <div><strong>Business:</strong> ${state.brief.business_name || state.brief.business?.name || '-'}</div>
-        <div><strong>Industry:</strong> ${state.brief.industry || state.brief.business?.industry || '-'}</div>
-        <div><strong>Platform:</strong> ${state.brief.target_platform || state.brief.video?.platform || '-'}</div>
-        <div><strong>Duration:</strong> ${state.brief.video_duration || state.brief.video?.duration_seconds || 30}s</div>
-        <div><strong>Tone:</strong> ${state.brief.brand_tone || state.brief.creative?.mood || '-'}</div>
-    `;
+    if (elements.briefSummary) {
+        elements.briefSummary.classList.remove('hidden');
+    }
+    if (elements.briefContent) {
+        elements.briefContent.innerHTML = `
+            <div><strong>Business:</strong> ${state.brief.business_name || state.brief.business?.name || '-'}</div>
+            <div><strong>Industry:</strong> ${state.brief.industry || state.brief.business?.industry || '-'}</div>
+            <div><strong>Platform:</strong> ${state.brief.target_platform || state.brief.video?.platform || '-'}</div>
+            <div><strong>Duration:</strong> ${state.brief.video_duration || state.brief.video?.duration_seconds || 30}s</div>
+            <div><strong>Tone:</strong> ${state.brief.brand_tone || state.brief.creative?.mood || '-'}</div>
+        `;
+    }
+    // Enable download button
+    if (elements.downloadBriefBtn) {
+        elements.downloadBriefBtn.disabled = false;
+    }
 }
 
 function showResearchInsights(enrichedBrief) {
     if (!enrichedBrief || !enrichedBrief.market_intel) return;
 
-    elements.researchInsights.style.display = 'block';
+    if (elements.researchSection) {
+        elements.researchSection.classList.remove('hidden');
+    }
     const intel = enrichedBrief.market_intel;
 
-    elements.insightsContent.innerHTML = `
-        <div><strong>Competitors Analyzed:</strong> ${intel.competitor_ads?.length || 0}</div>
-        <div><strong>Top Trend:</strong> ${intel.platform_trends?.[0] || 'N/A'}</div>
-        <div><strong>Confidence:</strong> ${Math.round((enrichedBrief.confidence_score || 0.85) * 100)}%</div>
-    `;
+    if (elements.researchContent) {
+        elements.researchContent.innerHTML = `
+            <div><strong>Competitors Analyzed:</strong> ${intel.competitor_ads?.length || 0}</div>
+            <div><strong>Top Trend:</strong> ${intel.platform_trends?.[0] || 'N/A'}</div>
+            <div><strong>Confidence:</strong> ${Math.round((enrichedBrief.confidence_score || 0.85) * 100)}%</div>
+        `;
+    }
 }
 
 function showQualityScore(report) {
     if (!report) return;
 
-    elements.qualityScore.style.display = 'block';
+    if (elements.qualitySection) {
+        elements.qualitySection.classList.remove('hidden');
+    }
 
     const score = report.overall_score || 0.85;
     const approved = report.approved !== false;
 
-    elements.scoreContent.innerHTML = `
-        <div style="font-size: 2rem; font-weight: 700; color: ${approved ? 'var(--success)' : 'var(--warning)'};">
-            ${Math.round(score * 100)}%
-        </div>
-        <div style="margin-top: 8px; color: ${approved ? 'var(--success)' : 'var(--warning)'};">
-            ${approved ? 'Approved' : 'Needs Revision'}
-        </div>
-    `;
+    if (elements.qualityScoreValue) {
+        elements.qualityScoreValue.textContent = Math.round(score * 100);
+        elements.qualityScoreValue.style.color = approved ? 'var(--success)' : 'var(--warning)';
+    }
+
+    if (elements.qualityBreakdown) {
+        elements.qualityBreakdown.innerHTML = `
+            <div style="margin-top: 8px; color: ${approved ? 'var(--success)' : 'var(--warning)'};">
+                ${approved ? 'Approved' : 'Needs Revision'}
+            </div>
+        `;
+    }
 }
 
 // ================================================================================
