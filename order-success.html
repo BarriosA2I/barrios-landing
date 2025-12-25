@@ -99,15 +99,15 @@
                 <div class="space-y-3 border-t border-white/10 pt-4">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-white/60">Package</span>
-                        <span class="text-sm font-medium text-white">Standard AI Commercial</span>
+                        <span class="text-sm font-medium text-white" id="package-name">Neural Ad Forge</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-white/60">Duration</span>
-                        <span class="text-sm font-medium text-white">30 seconds</span>
+                        <span class="text-sm font-medium text-white" id="package-duration">30-second commercial</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-white/60">Amount Paid</span>
-                        <span class="text-sm font-bold text-neon">$499.00</span>
+                        <span class="text-sm font-bold text-neon" id="amount-paid">$499.00</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-white/60">Session ID</span>
@@ -175,6 +175,15 @@
     </footer>
 
     <script>
+        // Single product configuration
+        const PLAN_CONFIG = {
+            default: {
+                name: 'Neural Ad Forge',
+                duration: '30-second commercial',
+                price: '$499.00'
+            }
+        };
+
         // Initialize Lucide icons
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
@@ -182,11 +191,18 @@
             // Get URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const sessionId = urlParams.get('session_id') || urlParams.get('client_reference_id');
+            const plan = urlParams.get('plan');
 
             // Display session ID
             if (sessionId) {
                 document.getElementById('session-display').textContent = sessionId.slice(0, 8) + '...';
             }
+
+            // Display order details (single product)
+            const config = PLAN_CONFIG.default;
+            document.getElementById('package-name').textContent = config.name;
+            document.getElementById('package-duration').textContent = config.duration;
+            document.getElementById('amount-paid').textContent = config.price;
 
             // Display order date
             document.getElementById('order-date').textContent = new Date().toLocaleDateString('en-US', {
@@ -195,6 +211,9 @@
                 month: 'long',
                 day: 'numeric'
             });
+
+            // Clear stored session since order is complete
+            localStorage.removeItem('barrios_creative_director_session');
 
             // Trigger confetti animation
             createConfetti();

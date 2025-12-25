@@ -336,6 +336,8 @@
 
         .hidden { display: none !important; }
     </style>
+
+    <!-- Payment handled via Stripe Payment Link -->
 </head>
 <body class="antialiased font-sans selection:bg-neon selection:text-white">
     <div id="canvas-container"></div>
@@ -1083,6 +1085,10 @@
     <!-- Chat API Integration with 6-Agent Pipeline -->
     <script>
         const API_URL = 'https://barrios-creative-director.onrender.com';
+
+        // Payment link (direct redirect, no API needed)
+        const PAYMENT_LINK = 'https://buy.stripe.com/00w4gA84Ve498yF27HeME05';
+
         let sessionId = localStorage.getItem('barrios_creative_director_session');
         let isLoading = false;
         let lastMessage = '';
@@ -1332,9 +1338,9 @@
                         pipelinePhase = data.phase;
                     }
 
-                    // Check for auto-trigger events
-                    if (data.ragnarok_ready || data.trigger_research) {
-                        addSystemMessage('🔬 Starting market research...');
+                    // Trigger research when intake is complete
+                    if (data.is_complete && pipelinePhase === 'intake') {
+                        addSystemMessage('🔬 Brief complete! Starting market research...');
                         await runResearchPhase();
                     }
                 } else {
@@ -1501,7 +1507,8 @@
 
                     if (data.approved) {
                         updatePhaseIndicator('production');
-                        addSystemMessage('🎬 Your commercial is being produced...');
+                        addSystemMessage('🎬 Your commercial is ready for production!');
+                        showPricingOptions();
                     }
                 }
             } catch (e) {
@@ -1521,6 +1528,49 @@
         async function requestRevision() {
             document.getElementById('script-preview').classList.add('hidden');
             addMessage("I'd like to revise the script. What changes would you like?", false);
+        }
+
+        function showPricingOptions() {
+            const container = document.getElementById('chat-messages');
+            const pricingDiv = document.createElement('div');
+            pricingDiv.className = 'pricing-options mt-4 p-4 bg-gradient-to-r from-neon/10 to-transparent border border-neon/30 rounded-lg';
+            pricingDiv.innerHTML = `
+                <div class="text-neon font-mono text-xs mb-3">[ READY FOR PRODUCTION ]</div>
+                <div class="p-4 bg-gradient-to-r from-brand-gold/20 to-neon/10 border border-brand-gold/50 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-white font-semibold text-lg">Neural Ad Forge</span>
+                        <span class="text-brand-gold font-mono text-xl">$499</span>
+                    </div>
+                    <p class="text-white/60 text-sm mb-4">AI-generated commercial with your approved script</p>
+                    <ul class="text-white/50 text-xs space-y-1 mb-4">
+                        <li>✓ 30-second broadcast-quality commercial</li>
+                        <li>✓ Professional AI voiceover</li>
+                        <li>✓ Music & sound design</li>
+                        <li>✓ 2 revision rounds</li>
+                        <li>✓ Delivered in 48-72 hours</li>
+                    </ul>
+                    <button onclick="proceedToCheckout()" class="w-full py-3 bg-brand-gold text-black font-bold text-sm uppercase rounded hover:bg-white transition-colors">
+                        Proceed to Checkout →
+                    </button>
+                </div>
+                <p class="text-center text-white/40 text-xs mt-3">Secure payment powered by Stripe</p>
+            `;
+            container.appendChild(pricingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function proceedToCheckout() {
+            addSystemMessage('💳 Redirecting to secure checkout...');
+
+            // Append session_id to payment link for tracking
+            const checkoutUrl = sessionId
+                ? `${PAYMENT_LINK}?client_reference_id=${sessionId}`
+                : PAYMENT_LINK;
+
+            // Small delay so user sees the message
+            setTimeout(() => {
+                window.location.href = checkoutUrl;
+            }, 500);
         }
 
         // ============= RENDER FUNCTIONS =============
@@ -1601,6 +1651,18 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+
+            // Check for canceled checkout
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('canceled') === 'true') {
+                // Clean up URL
+                window.history.replaceState({}, '', window.location.pathname);
+                // Show message after chat initializes
+                setTimeout(() => {
+                    addSystemMessage('↩️ Checkout canceled. Your brief is still saved. Select a plan when ready.');
+                }, 2000);
+            }
+
             // Start fresh session for clean state
             initSession();
         });
