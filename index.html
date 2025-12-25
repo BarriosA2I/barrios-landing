@@ -1195,23 +1195,23 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
 
         <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
             <!-- Brand Section with Status Indicator -->
-            <a href="/" class="flex items-center gap-3 md:gap-4 group">
+            <a href="/" class="flex items-center gap-4 md:gap-5 group">
                 <div class="relative">
-                    <!-- Shard Logo with Volumetric Glow -->
-                    <div class="relative w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
+                    <!-- Shard Logo with Volumetric Glow (2x size) -->
+                    <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center">
                         <div class="absolute inset-0 bg-brand-blue blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
                         <img
                             src="brand/barrios-a2i-shard-logo.png"
                             alt="Barrios A2I"
-                            class="relative w-6 h-6 md:w-8 md:h-8 object-contain volumetric-glow transition-all duration-300"
+                            class="relative w-12 h-12 md:w-16 md:h-16 object-contain volumetric-glow transition-all duration-300"
                         >
                     </div>
                     <!-- Active Status Dot -->
-                    <div class="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 w-1.5 h-1.5 md:w-2 md:h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                    <div class="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-2.5 h-2.5 md:w-3 md:h-3 bg-brand-gold rounded-full animate-pulse"></div>
                 </div>
                 <div class="hidden md:flex flex-col">
-                    <span class="text-brand-blue font-mono text-[10px] tracking-[0.2em] leading-none mb-1">SYSTEM_CONNECTED</span>
-                    <span class="text-white font-black tracking-tighter text-xl leading-none">
+                    <span class="text-brand-blue font-mono text-xs tracking-[0.2em] leading-none mb-1">SYSTEM_CONNECTED</span>
+                    <span class="text-white font-black tracking-tighter text-2xl leading-none">
                         BARRIOS <span class="text-brand-gold">A2I</span>
                     </span>
                 </div>
