@@ -53,6 +53,32 @@
         .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
+        /* Fix for responsive classes - ensure proper visibility */
+        @media (min-width: 640px) {
+            .hidden.sm\:block { display: block !important; }
+        }
+        @media (min-width: 768px) {
+            .hidden.md\:flex { display: flex !important; }
+            .md\:flex { display: flex !important; }
+            .md\:gap-4 { gap: 1rem !important; }
+            .md\:gap-6 { gap: 1.5rem !important; }
+            .md\:w-10 { width: 2.5rem !important; }
+            .md\:h-10 { height: 2.5rem !important; }
+            .md\:w-8 { width: 2rem !important; }
+            .md\:h-8 { height: 2rem !important; }
+            .md\:px-6 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+            .md\:py-6 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+            .md\:-top-1 { top: -0.25rem !important; }
+            .md\:-right-1 { right: -0.25rem !important; }
+            .md\:w-2 { width: 0.5rem !important; }
+            .md\:h-2 { height: 0.5rem !important; }
+        }
+        @media (min-width: 1024px) {
+            .hidden.lg\:flex { display: flex !important; }
+            .lg\:flex { display: flex !important; }
+            .lg\:hidden { display: none !important; }
+        }
+
         /* Nav Link Styles (from landing page) */
         .nav-link { position: relative; }
         .nav-link::after {
