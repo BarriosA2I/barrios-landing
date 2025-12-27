@@ -131,6 +131,19 @@
         .volumetric-glow:hover {
             filter: drop-shadow(0 0 15px rgba(0, 194, 255, 0.7));
         }
+
+        /* Pricing card lift on hover */
+        .pricing-card {
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Add-on card slide */
+        .addon-card {
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .addon-card:hover {
+            transform: translateX(4px);
+        }
     </style>
 </head>
 
@@ -310,73 +323,68 @@
         </section>
 
         <!-- ========== SECTION 2.6: COMPARISON TABLE ========== -->
-        <section class="relative z-10 max-w-7xl mx-auto py-24 px-6 border-t border-white/5">
-            <div class="mb-16 animate-on-scroll">
-                <div class="font-mono text-[10px] text-brand-blue tracking-[0.4em] uppercase mb-4">Why This Is Different</div>
-                <h2 class="font-serif text-4xl md:text-5xl italic text-white leading-tight">Unlike <span class="text-brand-gold">ChatGPT</span> or cloud AI...</h2>
+        <section class="relative z-20 w-full py-24 px-6 max-w-5xl mx-auto border-t border-white/5" id="compare">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="text-[10px] font-mono text-primary tracking-[0.2em] uppercase mb-4 block">[ Comparison ]</span>
+                <h2 class="text-4xl md:text-5xl font-serif text-white">
+                    Nexus vs. <span class="text-muted/50 italic">Cloud AI</span>
+                </h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 animate-on-scroll" style="transition-delay: 100ms;">
-                <!-- Cloud AI Column -->
-                <div class="bg-white/[0.02] border border-white/10 p-8">
-                    <div class="flex items-center gap-3 mb-8">
-                        <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-                        <span class="font-mono text-xs text-white/40 uppercase tracking-widest">Cloud AI (ChatGPT, etc.)</span>
-                    </div>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-3">
-                            <span class="text-red-500/70 mt-1">&#x2717;</span>
-                            <span class="text-white/50 text-sm">Your files get uploaded to someone else's servers</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-red-500/70 mt-1">&#x2717;</span>
-                            <span class="text-white/50 text-sm">Requires constant internet connection</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-red-500/70 mt-1">&#x2717;</span>
-                            <span class="text-white/50 text-sm">Monthly subscriptions add up over time</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-red-500/70 mt-1">&#x2717;</span>
-                            <span class="text-white/50 text-sm">Can't read your personal files directly</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-red-500/70 mt-1">&#x2717;</span>
-                            <span class="text-white/50 text-sm">Your data may be used to train their AI</span>
-                        </li>
-                    </ul>
-                </div>
+            <div class="overflow-hidden border border-white/10 bg-white/[0.02] backdrop-blur-sm animate-on-scroll">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/10 bg-white/5">
+                            <th class="p-6 text-[11px] font-mono text-muted uppercase tracking-widest">Feature</th>
+                            <th class="p-6 text-[11px] font-mono text-primary uppercase tracking-widest text-center">Nexus Personal</th>
+                            <th class="p-6 text-[11px] font-mono text-muted/40 uppercase tracking-widest text-center">ChatGPT / Gemini</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Your data location</td>
+                            <td class="p-6 text-center text-green-400 font-semibold">Your computer only</td>
+                            <td class="p-6 text-center text-muted/40">Their servers</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Works offline</td>
+                            <td class="p-6 text-center"><iconify-icon icon="lucide:check" class="text-green-400" width="18"></iconify-icon></td>
+                            <td class="p-6 text-center"><iconify-icon icon="lucide:x" class="text-red-400/50" width="18"></iconify-icon></td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Reads your files</td>
+                            <td class="p-6 text-center text-green-400 font-semibold">Only folders you choose</td>
+                            <td class="p-6 text-center text-muted/40">Must upload each time</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Remembers context</td>
+                            <td class="p-6 text-center text-white">Forever (local index)</td>
+                            <td class="p-6 text-center text-muted/40">Limited / forgets</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Used to train AI</td>
+                            <td class="p-6 text-center text-green-400 font-semibold">Never</td>
+                            <td class="p-6 text-center text-muted/40">Unless you opt out</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Monthly cost</td>
+                            <td class="p-6 text-center text-white">$49.99</td>
+                            <td class="p-6 text-center text-muted/40">$20-25</td>
+                        </tr>
+                        <tr class="hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Setup</td>
+                            <td class="p-6 text-center text-green-400 font-semibold">Done for you</td>
+                            <td class="p-6 text-center text-muted/40">DIY</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                <!-- Nexus Personal Column -->
-                <div class="bg-brand-blue/5 border border-brand-blue/30 p-8 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-blue/10 rounded-full blur-3xl"></div>
-                    <div class="flex items-center gap-3 mb-8 relative z-10">
-                        <div class="w-3 h-3 rounded-full bg-brand-blue animate-pulse"></div>
-                        <span class="font-mono text-xs text-brand-blue uppercase tracking-widest">Nexus Personal</span>
-                    </div>
-                    <ul class="space-y-4 relative z-10">
-                        <li class="flex items-start gap-3">
-                            <span class="text-brand-blue mt-1">&#x2713;</span>
-                            <span class="text-white text-sm">Everything stays on your computer—always</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-brand-blue mt-1">&#x2713;</span>
-                            <span class="text-white text-sm">Works even if your internet is turned off</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-brand-blue mt-1">&#x2713;</span>
-                            <span class="text-white text-sm">One-time setup fee, no monthly costs</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-brand-blue mt-1">&#x2713;</span>
-                            <span class="text-white text-sm">Reads and understands your household documents</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-brand-blue mt-1">&#x2713;</span>
-                            <span class="text-white text-sm font-bold">Your data is never used for anything else</span>
-                        </li>
-                    </ul>
-                </div>
+            <div class="mt-8 p-4 bg-primary/5 border border-primary/20 text-center animate-on-scroll">
+                <p class="text-sm text-muted">
+                    <span class="text-primary font-mono font-bold uppercase mr-2">Bottom line:</span>
+                    Nexus costs ~$25/month more, but your files never leave your computer.
+                </p>
             </div>
         </section>
 
@@ -615,80 +623,241 @@
         </section>
 
         <!-- ========== SECTION 6: PRICING ========== -->
-        <section class="flex flex-col w-full z-20 mt-20 relative pt-32 pb-32 border-t border-white/5 bg-obsidian/20" id="pricing">
+        <section class="relative z-20 py-32 px-6 border-t border-white/5 bg-obsidian/20" id="pricing">
+            <!-- Architectural Grid Background -->
             <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:80px_40px] pointer-events-none"></div>
-            <div class="max-w-7xl mx-auto px-6 w-full relative">
-                <div class="text-center max-w-2xl mx-auto mb-16 animate-on-scroll">
-                    <span class="text-xs font-mono text-primary tracking-widest mb-4 block">[ DEPLOYMENT_PATHS ]</span>
-                    <h2 class="text-4xl md:text-5xl font-serif text-white tracking-tight mb-4 leading-none">
-                        <span class="italic block text-muted/50">Simple pricing</span>
-                        <span class="font-medium">for peace of mind.</span>
+
+            <div class="max-w-7xl mx-auto relative">
+                <!-- Section Header -->
+                <div class="text-center max-w-2xl mx-auto mb-20 animate-on-scroll">
+                    <span class="text-[10px] font-mono text-primary tracking-[0.2em] uppercase mb-4 block">[ Pricing ]</span>
+                    <h2 class="text-5xl md:text-6xl font-serif text-white tracking-tight leading-none mb-6">
+                        One price. <br/><span class="text-muted/40 italic">Everything included.</span>
                     </h2>
+                    <p class="text-muted text-base leading-relaxed">
+                        $759 for a fully-installed, personally-trained AI assistant.<br/>
+                        Maintenance keeps it improving every month.
+                    </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto animate-on-scroll">
-                    <!-- Support Membership (Subscription) -->
-                    <div class="bg-void/50 border border-white/5 p-6 pb-8 flex flex-col gap-4 hover:border-white/20 transition-all order-3 md:order-1">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-sm font-mono text-muted">NEXUS_SUPPORT</span>
+                <!-- Pricing Cards Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+
+                    <!-- ===== MAINTENANCE CARD (Left) ===== -->
+                    <div class="pricing-card bg-white/[0.03] border border-white/10 p-8 flex flex-col gap-6 hover:border-white/20 transition-all hover:-translate-y-1 order-2 lg:order-1 animate-on-scroll">
+                        <div class="flex items-center gap-2">
+                            <iconify-icon icon="lucide:refresh-cw" class="text-primary" width="14"></iconify-icon>
+                            <span class="text-[11px] font-mono text-muted uppercase tracking-widest">Why Maintenance</span>
                         </div>
+
                         <div>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-3xl font-serif text-white">$49</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-serif text-white">$49.99</span>
                                 <span class="text-xs text-muted font-mono">/ MO</span>
                             </div>
-                            <p class="text-sm text-muted mt-2">Ongoing updates, tune-ups, and priority troubleshooting.</p>
+                            <p class="text-sm text-muted mt-4 leading-relaxed">
+                                AI models improve monthly. Without updates, your assistant falls behind in 6-12 months.
+                            </p>
                         </div>
-                        <ul class="flex flex-col gap-3 mt-4 mb-4">
-                            <li class="text-xs text-muted flex gap-2"><iconify-icon icon="lucide:check" class="text-muted/50"></iconify-icon>Monthly model updates</li>
-                            <li class="text-xs text-muted flex gap-2"><iconify-icon icon="lucide:check" class="text-muted/50"></iconify-icon>Remote troubleshooting</li>
-                            <li class="text-xs text-muted flex gap-2"><iconify-icon icon="lucide:check" class="text-muted/50"></iconify-icon>Security patches</li>
-                        </ul>
-                        <button class="w-full mt-auto py-3 bg-white/5 border border-white/10 text-muted font-mono text-sm hover:bg-white/10 hover:text-white transition-colors">[ SUBSCRIBE ]</button>
-                    </div>
 
-                    <!-- Remote Install (Featured, ONE-TIME) -->
-                    <div class="relative group order-1 md:order-2">
-                        <div class="absolute -inset-0.5 bg-gradient-to-b from-primary/30 to-transparent blur opacity-50"></div>
-                        <div class="relative bg-void border border-primary/30 p-6 pb-8 flex flex-col gap-4 shadow-2xl glow-primary h-full">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                                <span class="text-sm font-mono text-white">REMOTE_INSTALL</span>
-                            </div>
-                            <div>
-                                <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-serif text-white">$199</span>
-                                    <span class="text-xs text-primary font-mono">/ ONE-TIME</span>
-                                </div>
-                                <p class="text-sm text-muted mt-2">Best for speed. We configure your system via secure remote desktop.</p>
-                            </div>
-                            <ul class="flex flex-col gap-3 mt-4 mb-4">
-                                <li class="text-xs text-white flex gap-2"><iconify-icon icon="lucide:check" class="text-primary"></iconify-icon>Full Setup & Config</li>
-                                <li class="text-xs text-white flex gap-2"><iconify-icon icon="lucide:check" class="text-primary"></iconify-icon>1 Hour Training Session</li>
-                                <li class="text-xs text-white flex gap-2"><iconify-icon icon="lucide:check" class="text-primary"></iconify-icon>30-Day Guarantee</li>
+                        <!-- Feature Changelog -->
+                        <div class="bg-white/5 border border-white/5 p-4 space-y-3">
+                            <p class="text-[10px] font-mono text-primary uppercase tracking-widest">Recent Updates</p>
+                            <ul class="text-[11px] space-y-2 text-muted font-mono">
+                                <li><span class="text-primary">Dec:</span> Compare two documents side-by-side</li>
+                                <li><span class="text-primary">Nov:</span> Transcribe voice notes automatically</li>
+                                <li><span class="text-primary">Oct:</span> Search your photos by description</li>
+                                <li><span class="text-primary">Sep:</span> 40% faster responses</li>
                             </ul>
-                            <button class="w-full mt-auto py-3 bg-primary text-void font-mono text-sm font-semibold hover:bg-primary/90 transition-colors">[ START_INSTALL ]</button>
+                        </div>
+
+                        <ul class="space-y-3">
+                            <li class="text-xs text-muted flex gap-2 items-center">
+                                <iconify-icon icon="lucide:check" class="text-primary" width="14"></iconify-icon>
+                                New features every month
+                            </li>
+                            <li class="text-xs text-muted flex gap-2 items-center">
+                                <iconify-icon icon="lucide:check" class="text-primary" width="14"></iconify-icon>
+                                Priority troubleshooting
+                            </li>
+                            <li class="text-xs text-muted flex gap-2 items-center">
+                                <iconify-icon icon="lucide:check" class="text-primary" width="14"></iconify-icon>
+                                Free migration to new computer
+                            </li>
+                        </ul>
+
+                        <!-- ROI Calculator -->
+                        <div class="mt-auto bg-green-500/10 border border-green-500/20 p-4 text-center">
+                            <p class="text-xs text-green-400 font-medium">
+                                At $50/hr, 5 hours saved = <span class="font-bold">$250 value</span>
+                            </p>
+                            <p class="text-[10px] text-muted mt-1">You pay $49.99. Net gain: +$200/month</p>
                         </div>
                     </div>
 
-                    <!-- House Call (ONE-TIME) -->
-                    <div class="bg-void/50 border border-white/5 p-6 pb-8 flex flex-col gap-4 hover:border-accent/30 transition-all order-2 md:order-3">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-sm font-mono text-accent">HOUSE_CALL</span>
+                    <!-- ===== MAIN PRODUCT CARD (Center) ===== -->
+                    <div class="relative group order-1 lg:order-2 animate-on-scroll">
+                        <!-- Volumetric Glow -->
+                        <div class="absolute -inset-1 bg-gradient-to-b from-primary/30 to-transparent blur-xl opacity-50 transition-opacity group-hover:opacity-80"></div>
+
+                        <div class="relative bg-void border border-primary/40 p-10 flex flex-col gap-6 shadow-2xl h-full">
+                            <!-- Badge -->
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-primary text-void text-[10px] font-mono font-bold tracking-[0.2em] uppercase">
+                                Most Popular
+                            </div>
+
+                            <div class="flex items-center gap-3 mt-4">
+                                <div class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--color-primary)]"></div>
+                                <span class="text-xs font-mono text-white tracking-widest uppercase">Nexus_Personal</span>
+                            </div>
+
+                            <div>
+                                <!-- Large Price Anchor -->
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-6xl font-serif text-white">$759</span>
+                                    <span class="text-xs text-primary font-mono">ONE-TIME</span>
+                                </div>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <span class="text-sm text-primary/80 font-mono">+ $49.99/mo</span>
+                                    <span class="text-xs text-muted italic">maintenance</span>
+                                </div>
+                                <p class="text-sm text-muted mt-4 leading-relaxed">
+                                    Complete setup via secure remote session. Your AI assistant, installed and trained in under an hour.
+                                </p>
+                            </div>
+
+                            <!-- Feature List -->
+                            <ul class="space-y-4 my-4">
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:check" class="text-primary" width="16"></iconify-icon>
+                                    45-60 min remote installation
+                                </li>
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:check" class="text-primary" width="16"></iconify-icon>
+                                    Personalized training session
+                                </li>
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:check" class="text-primary" width="16"></iconify-icon>
+                                    Optimized for your computer
+                                </li>
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:check" class="text-primary" width="16"></iconify-icon>
+                                    Monthly AI improvements included
+                                </li>
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:shield-check" class="text-green-500" width="16"></iconify-icon>
+                                    30-day money-back guarantee
+                                </li>
+                            </ul>
+
+                            <!-- CTA -->
+                            <button class="w-full mt-auto py-4 bg-primary text-void font-mono text-xs font-bold tracking-[0.15em] uppercase hover:bg-primary/90 transition-all active:scale-[0.98]">
+                                [ Start Deployment ]
+                            </button>
+
+                            <!-- Tagline Stack -->
+                            <p class="text-[10px] text-muted/50 text-center uppercase tracking-widest">
+                                Encrypted. Local. Forever.
+                            </p>
+                            <p class="text-[10px] text-muted/30 text-center">
+                                Cancel maintenance anytime—Nexus keeps working
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ===== ADD-ONS CARD (Right) ===== -->
+                    <div class="pricing-card bg-white/[0.03] border border-white/10 p-8 flex flex-col gap-6 hover:border-accent/30 transition-all hover:-translate-y-1 order-3 animate-on-scroll">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <iconify-icon icon="lucide:plus-circle" class="text-accent" width="14"></iconify-icon>
+                                <span class="text-[11px] font-mono text-accent uppercase tracking-widest">Add-Ons</span>
+                            </div>
+                            <p class="text-sm text-muted">Enhance your installation with optional extras.</p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <!-- House Call -->
+                            <div class="addon-card p-4 bg-white/5 border border-white/10 hover:border-accent/40 transition-all cursor-pointer group">
+                                <div class="flex justify-between items-center mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <iconify-icon icon="lucide:home" class="text-accent" width="16"></iconify-icon>
+                                        <span class="text-sm font-medium text-white group-hover:text-accent transition-colors">House Call</span>
+                                    </div>
+                                    <span class="text-accent font-mono text-xs">+$150</span>
+                                </div>
+                                <p class="text-[11px] text-muted/60">In-person installation at your home. Phoenix metro.</p>
+                            </div>
+
+                            <!-- Family Training -->
+                            <div class="addon-card p-4 bg-white/5 border border-white/10 hover:border-accent/40 transition-all cursor-pointer group">
+                                <div class="flex justify-between items-center mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <iconify-icon icon="lucide:users" class="text-accent" width="16"></iconify-icon>
+                                        <span class="text-sm font-medium text-white group-hover:text-accent transition-colors">Family Training</span>
+                                    </div>
+                                    <span class="text-accent font-mono text-xs">+$99</span>
+                                </div>
+                                <p class="text-[11px] text-muted/60">Extra 30-min session for spouse, kids, or parents.</p>
+                            </div>
+
+                            <!-- Priority Setup -->
+                            <div class="addon-card p-4 bg-white/5 border border-white/10 hover:border-accent/40 transition-all cursor-pointer group">
+                                <div class="flex justify-between items-center mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <iconify-icon icon="lucide:zap" class="text-accent" width="16"></iconify-icon>
+                                        <span class="text-sm font-medium text-white group-hover:text-accent transition-colors">Priority Setup</span>
+                                    </div>
+                                    <span class="text-accent font-mono text-xs">+$75</span>
+                                </div>
+                                <p class="text-[11px] text-muted/60">Skip the queue. Installation within 48 hours.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-6 border-t border-white/5">
+                            <p class="text-[10px] text-muted/40 text-center uppercase tracking-widest">
+                                Configure during checkout
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== TRUST BAR ===== -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 mt-24 pt-12 border-t border-white/10 animate-on-scroll">
+                    <!-- Guarantee -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                            <iconify-icon icon="lucide:shield-check" class="text-green-500" width="20"></iconify-icon>
                         </div>
                         <div>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-3xl font-serif text-white">$299</span>
-                                <span class="text-xs text-accent font-mono">/ ONE-TIME</span>
-                            </div>
-                            <p class="text-sm text-muted mt-2">For local trust. An engineer visits your home to install personally.</p>
+                            <p class="text-sm text-white font-medium">30-Day Money-Back</p>
+                            <p class="text-xs text-muted">Full refund, no questions asked.</p>
                         </div>
-                        <ul class="flex flex-col gap-3 mt-4 mb-4">
-                            <li class="text-xs text-muted flex gap-2"><iconify-icon icon="lucide:check" class="text-muted/50"></iconify-icon>In-person Setup</li>
-                            <li class="text-xs text-muted flex gap-2"><iconify-icon icon="lucide:check" class="text-muted/50"></iconify-icon>Hardware Optimization</li>
-                            <li class="text-xs text-muted flex gap-2"><iconify-icon icon="lucide:check" class="text-muted/50"></iconify-icon>Family Training</li>
-                        </ul>
-                        <button class="w-full mt-auto py-3 bg-white/5 border border-white/10 text-muted font-mono text-sm hover:bg-accent/10 hover:text-accent hover:border-accent/30 transition-colors">[ BOOK_VISIT ]</button>
+                    </div>
+
+                    <div class="hidden md:block w-px h-10 bg-white/10"></div>
+
+                    <!-- Privacy -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+                            <iconify-icon icon="lucide:lock" class="text-primary" width="20"></iconify-icon>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white font-medium">Your Data Stays Yours</p>
+                            <p class="text-xs text-muted">We can't see your files. Ever.</p>
+                        </div>
+                    </div>
+
+                    <div class="hidden md:block w-px h-10 bg-white/10"></div>
+
+                    <!-- Support -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center border border-accent/20">
+                            <iconify-icon icon="lucide:headphones" class="text-accent" width="20"></iconify-icon>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white font-medium">Human Support</p>
+                            <p class="text-xs text-muted">Real person, same-day response.</p>
+                        </div>
                     </div>
                 </div>
             </div>
