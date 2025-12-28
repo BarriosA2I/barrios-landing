@@ -1,1182 +1,823 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEXUS Command Center | Barrios A2I</title>
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
-  
-  <style>
-    /* ============================================================
-       DESIGN TOKENS - Matching barrios-landing.vercel.app
-       ============================================================ */
-    :root {
-      --color-primary: #00C2FF;
-      --color-primary-glow: rgba(0, 194, 255, 0.15);
-      --color-accent: #FFD700;
-      --color-accent-glow: rgba(255, 215, 0, 0.15);
-      --color-success: #22C55E;
-      --color-error: #EF4444;
-      --color-warning: #F59E0B;
-      --color-bg-primary: #0a0a0f;
-      --color-bg-secondary: #0f1419;
-      --color-bg-card: rgba(15, 20, 25, 0.85);
-      --color-border-primary: rgba(0, 194, 255, 0.2);
-      --color-border-subtle: rgba(255, 255, 255, 0.05);
-      --color-text-primary: #FFFFFF;
-      --color-text-secondary: rgba(255, 255, 255, 0.6);
-      --color-text-muted: rgba(255, 255, 255, 0.4);
-      
-      --font-display: 'Playfair Display', Georgia, serif;
-      --font-body: 'Inter', -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-    }
-    
-    /* ============================================================
-       RESET & BASE
-       ============================================================ */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    html {
-      scroll-behavior: smooth;
-    }
-    
-    body {
-      font-family: var(--font-body);
-      background: var(--color-bg-primary);
-      color: var(--color-text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
-    
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.2);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(0, 194, 255, 0.4);
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 194, 255, 0.6);
-    }
-    
-    /* ============================================================
-       ANIMATIONS
-       ============================================================ */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes glow {
-      0%, 100% { box-shadow: 0 0 20px var(--color-primary-glow); }
-      50% { box-shadow: 0 0 40px var(--color-primary-glow), 0 0 60px var(--color-primary-glow); }
-    }
-    
-    /* ============================================================
-       MATRIX RAIN CANVAS
-       ============================================================ */
-    #matrix-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    
-    /* ============================================================
-       LAYOUT
-       ============================================================ */
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 32px 24px;
-    }
-    
-    /* ============================================================
-       TYPOGRAPHY
-       ============================================================ */
-    .accent-text {
-      font-family: var(--font-display);
-      font-style: italic;
-      color: var(--color-primary);
-    }
-    
-    .bracket-label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    
-    .bracket-label .bracket {
-      opacity: 0.6;
-    }
-    
-    .bracket-label.accent {
-      color: var(--color-accent);
-    }
-    
-    .bracket-label.primary {
-      color: var(--color-primary);
-    }
-    
-    /* ============================================================
-       COMPONENTS
-       ============================================================ */
-    
-    /* Glass Card */
-    .glass-card {
-      background: var(--color-bg-card);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--color-border-primary);
-      border-radius: 8px;
-      padding: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .glass-card.glow {
-      box-shadow: 0 0 40px var(--color-primary-glow), inset 0 1px 0 rgba(255,255,255,0.05);
-    }
-    
-    /* Status Indicator */
-    .status-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 4px;
-    }
-    
-    .status-indicator .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    
-    .status-indicator .dot.nominal {
-      background: var(--color-success);
-      box-shadow: 0 0 12px var(--color-success);
-    }
-    
-    .status-indicator .label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-    
-    .status-indicator.nominal .label {
-      color: var(--color-success);
-    }
-    
-    .status-indicator.nominal {
-      border: 1px solid rgba(34, 197, 94, 0.3);
-    }
-    
-    /* ============================================================
-       HEADER
-       ============================================================ */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 32px;
-    }
-    
-    .header h1 {
-      font-family: var(--font-body);
-      font-size: 36px;
-      font-weight: 300;
-      margin: 12px 0 4px 0;
-    }
-    
-    .header p {
-      font-family: var(--font-body);
-      font-size: 14px;
-      color: var(--color-text-secondary);
-      margin: 0;
-    }
-    
-    /* ============================================================
-       QUICK STATS BAR
-       ============================================================ */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    
-    .stat-card {
-      padding: 16px 20px;
-      background: var(--color-bg-card);
-      border: 1px solid var(--color-border-primary);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    
-    .stat-card .icon {
-      font-size: 20px;
-      color: var(--color-primary);
-      filter: drop-shadow(0 0 8px var(--color-primary));
-    }
-    
-    .stat-card .value {
-      font-family: var(--font-mono);
-      font-size: 20px;
-      color: var(--color-text-primary);
-    }
-    
-    .stat-card .label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--color-text-muted);
-      letter-spacing: 0.1em;
-    }
-    
-    /* ============================================================
-       TAB NAVIGATION
-       ============================================================ */
-    .tab-nav {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--color-border-subtle);
-      padding-bottom: 16px;
-    }
-    
-    .tab-btn {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      padding: 10px 20px;
-      background: transparent;
-      border: 1px solid var(--color-border-subtle);
-      border-radius: 4px;
-      color: var(--color-text-secondary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .tab-btn:hover {
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-    
-    .tab-btn.active {
-      background: rgba(0, 194, 255, 0.15);
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-    
-    /* ============================================================
-       MAIN CONTENT GRID
-       ============================================================ */
-    .content-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-    
-    .content-grid.single {
-      grid-template-columns: 1fr;
-    }
-    
-    .content-column {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    
-    /* ============================================================
-       AGENT TOPOLOGY
-       ============================================================ */
-    .topology-core {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 32px;
-    }
-    
-    .core-node {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(0, 194, 255, 0.25), var(--color-bg-primary));
-      border: 2px solid var(--color-primary);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      box-shadow: 0 0 60px rgba(0, 194, 255, 0.4);
-    }
-    
-    .core-node .ring {
-      position: absolute;
-      inset: -8px;
-      border: 1px dashed rgba(0, 194, 255, 0.4);
-      border-radius: 50%;
-      animation: spin 20s linear infinite;
-    }
-    
-    .core-node .name {
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-style: italic;
-      color: var(--color-text-primary);
-    }
-    
-    .core-node .type {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--color-primary);
-      letter-spacing: 0.1em;
-      margin-top: 4px;
-    }
-    
-    .core-metrics {
-      display: flex;
-      gap: 24px;
-      margin-top: 16px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--color-text-secondary);
-    }
-    
-    .core-metrics .divider {
-      color: var(--color-primary);
-    }
-    
-    .agents-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    
-    .agent-card {
-      padding: 16px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(0, 194, 255, 0.2);
-      border-radius: 8px;
-      text-align: center;
-    }
-    
-    .agent-card .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin: 0 auto 8px;
-    }
-    
-    .agent-card .status-dot.active {
-      background: var(--color-success);
-      box-shadow: 0 0 8px var(--color-success);
-    }
-    
-    .agent-card .status-dot.standby {
-      background: var(--color-warning);
-    }
-    
-    .agent-card .name {
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--color-text-primary);
-      margin-bottom: 4px;
-    }
-    
-    .agent-card .type {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-    }
-    
-    .agent-card .load {
-      font-family: var(--font-mono);
-      font-size: 18px;
-      margin-top: 8px;
-    }
-    
-    .agent-card .load.high { color: var(--color-error); }
-    .agent-card .load.medium { color: var(--color-warning); }
-    .agent-card .load.low { color: var(--color-primary); }
-    
-    /* ============================================================
-       CIRCUIT BREAKERS
-       ============================================================ */
-    .circuit-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    .circuit-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 6px;
-    }
-    
-    .circuit-item.closed { border-left: 2px solid var(--color-success); }
-    .circuit-item.open { border-left: 2px solid var(--color-error); }
-    .circuit-item.half-open { border-left: 2px solid var(--color-warning); }
-    
-    .circuit-item .left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .circuit-item .state-icon {
-      font-size: 16px;
-    }
-    
-    .circuit-item .state-icon.closed { color: var(--color-success); filter: drop-shadow(0 0 4px var(--color-success)); }
-    .circuit-item .state-icon.open { color: var(--color-error); filter: drop-shadow(0 0 4px var(--color-error)); }
-    .circuit-item .state-icon.half-open { color: var(--color-warning); filter: drop-shadow(0 0 4px var(--color-warning)); }
-    
-    .circuit-item .name {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--color-text-primary);
-    }
-    
-    .circuit-item .right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    
-    .circuit-item .failures {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--color-text-secondary);
-    }
-    
-    .circuit-item .state-badge {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-    
-    .circuit-item .state-badge.closed {
-      background: rgba(34, 197, 94, 0.2);
-      color: var(--color-success);
-    }
-    
-    .circuit-item .state-badge.open {
-      background: rgba(239, 68, 68, 0.2);
-      color: var(--color-error);
-    }
-    
-    .circuit-item .state-badge.half-open {
-      background: rgba(245, 158, 11, 0.2);
-      color: var(--color-warning);
-    }
-    
-    /* ============================================================
-       COST ROUTING
-       ============================================================ */
-    .savings-highlight {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), transparent);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    
-    .savings-highlight .savings-label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--color-text-secondary);
-      margin-bottom: 4px;
-    }
-    
-    .savings-highlight .savings-value {
-      font-family: var(--font-display);
-      font-size: 28px;
-      font-style: italic;
-      color: var(--color-success);
-    }
-    
-    .savings-highlight .reduction {
-      text-align: right;
-    }
-    
-    .savings-highlight .reduction-value {
-      font-family: var(--font-mono);
-      font-size: 24px;
-      color: var(--color-success);
-    }
-    
-    .savings-highlight .reduction-label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--color-text-secondary);
-    }
-    
-    .model-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    
-    .model-row .model-name {
-      width: 60px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--color-text-secondary);
-    }
-    
-    .model-row .bar-container {
-      flex: 1;
-      height: 8px;
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    
-    .model-row .bar {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.5s ease;
-    }
-    
-    .model-row .bar.haiku { background: var(--color-success); box-shadow: 0 0 10px rgba(34, 197, 94, 0.6); }
-    .model-row .bar.sonnet { background: var(--color-primary); box-shadow: 0 0 10px rgba(0, 194, 255, 0.6); }
-    .model-row .bar.opus { background: var(--color-accent); box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
-    
-    .model-row .stats {
-      width: 100px;
-      text-align: right;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--color-text-primary);
-    }
-    
-    .cache-rate {
-      margin-top: 20px;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .cache-rate .label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--color-text-secondary);
-    }
-    
-    .cache-rate .value {
-      font-family: var(--font-mono);
-      font-size: 16px;
-      color: var(--color-primary);
-    }
-    
-    /* ============================================================
-       EVENT STREAM
-       ============================================================ */
-    .event-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 320px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-    
-    .event-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 10px 12px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 0 4px 4px 0;
-      animation: slideIn 0.3s ease-out;
-    }
-    
-    .event-item.node-completed { border-left: 2px solid var(--color-success); }
-    .event-item.checkpoint-created { border-left: 2px solid var(--color-primary); }
-    .event-item.escalation-triggered { border-left: 2px solid var(--color-warning); }
-    .event-item.cache-hit { border-left: 2px solid var(--color-accent); }
-    
-    .event-item .timestamp {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--color-text-muted);
-      white-space: nowrap;
-    }
-    
-    .event-item .type {
-      font-family: var(--font-mono);
-      font-size: 11px;
-    }
-    
-    .event-item.node-completed .type { color: var(--color-success); }
-    .event-item.checkpoint-created .type { color: var(--color-primary); }
-    .event-item.escalation-triggered .type { color: var(--color-warning); }
-    .event-item.cache-hit .type { color: var(--color-accent); }
-    
-    .event-item .message {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--color-text-secondary);
-      flex: 1;
-    }
-    
-    /* ============================================================
-       FOOTER
-       ============================================================ */
-    .footer {
-      margin-top: 48px;
-      padding-top: 24px;
-      border-top: 1px solid var(--color-border-subtle);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .footer .copyright {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--color-text-muted);
-    }
-    
-    /* ============================================================
-       RESPONSIVE
-       ============================================================ */
-    @media (max-width: 1024px) {
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .agents-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    
-    @media (max-width: 640px) {
-      .header {
-        flex-direction: column;
-        gap: 16px;
-      }
-      
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .tab-nav {
-        flex-wrap: wrap;
-      }
-      
-      .agents-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-</head>
-<body>
-  <!-- Matrix Rain Canvas -->
-  <canvas id="matrix-canvas"></canvas>
-  
-  <div class="container">
-    <!-- Header -->
-    <header class="header">
-      <div>
-        <span class="bracket-label accent">
-          <span class="bracket">[</span>
-          NEXUS_COMMAND_CENTER
-          <span class="bracket">]</span>
-        </span>
-        <h1>Command <span class="accent-text">Center</span></h1>
-        <p>Real-time orchestration monitoring and system control.</p>
-      </div>
-      <div class="status-indicator nominal">
-        <span class="dot nominal"></span>
-        <span class="label">SYSTEMS_NOMINAL</span>
-      </div>
-    </header>
-    
-    <!-- Quick Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <span class="icon">⚡</span>
-        <div>
-          <div class="value" id="stat-requests">230,847</div>
-          <div class="label">REQUESTS</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <span class="icon">●</span>
-        <div>
-          <div class="value">99.95%</div>
-          <div class="label">UPTIME_SLA</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <span class="icon">◆</span>
-        <div>
-          <div class="value">59</div>
-          <div class="label">ACTIVE_AGENTS</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <span class="icon">▣</span>
-        <div>
-          <div class="value">12.4TB</div>
-          <div class="label">MEMORY_ALLOC</div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Tab Navigation -->
-    <nav class="tab-nav">
-      <button class="tab-btn active" data-tab="overview">[ OVERVIEW ]</button>
-      <button class="tab-btn" data-tab="agents">[ AGENTS ]</button>
-      <button class="tab-btn" data-tab="circuits">[ CIRCUITS ]</button>
-      <button class="tab-btn" data-tab="routing">[ COST_ROUTING ]</button>
-      <button class="tab-btn" data-tab="events">[ EVENT_STREAM ]</button>
-    </nav>
-    
-    <!-- Main Content -->
-    <main>
-      <!-- Overview Tab -->
-      <div id="tab-overview" class="tab-content content-grid">
-        <!-- Left Column: Topology -->
-        <div class="glass-card glow">
-          <span class="bracket-label primary">
-            <span class="bracket">[</span>
-            NEURAL_TOPOLOGY
-            <span class="bracket">]</span>
-          </span>
-          
-          <div class="topology-core">
-            <div class="core-node">
-              <div class="ring"></div>
-              <span class="name">Ragnarok</span>
-              <span class="type">CORE_ORCHESTRATOR</span>
-            </div>
-            <div class="core-metrics">
-              <span>59 AGENTS</span>
-              <span class="divider">•</span>
-              <span>12.4TB MEMORY</span>
-            </div>
-          </div>
-          
-          <div class="agents-grid" id="agents-grid">
-            <!-- Agents populated by JS -->
-          </div>
-        </div>
-        
-        <!-- Right Column -->
-        <div class="content-column">
-          <!-- Circuit Breakers -->
-          <div class="glass-card">
-            <span class="bracket-label primary">
-              <span class="bracket">[</span>
-              CIRCUIT_BREAKERS
-              <span class="bracket">]</span>
-            </span>
-            
-            <div class="circuit-list" id="circuit-list" style="margin-top: 20px;">
-              <!-- Circuits populated by JS -->
-            </div>
-          </div>
-          
-          <!-- Cost Routing -->
-          <div class="glass-card">
-            <span class="bracket-label primary">
-              <span class="bracket">[</span>
-              COST_ROUTING
-              <span class="bracket">]</span>
-            </span>
-            
-            <div class="savings-highlight" style="margin-top: 20px;">
-              <div>
-                <div class="savings-label">TOTAL_SAVINGS</div>
-                <div class="savings-value">$6,892</div>
-              </div>
-              <div class="reduction">
-                <div class="reduction-value">-70.8%</div>
-                <div class="reduction-label">COST_REDUCTION</div>
-              </div>
-            </div>
-            
-            <div id="model-distribution">
-              <!-- Models populated by JS -->
-            </div>
-            
-            <div class="cache-rate">
-              <span class="label">CACHE_HIT_RATE</span>
-              <span class="value">34.2%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Agents Tab -->
-      <div id="tab-agents" class="tab-content content-grid single" style="display: none;">
-        <div class="glass-card glow">
-          <span class="bracket-label primary">
-            <span class="bracket">[</span>
-            NEURAL_TOPOLOGY
-            <span class="bracket">]</span>
-          </span>
-          
-          <div class="topology-core">
-            <div class="core-node">
-              <div class="ring"></div>
-              <span class="name">Ragnarok</span>
-              <span class="type">CORE_ORCHESTRATOR</span>
-            </div>
-            <div class="core-metrics">
-              <span>59 AGENTS</span>
-              <span class="divider">•</span>
-              <span>12.4TB MEMORY</span>
-            </div>
-          </div>
-          
-          <div class="agents-grid" id="agents-grid-full">
-            <!-- Agents populated by JS -->
-          </div>
-        </div>
-      </div>
-      
-      <!-- Circuits Tab -->
-      <div id="tab-circuits" class="tab-content content-grid single" style="display: none;">
-        <div class="glass-card">
-          <span class="bracket-label primary">
-            <span class="bracket">[</span>
-            CIRCUIT_BREAKERS
-            <span class="bracket">]</span>
-          </span>
-          
-          <div class="circuit-list" id="circuit-list-full" style="margin-top: 20px;">
-            <!-- Circuits populated by JS -->
-          </div>
-        </div>
-      </div>
-      
-      <!-- Cost Routing Tab -->
-      <div id="tab-routing" class="tab-content content-grid single" style="display: none;">
-        <div class="glass-card">
-          <span class="bracket-label primary">
-            <span class="bracket">[</span>
-            COST_ROUTING
-            <span class="bracket">]</span>
-          </span>
-          
-          <div class="savings-highlight" style="margin-top: 20px;">
-            <div>
-              <div class="savings-label">TOTAL_SAVINGS</div>
-              <div class="savings-value">$6,892</div>
-            </div>
-            <div class="reduction">
-              <div class="reduction-value">-70.8%</div>
-              <div class="reduction-label">COST_REDUCTION</div>
-            </div>
-          </div>
-          
-          <div id="model-distribution-full">
-            <!-- Models populated by JS -->
-          </div>
-          
-          <div class="cache-rate">
-            <span class="label">CACHE_HIT_RATE</span>
-            <span class="value">34.2%</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Events Tab -->
-      <div id="tab-events" class="tab-content content-grid single" style="display: none;">
-        <div class="glass-card">
-          <span class="bracket-label primary">
-            <span class="bracket">[</span>
-            EVENT_STREAM
-            <span class="bracket">]</span>
-          </span>
-          
-          <div class="event-list" id="event-list" style="margin-top: 20px;">
-            <!-- Events populated by JS -->
-          </div>
-        </div>
-      </div>
-    </main>
-    
-    <!-- Footer -->
-    <footer class="footer">
-      <span class="copyright">NEXUS_COMMAND_CENTER v4.0 • © 2025 BARRIOS A2I</span>
-      <div class="status-indicator nominal">
-        <span class="dot nominal"></span>
-        <span class="label">LIVE_DATA</span>
-      </div>
-    </footer>
-  </div>
-  
-  <script>
-    // ================================================================
-    // MATRIX RAIN EFFECT
-    // ================================================================
-    const canvas = document.getElementById('matrix-canvas');
-    const ctx = canvas.getContext('2d');
-    
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()アイウエオカキクケコサシスセソ';
-    const fontSize = 14;
-    let columns = Math.floor(canvas.width / fontSize);
-    let drops = Array(columns).fill(1);
-    
-    function drawMatrix() {
-      ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      ctx.fillStyle = '#00C2FF';
-      ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
-      ctx.globalAlpha = 0.08;
-      
-      for (let i = 0; i < drops.length; i++) {
-        const char = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-        
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS // ORBITAL_CORE</title>
+
+    <!-- Font: JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- P0 FIX: Actually load the font (was missing) -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        obsidian: '#020408',
+                        panel: '#050a10',
+                        cyan: '#00C2FF',
+                        gold: '#FFD700',
+                        amber: '#F59E0B',
+                        red: '#EF4444',
+                        border: 'rgba(0, 194, 255, 0.15)',
+                        'border-dim': 'rgba(255, 255, 255, 0.05)',
+                    },
+                    fontSize: {
+                        'xxs': '0.6rem',
+                    },
+                    letterSpacing: {
+                        'widest': '0.15em',
+                    }
+                }
+            }
         }
-        drops[i]++;
-      }
-      
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(drawMatrix);
-    }
-    drawMatrix();
-    
-    // ================================================================
-    // DATA
-    // ================================================================
-    const agents = [
-      { id: 'trinity', name: 'Trinity', type: 'INTELLIGENCE', status: 'active', load: 67 },
-      { id: 'overlord', name: 'Overlord', type: 'CAMPAIGNS', status: 'active', load: 82 },
-      { id: 'adforge', name: 'Ad Forge', type: 'CREATIVE', status: 'active', load: 45 },
-      { id: 'cinesite', name: 'Cinesite', type: 'CONVERSION', status: 'active', load: 38 },
-      { id: 'lingua', name: 'Lingua', type: 'EXPERIMENTAL', status: 'standby', load: 12 },
-      { id: 'nexus_p', name: 'Nexus', type: 'PERSONAL', status: 'active', load: 71 },
-    ];
-    
-    const circuits = [
-      { id: 'llm_primary', name: 'llm_primary', state: 'closed', failures: 0, threshold: 5 },
-      { id: 'llm_fallback', name: 'llm_fallback', state: 'closed', failures: 1, threshold: 5 },
-      { id: 'vector_store', name: 'vector_store', state: 'closed', failures: 0, threshold: 5 },
-      { id: 'billing_api', name: 'billing_api', state: 'half-open', failures: 3, threshold: 5 },
-      { id: 'telemetry', name: 'telemetry', state: 'closed', failures: 0, threshold: 5 },
-      { id: 'cache_redis', name: 'cache_redis', state: 'closed', failures: 0, threshold: 5 },
-    ];
-    
-    const models = [
-      { name: 'Haiku', usage: 45, cost: '0.25', class: 'haiku' },
-      { name: 'Sonnet', usage: 38, cost: '3.00', class: 'sonnet' },
-      { name: 'Opus', usage: 17, cost: '15.00', class: 'opus' },
-    ];
-    
-    let events = [
-      { timestamp: '12:34:56', type: 'node-completed', message: 'synthesis_node → complete (234ms)' },
-      { timestamp: '12:34:52', type: 'cache-hit', message: 'semantic_cache hit for query_hash:a3f2...' },
-      { timestamp: '12:34:48', type: 'checkpoint-created', message: 'auto_checkpoint before verification' },
-      { timestamp: '12:34:41', type: 'escalation-triggered', message: 'fast_path → deep_path (confidence: 0.72)' },
-      { timestamp: '12:34:35', type: 'node-completed', message: 'router_node → fast_path (89ms)' },
-    ];
-    
-    let requestCount = 230847;
-    
-    // ================================================================
-    // RENDER FUNCTIONS
-    // ================================================================
-    function renderAgents(containerId) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      
-      container.innerHTML = agents.map(agent => {
-        const loadClass = agent.load > 80 ? 'high' : agent.load > 60 ? 'medium' : 'low';
-        return `
-          <div class="agent-card">
-            <div class="status-dot ${agent.status}"></div>
-            <div class="name">${agent.name}</div>
-            <div class="type">${agent.type}</div>
-            <div class="load ${loadClass}">${Math.round(agent.load)}%</div>
-          </div>
-        `;
-      }).join('');
-    }
-    
-    function renderCircuits(containerId, limit = null) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      
-      const items = limit ? circuits.slice(0, limit) : circuits;
-      const stateIcons = { closed: '●', open: '○', 'half-open': '◐' };
-      
-      container.innerHTML = items.map(circuit => `
-        <div class="circuit-item ${circuit.state}">
-          <div class="left">
-            <span class="state-icon ${circuit.state}">${stateIcons[circuit.state]}</span>
-            <span class="name">${circuit.name}</span>
-          </div>
-          <div class="right">
-            <span class="failures">${circuit.failures}/${circuit.threshold} failures</span>
-            <span class="state-badge ${circuit.state}">${circuit.state.replace('-', ' ')}</span>
-          </div>
-        </div>
-      `).join('');
-    }
-    
-    function renderModels(containerId) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      
-      container.innerHTML = models.map(model => `
-        <div class="model-row">
-          <span class="model-name">${model.name}</span>
-          <div class="bar-container">
-            <div class="bar ${model.class}" style="width: ${model.usage}%"></div>
-          </div>
-          <span class="stats">${model.usage}% • $${model.cost}</span>
-        </div>
-      `).join('');
-    }
-    
-    function renderEvents() {
-      const container = document.getElementById('event-list');
-      if (!container) return;
-      
-      container.innerHTML = events.map(event => `
-        <div class="event-item ${event.type}">
-          <span class="timestamp">${event.timestamp}</span>
-          <span class="type">${event.type.replace(/-/g, '.')}</span>
-          <span class="message">${event.message}</span>
-        </div>
-      `).join('');
-    }
-    
-    // ================================================================
-    // TAB NAVIGATION
-    // ================================================================
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = btn.dataset.tab;
+    </script>
+
+    <style>
+        /* CORE RESET & SCROLLBARS */
+        :root {
+            color-scheme: dark;
+        }
+        body {
+            background-color: #020408;
+            color: #e2e8f0;
+            overflow: hidden;
+            font-feature-settings: "zero" on;
+            -webkit-font-smoothing: antialiased;
+        }
         
-        tabBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        /* Custom Thin Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #020408; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00C2FF; }
+
+        /* UTILITIES */
+        .glass-panel {
+            background: rgba(5, 10, 16, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 194, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 0 rgba(0, 194, 255, 0.1);
+        }
         
-        tabContents.forEach(content => {
-          content.style.display = content.id === `tab-${tab}` ? '' : 'none';
+        .text-micro { font-size: 10px; line-height: 1.4; }
+        .text-nano { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+        /* SLIDER STYLING */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 14px;
+            width: 6px;
+            background: #00C2FF;
+            transform: translateY(-6px);
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(0, 194, 255, 0.6);
+            border-radius: 1px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 194, 255, 0.2);
+        }
+        input[type=range]::-moz-range-thumb {
+            height: 14px;
+            width: 6px;
+            background: #00C2FF;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(0, 194, 255, 0.6);
+            border: none;
+            border-radius: 1px;
+        }
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 194, 255, 0.2);
+        }
+
+        /* ANIMATIONS */
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .animate-pulse-slow { animation: pulse-slow 2.5s ease-in-out infinite; }
+        
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .scanline::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0, 194, 255, 0.02), transparent);
+            animation: scanline 10s linear infinite;
+            pointer-events: none;
+        }
+
+        /* Status indicator glow */
+        .status-glow {
+            box-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+        }
+
+        /* Button hover effects */
+        .ctrl-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .ctrl-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 194, 255, 0.1), transparent);
+            transition: left 0.3s ease;
+        }
+        .ctrl-btn:hover::before {
+            left: 100%;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col font-mono selection:bg-cyan/20 selection:text-cyan">
+
+    <!-- HEADER: STATUS & CONTEXT -->
+    <header class="h-12 border-b border-border bg-obsidian flex items-center justify-between px-4 z-40 relative">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+                <i data-lucide="cpu" class="w-4 h-4 text-cyan"></i>
+                <span class="text-xs font-bold tracking-widest text-cyan">NEXUS_CORE</span>
+                <span class="text-[9px] text-gray-500 ml-1">v4.1</span>
+            </div>
+            
+            <div class="h-4 w-px bg-white/10"></div>
+            
+            <div class="flex items-center gap-6">
+                <div class="flex flex-col">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-wider">Sys_State</span>
+                    <span class="text-[10px] text-emerald-400 tracking-wide font-medium flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        OPTIMAL
+                    </span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-wider">Latency</span>
+                    <span class="text-[10px] text-white/80 tracking-wide font-medium">0.02ms</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-wider">Uptime</span>
+                    <span class="text-[10px] text-cyan tracking-wide font-medium">99.95%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 text-[10px] text-gray-500">
+                <span class="flex items-center gap-1">
+                    <i data-lucide="clock" class="w-3 h-3"></i>
+                    <span id="system-time">--:--:--</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-cyan/5 border border-cyan/20">
+                <div class="w-1.5 h-1.5 rounded-full bg-cyan animate-pulse-slow status-glow text-cyan"></div>
+                <span class="text-[10px] text-cyan tracking-widest font-medium">LIVE_FEED</span>
+            </div>
+        </div>
+        
+        <!-- Decoration Line -->
+        <div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan/40 to-transparent"></div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden bg-obsidian relative">
+        
+        <!-- LEFT RAIL: TELEMETRY (300px) -->
+        <aside class="w-[300px] flex flex-col border-r border-border bg-[#030508] z-30 relative">
+            
+            <!-- MODULE 1: SYSTEM RESOURCES -->
+            <div class="p-4 border-b border-border-dim">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-nano text-cyan flex items-center gap-2">
+                        <i data-lucide="activity" class="w-3 h-3"></i>
+                        Resource_Allocation
+                    </span>
+                    <span class="text-[9px] text-emerald-400 border border-emerald-400/30 px-1.5 py-0.5 bg-emerald-400/5">HEALTHY</span>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- CPU -->
+                    <div class="group">
+                        <div class="flex justify-between text-micro mb-1">
+                            <span class="text-gray-400 flex items-center gap-1">
+                                <i data-lucide="cpu" class="w-2.5 h-2.5 opacity-50"></i>
+                                PROC_CORE
+                            </span>
+                            <span class="text-cyan font-medium" id="cpu-val">42%</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-white/5 relative overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-cyan to-cyan/70 transition-all duration-500 shadow-[0_0_8px_rgba(0,194,255,0.4)]" id="cpu-bar" style="width: 42%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- MEM -->
+                    <div class="group">
+                        <div class="flex justify-between text-micro mb-1">
+                            <span class="text-gray-400 flex items-center gap-1">
+                                <i data-lucide="hard-drive" class="w-2.5 h-2.5 opacity-50"></i>
+                                MEM_ALLOC
+                            </span>
+                            <span class="text-cyan font-medium" id="mem-val">68%</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-white/5 relative overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-cyan/90 to-cyan/60 transition-all duration-500" id="mem-bar" style="width: 68%"></div>
+                        </div>
+                    </div>
+
+                    <!-- THERMAL -->
+                    <div class="group">
+                        <div class="flex justify-between text-micro mb-1">
+                            <span class="text-gray-400 flex items-center gap-1">
+                                <i data-lucide="thermometer" class="w-2.5 h-2.5 opacity-50"></i>
+                                THERMAL
+                            </span>
+                            <span class="text-amber font-medium" id="thermal-val">NOMINAL</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-white/5 relative overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-amber to-amber/60 transition-all duration-500" id="thermal-bar" style="width: 24%"></div>
+                        </div>
+                    </div>
+
+                    <!-- NETWORK -->
+                    <div class="group">
+                        <div class="flex justify-between text-micro mb-1">
+                            <span class="text-gray-400 flex items-center gap-1">
+                                <i data-lucide="wifi" class="w-2.5 h-2.5 opacity-50"></i>
+                                NET_IO
+                            </span>
+                            <span class="text-emerald-400 font-medium" id="net-val">1.2 GB/s</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-white/5 relative overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-400/60 transition-all duration-500" id="net-bar" style="width: 35%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 2: ORBITAL BODIES STATUS -->
+            <div class="p-4 border-b border-border-dim">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-nano text-gray-500 flex items-center gap-2">
+                        <i data-lucide="orbit" class="w-3 h-3"></i>
+                        Orbital_Registry
+                    </span>
+                </div>
+                
+                <div class="space-y-2" id="orbital-status">
+                    <div class="flex items-center justify-between text-micro py-1.5 px-2 bg-white/[0.02] border border-white/5">
+                        <span class="text-gray-400">SOL_PRIMARY</span>
+                        <span class="text-gold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>
+                            ACTIVE
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-micro py-1.5 px-2 bg-white/[0.02] border border-white/5">
+                        <span class="text-gray-400">TERRA_NODE</span>
+                        <span class="text-cyan flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan"></span>
+                            TRACKING
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-micro py-1.5 px-2 bg-white/[0.02] border border-white/5">
+                        <span class="text-gray-400">SATELLITES</span>
+                        <span class="text-emerald-400 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            6 ONLINE
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 3: DATA STREAM -->
+            <div class="flex-1 overflow-hidden flex flex-col p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-nano text-gray-500 flex items-center gap-2">
+                        <i data-lucide="terminal" class="w-3 h-3"></i>
+                        Event_Log
+                    </span>
+                    <span class="text-nano text-cyan border border-cyan/20 px-1.5 py-0.5 bg-cyan/5">STREAM</span>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto space-y-1.5 pr-1" id="log-container">
+                    <div class="text-micro flex gap-2 text-gray-400 py-0.5">
+                        <span class="text-white/30 shrink-0">--:--:--</span>
+                        <span class="text-cyan/60">Awaiting_Events...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 4: CONTROLS (Bottom Fixed) -->
+            <div class="p-4 bg-panel border-t border-border">
+                <div class="mb-2 flex justify-between items-end">
+                    <span class="text-nano text-gray-500 flex items-center gap-1">
+                        <i data-lucide="gauge" class="w-3 h-3"></i>
+                        Time_Dilation
+                    </span>
+                    <span class="text-micro text-cyan font-medium" id="speed-val">1.0x</span>
+                </div>
+                <!-- P2 FIX: min="0.2" to prevent frozen animation -->
+                <input type="range" min="0.2" max="3" step="0.1" value="1" id="speed-slider" class="mb-4">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <button class="ctrl-btn border border-white/10 bg-white/5 hover:bg-cyan/10 hover:border-cyan/30 text-white/70 hover:text-cyan py-2.5 text-micro transition-all uppercase tracking-wider flex items-center justify-center gap-2" onclick="resetCam()">
+                        <i data-lucide="crosshair" class="w-3 h-3"></i> Recenter
+                    </button>
+                    <button class="ctrl-btn border border-white/10 bg-white/5 hover:bg-amber/10 hover:border-amber/30 text-white/70 hover:text-amber py-2.5 text-micro transition-all uppercase tracking-wider flex items-center justify-center gap-2" onclick="toggleGrid()">
+                        <i data-lucide="grid-3x3" class="w-3 h-3"></i> Grid
+                    </button>
+                </div>
+                
+                <div class="mt-3 pt-3 border-t border-white/5">
+                    <div class="flex justify-between text-[9px] text-gray-600">
+                        <span>NEXUS ORBITAL v4.1</span>
+                        <span>BARRIOS A2I</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- RIGHT: ORBITAL ENGINE (Canvas) -->
+        <section class="flex-1 relative bg-black cursor-crosshair scanline">
+            
+            <!-- CANVAS CONTAINER -->
+            <div id="canvas-container" class="absolute inset-0 z-10"></div>
+
+            <!-- HUD OVERLAY: Top Left - Target Lock -->
+            <div class="absolute top-6 left-6 z-20 pointer-events-none">
+                <div class="glass-panel px-4 py-3 min-w-[200px]">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-gold mb-1">
+                            <i data-lucide="target" class="w-3 h-3"></i>
+                            <span class="text-nano tracking-widest font-bold">TARGET_LOCK</span>
+                        </div>
+                        <span class="text-sm font-medium text-white tracking-wide">SOLAR_BARYCENTER</span>
+                        <div class="h-px w-full bg-white/10 my-1.5"></div>
+                        <div class="flex justify-between text-micro text-gray-400">
+                            <span>CLASS</span>
+                            <span class="text-white/80">G-TYPE MAIN SEQ</span>
+                        </div>
+                        <div class="flex justify-between text-micro text-gray-400">
+                            <span>MASS</span>
+                            <span class="text-white/80">1.989 × 10³⁰ kg</span>
+                        </div>
+                        <div class="flex justify-between text-micro text-gray-400">
+                            <span>RADIUS</span>
+                            <span class="text-white/80">695,700 km</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HUD OVERLAY: Top Right - System Stats -->
+            <div class="absolute top-6 right-6 z-20 pointer-events-none">
+                <div class="glass-panel px-4 py-3 min-w-[160px]">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-2 text-cyan mb-1">
+                            <i data-lucide="bar-chart-2" class="w-3 h-3"></i>
+                            <span class="text-nano tracking-widest">METRICS</span>
+                        </div>
+                        <div class="flex justify-between text-micro">
+                            <span class="text-gray-500">FPS</span>
+                            <span class="text-emerald-400 font-medium" id="fps-counter">60</span>
+                        </div>
+                        <div class="flex justify-between text-micro">
+                            <span class="text-gray-500">FRAME</span>
+                            <span class="text-white/60 font-medium" id="frame-counter">0</span>
+                        </div>
+                        <div class="flex justify-between text-micro">
+                            <span class="text-gray-500">OBJECTS</span>
+                            <span class="text-cyan font-medium">14</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HUD OVERLAY: Bottom Left - Camera Info -->
+            <div class="absolute bottom-6 left-6 z-20 pointer-events-none">
+                <div class="flex flex-col gap-1">
+                    <span class="text-nano text-gray-500 tracking-widest flex items-center gap-1">
+                        <i data-lucide="camera" class="w-3 h-3"></i>
+                        VIEWPORT
+                    </span>
+                    <span class="text-[10px] text-white/40">Perspective 45° FOV</span>
+                </div>
+            </div>
+
+            <!-- HUD OVERLAY: Bottom Right - Coordinates (P2 FIX: Real camera pos) -->
+            <div class="absolute bottom-6 right-6 z-20 pointer-events-none text-right">
+                <div class="flex flex-col gap-1">
+                    <span class="text-nano text-gray-500 tracking-widest">CAMERA_POS</span>
+                    <span class="text-xs text-cyan font-mono tracking-wider" id="coords">X: 0.00 Y: 140.00 Z: 200.00</span>
+                </div>
+            </div>
+
+            <!-- HUD: Corner Brackets -->
+            <div class="absolute inset-6 z-10 pointer-events-none">
+                <div class="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-cyan/30"></div>
+                <div class="absolute top-0 right-0 w-10 h-10 border-t-2 border-r-2 border-cyan/30"></div>
+                <div class="absolute bottom-0 left-0 w-10 h-10 border-b-2 border-l-2 border-cyan/30"></div>
+                <div class="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-cyan/30"></div>
+            </div>
+
+            <!-- Center crosshair -->
+            <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none opacity-20">
+                <div class="w-8 h-px bg-cyan"></div>
+                <div class="absolute w-px h-8 bg-cyan"></div>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        // --- 1. INITIALIZATION & SETUP ---
+        lucide.createIcons();
+        const container = document.getElementById('canvas-container');
+
+        // Scene Setup
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x020408, 0.0015); // Slightly less fog for visibility
+
+        // Camera: Perspective for proper 3D depth
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 2000);
+        camera.position.set(0, 140, 200);
+        camera.lookAt(0, 0, 0);
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // P1 FIX: Cap at 2
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        
+        // P0 FIX: Color space & tone mapping for crisp colors
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.1;
+        
+        container.appendChild(renderer.domElement);
+
+        // --- 2. ORBITAL ENGINE ---
+        
+        // Starfield Background (denser, more depth)
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 3000;
+        const starPos = new Float32Array(starCount * 3);
+        const starColors = new Float32Array(starCount * 3);
+        for(let i = 0; i < starCount; i++) {
+            const i3 = i * 3;
+            starPos[i3] = (Math.random() - 0.5) * 1000;
+            starPos[i3 + 1] = (Math.random() - 0.5) * 1000;
+            starPos[i3 + 2] = (Math.random() - 0.5) * 1000;
+            
+            // Slight color variation
+            const brightness = 0.5 + Math.random() * 0.5;
+            starColors[i3] = brightness;
+            starColors[i3 + 1] = brightness;
+            starColors[i3 + 2] = brightness + Math.random() * 0.1;
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+        const starMat = new THREE.PointsMaterial({ 
+            size: 0.8, 
+            transparent: true, 
+            opacity: 0.9,
+            vertexColors: true,
+            sizeAttenuation: true
         });
-      });
-    });
-    
-    // ================================================================
-    // LIVE DATA SIMULATION
-    // ================================================================
-    setInterval(() => {
-      // Update request count
-      requestCount += Math.floor(Math.random() * 5);
-      document.getElementById('stat-requests').textContent = requestCount.toLocaleString();
-      
-      // Update agent loads
-      agents.forEach(agent => {
-        agent.load = Math.max(5, Math.min(95, agent.load + (Math.random() * 10 - 5)));
-      });
-      renderAgents('agents-grid');
-      renderAgents('agents-grid-full');
-      
-      // Add new event occasionally
-      if (Math.random() > 0.7) {
-        const eventTypes = ['node-completed', 'cache-hit', 'checkpoint-created'];
-        const newEvent = {
-          timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
-          type: eventTypes[Math.floor(Math.random() * eventTypes.length)],
-          message: `system_event processed (${Math.floor(Math.random() * 300)}ms)`,
-        };
-        events = [newEvent, ...events.slice(0, 9)];
-        renderEvents();
-      }
-    }, 2000);
-    
-    // ================================================================
-    // INITIAL RENDER
-    // ================================================================
-    renderAgents('agents-grid');
-    renderAgents('agents-grid-full');
-    renderCircuits('circuit-list', 4);
-    renderCircuits('circuit-list-full');
-    renderModels('model-distribution');
-    renderModels('model-distribution-full');
-    renderEvents();
-  </script>
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
+
+        // Grid (Toggleable)
+        const gridHelper = new THREE.PolarGridHelper(120, 16, 8, 64, 0x1e3a5f, 0x1e3a5f);
+        gridHelper.material.transparent = true;
+        gridHelper.material.opacity = 0.12;
+        scene.add(gridHelper);
+
+        // The Sun
+        const sunGeo = new THREE.SphereGeometry(6, 32, 32);
+        const sunMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
+        const sun = new THREE.Mesh(sunGeo, sunMat);
+        
+        // Sun Glow (Sprite) - Enhanced
+        const canvas = document.createElement('canvas');
+        canvas.width = 256; canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+        gradient.addColorStop(0, 'rgba(255, 200, 50, 1)');
+        gradient.addColorStop(0.1, 'rgba(255, 160, 0, 0.8)');
+        gradient.addColorStop(0.3, 'rgba(255, 100, 0, 0.4)');
+        gradient.addColorStop(0.6, 'rgba(255, 50, 0, 0.1)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 256, 256);
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMat = new THREE.SpriteMaterial({ 
+            map: texture, 
+            transparent: true, 
+            blending: THREE.AdditiveBlending 
+        });
+        const sunGlow = new THREE.Sprite(spriteMat);
+        sunGlow.scale.set(50, 50, 1);
+        sun.add(sunGlow);
+        
+        // Sun Light
+        const sunLight = new THREE.PointLight(0xFFFFFF, 1.8, 400);
+        sun.add(sunLight);
+        scene.add(sun);
+
+        // Ambient Light
+        const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
+        scene.add(ambientLight);
+
+        // Planets Configuration
+        const planets = [];
+        const planetData = [
+            { r: 20, size: 1.2, speed: 0.02, color: 0xA0A0A0, name: "MERCURY" },
+            { r: 32, size: 2.0, speed: 0.015, color: 0xF59E0B, name: "VENUS" },
+            { r: 48, size: 2.2, speed: 0.01, color: 0x00C2FF, name: "TERRA" },
+            { r: 65, size: 1.8, speed: 0.008, color: 0xEF4444, name: "MARS" },
+            { r: 90, size: 4.5, speed: 0.005, color: 0xE8D5B7, name: "JUPITER" },
+            { r: 120, size: 3.8, speed: 0.003, color: 0xF4D03F, ring: true, name: "SATURN" },
+        ];
+
+        planetData.forEach(d => {
+            // P1 FIX: Build Vector3 points directly on XZ plane
+            const orbitCurve = new THREE.EllipseCurve(0, 0, d.r, d.r, 0, 2 * Math.PI, false, 0);
+            const orbitPoints2 = orbitCurve.getPoints(128);
+            const orbitPoints3 = orbitPoints2.map(p => new THREE.Vector3(p.x, 0, p.y));
+            const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints3);
+            
+            // P0 FIX: Brighter orbit lines
+            const orbitMat = new THREE.LineBasicMaterial({ 
+                color: 0x00C2FF, 
+                transparent: true, 
+                opacity: 0.18 
+            });
+            const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+            // No rotation needed - already on XZ plane
+            scene.add(orbitLine);
+            
+            // P0 FIX: Add glow duplicate for depth
+            const orbitGlowMat = new THREE.LineBasicMaterial({
+                color: 0x00C2FF,
+                transparent: true,
+                opacity: 0.05
+            });
+            const orbitGlow = new THREE.Line(orbitGeo.clone(), orbitGlowMat);
+            orbitGlow.scale.set(1.003, 1.003, 1.003);
+            scene.add(orbitGlow);
+
+            // Planet Mesh
+            const pGeo = new THREE.SphereGeometry(d.size, 32, 32);
+            const pMat = new THREE.MeshPhongMaterial({ 
+                color: d.color, 
+                emissive: d.color,
+                emissiveIntensity: 0.15,
+                shininess: 40
+            });
+            const mesh = new THREE.Mesh(pGeo, pMat);
+            
+            // Planet glow (subtle)
+            const glowCanvas = document.createElement('canvas');
+            glowCanvas.width = 64; glowCanvas.height = 64;
+            const glowCtx = glowCanvas.getContext('2d');
+            const glowGrad = glowCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            const colorHex = '#' + d.color.toString(16).padStart(6, '0');
+            glowGrad.addColorStop(0, colorHex + '40');
+            glowGrad.addColorStop(0.5, colorHex + '10');
+            glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            glowCtx.fillStyle = glowGrad;
+            glowCtx.fillRect(0, 0, 64, 64);
+            const glowTex = new THREE.CanvasTexture(glowCanvas);
+            const glowSpriteMat = new THREE.SpriteMaterial({ 
+                map: glowTex, 
+                transparent: true, 
+                blending: THREE.AdditiveBlending 
+            });
+            const planetGlow = new THREE.Sprite(glowSpriteMat);
+            planetGlow.scale.set(d.size * 4, d.size * 4, 1);
+            mesh.add(planetGlow);
+            
+            // Add Ring if specified
+            if (d.ring) {
+                const rGeo = new THREE.RingGeometry(d.size * 1.5, d.size * 2.4, 64);
+                const rMat = new THREE.MeshBasicMaterial({ 
+                    color: 0xE8D5B7, 
+                    side: THREE.DoubleSide, 
+                    transparent: true, 
+                    opacity: 0.35 
+                });
+                const ring = new THREE.Mesh(rGeo, rMat);
+                ring.rotation.x = Math.PI / 2.2;
+                mesh.add(ring);
+            }
+
+            // Random start angle
+            const angle = Math.random() * Math.PI * 2;
+            mesh.position.x = Math.cos(angle) * d.r;
+            mesh.position.z = Math.sin(angle) * d.r;
+
+            scene.add(mesh);
+            planets.push({ mesh, angle, ...d });
+        });
+
+        // --- 3. ANIMATION LOOP ---
+        let timeScale = 1.0;
+        let frameCount = 0;
+        let lastTime = performance.now();
+        let fps = 60;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            frameCount++;
+            
+            // FPS calculation
+            const now = performance.now();
+            const delta = now - lastTime;
+            if (delta >= 1000) {
+                fps = Math.round((frameCount * 1000) / delta);
+                document.getElementById('fps-counter').innerText = fps;
+                frameCount = 0;
+                lastTime = now;
+            }
+
+            // Rotate Planets
+            planets.forEach(p => {
+                p.angle += p.speed * timeScale * 0.5;
+                p.mesh.position.x = Math.cos(p.angle) * p.r;
+                p.mesh.position.z = Math.sin(p.angle) * p.r;
+                p.mesh.rotation.y += 0.01 * timeScale;
+            });
+
+            // Rotate Grid & Stars slowly
+            gridHelper.rotation.y += 0.0003 * timeScale;
+            stars.rotation.y -= 0.0001 * timeScale;
+
+            // Pulse Sun Glow
+            const scalePulse = 50 + Math.sin(performance.now() * 0.002) * 3;
+            sunGlow.scale.set(scalePulse, scalePulse, 1);
+
+            renderer.render(scene, camera);
+
+            // P2 FIX: Show real camera position instead of random
+            if (frameCount % 10 === 0) {
+                const { x, y, z } = camera.position;
+                document.getElementById('coords').innerText = 
+                    `X: ${x.toFixed(2)} Y: ${y.toFixed(2)} Z: ${z.toFixed(2)}`;
+            }
+            
+            // Update frame counter
+            document.getElementById('frame-counter').innerText = 
+                Math.floor(performance.now() / 16.67);
+        }
+        animate();
+
+        // --- 4. UI INTERACTIONS ---
+        
+        // P1 FIX: ResizeObserver for robust resize handling
+        const ro = new ResizeObserver(() => {
+            const w = container.clientWidth || window.innerWidth;
+            const h = container.clientHeight || window.innerHeight;
+            if (w > 0 && h > 0) {
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h, false);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            }
+        });
+        ro.observe(container);
+
+        // Speed Slider
+        const slider = document.getElementById('speed-slider');
+        const speedVal = document.getElementById('speed-val');
+        
+        slider.addEventListener('input', (e) => {
+            // P2 FIX: Clamp to prevent frozen animation
+            timeScale = Math.max(0.2, parseFloat(e.target.value));
+            speedVal.innerText = timeScale.toFixed(1) + 'x';
+            if (timeScale > 2) speedVal.style.color = '#EF4444';
+            else if (timeScale > 0.2) speedVal.style.color = '#00C2FF';
+        });
+
+        function resetCam() {
+            camera.position.set(0, 140, 200);
+            camera.lookAt(0, 0, 0);
+        }
+
+        let gridVisible = true;
+        function toggleGrid() {
+            gridVisible = !gridVisible;
+            gridHelper.visible = gridVisible;
+        }
+
+        // System Time Update
+        function updateSystemTime() {
+            const time = new Date().toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit'
+            });
+            document.getElementById('system-time').innerText = time;
+        }
+        setInterval(updateSystemTime, 1000);
+        updateSystemTime();
+
+        // Resource Bars Animation (simulated telemetry)
+        function updateResources() {
+            const cpu = 35 + Math.random() * 20;
+            const mem = 60 + Math.random() * 15;
+            const thermal = 20 + Math.random() * 10;
+            const net = 30 + Math.random() * 20;
+            
+            document.getElementById('cpu-val').innerText = Math.round(cpu) + '%';
+            document.getElementById('cpu-bar').style.width = cpu + '%';
+            
+            document.getElementById('mem-val').innerText = Math.round(mem) + '%';
+            document.getElementById('mem-bar').style.width = mem + '%';
+            
+            document.getElementById('thermal-bar').style.width = thermal + '%';
+            
+            document.getElementById('net-val').innerText = (net / 25).toFixed(1) + ' GB/s';
+            document.getElementById('net-bar').style.width = net + '%';
+        }
+        setInterval(updateResources, 3000);
+
+        // Event Log Stream
+        const logMessages = [
+            { type: 'info', msg: 'Orbital_Correction_Applied' },
+            { type: 'info', msg: 'Telemetry_Stream_Sync' },
+            { type: 'success', msg: 'Packet_Integrity_Verified' },
+            { type: 'info', msg: 'Thermal_Regulation_Active' },
+            { type: 'info', msg: 'Sector_Scan_Complete' },
+            { type: 'warn', msg: 'Solar_Flux_Elevated' },
+            { type: 'info', msg: 'Gravity_Well_Mapped' },
+            { type: 'success', msg: 'Navigation_Lock_Acquired' },
+            { type: 'info', msg: 'Data_Buffer_Flushed' },
+            { type: 'info', msg: 'Quantum_Sync_Stable' },
+        ];
+        const logContainer = document.getElementById('log-container');
+        
+        function addLogEntry() {
+            const entry = logMessages[Math.floor(Math.random() * logMessages.length)];
+            const div = document.createElement('div');
+            div.className = 'text-micro flex gap-2 py-0.5 opacity-0 transition-opacity duration-300';
+            
+            const time = new Date().toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit'
+            });
+            
+            let color = 'text-cyan/70';
+            if (entry.type === 'success') color = 'text-emerald-400/70';
+            if (entry.type === 'warn') color = 'text-amber/70';
+            
+            div.innerHTML = `<span class="text-white/30 shrink-0">${time}</span><span class="${color}">${entry.msg}</span>`;
+            
+            logContainer.prepend(div);
+            
+            // Fade in
+            requestAnimationFrame(() => {
+                div.style.opacity = '1';
+            });
+            
+            // Limit log entries
+            while (logContainer.children.length > 25) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+        
+        setInterval(addLogEntry, 2000);
+        addLogEntry(); // Initial entry
+    </script>
+
 </body>
 </html>
