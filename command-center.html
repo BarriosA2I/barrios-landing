@@ -176,7 +176,7 @@
             <div class="flex items-center gap-2">
                 <i data-lucide="cpu" class="w-3.5 h-3.5 md:w-4 md:h-4 text-cyan"></i>
                 <span class="text-[10px] md:text-xs font-bold tracking-widest text-cyan">NEXUS_CORE</span>
-                <span class="text-[8px] md:text-[9px] text-gray-500 hidden sm:inline">v4.3</span>
+                <span class="text-[8px] md:text-[9px] text-gray-500 hidden sm:inline">v4.4</span>
             </div>
 
             <div class="h-4 w-px bg-white/10 hidden md:block"></div>
@@ -292,7 +292,7 @@
                             <span class="text-gray-400">SATS</span>
                             <span class="text-emerald-400 flex items-center gap-1 text-[9px]">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                6 ON
+                                8 ON
                             </span>
                         </div>
                     </div>
@@ -378,7 +378,7 @@
                         </div>
                         <div class="flex justify-between text-[9px] md:text-micro">
                             <span class="text-gray-500">OBJ</span>
-                            <span class="text-cyan font-medium">14</span>
+                            <span class="text-cyan font-medium">18</span>
                         </div>
                     </div>
                 </div>
@@ -388,7 +388,7 @@
             <div class="absolute bottom-3 md:bottom-4 right-3 md:right-4 z-20 pointer-events-none text-right">
                 <div class="flex flex-col gap-0.5">
                     <span class="text-[8px] md:text-nano text-gray-500 tracking-widest">CAM</span>
-                    <span class="text-[9px] md:text-[10px] text-cyan font-mono tracking-wider" id="coords">X:0 Y:120 Z:180</span>
+                    <span class="text-[9px] md:text-[10px] text-cyan font-mono tracking-wider" id="coords">X:0 Y:160 Z:220</span>
                 </div>
             </div>
 
@@ -418,9 +418,9 @@
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x020408, 0.001);
 
-        // Camera: balanced position - centered but closer for larger solar system
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 2000);
-        camera.position.set(0, 120, 180);
+        // Camera: positioned to see all 8 planets
+        const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 2000);
+        camera.position.set(0, 160, 220);
         camera.lookAt(0, 0, 0);
 
         // Renderer
@@ -451,10 +451,10 @@
         const stars = new THREE.Points(starGeo, starMat);
         scene.add(stars);
 
-        // Grid (larger to match orbits)
-        const gridHelper = new THREE.PolarGridHelper(130, 12, 6, 48, 0x1e3a5f, 0x1e3a5f);
+        // Grid (expanded for all 8 planets)
+        const gridHelper = new THREE.PolarGridHelper(150, 16, 8, 64, 0x1e3a5f, 0x1e3a5f);
         gridHelper.material.transparent = true;
-        gridHelper.material.opacity = 0.15;
+        gridHelper.material.opacity = 0.12;
         scene.add(gridHelper);
 
         // Sun (larger, centered)
@@ -490,15 +490,17 @@
         const ambientLight = new THREE.AmbientLight(0x404060, 0.5);
         scene.add(ambientLight);
 
-        // Planets (larger radii to fill viewport)
+        // All 8 Planets of the Solar System
         const planets = [];
         const planetData = [
-            { r: 22, size: 1.8, speed: 0.025, color: 0xA0A0A0, name: "MERC" },
-            { r: 34, size: 2.5, speed: 0.018, color: 0xF59E0B, name: "VENUS" },
-            { r: 48, size: 2.8, speed: 0.012, color: 0x00C2FF, name: "TERRA" },
-            { r: 65, size: 2.2, speed: 0.009, color: 0xEF4444, name: "MARS" },
-            { r: 88, size: 5.5, speed: 0.006, color: 0xE8D5B7, name: "JUP" },
-            { r: 115, size: 4.8, speed: 0.004, color: 0xF4D03F, ring: true, name: "SAT" },
+            { r: 18, size: 1.2, speed: 0.028, color: 0xA0A0A0, name: "MERCURY" },
+            { r: 28, size: 2.0, speed: 0.022, color: 0xE6C87A, name: "VENUS" },
+            { r: 40, size: 2.2, speed: 0.016, color: 0x00C2FF, name: "EARTH" },
+            { r: 54, size: 1.6, speed: 0.012, color: 0xEF4444, name: "MARS" },
+            { r: 75, size: 5.0, speed: 0.007, color: 0xE8C4A0, name: "JUPITER" },
+            { r: 95, size: 4.2, speed: 0.005, color: 0xF4D03F, ring: true, name: "SATURN" },
+            { r: 115, size: 2.8, speed: 0.003, color: 0x7DD3E8, ring: true, ringThin: true, name: "URANUS" },
+            { r: 135, size: 2.6, speed: 0.002, color: 0x4169E1, name: "NEPTUNE" },
         ];
 
         planetData.forEach(d => {
@@ -535,17 +537,20 @@
             });
             const mesh = new THREE.Mesh(pGeo, pMat);
 
-            // Ring for Saturn
+            // Ring for Saturn and Uranus
             if (d.ring) {
-                const rGeo = new THREE.RingGeometry(d.size * 1.5, d.size * 2.3, 48);
+                const innerMult = d.ringThin ? 1.3 : 1.5;
+                const outerMult = d.ringThin ? 1.6 : 2.3;
+                const rGeo = new THREE.RingGeometry(d.size * innerMult, d.size * outerMult, 48);
                 const rMat = new THREE.MeshBasicMaterial({
-                    color: 0xE8D5B7,
+                    color: d.ringThin ? 0x7DD3E8 : 0xE8D5B7,
                     side: THREE.DoubleSide,
                     transparent: true,
-                    opacity: 0.4
+                    opacity: d.ringThin ? 0.25 : 0.4
                 });
                 const ring = new THREE.Mesh(rGeo, rMat);
-                ring.rotation.x = Math.PI / 2.5;
+                // Uranus has nearly vertical rings
+                ring.rotation.x = d.ringThin ? Math.PI / 10 : Math.PI / 2.5;
                 mesh.add(ring);
             }
 
@@ -630,7 +635,7 @@
         });
 
         function resetCam() {
-            camera.position.set(0, 120, 180);
+            camera.position.set(0, 160, 220);
             camera.lookAt(0, 0, 0);
         }
 
@@ -693,8 +698,9 @@
             logEl.prepend(div);
             while (logEl.children.length > 20) logEl.removeChild(logEl.lastChild);
         }
-        setInterval(addLog, 2000);
+        setInterval(addLog, 2500);
         addLog();
     </script>
+
 </body>
 </html>
