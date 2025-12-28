@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    
+
     <!-- Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -55,7 +55,7 @@
             font-feature-settings: "zero" on;
             -webkit-font-smoothing: antialiased;
         }
-        
+
         /* Custom Thin Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #020408; }
@@ -67,10 +67,10 @@
             background: rgba(5, 10, 16, 0.85);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(0, 194, 255, 0.25);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5),
                         inset 0 1px 0 rgba(0, 194, 255, 0.1);
         }
-        
+
         .text-micro { font-size: 10px; line-height: 1.4; }
         .text-nano { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
 
@@ -122,13 +122,13 @@
             width: 280px;
             transition: width 0.3s ease;
         }
-        
+
         @media (max-width: 1024px) {
             .sidebar {
                 width: 240px;
             }
         }
-        
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 200px;
@@ -176,11 +176,11 @@
             <div class="flex items-center gap-2">
                 <i data-lucide="cpu" class="w-3.5 h-3.5 md:w-4 md:h-4 text-cyan"></i>
                 <span class="text-[10px] md:text-xs font-bold tracking-widest text-cyan">NEXUS_CORE</span>
-                <span class="text-[8px] md:text-[9px] text-gray-500 hidden sm:inline">v4.2</span>
+                <span class="text-[8px] md:text-[9px] text-gray-500 hidden sm:inline">v4.3</span>
             </div>
-            
+
             <div class="h-4 w-px bg-white/10 hidden md:block"></div>
-            
+
             <div class="hidden md:flex items-center gap-6">
                 <div class="flex flex-col">
                     <span class="text-[9px] text-gray-500 uppercase tracking-wider">State</span>
@@ -203,17 +203,17 @@
                 <span class="text-[9px] md:text-[10px] text-cyan tracking-widest font-medium">LIVE</span>
             </div>
         </div>
-        
+
         <div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan/40 to-transparent"></div>
     </header>
 
     <main class="flex-1 flex overflow-hidden bg-obsidian relative min-h-0">
-        
+
         <!-- LEFT SIDEBAR: Collapsible on mobile -->
         <aside class="sidebar flex flex-col border-r border-border bg-[#030508] z-30 relative shrink-0" id="sidebar">
-            
+
             <!-- Toggle Button (mobile) -->
-            <button 
+            <button
                 class="md:hidden absolute -right-6 top-4 w-6 h-12 bg-panel border border-border border-l-0 rounded-r flex items-center justify-center z-50"
                 onclick="toggleSidebar()"
             >
@@ -230,7 +230,7 @@
                         </span>
                         <span class="text-[8px] text-emerald-400 border border-emerald-400/30 px-1 py-0.5 bg-emerald-400/5">OK</span>
                     </div>
-                    
+
                     <div class="space-y-3">
                         <div class="group">
                             <div class="flex justify-between text-micro mb-1">
@@ -241,7 +241,7 @@
                                 <div class="h-full bg-gradient-to-r from-cyan to-cyan/70 transition-all duration-500" id="cpu-bar" style="width: 42%"></div>
                             </div>
                         </div>
-                        
+
                         <div class="group">
                             <div class="flex justify-between text-micro mb-1">
                                 <span class="text-gray-400">MEM</span>
@@ -272,7 +272,7 @@
                             Orbitals
                         </span>
                     </div>
-                    
+
                     <div class="space-y-1.5" id="orbital-status">
                         <div class="flex items-center justify-between text-micro py-1 px-1.5 bg-white/[0.02]">
                             <span class="text-gray-400">SOL</span>
@@ -307,7 +307,7 @@
                         </span>
                         <span class="text-[8px] text-cyan border border-cyan/20 px-1 py-0.5 bg-cyan/5">LIVE</span>
                     </div>
-                    
+
                     <div class="flex-1 overflow-y-auto space-y-1 pr-1 min-h-0" id="log-container">
                         <div class="text-micro flex gap-1.5 text-gray-400 py-0.5">
                             <span class="text-white/30 shrink-0 text-[9px]">--:--</span>
@@ -323,7 +323,7 @@
                         <span class="text-micro text-cyan font-medium" id="speed-val">1.0x</span>
                     </div>
                     <input type="range" min="0.2" max="3" step="0.1" value="1" id="speed-slider" class="mb-3">
-                    
+
                     <div class="grid grid-cols-2 gap-2">
                         <button class="ctrl-btn border border-white/10 bg-white/5 hover:bg-cyan/10 hover:border-cyan/30 text-white/70 hover:text-cyan py-2 text-[9px] transition-all uppercase tracking-wider flex items-center justify-center gap-1" onclick="resetCam()">
                             <i data-lucide="crosshair" class="w-3 h-3"></i> Reset
@@ -338,7 +338,7 @@
 
         <!-- RIGHT: ORBITAL ENGINE (Canvas) -->
         <section class="flex-1 relative bg-black min-w-0">
-            
+
             <!-- CANVAS CONTAINER -->
             <div id="canvas-container" class="absolute inset-0 z-10"></div>
 
@@ -388,7 +388,7 @@
             <div class="absolute bottom-3 md:bottom-4 right-3 md:right-4 z-20 pointer-events-none text-right">
                 <div class="flex flex-col gap-0.5">
                     <span class="text-[8px] md:text-nano text-gray-500 tracking-widest">CAM</span>
-                    <span class="text-[9px] md:text-[10px] text-cyan font-mono tracking-wider" id="coords">X:0 Y:250 Z:350</span>
+                    <span class="text-[9px] md:text-[10px] text-cyan font-mono tracking-wider" id="coords">X:0 Y:120 Z:180</span>
                 </div>
             </div>
 
@@ -418,9 +418,9 @@
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x020408, 0.001);
 
-        // FIX: Camera positioned higher and further back, looking at center
-        const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 2000);
-        camera.position.set(0, 250, 350);
+        // Camera: balanced position - centered but closer for larger solar system
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 2000);
+        camera.position.set(0, 120, 180);
         camera.lookAt(0, 0, 0);
 
         // Renderer
@@ -433,7 +433,7 @@
         container.appendChild(renderer.domElement);
 
         // --- 2. ORBITAL SYSTEM ---
-        
+
         // Starfield
         const starGeo = new THREE.BufferGeometry();
         const starCount = 2500;
@@ -442,26 +442,26 @@
             starPos[i] = (Math.random() - 0.5) * 1200;
         }
         starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-        const starMat = new THREE.PointsMaterial({ 
-            color: 0xaaaaaa, 
-            size: 0.8, 
-            transparent: true, 
-            opacity: 0.8 
+        const starMat = new THREE.PointsMaterial({
+            color: 0xaaaaaa,
+            size: 0.8,
+            transparent: true,
+            opacity: 0.8
         });
         const stars = new THREE.Points(starGeo, starMat);
         scene.add(stars);
 
-        // Grid
-        const gridHelper = new THREE.PolarGridHelper(100, 12, 6, 48, 0x1e3a5f, 0x1e3a5f);
+        // Grid (larger to match orbits)
+        const gridHelper = new THREE.PolarGridHelper(130, 12, 6, 48, 0x1e3a5f, 0x1e3a5f);
         gridHelper.material.transparent = true;
         gridHelper.material.opacity = 0.15;
         scene.add(gridHelper);
 
-        // Sun (centered, larger glow)
-        const sunGeo = new THREE.SphereGeometry(8, 32, 32);
+        // Sun (larger, centered)
+        const sunGeo = new THREE.SphereGeometry(10, 32, 32);
         const sunMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
         const sun = new THREE.Mesh(sunGeo, sunMat);
-        
+
         // Sun Glow
         const glowCanvas = document.createElement('canvas');
         glowCanvas.width = 256; glowCanvas.height = 256;
@@ -474,15 +474,15 @@
         glowCtx.fillStyle = glowGrad;
         glowCtx.fillRect(0, 0, 256, 256);
         const glowTex = new THREE.CanvasTexture(glowCanvas);
-        const sunGlowMat = new THREE.SpriteMaterial({ 
-            map: glowTex, 
-            transparent: true, 
-            blending: THREE.AdditiveBlending 
+        const sunGlowMat = new THREE.SpriteMaterial({
+            map: glowTex,
+            transparent: true,
+            blending: THREE.AdditiveBlending
         });
         const sunGlow = new THREE.Sprite(sunGlowMat);
-        sunGlow.scale.set(60, 60, 1);
+        sunGlow.scale.set(80, 80, 1);
         sun.add(sunGlow);
-        
+
         const sunLight = new THREE.PointLight(0xFFFFFF, 2, 500);
         sun.add(sunLight);
         scene.add(sun);
@@ -490,15 +490,15 @@
         const ambientLight = new THREE.AmbientLight(0x404060, 0.5);
         scene.add(ambientLight);
 
-        // Planets (scaled down radii for better fit)
+        // Planets (larger radii to fill viewport)
         const planets = [];
         const planetData = [
-            { r: 18, size: 1.5, speed: 0.025, color: 0xA0A0A0, name: "MERC" },
-            { r: 28, size: 2.2, speed: 0.018, color: 0xF59E0B, name: "VENUS" },
-            { r: 40, size: 2.5, speed: 0.012, color: 0x00C2FF, name: "TERRA" },
-            { r: 55, size: 2.0, speed: 0.009, color: 0xEF4444, name: "MARS" },
-            { r: 75, size: 5.0, speed: 0.006, color: 0xE8D5B7, name: "JUP" },
-            { r: 95, size: 4.2, speed: 0.004, color: 0xF4D03F, ring: true, name: "SAT" },
+            { r: 22, size: 1.8, speed: 0.025, color: 0xA0A0A0, name: "MERC" },
+            { r: 34, size: 2.5, speed: 0.018, color: 0xF59E0B, name: "VENUS" },
+            { r: 48, size: 2.8, speed: 0.012, color: 0x00C2FF, name: "TERRA" },
+            { r: 65, size: 2.2, speed: 0.009, color: 0xEF4444, name: "MARS" },
+            { r: 88, size: 5.5, speed: 0.006, color: 0xE8D5B7, name: "JUP" },
+            { r: 115, size: 4.8, speed: 0.004, color: 0xF4D03F, ring: true, name: "SAT" },
         ];
 
         planetData.forEach(d => {
@@ -506,11 +506,11 @@
             const orbitCurve = new THREE.EllipseCurve(0, 0, d.r, d.r, 0, 2 * Math.PI, false, 0);
             const orbitPoints = orbitCurve.getPoints(96).map(p => new THREE.Vector3(p.x, 0, p.y));
             const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
-            
-            const orbitMat = new THREE.LineBasicMaterial({ 
-                color: 0x00C2FF, 
-                transparent: true, 
-                opacity: 0.2 
+
+            const orbitMat = new THREE.LineBasicMaterial({
+                color: 0x00C2FF,
+                transparent: true,
+                opacity: 0.2
             });
             const orbitLine = new THREE.Line(orbitGeo, orbitMat);
             scene.add(orbitLine);
@@ -527,22 +527,22 @@
 
             // Planet
             const pGeo = new THREE.SphereGeometry(d.size, 24, 24);
-            const pMat = new THREE.MeshPhongMaterial({ 
-                color: d.color, 
+            const pMat = new THREE.MeshPhongMaterial({
+                color: d.color,
                 emissive: d.color,
                 emissiveIntensity: 0.12,
                 shininess: 30
             });
             const mesh = new THREE.Mesh(pGeo, pMat);
-            
+
             // Ring for Saturn
             if (d.ring) {
                 const rGeo = new THREE.RingGeometry(d.size * 1.5, d.size * 2.3, 48);
-                const rMat = new THREE.MeshBasicMaterial({ 
-                    color: 0xE8D5B7, 
-                    side: THREE.DoubleSide, 
-                    transparent: true, 
-                    opacity: 0.4 
+                const rMat = new THREE.MeshBasicMaterial({
+                    color: 0xE8D5B7,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.4
                 });
                 const ring = new THREE.Mesh(rGeo, rMat);
                 ring.rotation.x = Math.PI / 2.5;
@@ -569,7 +569,7 @@
             requestAnimationFrame(animate);
             frameCount++;
             fpsFrames++;
-            
+
             // FPS
             const now = performance.now();
             if (now - lastTime >= 1000) {
@@ -592,7 +592,7 @@
             stars.rotation.y -= 0.00008 * timeScale;
 
             // Sun pulse
-            const pulse = 60 + Math.sin(now * 0.002) * 4;
+            const pulse = 80 + Math.sin(now * 0.002) * 5;
             sunGlow.scale.set(pulse, pulse, 1);
 
             renderer.render(scene, camera);
@@ -600,14 +600,14 @@
             // Update camera coords
             if (frameCount % 15 === 0) {
                 const { x, y, z } = camera.position;
-                document.getElementById('coords').innerText = 
+                document.getElementById('coords').innerText =
                     `X:${Math.round(x)} Y:${Math.round(y)} Z:${Math.round(z)}`;
             }
         }
         animate();
 
         // --- 4. UI ---
-        
+
         // Resize
         const ro = new ResizeObserver(() => {
             const w = container.clientWidth || window.innerWidth;
@@ -630,7 +630,7 @@
         });
 
         function resetCam() {
-            camera.position.set(0, 250, 350);
+            camera.position.set(0, 120, 180);
             camera.lookAt(0, 0, 0);
         }
 
@@ -658,7 +658,7 @@
             const cpu = 35 + Math.random() * 20;
             const mem = 60 + Math.random() * 15;
             const net = 30 + Math.random() * 25;
-            
+
             document.getElementById('cpu-val').innerText = Math.round(cpu) + '%';
             document.getElementById('cpu-bar').style.width = cpu + '%';
             document.getElementById('mem-val').innerText = Math.round(mem) + '%';
@@ -680,7 +680,7 @@
             { t: 'info', m: 'Buffer_Flush' },
         ];
         const logEl = document.getElementById('log-container');
-        
+
         function addLog() {
             const e = logMsgs[Math.floor(Math.random() * logMsgs.length)];
             const div = document.createElement('div');
@@ -693,9 +693,8 @@
             logEl.prepend(div);
             while (logEl.children.length > 20) logEl.removeChild(logEl.lastChild);
         }
-        setInterval(addLog, 2500);
+        setInterval(addLog, 2000);
         addLog();
     </script>
-
 </body>
 </html>
