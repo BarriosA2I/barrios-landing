@@ -1,13 +1,16 @@
 /**
- * Nexus Chat - Sales-Safe SSE Streaming
+ * Nexus Brain Chat Interface
+ * Updated to use Cognitive Orchestrator backend via API Gateway
  * Event types: meta, delta, final, error
- * NO technical exposure: no confidence, no trace_id, no sources
  * P0-E: Session persistence via localStorage
  */
 (function() {
   'use strict';
 
-  const NEXUS_API_BASE = window.NEXUS_API_BASE || 'https://nexus-api-wud4.onrender.com/api/nexus';
+  // API endpoint - Production: Render, Development: localhost
+  // Configure via window.NEXUS_API_BASE before loading this script
+  const NEXUS_API_BASE = window.NEXUS_API_BASE || 'https://barrios-api-gateway.onrender.com';
+
   const STORAGE_KEYS = {
     SESSION_ID: 'nexus_session_id',
     MESSAGES: 'nexus_chat_messages',
@@ -15,9 +18,9 @@
   };
   const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-  console.log('[NEXUS] Ready');
+  console.log('[NEXUS] Chat module ready');
 
-  // P0-E: Get or create persistent session ID
+  // Session management
   let sessionId = getOrCreateSessionId();
 
   function generateSessionId() {
@@ -30,7 +33,6 @@
       if (lastActivity) {
         const elapsed = Date.now() - parseInt(lastActivity, 10);
         if (elapsed > SESSION_EXPIRY_MS) {
-          // Session expired - clear all
           clearStoredSession();
           return createAndStoreSession();
         }
@@ -65,7 +67,7 @@
     } catch (e) {}
   }
 
-  // P0-E: Message persistence
+  // Message persistence
   function getStoredMessages() {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.MESSAGES);
@@ -77,7 +79,6 @@
 
   function storeMessages(messages) {
     try {
-      // Keep last 50 messages
       const toStore = messages.slice(-50);
       localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(toStore));
       localStorage.setItem(STORAGE_KEYS.LAST_ACTIVITY, Date.now().toString());
@@ -100,24 +101,31 @@
       .replace(/\n/g, '<br>');
   }
 
-  // Cleanup - ALWAYS re-enable input
+  // Cleanup - re-enable input
   function cleanup() {
     window.NexusPanel?.enableInput();
   }
 
-  // Stream message from API
+  // Stream message from API Gateway
   async function stream(message, messageElement) {
     const contentEl = messageElement.querySelector('.nexus-message-content');
     let accumulatedContent = '';
-    let messageStored = false; // P0-E: Guard against duplicate storage
+    let messageStored = false;
 
     try {
-      const response = await fetch(`${NEXUS_API_BASE}/chat`, {
+      // Store user message
+      addMessageToStore('user', message);
+
+      // Call the streaming endpoint
+      const response = await fetch(`${NEXUS_API_BASE}/api/chat/stream`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-ID': sessionId
+        },
         body: JSON.stringify({
-          session_id: sessionId,
           message: message,
+          session_id: sessionId,
           stream: true
         })
       });
@@ -138,7 +146,7 @@
         }
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
+        const lines = buffer.split('\n\n');
         buffer = lines.pop() || '';
 
         for (const line of lines) {
@@ -147,37 +155,26 @@
               const data = JSON.parse(line.slice(6));
 
               switch (data.type) {
-                case 'meta':
-                  // Status update (thinking, working)
-                  window.NexusPanel?.updateStatus(data.state || 'thinking');
-                  break;
-
-                case 'delta':
-                  // Text chunk - accumulate and render
+                case 'token':
+                  // Token chunk from orchestrator
                   contentEl.classList.remove('nexus-message--streaming');
-                  accumulatedContent += (data.text || '');
+                  accumulatedContent += (data.content || '');
                   contentEl.innerHTML = parseMarkdown(accumulatedContent);
                   // Auto-scroll
                   const container = contentEl.closest('.nexus-panel-messages');
                   if (container) container.scrollTop = container.scrollHeight;
                   break;
 
-                case 'final':
-                  // Stream complete - ALWAYS cleanup
+                case 'complete':
+                  // Stream complete
                   cleanup();
-                  // P0-E: Store assistant message (only once)
                   if (accumulatedContent && !messageStored) {
                     addMessageToStore('assistant', accumulatedContent);
                     messageStored = true;
                   }
-                  // Store support code for reference (internal)
-                  if (data.support_code) {
-                    console.log('Support:', data.support_code);
-                  }
                   break;
 
                 case 'error':
-                  // Show error message
                   contentEl.innerHTML = `
                     <div class="nexus-error">
                       <span>${data.message || 'Something went wrong. Try again.'}</span>
@@ -187,7 +184,7 @@
                   break;
               }
             } catch (e) {
-              console.warn('Parse error:', e);
+              console.warn('[NEXUS] Parse error:', e);
             }
           }
         }
@@ -197,7 +194,6 @@
       contentEl.classList.remove('nexus-message--streaming');
       if (accumulatedContent) {
         contentEl.innerHTML = parseMarkdown(accumulatedContent);
-        // P0-E: Fallback storage if 'final' event was missed
         if (!messageStored) {
           addMessageToStore('assistant', accumulatedContent);
           messageStored = true;
@@ -205,16 +201,32 @@
       }
 
     } catch (error) {
-      console.error('Chat error:', error.message);
+      console.error('[NEXUS] Chat error:', error.message);
       contentEl.classList.remove('nexus-message--streaming');
 
-      if (accumulatedContent && accumulatedContent.length > 10) {
-        contentEl.innerHTML = parseMarkdown(accumulatedContent);
-        // P0-E: Store partial response on error (only if not already stored)
-        if (!messageStored) {
-          addMessageToStore('assistant', accumulatedContent);
+      // Fallback to non-streaming endpoint
+      try {
+        const fallbackResponse = await fetch(`${NEXUS_API_BASE}/api/chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Session-ID': sessionId
+          },
+          body: JSON.stringify({
+            message: message,
+            session_id: sessionId,
+            stream: false
+          })
+        });
+
+        if (fallbackResponse.ok) {
+          const data = await fallbackResponse.json();
+          contentEl.innerHTML = parseMarkdown(data.response || 'Got it!');
+          addMessageToStore('assistant', data.response);
+        } else {
+          throw new Error('Fallback failed');
         }
-      } else {
+      } catch (fallbackError) {
         contentEl.innerHTML = `
           <div class="nexus-error">
             <span>Connection issue. Try again in a moment.</span>
@@ -225,17 +237,52 @@
     }
   }
 
+  // Non-streaming chat (fallback)
+  async function chat(message) {
+    try {
+      addMessageToStore('user', message);
+
+      const response = await fetch(`${NEXUS_API_BASE}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-ID': sessionId
+        },
+        body: JSON.stringify({
+          message: message,
+          session_id: sessionId,
+          stream: false
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      addMessageToStore('assistant', data.response);
+      return data;
+
+    } catch (error) {
+      console.error('[NEXUS] Chat error:', error);
+      throw error;
+    }
+  }
+
   // Public API
   window.NexusChat = {
     stream,
+    chat,
     resetSession: function() {
       clearStoredSession();
       sessionId = createAndStoreSession();
     },
-    // P0-E: Expose persistence functions
     getStoredMessages,
     addMessageToStore,
     clearHistory: clearStoredSession,
-    getSessionId: function() { return sessionId; }
+    getSessionId: function() { return sessionId; },
+    setApiBase: function(url) {
+      window.NEXUS_API_BASE = url;
+    }
   };
 })();
