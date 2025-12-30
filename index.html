@@ -1126,21 +1126,95 @@ animation: signal-sweep 2s linear infinite;
         border-bottom: none;
     }
 
-    /* Neural Video Background - Smooth & Slow */
-    #neural-video-bg {
-        opacity: 1;
-        will-change: opacity;
+    /* Neural Ambient Glow - CSS-only, GPU-accelerated (per frontend skill) */
+    /* Uses: --accent-cyan: #00D4FF, --accent-glow: rgba(0, 212, 255, 0.15) */
+    #neural-ambient {
+        position: fixed;
+        inset: 0;
+        z-index: -20;
+        overflow: hidden;
+        pointer-events: none;
     }
 
-    #neural-video-bg video {
-        filter: hue-rotate(180deg) saturate(2.0) brightness(1.3) contrast(1.1);
-        mix-blend-mode: screen;
-        will-change: transform;
-        transform: translateZ(0); /* GPU acceleration */
+    .neural-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0;
+        will-change: transform, opacity;
+        transform: translateZ(0); /* GPU layer */
     }
 
-    .bg-gradient-radial {
-        background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 10, 0.3) 60%, rgba(10, 10, 10, 0.9) 100%);
+    .neural-orb-1 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(0, 212, 255, 0.12) 0%, transparent 70%);
+        top: -200px;
+        right: -100px;
+        animation: neural-drift-1 45s ease-in-out infinite;
+    }
+
+    .neural-orb-2 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+        bottom: -150px;
+        left: -100px;
+        animation: neural-drift-2 60s ease-in-out infinite;
+    }
+
+    .neural-orb-3 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(0, 212, 255, 0.06) 0%, transparent 70%);
+        top: 40%;
+        left: 30%;
+        animation: neural-drift-3 50s ease-in-out infinite;
+    }
+
+    @keyframes neural-drift-1 {
+        0%, 100% {
+            transform: translate(0, 0) translateZ(0);
+            opacity: 0.4;
+        }
+        25% {
+            transform: translate(-50px, 80px) translateZ(0);
+            opacity: 0.6;
+        }
+        50% {
+            transform: translate(-100px, 40px) translateZ(0);
+            opacity: 0.3;
+        }
+        75% {
+            transform: translate(-30px, 100px) translateZ(0);
+            opacity: 0.5;
+        }
+    }
+
+    @keyframes neural-drift-2 {
+        0%, 100% {
+            transform: translate(0, 0) translateZ(0);
+            opacity: 0.3;
+        }
+        33% {
+            transform: translate(80px, -60px) translateZ(0);
+            opacity: 0.5;
+        }
+        66% {
+            transform: translate(40px, -100px) translateZ(0);
+            opacity: 0.2;
+        }
+    }
+
+    @keyframes neural-drift-3 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1) translateZ(0);
+            opacity: 0.2;
+        }
+        50% {
+            transform: translate(100px, -50px) scale(1.1) translateZ(0);
+            opacity: 0.4;
+        }
     }
 
     </style>
@@ -1170,31 +1244,12 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
 
 <body class="bg-gradient-to-b from-void to-obsidian text-white font-sans antialiased min-h-screen w-full overflow-x-clip flex flex-col selection:bg-primary/20" id="main-body">
 
-<!-- GLOBAL AI BRAIN VIDEO BACKGROUND -->
-<div id="neural-video-bg" class="fixed inset-0 -z-20 overflow-hidden pointer-events-none">
-  <video
-    id="brain-video"
-    autoplay
-    muted
-    loop
-    playsinline
-    class="absolute w-full h-full object-cover"
-    style="filter: hue-rotate(180deg) saturate(2.0) brightness(1.3); mix-blend-mode: screen; opacity: 0.30;"
-  >
-    <source src="assets/backgrounds/ai-brain.mp4" type="video/mp4">
-  </video>
-  <div class="absolute inset-0 bg-gradient-radial from-transparent via-[#0a0a0a]/30 to-[#0a0a0a]/90"></div>
+<!-- NEURAL AMBIENT GLOW - CSS-only, no video (per frontend skill: "subtle, purposeful") -->
+<div id="neural-ambient">
+  <div class="neural-orb neural-orb-1"></div>
+  <div class="neural-orb neural-orb-2"></div>
+  <div class="neural-orb neural-orb-3"></div>
 </div>
-
-<script>
-  // Slow down brain video playback
-  document.addEventListener('DOMContentLoaded', function() {
-    const video = document.getElementById('brain-video');
-    if (video) {
-      video.playbackRate = 0.3; // 30% speed - much slower
-    }
-  });
-</script>
 
 <!-- Cinematic Noise/Scanlines -->
 <div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[90] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
