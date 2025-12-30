@@ -55,6 +55,41 @@ barrios-landing/
 ## Current Priority
 Nexus Brain chat integration with Cognitive Orchestrator (Phase 4 of Nervous System)
 
+## 🚨 MANDATORY: Frontend Design Skill
+
+**BEFORE making ANY frontend changes** (CSS, HTML, animations, colors, layouts):
+
+1. **ALWAYS READ FIRST**: `.claude/skills/frontend-design/SKILL.md`
+2. Follow the design system variables, spacing, and color palette
+3. Use the component patterns defined in the skill
+4. Reference the skill when explaining design decisions
+
+**DO NOT** make trial-and-error CSS commits. Follow the skill.
+
+Example workflow:
+```bash
+# Before ANY frontend work:
+cat .claude/skills/frontend-design/SKILL.md
+
+# Then implement according to the skill
+```
+
+### Key Design Values (Quick Reference)
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--bg-primary` | #0a0a0a | Page background |
+| `--bg-secondary` | #141414 | Cards, panels |
+| `--accent-cyan` | #00D4FF | Primary accent, CTAs |
+| `--accent-purple` | #8B5CF6 | Secondary accent |
+| `--text-primary` | #fafafa | Headings |
+| `--text-secondary` | #a1a1aa | Body text |
+
+### Animation Guidelines
+- **Slow & smooth**: 20s+ for ambient effects
+- **No jittery opacity pulses**: Use `transform` for GPU acceleration
+- **playbackRate**: 0.3 for background videos
+- **will-change**: Add for animated elements
+
 ## CHROMADON Browser Automation (Chrome DevTools MCP)
 
 Location: `C:\Users\gary\chromadon`
