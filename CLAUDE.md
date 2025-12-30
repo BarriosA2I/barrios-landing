@@ -54,3 +54,59 @@ barrios-landing/
 
 ## Current Priority
 Nexus Brain chat integration with Cognitive Orchestrator (Phase 4 of Nervous System)
+
+## CHROMADON Browser Automation (Chrome DevTools MCP)
+
+Location: `C:\Users\gary\chromadon`
+
+**PREFERRED METHOD**: Use Chrome DevTools MCP - works with already-open Chrome, no profile management needed.
+
+### Deploy to Vercel (MCP Method):
+
+```
+# Step 1: Navigate to deployments
+mcp__chrome-devtools__navigate_page(url="https://vercel.com/garys-projects-ff523529/barrios-landing/deployments")
+
+# Step 2: Take snapshot to find element UIDs
+mcp__chrome-devtools__take_snapshot()
+
+# Step 3: Click menu button (look for "Deployment Actions" in snapshot)
+mcp__chrome-devtools__click(uid="<menu_uid>")
+
+# Step 4: Click "Redeploy" in dropdown
+mcp__chrome-devtools__click(uid="<redeploy_uid>")
+
+# Step 5: Confirm in dialog
+mcp__chrome-devtools__click(uid="<confirm_uid>")
+
+# Step 6: Screenshot result
+mcp__chrome-devtools__take_screenshot(filePath="C:\\Users\\gary\\chromadon\\screenshots\\deploy.png")
+```
+
+### Chrome DevTools MCP Commands:
+
+| Command | Description |
+|---------|-------------|
+| `navigate_page(url)` | Go to URL |
+| `take_snapshot()` | Get accessibility tree with UIDs |
+| `click(uid)` | Click element by UID |
+| `fill(uid, value)` | Type into input |
+| `take_screenshot(filePath)` | Save screenshot |
+| `list_pages()` | List open tabs |
+
+### Vercel Project URLs:
+
+- **barrios-landing**: `https://vercel.com/garys-projects-ff523529/barrios-landing`
+
+### Screenshot Output:
+
+`C:\Users\gary\chromadon\screenshots\`
+
+### Fallback (Playwright - if MCP unavailable):
+
+```bash
+cd C:\Users\gary\chromadon
+python vercel_deploy.py barrios-landing
+```
+
+See `C:\Users\gary\chromadon\CHROMADON.md` for full documentation.
