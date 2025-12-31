@@ -1,6 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* ==========================================
+   BARRIOS A2I - Theme Configuration (Tailwind v4)
+   ========================================== */
+@theme {
+  /* Brand Colors */
+  --color-void: #0a0a0f;
+  --color-obsidian: #0a0a1e;
+  --color-primary: #00CED1;
+  --color-accent: #F59E0B;
+  --color-muted: #94a3b8;
+  --color-brand-teal: #00CED1;
+  --color-brand-gold: #ffd700;
+
+  /* Additional design system colors */
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #141414;
+  --color-bg-tertiary: #1a1a1a;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-accent-cyan: #00CED1;
+  --color-accent-purple: #8B5CF6;
+
+  /* Font Families */
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Letter Spacing */
+  --tracking-tighter: -0.04em;
+  --tracking-tight: -0.02em;
+}
 
 /* ==========================================
    BARRIOS A2I - Custom CSS
