@@ -22,16 +22,76 @@
                 colors: {
                     void: '#0a0a0f',
                     obsidian: '#0a0a1e',
-                    primary: '#00C2FF',
+                    primary: '#00CED1',
                     accent: '#F59E0B',
                     muted: '#94a3b8',
-                    'brand-blue': '#00C2FF',
+                    'brand-teal': '#00CED1',
                     'brand-gold': '#ffd700',
                 },
             }
         }
     }
     </script>
+    <style>
+        @keyframes checkmark-draw {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 206, 209, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 206, 209, 0.5); }
+        }
+        .checkmark-path {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: checkmark-draw 0.6s ease-out forwards;
+        }
+        .success-fade-in {
+            animation: fade-in-up 0.5s ease-out forwards;
+        }
+        .success-icon-pulse {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        .form-fade-out {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+        /* Focus styles */
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: rgba(0, 206, 209, 0.5) !important;
+            box-shadow: 0 0 0 2px rgba(0, 206, 209, 0.2);
+        }
+        /* Error styles */
+        .field-error {
+            border-color: #ef4444 !important;
+        }
+        .field-error:focus {
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+        }
+        /* Custom select arrow */
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+        }
+        /* Spinner */
+        .spinner {
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body class="bg-obsidian min-h-screen text-white">
     <!-- Header -->
@@ -47,88 +107,234 @@
 
     <!-- Content -->
     <main class="pt-32 pb-20 px-6">
-        <div class="max-w-3xl mx-auto">
-            <div class="mb-12 text-center">
-                <span class="text-brand-blue font-mono text-[10px] tracking-widest">[ INITIALIZE_CONTACT ]</span>
-                <h1 class="text-4xl md:text-5xl font-serif text-white mt-2">Get In Touch</h1>
-                <p class="text-gray-400 mt-4 max-w-xl mx-auto">Ready to build your AI workforce? Let's discuss how Barrios A2I can transform your operations.</p>
-            </div>
+        <div class="max-w-6xl mx-auto">
+            <div class="grid lg:grid-cols-5 gap-8 lg:gap-12">
+                <!-- LEFT COLUMN: Form -->
+                <div class="lg:col-span-3">
+                    <div class="mb-8">
+                        <span class="text-[#00CED1] font-mono text-[10px] tracking-widest">[ INITIALIZE_CONTACT ]</span>
+                        <h1 class="text-3xl md:text-4xl font-serif text-white mt-2 leading-tight">Start your AI transformation — the clean way.</h1>
+                        <p class="text-gray-400 mt-4">Tell us what's slow, expensive, or inconsistent. We'll respond within 1 business day with scope, timeline, and next steps.</p>
+                    </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Contact Info -->
-                <div class="space-y-6">
-                    <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                    <!-- Form Container (fixed height to prevent layout shift) -->
+                    <div id="form-container" class="min-h-[520px] relative">
+                        <!-- Contact Form -->
+                        <form id="contact-form" class="space-y-5 transition-all duration-300" novalidate>
+                            <!-- Honeypot (spam protection) -->
+                            <div class="absolute -left-[9999px]" aria-hidden="true">
+                                <label for="website_url">Website</label>
+                                <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
+                            </div>
+
+                            <!-- Name -->
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-300 mb-1.5">Name <span class="text-gray-500">(optional)</span></label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    autocomplete="name"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                    placeholder="Your name"
+                                >
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-300 mb-1.5">Email <span class="text-red-400">*</span></label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    autocomplete="email"
+                                    aria-describedby="email-error"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                    placeholder="you@company.com"
+                                >
+                                <p id="email-error" class="mt-1.5 text-sm text-red-400 hidden" role="alert"></p>
+                            </div>
+
+                            <!-- Company & Phone Row -->
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <!-- Company -->
+                                <div>
+                                    <label for="company" class="block text-sm font-medium text-gray-300 mb-1.5">Company <span class="text-gray-500">(optional)</span></label>
+                                    <input
+                                        type="text"
+                                        id="company"
+                                        name="company"
+                                        autocomplete="organization"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                        placeholder="Your company"
+                                    >
+                                </div>
+                                <!-- Phone -->
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-300 mb-1.5">Phone <span class="text-gray-500">(optional)</span></label>
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        name="phone"
+                                        autocomplete="tel"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                        placeholder="+1 (555) 000-0000"
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- Interest -->
+                            <div>
+                                <label for="interest" class="block text-sm font-medium text-gray-300 mb-1.5">What are you interested in? <span class="text-gray-500">(optional)</span></label>
+                                <select
+                                    id="interest"
+                                    name="interest"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white transition-all duration-200 hover:border-[#00CED1]/30 appearance-none cursor-pointer"
+                                >
+                                    <option value="" class="bg-obsidian">Select an option...</option>
+                                    <option value="AI Automation Consulting" class="bg-obsidian">AI Automation Consulting</option>
+                                    <option value="Marketing Overlord" class="bg-obsidian">Marketing Overlord</option>
+                                    <option value="Custom AI Agent Development" class="bg-obsidian">Custom AI Agent Development</option>
+                                    <option value="Enterprise Integration" class="bg-obsidian">Enterprise Integration</option>
+                                    <option value="Other" class="bg-obsidian">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Message -->
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-300 mb-1.5">Message <span class="text-red-400">*</span></label>
+                                <textarea
+                                    id="message"
+                                    name="message"
+                                    required
+                                    rows="4"
+                                    aria-describedby="message-error"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30 resize-none"
+                                    placeholder="Tell us about your project, challenges, or goals..."
+                                ></textarea>
+                                <p id="message-error" class="mt-1.5 text-sm text-red-400 hidden" role="alert"></p>
+                            </div>
+
+                            <!-- Offline Notice -->
+                            <div id="offline-notice" class="hidden px-4 py-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                                <div class="flex items-center gap-2 text-amber-400 text-sm">
+                                    <iconify-icon icon="mdi:wifi-off" class="text-lg"></iconify-icon>
+                                    <span>You're offline. Your message will auto-sync when reconnected.</span>
+                                </div>
+                            </div>
+
+                            <!-- Submit Error -->
+                            <div id="submit-error" class="hidden px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg" role="alert">
+                                <div class="flex items-center gap-2 text-red-400 text-sm">
+                                    <iconify-icon icon="mdi:alert-circle" class="text-lg"></iconify-icon>
+                                    <span id="submit-error-text">Something went wrong. Please try again.</span>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button
+                                type="submit"
+                                id="submit-btn"
+                                class="w-full px-6 py-4 bg-[#00CED1]/20 border border-[#00CED1]/50 text-[#00CED1] font-mono text-sm rounded-lg hover:bg-[#00CED1]/30 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <span id="btn-text">[ TRANSMIT SIGNAL ]</span>
+                                <div id="btn-spinner" class="hidden w-4 h-4 spinner"></div>
+                            </button>
+                        </form>
+
+                        <!-- Success State -->
+                        <div id="success-state" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center">
+                            <!-- Animated Checkmark -->
+                            <div class="w-20 h-20 rounded-full bg-[#00CED1]/10 border-2 border-[#00CED1]/50 flex items-center justify-center mb-6 success-icon-pulse">
+                                <svg class="w-10 h-10 text-[#00CED1]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path class="checkmark-path" d="M5 12l5 5L20 7"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-serif text-white mb-3 success-fade-in" style="animation-delay: 0.2s">Signal received.</h2>
+                            <p class="text-gray-400 max-w-sm mb-6 success-fade-in" style="animation-delay: 0.4s">We'll reply within 1 business day with next steps. If urgent, reply with 'URGENT' and we'll prioritize.</p>
+                            <button
+                                id="reset-btn"
+                                class="text-[#00CED1] text-sm font-mono hover:underline underline-offset-4 success-fade-in"
+                                style="animation-delay: 0.6s"
+                            >
+                                [ SEND_ANOTHER ]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Contact Info & Services -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Direct Contact -->
+                    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg p-6">
                         <h3 class="text-lg font-serif text-white mb-4">Direct Contact</h3>
                         <div class="space-y-4">
-                            <a href="mailto:contact@barriosa2i.com" class="flex items-center gap-3 text-gray-400 hover:text-brand-blue transition-colors">
+                            <a href="mailto:contact@barriosa2i.com" class="flex items-center gap-3 text-gray-400 hover:text-[#00CED1] transition-colors">
                                 <iconify-icon icon="mdi:email-outline" class="text-xl"></iconify-icon>
                                 <span>contact@barriosa2i.com</span>
                             </a>
                         </div>
                     </div>
 
-                    <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                    <!-- Social Links -->
+                    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg p-6">
                         <h3 class="text-lg font-serif text-white mb-4">Connect With Us</h3>
                         <div class="flex gap-4">
-                            <a href="https://www.linkedin.com/in/gary-barrios-3953b2390/" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded hover:border-brand-blue/50 hover:text-brand-blue transition-colors">
+                            <a href="https://www.linkedin.com/in/gary-barrios-3953b2390/" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded hover:border-[#00CED1]/50 hover:text-[#00CED1] transition-colors">
                                 <iconify-icon icon="mdi:linkedin" class="text-xl"></iconify-icon>
                             </a>
-                            <a href="https://www.tiktok.com/@garyjbarrios" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded hover:border-brand-blue/50 hover:text-brand-blue transition-colors">
+                            <a href="https://www.tiktok.com/@garyjbarrios" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded hover:border-[#00CED1]/50 hover:text-[#00CED1] transition-colors">
                                 <iconify-icon icon="ic:baseline-tiktok" class="text-xl"></iconify-icon>
                             </a>
-                            <a href="https://www.facebook.com/barrios.ai.gary" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded hover:border-brand-blue/50 hover:text-brand-blue transition-colors">
+                            <a href="https://www.facebook.com/barrios.ai.gary" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded hover:border-[#00CED1]/50 hover:text-[#00CED1] transition-colors">
                                 <iconify-icon icon="mdi:facebook" class="text-xl"></iconify-icon>
                             </a>
-                            <a href="https://www.instagram.com/barrios.ai.gary/" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded hover:border-brand-blue/50 hover:text-brand-blue transition-colors">
+                            <a href="https://www.instagram.com/barrios.ai.gary/" target="_blank" rel="noopener" class="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded hover:border-[#00CED1]/50 hover:text-[#00CED1] transition-colors">
                                 <iconify-icon icon="mdi:instagram" class="text-xl"></iconify-icon>
                             </a>
                         </div>
                     </div>
 
-                    <div class="bg-white/5 border border-white/10 rounded-lg p-6">
+                    <!-- Services -->
+                    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg p-6">
+                        <h3 class="text-lg font-serif text-white mb-6">What Can We Build For You?</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <iconify-icon icon="mdi:robot" class="text-brand-gold text-xl mt-1"></iconify-icon>
+                                <div>
+                                    <h4 class="text-white font-medium">RAG Research Agents</h4>
+                                    <p class="text-gray-500 text-sm">Autonomous agents that scrape, analyze, and deliver market intelligence</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <iconify-icon icon="mdi:bullhorn" class="text-brand-gold text-xl mt-1"></iconify-icon>
+                                <div>
+                                    <h4 class="text-white font-medium">Marketing Overlord</h4>
+                                    <p class="text-gray-500 text-sm">Automated campaigns, content generation, and lead nurturing</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <iconify-icon icon="mdi:web" class="text-brand-gold text-xl mt-1"></iconify-icon>
+                                <div>
+                                    <h4 class="text-white font-medium">AI-Powered Websites</h4>
+                                    <p class="text-gray-500 text-sm">Intelligent web experiences with embedded AI assistants</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <iconify-icon icon="mdi:code-braces" class="text-brand-gold text-xl mt-1"></iconify-icon>
+                                <div>
+                                    <h4 class="text-white font-medium">Custom App Development</h4>
+                                    <p class="text-gray-500 text-sm">Full-stack applications with AI capabilities baked in</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Response Time -->
+                    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg p-6">
                         <h3 class="text-lg font-serif text-white mb-4">Response Time</h3>
-                        <p class="text-gray-400 text-sm">We typically respond within 24 hours. For urgent matters, reach out via LinkedIn for fastest response.</p>
-                    </div>
-                </div>
-
-                <!-- Services Quick Links -->
-                <div class="bg-white/5 border border-white/10 rounded-lg p-6">
-                    <h3 class="text-lg font-serif text-white mb-6">What Can We Build For You?</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start gap-3">
-                            <iconify-icon icon="mdi:robot" class="text-brand-gold text-xl mt-1"></iconify-icon>
-                            <div>
-                                <h4 class="text-white font-medium">RAG Research Agents</h4>
-                                <p class="text-gray-500 text-sm">Autonomous agents that scrape, analyze, and deliver market intelligence</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <iconify-icon icon="mdi:bullhorn" class="text-brand-gold text-xl mt-1"></iconify-icon>
-                            <div>
-                                <h4 class="text-white font-medium">Marketing Overlord</h4>
-                                <p class="text-gray-500 text-sm">Automated campaigns, content generation, and lead nurturing</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <iconify-icon icon="mdi:web" class="text-brand-gold text-xl mt-1"></iconify-icon>
-                            <div>
-                                <h4 class="text-white font-medium">AI-Powered Websites</h4>
-                                <p class="text-gray-500 text-sm">Intelligent web experiences with embedded AI assistants</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <iconify-icon icon="mdi:code-braces" class="text-brand-gold text-xl mt-1"></iconify-icon>
-                            <div>
-                                <h4 class="text-white font-medium">Custom App Development</h4>
-                                <p class="text-gray-500 text-sm">Full-stack applications with AI capabilities baked in</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 pt-6 border-t border-white/10">
-                        <a href="mailto:contact@barriosa2i.com?subject=Project%20Inquiry" class="block w-full text-center px-6 py-3 bg-brand-blue/20 border border-brand-blue/50 text-brand-blue font-mono text-sm rounded hover:bg-brand-blue/30 transition-colors">
-                            [ START_CONVERSATION ]
-                        </a>
+                        <p class="text-gray-400 text-sm">We typically respond within 1 business day. For urgent matters, include 'URGENT' in your message or reach out via LinkedIn.</p>
                     </div>
                 </div>
             </div>
@@ -148,6 +354,345 @@
             </div>
         </div>
     </footer>
-    <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+
+    <!-- Lead Capture Utility -->
+    <script src="js/lead-capture.js"></script>
+
+    <!-- Form Handling Script -->
+    <script>
+    (function() {
+        'use strict';
+
+        const API_URL = 'https://barrios-api-gateway.onrender.com/api/leads';
+
+        // Shadow Queue for offline support
+        const ShadowQueue = {
+            STORAGE_KEY: 'barrios_lead_queue',
+            EXPIRY_MS: 24 * 60 * 60 * 1000,
+
+            store(leadData) {
+                const queue = this.getQueue();
+                queue.push({ data: leadData, timestamp: Date.now() });
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(queue));
+            },
+
+            getQueue() {
+                try {
+                    const raw = localStorage.getItem(this.STORAGE_KEY);
+                    if (!raw) return [];
+                    const queue = JSON.parse(raw);
+                    return queue.filter(item => Date.now() - item.timestamp < this.EXPIRY_MS);
+                } catch { return []; }
+            },
+
+            async sync() {
+                const queue = this.getQueue();
+                const remaining = [];
+                for (const item of queue) {
+                    try {
+                        const res = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(item.data)
+                        });
+                        if (!res.ok) remaining.push(item);
+                    } catch {
+                        remaining.push(item);
+                    }
+                }
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(remaining));
+            },
+
+            init() {
+                if (navigator.onLine) this.sync();
+                window.addEventListener('online', () => this.sync());
+            }
+        };
+
+        // DOM Elements
+        const form = document.getElementById('contact-form');
+        const successState = document.getElementById('success-state');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const offlineNotice = document.getElementById('offline-notice');
+        const submitError = document.getElementById('submit-error');
+        const submitErrorText = document.getElementById('submit-error-text');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // Field elements
+        const fields = {
+            name: document.getElementById('name'),
+            email: document.getElementById('email'),
+            company: document.getElementById('company'),
+            phone: document.getElementById('phone'),
+            interest: document.getElementById('interest'),
+            message: document.getElementById('message'),
+            honeypot: document.getElementById('website_url')
+        };
+
+        const errorElements = {
+            email: document.getElementById('email-error'),
+            message: document.getElementById('message-error')
+        };
+
+        // Validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validateField(field, value) {
+            let error = '';
+
+            if (field === 'email') {
+                if (!value.trim()) {
+                    error = 'Email is required';
+                } else if (!validateEmail(value)) {
+                    error = 'Please enter a valid email address';
+                }
+            } else if (field === 'message') {
+                if (!value.trim()) {
+                    error = 'Message is required';
+                } else if (value.trim().length < 10) {
+                    error = 'Message must be at least 10 characters';
+                }
+            }
+
+            return error;
+        }
+
+        function showFieldError(field, message) {
+            const input = fields[field];
+            const errorEl = errorElements[field];
+
+            if (input && errorEl) {
+                input.classList.add('field-error');
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function clearFieldError(field) {
+            const input = fields[field];
+            const errorEl = errorElements[field];
+
+            if (input && errorEl) {
+                input.classList.remove('field-error');
+                errorEl.textContent = '';
+                errorEl.classList.add('hidden');
+            }
+        }
+
+        function validateForm() {
+            let isValid = true;
+            let firstInvalidField = null;
+
+            // Clear previous errors
+            Object.keys(errorElements).forEach(clearFieldError);
+
+            // Validate required fields
+            ['email', 'message'].forEach(field => {
+                const error = validateField(field, fields[field].value);
+                if (error) {
+                    showFieldError(field, error);
+                    isValid = false;
+                    if (!firstInvalidField) firstInvalidField = fields[field];
+                }
+            });
+
+            // Focus first invalid field
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+            }
+
+            return isValid;
+        }
+
+        // Real-time validation on blur
+        ['email', 'message'].forEach(field => {
+            fields[field].addEventListener('blur', function() {
+                const error = validateField(field, this.value);
+                if (error) {
+                    showFieldError(field, error);
+                } else {
+                    clearFieldError(field);
+                }
+            });
+
+            // Clear error on input
+            fields[field].addEventListener('input', function() {
+                if (this.classList.contains('field-error')) {
+                    const error = validateField(field, this.value);
+                    if (!error) {
+                        clearFieldError(field);
+                    }
+                }
+            });
+        });
+
+        // Offline detection
+        function updateOnlineStatus() {
+            if (navigator.onLine) {
+                offlineNotice.classList.add('hidden');
+            } else {
+                offlineNotice.classList.remove('hidden');
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+
+        // Set loading state
+        function setLoading(loading) {
+            submitBtn.disabled = loading;
+            btnText.textContent = loading ? '[ TRANSMITTING... ]' : '[ TRANSMIT SIGNAL ]';
+            btnSpinner.classList.toggle('hidden', !loading);
+
+            // Disable all inputs during submission
+            Object.values(fields).forEach(field => {
+                if (field) field.disabled = loading;
+            });
+        }
+
+        // Show error
+        function showError(message) {
+            submitErrorText.textContent = message;
+            submitError.classList.remove('hidden');
+        }
+
+        // Hide error
+        function hideError() {
+            submitError.classList.add('hidden');
+        }
+
+        // Show success
+        function showSuccess() {
+            form.classList.add('form-fade-out');
+            setTimeout(() => {
+                form.classList.add('hidden');
+                successState.classList.remove('hidden');
+            }, 300);
+        }
+
+        // Reset form
+        function resetForm() {
+            form.reset();
+            form.classList.remove('form-fade-out', 'hidden');
+            successState.classList.add('hidden');
+            hideError();
+            Object.keys(errorElements).forEach(clearFieldError);
+            fields.email.focus();
+        }
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideError();
+
+            // Check honeypot
+            if (fields.honeypot.value) {
+                showSuccess(); // Silently "succeed" for bots
+                return;
+            }
+
+            // Validate
+            if (!validateForm()) {
+                return;
+            }
+
+            // Gather form data
+            const formData = {
+                name: fields.name.value.trim(),
+                email: fields.email.value.trim(),
+                company: fields.company.value.trim(),
+                phone: fields.phone.value.trim(),
+                interest: fields.interest.value,
+                message: fields.message.value.trim()
+            };
+
+            // Build lead data
+            const leadData = {
+                name: formData.name,
+                email: formData.email,
+                company: formData.company,
+                phone: formData.phone,
+                message: formData.message + (formData.interest ? ' [Interest: ' + formData.interest + ']' : ''),
+                source: 'contact_form',
+                session_id: window.LeadCapture?.getSessionId() || ('contact_' + Date.now().toString(36))
+            };
+
+            setLoading(true);
+
+            // Check if offline
+            if (!navigator.onLine) {
+                ShadowQueue.store(leadData);
+                setLoading(false);
+                showSuccess();
+                return;
+            }
+
+            try {
+                // Use LeadCapture utility (primary)
+                if (window.LeadCapture) {
+                    window.LeadCapture.capture({
+                        name: formData.name,
+                        email: formData.email,
+                        company: formData.company,
+                        phone: formData.phone,
+                        message: formData.message + (formData.interest ? ' [Interest: ' + formData.interest + ']' : ''),
+                        source: 'contact_form'
+                    });
+                }
+
+                // Direct API call for redundancy
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(leadData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server error');
+                }
+
+                setLoading(false);
+                showSuccess();
+
+            } catch (error) {
+                // Store in shadow queue as fallback
+                ShadowQueue.store(leadData);
+                setLoading(false);
+
+                // Still show success since we queued it
+                showSuccess();
+            }
+        });
+
+        // Reset button
+        resetBtn.addEventListener('click', resetForm);
+
+        // Initialize
+        ShadowQueue.init();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        // Accessibility: announce success to screen readers
+        const liveRegion = document.createElement('div');
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.className = 'sr-only';
+        liveRegion.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;';
+        document.body.appendChild(liveRegion);
+
+        // Update live region on success
+        const originalShowSuccess = showSuccess;
+        showSuccess = function() {
+            originalShowSuccess();
+            liveRegion.textContent = 'Signal received. We will reply within 1 business day with next steps.';
+        };
+
+    })();
+    </script>
 </body>
 </html>
