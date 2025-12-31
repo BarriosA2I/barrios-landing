@@ -38,11 +38,11 @@
           align-items: center;
           gap: 8px;
           padding: 6px 16px;
-          background: rgba(0, 194, 255, 0.1);
-          border: 1px solid rgba(0, 194, 255, 0.2);
+          background: rgba(0, 206, 209, 0.1);
+          border: 1px solid rgba(0, 206, 209, 0.2);
           font-family: 'JetBrains Mono', monospace;
           font-size: 10px;
-          color: #00C2FF;
+          color: #00CED1;
           text-transform: uppercase;
           letter-spacing: 0.2em;
           margin-bottom: 16px;
@@ -78,8 +78,8 @@
           transition: all 0.3s ease;
         }
         #install-checklist .checklist-item:hover {
-          border-color: rgba(0, 194, 255, 0.3);
-          background: rgba(0, 194, 255, 0.03);
+          border-color: rgba(0, 206, 209, 0.3);
+          background: rgba(0, 206, 209, 0.03);
         }
         #install-checklist .check-icon {
           flex-shrink: 0;
@@ -88,9 +88,9 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          background: rgba(0, 194, 255, 0.1);
-          border: 1px solid rgba(0, 194, 255, 0.3);
-          color: #00C2FF;
+          background: rgba(0, 206, 209, 0.1);
+          border: 1px solid rgba(0, 206, 209, 0.3);
+          color: #00CED1;
         }
         #install-checklist .check-text h4 {
           color: white;
@@ -117,7 +117,7 @@
           margin-right: auto;
         }
         #install-checklist .time-badge iconify-icon {
-          color: #00C2FF;
+          color: #00CED1;
         }
         #install-checklist .time-badge span {
           font-family: 'JetBrains Mono', monospace;
@@ -281,7 +281,7 @@
           left: 10%;
           right: 10%;
           height: 2px;
-          background: linear-gradient(90deg, transparent 0%, rgba(0, 194, 255, 0.3) 20%, rgba(0, 194, 255, 0.3) 80%, transparent 100%);
+          background: linear-gradient(90deg, transparent 0%, rgba(0, 206, 209, 0.3) 20%, rgba(0, 206, 209, 0.3) 80%, transparent 100%);
         }
         @media (max-width: 900px) {
           #go-live-timeline .timeline-line {
@@ -305,18 +305,18 @@
           align-items: center;
           justify-content: center;
           background: #0a0a1e;
-          border: 2px solid rgba(0, 194, 255, 0.4);
+          border: 2px solid rgba(0, 206, 209, 0.4);
           margin-bottom: 20px;
           transition: all 0.3s ease;
         }
         #go-live-timeline .timeline-day:hover .day-marker {
-          border-color: #00C2FF;
-          box-shadow: 0 0 30px rgba(0, 194, 255, 0.3);
+          border-color: #00CED1;
+          box-shadow: 0 0 30px rgba(0, 206, 209, 0.3);
         }
         #go-live-timeline .day-number {
           font-family: 'JetBrains Mono', monospace;
           font-size: 11px;
-          color: #00C2FF;
+          color: #00CED1;
           letter-spacing: 0.1em;
         }
         #go-live-timeline .day-title {
@@ -332,8 +332,8 @@
           max-width: 160px;
         }
         #go-live-timeline .timeline-day.active .day-marker {
-          background: #00C2FF;
-          border-color: #00C2FF;
+          background: #00CED1;
+          border-color: #00CED1;
         }
         #go-live-timeline .timeline-day.active .day-number {
           color: #0a0a0f;

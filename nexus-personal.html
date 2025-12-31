@@ -26,10 +26,10 @@
                     colors: {
                         void: '#0a0a0f',
                         obsidian: '#0a0a1e',
-                        primary: '#00C2FF',
+                        primary: '#00CED1',
                         accent: '#F59E0B',
                         muted: '#94a3b8',
-                        'brand-blue': '#00C2FF',
+                        'brand-teal': '#00CED1',
                         'brand-gold': '#F59E0B',
                     },
                     animation: {
@@ -39,8 +39,8 @@
                     },
                     keyframes: {
                         breathe: {
-                            '0%, 100%': { boxShadow: '0 0 20px -10px rgba(0, 194, 255, 0.2)' },
-                            '50%': { boxShadow: '0 0 40px -5px rgba(0, 194, 255, 0.4)' },
+                            '0%, 100%': { boxShadow: '0 0 20px -10px rgba(0, 206, 209, 0.2)' },
+                            '50%': { boxShadow: '0 0 40px -5px rgba(0, 206, 209, 0.4)' },
                         },
                         float: {
                             '0%, 100%': { transform: 'translateY(0px)' },
@@ -58,7 +58,7 @@
     <style>
         html { scroll-behavior: smooth; }
         body { background-color: #0a0a0f; color: #94a3b8; }
-        ::selection { background-color: rgba(0, 194, 255, 0.2); color: #ffffff; }
+        ::selection { background-color: rgba(0, 206, 209, 0.2); color: #ffffff; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
@@ -81,16 +81,16 @@
         .terminal-scroll::-webkit-scrollbar-track { background: transparent; }
         .terminal-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
         
-        .glow-primary { box-shadow: 0 0 60px -20px rgba(0, 194, 255, 0.5); }
-        .glow-border { border-color: rgba(0, 194, 255, 0.3); }
+        .glow-primary { box-shadow: 0 0 60px -20px rgba(0, 206, 209, 0.5); }
+        .glow-border { border-color: rgba(0, 206, 209, 0.3); }
         
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
 
         /* High-Authority HUD Typography */
-        .text-glow-blue { text-shadow: 0 0 15px rgba(0, 194, 255, 0.4); }
+        .text-glow-blue { text-shadow: 0 0 15px rgba(0, 206, 209, 0.4); }
         .border-bracket {
-            border-image: linear-gradient(to bottom, #00C2FF, transparent, #00C2FF) 1;
+            border-image: linear-gradient(to bottom, #00CED1, transparent, #00CED1) 1;
             border-left: 1px solid;
             border-right: 1px solid;
         }
@@ -126,10 +126,10 @@
 
         /* Volumetric Glow */
         .volumetric-glow {
-            filter: drop-shadow(0 0 8px rgba(0, 194, 255, 0.5));
+            filter: drop-shadow(0 0 8px rgba(0, 206, 209, 0.5));
         }
         .volumetric-glow:hover {
-            filter: drop-shadow(0 0 15px rgba(0, 194, 255, 0.7));
+            filter: drop-shadow(0 0 15px rgba(0, 206, 209, 0.7));
         }
 
         /* Pricing card lift on hover */
@@ -160,7 +160,7 @@
     <div class="fixed bottom-[-200px] left-[-100px] w-[500px] h-[500px] bg-primary/3 rounded-full blur-[120px] z-[-10] pointer-events-none"></div>
     
     <!-- Cursor spotlight -->
-    <div class="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300" style="background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 194, 255, 0.03), transparent 40%);"></div>
+    <div class="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300" style="background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 206, 209, 0.03), transparent 40%);"></div>
     
     <!-- Top border line -->
     <div class="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent z-50"></div>
@@ -168,14 +168,14 @@
     <!-- ========== SECTION 1: NAVIGATION (REMASTERED) ========== -->
     <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
         <!-- Glassmorphism Background -->
-        <div class="absolute inset-0 bg-obsidian/80 backdrop-blur-xl border-b border-brand-blue/20 transition-all duration-300"></div>
+        <div class="absolute inset-0 bg-obsidian/80 backdrop-blur-xl border-b border-brand-teal/20 transition-all duration-300"></div>
 
         <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
             <!-- Official Shard Logo with Volumetric Glow (2x size) -->
             <a href="/" class="flex items-center gap-5 group">
                 <div class="relative w-20 h-20 flex items-center justify-center">
                     <!-- Volumetric Glow Behind Logo -->
-                    <div class="absolute inset-0 bg-brand-blue blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
+                    <div class="absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
                     <img
                         src="brand/barrios-a2i-shard-logo.png"
                         alt="Barrios A2I"
@@ -183,7 +183,7 @@
                     >
                 </div>
                 <div class="hidden md:flex flex-col">
-                    <span class="text-brand-blue font-mono text-xs tracking-[0.3em] font-bold">SYSTEM_CONNECTED</span>
+                    <span class="text-brand-teal font-mono text-xs tracking-[0.3em] font-bold">SYSTEM_CONNECTED</span>
                     <span class="text-white font-black text-2xl tracking-tighter">BARRIOS A2I</span>
                 </div>
             </a>
@@ -191,35 +191,35 @@
             <!-- Tactical Navigation with Gold Trace -->
             <div class="hidden lg:flex items-center space-x-1">
                 <a href="/#stack" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">STACK</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
                 <a href="/#velocity" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">VELOCITY</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
                 <a href="/#architecture" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">ARCHITECTURE</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
                 <a href="/#pricing" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">PRICING</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
                 <a href="/nexus-personal" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue font-mono text-xs">[</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-blue animate-pulse mx-1"></span>
-                    <span class="text-[11px] font-mono font-medium tracking-[0.2em] text-brand-blue">NEXUS</span>
-                    <span class="bracket text-brand-blue font-mono text-xs">]</span>
+                    <span class="bracket text-brand-teal font-mono text-xs">[</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-teal animate-pulse mx-1"></span>
+                    <span class="text-[11px] font-mono font-medium tracking-[0.2em] text-brand-teal">NEXUS</span>
+                    <span class="bracket text-brand-teal font-mono text-xs">]</span>
                 </a>
                 <a href="/creative-director" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">AD_FORGE</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
             </div>
 
@@ -227,13 +227,13 @@
             <div class="flex items-center gap-4">
                 <a href="/login" class="hidden sm:block text-[10px] font-mono text-muted/50 hover:text-white transition-colors">AUTH_LOGIN</a>
 
-                <a href="#pricing" class="group relative px-5 py-2.5 overflow-hidden bg-white/5 border border-brand-blue/40 hover:border-brand-gold transition-all duration-300">
+                <a href="#pricing" class="group relative px-5 py-2.5 overflow-hidden bg-white/5 border border-brand-teal/40 hover:border-brand-gold transition-all duration-300">
                     <!-- Scanline Effect -->
                     <div class="absolute inset-0 pointer-events-none scanline-overlay opacity-50"></div>
 
                     <div class="relative flex items-center gap-2">
-                        <iconify-icon icon="lucide:terminal" width="14" class="text-brand-blue group-hover:text-brand-gold transition-colors"></iconify-icon>
-                        <span class="text-[11px] font-mono font-bold tracking-wider text-brand-blue group-hover:text-brand-gold transition-colors">[ INITIALIZE_LOGIC ]</span>
+                        <iconify-icon icon="lucide:terminal" width="14" class="text-brand-teal group-hover:text-brand-gold transition-colors"></iconify-icon>
+                        <span class="text-[11px] font-mono font-bold tracking-wider text-brand-teal group-hover:text-brand-gold transition-colors">[ INITIALIZE_LOGIC ]</span>
                     </div>
                 </a>
             </div>
@@ -290,31 +290,31 @@
         <!-- ========== SECTION 2.5: HOW IT WORKS (INVISIBLE SECRETARY) ========== -->
         <section class="relative z-10 max-w-7xl mx-auto py-32 px-6">
             <div class="mb-20 space-y-4 animate-on-scroll">
-                <div class="font-mono text-[10px] text-brand-blue tracking-[0.4em] uppercase">How It Works</div>
-                <h2 class="font-serif text-4xl md:text-6xl italic text-white leading-tight">Think of it as an <br/><span class="text-brand-blue">Invisible Secretary.</span></h2>
+                <div class="font-mono text-[10px] text-brand-teal tracking-[0.4em] uppercase">How It Works</div>
+                <h2 class="font-serif text-4xl md:text-6xl italic text-white leading-tight">Think of it as an <br/><span class="text-brand-teal">Invisible Secretary.</span></h2>
                 <p class="text-muted text-lg max-w-2xl mt-4">It only looks at the folders you show it—nothing more. Like having a personal assistant who respects your privacy completely.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-blue/30 transition-all animate-on-scroll">
+                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-teal/30 transition-all animate-on-scroll">
                     <div class="flex items-center gap-4 mb-6">
-                        <div class="w-12 h-12 rounded-full bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-brand-blue font-serif text-xl">1</div>
+                        <div class="w-12 h-12 rounded-full bg-brand-teal/10 border border-brand-teal/30 flex items-center justify-center text-brand-teal font-serif text-xl">1</div>
                         <h3 class="font-serif text-xl text-white">You Choose the Folders</h3>
                     </div>
                     <p class="text-muted text-sm leading-relaxed">Point it at your Documents, Receipts, or any folder you want. It never looks anywhere else.</p>
                 </div>
 
-                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-blue/30 transition-all animate-on-scroll" style="transition-delay: 100ms;">
+                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-teal/30 transition-all animate-on-scroll" style="transition-delay: 100ms;">
                     <div class="flex items-center gap-4 mb-6">
-                        <div class="w-12 h-12 rounded-full bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-brand-blue font-serif text-xl">2</div>
+                        <div class="w-12 h-12 rounded-full bg-brand-teal/10 border border-brand-teal/30 flex items-center justify-center text-brand-teal font-serif text-xl">2</div>
                         <h3 class="font-serif text-xl text-white">Ask in Plain English</h3>
                     </div>
                     <p class="text-muted text-sm leading-relaxed">Type questions like "Where's my fridge warranty?" or "Write an email to my landlord about the leak."</p>
                 </div>
 
-                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-blue/30 transition-all animate-on-scroll" style="transition-delay: 200ms;">
+                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-teal/30 transition-all animate-on-scroll" style="transition-delay: 200ms;">
                     <div class="flex items-center gap-4 mb-6">
-                        <div class="w-12 h-12 rounded-full bg-brand-blue/10 border border-brand-blue/30 flex items-center justify-center text-brand-blue font-serif text-xl">3</div>
+                        <div class="w-12 h-12 rounded-full bg-brand-teal/10 border border-brand-teal/30 flex items-center justify-center text-brand-teal font-serif text-xl">3</div>
                         <h3 class="font-serif text-xl text-white">You Stay in Control</h3>
                     </div>
                     <p class="text-muted text-sm leading-relaxed">It drafts, you review. Nothing ever sends or changes without your explicit approval.</p>
@@ -590,7 +590,7 @@
         <section class="flex flex-col w-full z-20 mt-32 relative py-12" id="privacy">
             <div class="max-w-4xl mx-auto px-6 w-full">
                 <div class="relative bg-obsidian/50 border border-primary/20 p-8 md:p-12 overflow-hidden animate-breathe animate-on-scroll glow-primary">
-                    <div class="absolute inset-0 bg-[radial-gradient(#00C2FF_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.03] pointer-events-none"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(#00CED1_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.03] pointer-events-none"></div>
                     <div class="absolute -right-10 -top-10 text-primary/5 font-serif text-[120px] italic pointer-events-none select-none">Private</div>
                     <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
                         <div class="shrink-0 bg-obsidian/50 border border-primary/30 p-6">
@@ -928,14 +928,14 @@
         <!-- ========== GLOBAL FOOTER (REMASTERED) ========== -->
         <footer class="relative w-full bg-obsidian pt-24 pb-12 px-6 border-t border-white/5 overflow-hidden">
             <!-- Volumetric Glow Background -->
-            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-brand-blue/5 blur-[120px] rounded-full pointer-events-none"></div>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-brand-teal/5 blur-[120px] rounded-full pointer-events-none"></div>
 
             <div class="max-w-7xl mx-auto relative z-10">
 
                 <!-- Top Section: Brand & Status -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-20">
                     <div class="group">
-                        <h2 class="text-4xl font-black tracking-tighter text-white transition-all group-hover:text-brand-blue">
+                        <h2 class="text-4xl font-black tracking-tighter text-white transition-all group-hover:text-brand-teal">
                             BARRIOS <span class="text-brand-gold">A2I</span>
                         </h2>
                         <p class="mt-4 text-gray-500 font-mono text-xs max-w-xs leading-relaxed uppercase tracking-wider">
@@ -943,7 +943,7 @@
                         </p>
                     </div>
 
-                    <div class="mt-8 md:mt-0 flex items-center gap-3 px-4 py-2 bg-white/5 border border-brand-blue/20 rounded-full">
+                    <div class="mt-8 md:mt-0 flex items-center gap-3 px-4 py-2 bg-white/5 border border-brand-teal/20 rounded-full">
                         <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></div>
                         <span class="text-[10px] font-mono text-green-500 tracking-[0.2em] font-bold">
                             SYSTEMS_NOMINAL
@@ -956,7 +956,7 @@
 
                     <!-- Nav Column: System -->
                     <div class="space-y-6">
-                        <h3 class="text-brand-blue font-mono text-[11px] tracking-[0.3em] flex items-center gap-2">
+                        <h3 class="text-brand-teal font-mono text-[11px] tracking-[0.3em] flex items-center gap-2">
                             <iconify-icon icon="lucide:terminal" width="12"></iconify-icon> [ SYSTEM ]
                         </h3>
                         <ul class="space-y-3">
@@ -969,7 +969,7 @@
 
                     <!-- Nav Column: Protocol -->
                     <div class="space-y-6">
-                        <h3 class="text-brand-blue font-mono text-[11px] tracking-[0.3em] flex items-center gap-2">
+                        <h3 class="text-brand-teal font-mono text-[11px] tracking-[0.3em] flex items-center gap-2">
                             <iconify-icon icon="lucide:shield" width="12"></iconify-icon> [ PROTOCOL ]
                         </h3>
                         <ul class="space-y-3">
@@ -981,7 +981,7 @@
 
                     <!-- Nav Column: Uplink -->
                     <div class="space-y-6">
-                        <h3 class="text-brand-blue font-mono text-[11px] tracking-[0.3em] flex items-center gap-2">
+                        <h3 class="text-brand-teal font-mono text-[11px] tracking-[0.3em] flex items-center gap-2">
                             <iconify-icon icon="lucide:globe" width="12"></iconify-icon> [ UPLINK ]
                         </h3>
                         <ul class="space-y-3">
@@ -994,7 +994,7 @@
 
                     <!-- Intelligence Briefing Input -->
                     <div class="col-span-2 space-y-6">
-                        <h3 class="text-brand-blue font-mono text-[11px] tracking-[0.3em] flex items-center gap-2">
+                        <h3 class="text-brand-teal font-mono text-[11px] tracking-[0.3em] flex items-center gap-2">
                             <iconify-icon icon="lucide:radio" width="12"></iconify-icon> [ SIGNAL_INPUT ]
                         </h3>
                         <p class="text-gray-500 text-sm">Receive intelligence briefings directly.</p>
@@ -1002,10 +1002,10 @@
                             <input
                                 type="email"
                                 placeholder="Enter frequency..."
-                                class="w-full bg-white/5 border border-white/10 px-4 py-3 rounded-l-sm text-sm text-white focus:outline-none focus:border-brand-blue/50 font-mono placeholder-white/30"
+                                class="w-full bg-white/5 border border-white/10 px-4 py-3 rounded-l-sm text-sm text-white focus:outline-none focus:border-brand-teal/50 font-mono placeholder-white/30"
                             >
-                            <button class="bg-brand-blue/10 border border-brand-blue/30 border-l-0 px-6 rounded-r-sm group hover:bg-brand-blue/20 transition-all">
-                                <iconify-icon icon="lucide:send" width="16" class="text-brand-blue group-hover:scale-110 transition-transform"></iconify-icon>
+                            <button class="bg-brand-teal/10 border border-brand-teal/30 border-l-0 px-6 rounded-r-sm group hover:bg-brand-teal/20 transition-all">
+                                <iconify-icon icon="lucide:send" width="16" class="text-brand-teal group-hover:scale-110 transition-transform"></iconify-icon>
                             </button>
                         </div>
                     </div>
@@ -1021,7 +1021,7 @@
                         <span class="text-white px-2 py-0.5 bg-white/5 border border-white/10 rounded-sm">
                             Gary Barrios
                         </span>
-                        <span class="text-brand-blue/60 text-[9px] border border-brand-blue/30 px-2 py-0.5 rounded-sm bg-brand-blue/5 uppercase tracking-tighter">
+                        <span class="text-brand-teal/60 text-[9px] border border-brand-teal/30 px-2 py-0.5 rounded-sm bg-brand-teal/5 uppercase tracking-tighter">
                             The Accidental Genius
                         </span>
                     </div>
@@ -1123,7 +1123,7 @@
 
             for (let i = 0; i < drops.length; i++) {
                 const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                ctx.fillStyle = Math.random() > 0.98 ? '#ffffff' : 'rgba(0, 194, 255, 0.5)';
+                ctx.fillStyle = Math.random() > 0.98 ? '#ffffff' : 'rgba(0, 206, 209, 0.5)';
                 ctx.globalAlpha = Math.random() * 0.5 + 0.2;
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 

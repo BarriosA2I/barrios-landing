@@ -104,7 +104,7 @@
           background: linear-gradient(180deg, rgba(10, 10, 15, 0.95) 0%, rgba(10, 10, 30, 0.98) 100%);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
-          border-top: 1px solid rgba(0, 194, 255, 0.2);
+          border-top: 1px solid rgba(0, 206, 209, 0.2);
           padding: 12px 16px;
           display: flex;
           align-items: center;
@@ -134,7 +134,7 @@
           align-items: center;
           gap: 8px;
           padding: 10px 24px;
-          background: #00C2FF;
+          background: #00CED1;
           color: #0a0a0f;
           font-family: 'JetBrains Mono', monospace;
           font-size: 11px;
@@ -149,7 +149,7 @@
         #sticky-cta-bar .cta-button:hover {
           background: #22D3EE;
           transform: translateY(-1px);
-          box-shadow: 0 4px 20px rgba(0, 194, 255, 0.4);
+          box-shadow: 0 4px 20px rgba(0, 206, 209, 0.4);
         }
         #sticky-cta-bar .cta-button svg {
           width: 14px;
@@ -280,11 +280,11 @@
           align-items: center;
           gap: 8px;
           padding: 6px 12px;
-          background: rgba(0, 194, 255, 0.1);
-          border: 1px solid rgba(0, 194, 255, 0.2);
+          background: rgba(0, 206, 209, 0.1);
+          border: 1px solid rgba(0, 206, 209, 0.2);
           font-family: 'JetBrains Mono', monospace;
           font-size: 10px;
-          color: #00C2FF;
+          color: #00CED1;
           text-transform: uppercase;
           letter-spacing: 0.2em;
           margin-bottom: 16px;
@@ -292,7 +292,7 @@
         #lead-capture-section .form-badge .pulse {
           width: 6px;
           height: 6px;
-          background: #00C2FF;
+          background: #00CED1;
           border-radius: 50%;
           animation: pulse 2s ease-in-out infinite;
         }
@@ -345,8 +345,8 @@
         #lead-capture-form select:focus,
         #lead-capture-form textarea:focus {
           outline: none;
-          border-color: rgba(0, 194, 255, 0.5);
-          background: rgba(0, 194, 255, 0.05);
+          border-color: rgba(0, 206, 209, 0.5);
+          background: rgba(0, 206, 209, 0.05);
         }
         #lead-capture-form input::placeholder,
         #lead-capture-form textarea::placeholder {
@@ -373,7 +373,7 @@
           justify-content: center;
           gap: 8px;
           padding: 16px 32px;
-          background: #00C2FF;
+          background: #00CED1;
           color: #0a0a0f;
           font-family: 'JetBrains Mono', monospace;
           font-size: 12px;
@@ -388,7 +388,7 @@
         #lead-capture-form button[type="submit"]:hover {
           background: #22D3EE;
           transform: translateY(-2px);
-          box-shadow: 0 8px 30px rgba(0, 194, 255, 0.3);
+          box-shadow: 0 8px 30px rgba(0, 206, 209, 0.3);
         }
         #lead-capture-form button[type="submit"]:disabled {
           opacity: 0.6;

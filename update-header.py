@@ -32,10 +32,10 @@ new_css = '''
 
         /* Volumetric Glow */
         .volumetric-glow {
-            filter: drop-shadow(0 0 8px rgba(0, 194, 255, 0.5));
+            filter: drop-shadow(0 0 8px rgba(0, 206, 209, 0.5));
         }
         .volumetric-glow:hover {
-            filter: drop-shadow(0 0 15px rgba(0, 194, 255, 0.7));
+            filter: drop-shadow(0 0 15px rgba(0, 206, 209, 0.7));
         }
     </style>'''
 
@@ -73,14 +73,14 @@ old_header = '''    <!-- ========== SECTION 1: NAVIGATION ========== -->
 new_header = '''    <!-- ========== SECTION 1: NAVIGATION (REMASTERED) ========== -->
     <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
         <!-- Glassmorphism Background -->
-        <div class="absolute inset-0 bg-obsidian/80 backdrop-blur-xl border-b border-brand-blue/20 transition-all duration-300"></div>
+        <div class="absolute inset-0 bg-obsidian/80 backdrop-blur-xl border-b border-brand-teal/20 transition-all duration-300"></div>
 
         <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
             <!-- Official Shard Logo with Volumetric Glow -->
             <a href="/" class="flex items-center gap-4 group">
                 <div class="relative w-12 h-12 flex items-center justify-center">
                     <!-- Volumetric Glow Behind Logo -->
-                    <div class="absolute inset-0 bg-brand-blue blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
+                    <div class="absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
                     <img
                         src="brand/barrios-a2i-shard-logo.png"
                         alt="Barrios A2I"
@@ -88,7 +88,7 @@ new_header = '''    <!-- ========== SECTION 1: NAVIGATION (REMASTERED) =========
                     >
                 </div>
                 <div class="hidden md:flex flex-col">
-                    <span class="text-brand-blue font-mono text-[10px] tracking-[0.3em] font-bold">SYSTEM_CONNECTED</span>
+                    <span class="text-brand-teal font-mono text-[10px] tracking-[0.3em] font-bold">SYSTEM_CONNECTED</span>
                     <span class="text-white font-black text-lg tracking-tighter">BARRIOS A2I</span>
                 </div>
             </a>
@@ -96,30 +96,30 @@ new_header = '''    <!-- ========== SECTION 1: NAVIGATION (REMASTERED) =========
             <!-- Tactical Navigation with Gold Trace -->
             <div class="hidden lg:flex items-center space-x-1">
                 <a href="/#stack" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">STACK</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
                 <a href="/#velocity" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">VELOCITY</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
                 <a href="/#architecture" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">ARCHITECTURE</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
                 <a href="/#pricing" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">[</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">[</span>
                     <span class="mx-2 text-[11px] font-mono font-medium tracking-[0.2em] text-muted group-hover:text-white transition-colors">PRICING</span>
-                    <span class="bracket text-brand-blue/40 font-mono text-xs transition-colors">]</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-xs transition-colors">]</span>
                 </a>
                 <a href="/nexus-personal" class="nav-link group relative px-4 py-2 flex items-center">
-                    <span class="bracket text-brand-blue font-mono text-xs">[</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-blue animate-pulse mx-1"></span>
-                    <span class="text-[11px] font-mono font-medium tracking-[0.2em] text-brand-blue">NEXUS</span>
-                    <span class="bracket text-brand-blue font-mono text-xs">]</span>
+                    <span class="bracket text-brand-teal font-mono text-xs">[</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-teal animate-pulse mx-1"></span>
+                    <span class="text-[11px] font-mono font-medium tracking-[0.2em] text-brand-teal">NEXUS</span>
+                    <span class="bracket text-brand-teal font-mono text-xs">]</span>
                 </a>
             </div>
 
@@ -127,13 +127,13 @@ new_header = '''    <!-- ========== SECTION 1: NAVIGATION (REMASTERED) =========
             <div class="flex items-center gap-4">
                 <span class="hidden sm:block text-[10px] font-mono text-muted/50 hover:text-white cursor-pointer transition-colors">AUTH_LOGIN</span>
 
-                <a href="#pricing" class="group relative px-5 py-2.5 overflow-hidden bg-white/5 border border-brand-blue/40 hover:border-brand-gold transition-all duration-300">
+                <a href="#pricing" class="group relative px-5 py-2.5 overflow-hidden bg-white/5 border border-brand-teal/40 hover:border-brand-gold transition-all duration-300">
                     <!-- Scanline Effect -->
                     <div class="absolute inset-0 pointer-events-none scanline-overlay opacity-50"></div>
 
                     <div class="relative flex items-center gap-2">
-                        <iconify-icon icon="lucide:terminal" width="14" class="text-brand-blue group-hover:text-brand-gold transition-colors"></iconify-icon>
-                        <span class="text-[11px] font-mono font-bold tracking-wider text-brand-blue group-hover:text-brand-gold transition-colors">[ INITIALIZE_LOGIC ]</span>
+                        <iconify-icon icon="lucide:terminal" width="14" class="text-brand-teal group-hover:text-brand-gold transition-colors"></iconify-icon>
+                        <span class="text-[11px] font-mono font-bold tracking-wider text-brand-teal group-hover:text-brand-gold transition-colors">[ INITIALIZE_LOGIC ]</span>
                     </div>
                 </a>
             </div>

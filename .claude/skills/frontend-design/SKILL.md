@@ -7,7 +7,7 @@ description: Create distinctive, production-grade frontend interfaces for Barrio
 
 **Core Aesthetic**: Tesla minimalism + cyberpunk accents + Claude's approachability
 - Monochrome base (deep blacks, clean whites, subtle grays)
-- Strategic accent color: Electric cyan (#00D4FF) or neural purple (#8B5CF6)
+- Strategic accent color: Crystalline teal (#00CED1) or neural purple (#8B5CF6)
 - Typography: Clean, technical fonts - avoid generic (no Inter, Roboto)
 - Motion: Subtle, purposeful micro-interactions
 - Spatial: Generous whitespace, asymmetric layouts, grid-breaking hero elements
@@ -26,9 +26,9 @@ description: Create distinctive, production-grade frontend interfaces for Barrio
   --bg-tertiary: #1a1a1a;
   --text-primary: #fafafa;
   --text-secondary: #a1a1aa;
-  --accent-cyan: #00D4FF;
+  --accent-cyan: #00CED1;
   --accent-purple: #8B5CF6;
-  --accent-glow: rgba(0, 212, 255, 0.15);
+  --accent-glow: rgba(0, 206, 209, 0.15);
 }
 ```
 
@@ -42,7 +42,7 @@ description: Create distinctive, production-grade frontend interfaces for Barrio
 
 ### Cards & Panels
 - Subtle border: `border border-white/5`
-- Hover state: `hover:border-accent-cyan/30 hover:shadow-[0_0_30px_rgba(0,212,255,0.1)]`
+- Hover state: `hover:border-accent-cyan/30 hover:shadow-[0_0_30px_rgba(0,206,209,0.1)]`
 - No harsh rounded corners - use `rounded-lg` max, prefer `rounded-md`
 
 ### Buttons

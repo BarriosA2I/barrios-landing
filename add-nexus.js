@@ -22,9 +22,9 @@ const nexusCSS = `
       border-radius: 16px;
       background: linear-gradient(135deg, rgba(10, 10, 30, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
       box-shadow:
-        0 0 0 1px rgba(0, 194, 255, 0.3),
+        0 0 0 1px rgba(0, 206, 209, 0.3),
         0 4px 24px rgba(0, 0, 0, 0.5),
-        0 0 40px rgba(0, 194, 255, 0.15);
+        0 0 40px rgba(0, 206, 209, 0.15);
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       overflow: visible;
@@ -33,28 +33,28 @@ const nexusCSS = `
     .nexus-launcher:hover {
       transform: translateY(-2px) scale(1.02);
       box-shadow:
-        0 0 0 1px rgba(0, 194, 255, 0.5),
+        0 0 0 1px rgba(0, 206, 209, 0.5),
         0 8px 32px rgba(0, 0, 0, 0.6),
-        0 0 60px rgba(0, 194, 255, 0.25);
+        0 0 60px rgba(0, 206, 209, 0.25);
     }
 
     .nexus-launcher:focus-visible {
-      outline: 2px solid #00C2FF;
+      outline: 2px solid #00CED1;
       outline-offset: 3px;
     }
 
     .nexus-launcher--active {
       box-shadow:
-        0 0 0 2px rgba(0, 194, 255, 0.6),
+        0 0 0 2px rgba(0, 206, 209, 0.6),
         0 4px 24px rgba(0, 0, 0, 0.5),
-        0 0 50px rgba(0, 194, 255, 0.3);
+        0 0 50px rgba(0, 206, 209, 0.3);
     }
 
     .nexus-launcher-glow {
       position: absolute;
       inset: -8px;
       border-radius: 24px;
-      background: radial-gradient(circle at 50% 50%, rgba(0, 194, 255, 0.25), transparent 70%);
+      background: radial-gradient(circle at 50% 50%, rgba(0, 206, 209, 0.25), transparent 70%);
       filter: blur(12px);
       opacity: 0.6;
       animation: nexus-breathe 3s ease-in-out infinite;
@@ -78,7 +78,7 @@ const nexusCSS = `
     .nexus-launcher-icon {
       width: 28px;
       height: 28px;
-      color: #00C2FF;
+      color: #00CED1;
       transition: color 0.2s ease;
     }
 
@@ -125,7 +125,7 @@ const nexusCSS = `
       font-size: 11px;
       font-weight: 500;
       letter-spacing: 0.1em;
-      color: #00C2FF;
+      color: #00CED1;
       white-space: nowrap;
       opacity: 0;
       transform: translateY(4px);
@@ -232,7 +232,7 @@ const nexusCSS = `
     .nexus-panel-logo {
       width: 32px;
       height: 32px;
-      color: #00C2FF;
+      color: #00CED1;
     }
 
     .nexus-panel-title-text {
@@ -358,7 +358,7 @@ const nexusCSS = `
       width: 64px;
       height: 64px;
       margin-bottom: 24px;
-      color: #00C2FF;
+      color: #00CED1;
       opacity: 0.6;
     }
 
@@ -393,20 +393,20 @@ const nexusCSS = `
 
     .nexus-quick-btn {
       padding: 8px 16px;
-      background: rgba(0, 194, 255, 0.1);
-      border: 1px solid rgba(0, 194, 255, 0.2);
+      background: rgba(0, 206, 209, 0.1);
+      border: 1px solid rgba(0, 206, 209, 0.2);
       border-radius: 20px;
       font-family: 'Inter', sans-serif;
       font-size: 12px;
       font-weight: 500;
-      color: #00C2FF;
+      color: #00CED1;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
     .nexus-quick-btn:hover {
-      background: rgba(0, 194, 255, 0.2);
-      border-color: rgba(0, 194, 255, 0.4);
+      background: rgba(0, 206, 209, 0.2);
+      border-color: rgba(0, 206, 209, 0.4);
     }
 
     /* --- Messages --- */
@@ -419,8 +419,8 @@ const nexusCSS = `
     }
 
     .nexus-message--user .nexus-message-content {
-      background: linear-gradient(135deg, rgba(0, 194, 255, 0.15) 0%, rgba(0, 194, 255, 0.08) 100%);
-      border: 1px solid rgba(0, 194, 255, 0.2);
+      background: linear-gradient(135deg, rgba(0, 206, 209, 0.15) 0%, rgba(0, 206, 209, 0.08) 100%);
+      border: 1px solid rgba(0, 206, 209, 0.2);
       border-radius: 16px 16px 4px 16px;
       padding: 12px 16px;
       color: #fff;
@@ -444,7 +444,7 @@ const nexusCSS = `
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.1em;
-      color: #00C2FF;
+      color: #00CED1;
     }
 
     .nexus-message-trace {
@@ -464,7 +464,7 @@ const nexusCSS = `
     }
 
     .nexus-message-content strong {
-      color: #00C2FF;
+      color: #00CED1;
       font-weight: 600;
     }
 
@@ -473,12 +473,12 @@ const nexusCSS = `
     }
 
     .nexus-inline-code {
-      background: rgba(0, 194, 255, 0.1);
+      background: rgba(0, 206, 209, 0.1);
       padding: 2px 6px;
       border-radius: 4px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
-      color: #00C2FF;
+      color: #00CED1;
     }
 
     /* Typing Indicator */
@@ -492,7 +492,7 @@ const nexusCSS = `
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #00C2FF;
+      background: #00CED1;
       animation: nexus-typing 1.4s ease-in-out infinite;
     }
 
@@ -554,10 +554,10 @@ const nexusCSS = `
     .nexus-citations-count {
       margin-left: auto;
       padding: 2px 6px;
-      background: rgba(0, 194, 255, 0.1);
+      background: rgba(0, 206, 209, 0.1);
       border-radius: 10px;
       font-size: 9px;
-      color: #00C2FF;
+      color: #00CED1;
     }
 
     .nexus-citations-list {
@@ -585,7 +585,7 @@ const nexusCSS = `
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       font-weight: 600;
-      color: #00C2FF;
+      color: #00CED1;
     }
 
     .nexus-citation-title {
@@ -620,7 +620,7 @@ const nexusCSS = `
       align-items: center;
       gap: 4px;
       font-size: 10px;
-      color: #00C2FF;
+      color: #00CED1;
       text-decoration: none;
       opacity: 0.7;
       transition: opacity 0.2s ease;
@@ -655,8 +655,8 @@ const nexusCSS = `
     }
 
     .nexus-input-wrapper:focus-within {
-      border-color: rgba(0, 194, 255, 0.4);
-      box-shadow: 0 0 0 3px rgba(0, 194, 255, 0.1);
+      border-color: rgba(0, 206, 209, 0.4);
+      box-shadow: 0 0 0 3px rgba(0, 206, 209, 0.1);
     }
 
     .nexus-input {
@@ -683,7 +683,7 @@ const nexusCSS = `
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #00C2FF 0%, #0891B2 100%);
+      background: linear-gradient(135deg, #00CED1 0%, #0891B2 100%);
       border: none;
       border-radius: 8px;
       color: #0a0a1e;
@@ -693,7 +693,7 @@ const nexusCSS = `
 
     .nexus-send:hover:not(:disabled) {
       transform: scale(1.05);
-      box-shadow: 0 4px 16px rgba(0, 194, 255, 0.3);
+      box-shadow: 0 4px 16px rgba(0, 206, 209, 0.3);
     }
 
     .nexus-send:disabled {

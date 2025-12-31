@@ -50,7 +50,7 @@ barrios-landing/
 ## Color Palette (Quick Reference)
 - Background: #0a0a0a (primary), #141414 (secondary)
 - Text: #fafafa (primary), #a1a1aa (secondary)
-- Accent: #00D4FF (cyan), #8B5CF6 (purple)
+- Accent: #00CED1 (cyan), #8B5CF6 (purple)
 
 ## Current Priority
 Nexus Brain chat integration with Cognitive Orchestrator (Phase 4 of Nervous System)
@@ -79,7 +79,7 @@ cat .claude/skills/frontend-design/SKILL.md
 |-------|-------|-------|
 | `--bg-primary` | #0a0a0a | Page background |
 | `--bg-secondary` | #141414 | Cards, panels |
-| `--accent-cyan` | #00D4FF | Primary accent, CTAs |
+| `--accent-cyan` | #00CED1 | Primary accent, CTAs |
 | `--accent-purple` | #8B5CF6 | Secondary accent |
 | `--text-primary` | #fafafa | Headings |
 | `--text-secondary` | #a1a1aa | Body text |
