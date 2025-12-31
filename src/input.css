@@ -1,0 +1,1111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================
+   BARRIOS A2I - Custom CSS
+   Extracted from index.html for PurgeCSS build
+   ========================================== */
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00CED1; }
+::selection { background-color: rgba(0, 206, 209, 0.2); color: white; }
+
+/* Cinematic HUD Utilities */
+.hud-card {
+  background: linear-gradient(180deg, rgba(16, 20, 30, 0.8) 0%, rgba(10, 10, 15, 0.9) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.05), 0 20px 40px -20px rgba(0,0,0,0.8);
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at top right, rgba(255,255,255,0.03), transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hud-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.08), 0 30px 60px -20px rgba(0,0,0,0.9), 0 0 20px rgba(0, 206, 209, 0.05);
+}
+
+/* Corner Accents for Tech Feel */
+.corner-accent::before, .corner-accent::after {
+  content: ''; position: absolute; width: 8px; height: 8px;
+  border-color: rgba(255,255,255,0.2); border-style: solid; transition: all 0.3s;
+}
+.corner-accent::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; border-radius: 6px 0 0 0; }
+.corner-accent::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; border-radius: 0 0 6px 0; }
+.hud-card:hover .corner-accent::before { border-color: #00CED1; }
+.hud-card:hover .corner-accent::after { border-color: #00CED1; }
+
+/* Intro Animation */
+@keyframes animationIn {
+  0% { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+
+@keyframes cortex-scan {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+@keyframes bar-pulse-1 { 0%,100%{height:30%} 50%{height:70%} }
+@keyframes bar-pulse-2 { 0%,100%{height:55%} 50%{height:35%} }
+@keyframes bar-pulse-3 { 0%,100%{height:70%} 50%{height:50%} }
+@keyframes bar-pulse-4 { 0%,100%{height:45%} 50%{height:85%} }
+@keyframes bar-pulse-5 { 0%,100%{height:80%} 50%{height:40%} }
+
+.animate-marquee { animation: marquee 25s linear infinite; }
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(500%); }
+}
+.animate-scan { animation: scan 4s linear infinite; }
+
+.animate-on-scroll { animation-play-state: paused !important; }
+.animate-on-scroll.animate { animation-play-state: running !important; }
+
+/* Aurora Background adjustments for Obsidian */
+.aurora-blob {
+  position: absolute; border-radius: 50%; filter: blur(120px); z-index: -1;
+  mix-blend-mode: screen;
+}
+
+/* Marquee gradient masks */
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+/* Plasma & Grid Specifics */
+.containment-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+}
+
+/* Signal Row Animation */
+.signal-line {
+  position: relative;
+  overflow: hidden;
+}
+.signal-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent, #00CED1, transparent);
+  width: 50%;
+  opacity: 0.5;
+  animation: signal-sweep 2s linear infinite;
+}
+.signal-line-delay-1::after { animation-delay: 0.4s; }
+.signal-line-delay-2::after { animation-delay: 0.8s; }
+
+@keyframes progress {
+  0% { transform: scaleX(0); }
+  50% { transform: scaleX(0.7); }
+  100% { transform: scaleX(1); }
+}
+.animate-progress {
+  animation: progress 2.5s ease-in-out forwards;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 25s linear infinite;
+}
+.animate-pulse-slow {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: -24; }
+}
+.animate-dash {
+  animation: dash 1.5s linear infinite;
+}
+
+/* === ENTERPRISE WORDMARK SLOT (NO HEADER EXPANSION) === */
+.logoWrap {
+  position: relative;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 240px;
+  min-width: 240px;
+  height: 100%;
+  max-height: 64px;
+  padding: 0;
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .logoWrap {
+    width: clamp(150px, 44vw, 190px);
+    min-width: clamp(150px, 44vw, 190px);
+    max-height: 52px;
+  }
+}
+
+/* === CENTER-LOCKED BREATHING GLOW === */
+.logoWrap::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 170%;
+  height: 170%;
+  border-radius: 18px;
+  background: radial-gradient(
+    circle at 50% 55%,
+    rgba(0,206,209,0.22),
+    rgba(34,211,238,0.10),
+    transparent 62%
+  );
+  filter: blur(10px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: -1;
+  animation: logoBreath 3.2s ease-in-out infinite;
+}
+
+@keyframes logoBreath {
+  0%,100% { transform: translate(-50%,-50%) scale(0.98); opacity: 0.26; }
+  50% { transform: translate(-50%,-50%) scale(1.05); opacity: 0.48; }
+}
+
+.logoWrap:hover::before {
+  animation: logoBreathHover 1.1s ease-in-out infinite alternate;
+  opacity: 0.6;
+}
+
+@keyframes logoBreathHover {
+  from { transform: translate(-50%,-50%) scale(1.02); }
+  to { transform: translate(-50%,-50%) scale(1.08); }
+}
+
+/* === WORDMARK RENDER === */
+.logoImg {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  transform: translateZ(0);
+}
+
+/* ========================================
+   NEXUS BRAIN - Chat Interface Styles
+   ======================================== */
+
+/* --- Launcher Button --- */
+.nexus-launcher {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(10, 10, 30, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 206, 209, 0.3),
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(0, 206, 209, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: visible;
+}
+
+.nexus-launcher:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 0 0 1px rgba(0, 206, 209, 0.5),
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(0, 206, 209, 0.25);
+}
+
+.nexus-launcher:focus-visible {
+  outline: 2px solid #00CED1;
+  outline-offset: 3px;
+}
+
+.nexus-launcher--active {
+  box-shadow:
+    0 0 0 2px rgba(0, 206, 209, 0.6),
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 50px rgba(0, 206, 209, 0.3);
+}
+
+.nexus-launcher-glow {
+  position: absolute;
+  inset: -8px;
+  border-radius: 24px;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 206, 209, 0.25), transparent 70%);
+  filter: blur(12px);
+  opacity: 0.6;
+  animation: nexus-breathe 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes nexus-breathe {
+  0%, 100% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.nexus-launcher-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nexus-launcher-icon {
+  width: 28px;
+  height: 28px;
+  color: #00CED1;
+  transition: color 0.2s ease;
+}
+
+.nexus-launcher:hover .nexus-launcher-icon {
+  color: #22D3EE;
+}
+
+.nexus-launcher-pulse {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22C55E;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+.nexus-launcher-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.4);
+  animation: nexus-pulse-ring 2s ease-out infinite;
+}
+
+@keyframes nexus-pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Tooltip */
+.nexus-launcher::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  padding: 8px 12px;
+  background: rgba(10, 10, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #00CED1;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.nexus-launcher:hover::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile positioning */
+@media (max-width: 768px) {
+  .nexus-launcher {
+    bottom: 16px;
+    right: 12px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 380px) {
+  .nexus-launcher {
+    bottom: 12px;
+    right: 8px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* --- Backdrop --- */
+.nexus-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.nexus-backdrop--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* --- Panel --- */
+.nexus-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10000;
+  width: 420px;
+  max-width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(10, 10, 30, 0.98) 0%, rgba(11, 18, 32, 0.98) 100%);
+  backdrop-filter: blur(24px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nexus-panel--open {
+  transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+  .nexus-panel {
+    width: 100vw;
+    border-left: none;
+  }
+}
+
+/* --- Panel Header --- */
+.nexus-panel-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nexus-panel-title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nexus-panel-branding {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nexus-panel-logo {
+  width: 32px;
+  height: 32px;
+  color: #00CED1;
+}
+
+.nexus-panel-title-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.nexus-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #fff;
+  margin: 0;
+}
+
+.nexus-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Status Pill */
+.nexus-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.nexus-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #666;
+}
+
+.nexus-status-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #666;
+}
+
+.nexus-status--loading .nexus-status-dot {
+  background: #F59E0B;
+  animation: nexus-blink 1s ease-in-out infinite;
+}
+.nexus-status--loading .nexus-status-text { color: #F59E0B; }
+
+.nexus-status--online .nexus-status-dot {
+  background: #22C55E;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+.nexus-status--online .nexus-status-text { color: #22C55E; }
+
+.nexus-status--degraded .nexus-status-dot {
+  background: #F59E0B;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+.nexus-status--degraded .nexus-status-text { color: #F59E0B; }
+
+.nexus-status--offline .nexus-status-dot { background: #EF4444; }
+.nexus-status--offline .nexus-status-text { color: #EF4444; }
+
+@keyframes nexus-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Close Button */
+.nexus-close {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nexus-close:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.nexus-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Clear History Button */
+.nexus-clear {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: rgba(239, 68, 68, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 8px;
+}
+
+.nexus-clear:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ef4444;
+}
+
+.nexus-clear svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* --- Messages Container --- */
+.nexus-panel-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Welcome Screen */
+.nexus-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  height: 100%;
+}
+
+.nexus-welcome-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 24px;
+  color: #00CED1;
+  opacity: 0.6;
+}
+
+.nexus-welcome-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.nexus-welcome-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #fff;
+  margin: 0 0 12px;
+}
+
+.nexus-welcome-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 280px;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.nexus-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.nexus-quick-btn {
+  padding: 8px 16px;
+  background: rgba(0, 206, 209, 0.1);
+  border: 1px solid rgba(0, 206, 209, 0.2);
+  border-radius: 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #00CED1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nexus-quick-btn:hover {
+  background: rgba(0, 206, 209, 0.2);
+  border-color: rgba(0, 206, 209, 0.4);
+}
+
+/* --- Messages --- */
+.nexus-message {
+  max-width: 95%;
+}
+
+.nexus-message--user {
+  align-self: flex-end;
+}
+
+.nexus-message--user .nexus-message-content {
+  background: linear-gradient(135deg, rgba(0, 206, 209, 0.15) 0%, rgba(0, 206, 209, 0.08) 100%);
+  border: 1px solid rgba(0, 206, 209, 0.2);
+  border-radius: 16px 16px 4px 16px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.nexus-message--assistant {
+  align-self: flex-start;
+}
+
+.nexus-message-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.nexus-message-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #00CED1;
+}
+
+.nexus-message-trace {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.nexus-message--assistant .nexus-message-content {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px 16px 16px 16px;
+  padding: 14px 16px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.nexus-message-content strong {
+  color: #00CED1;
+  font-weight: 600;
+}
+
+.nexus-message-content em {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.nexus-inline-code {
+  background: rgba(0, 206, 209, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #00CED1;
+}
+
+/* Typing Indicator */
+.nexus-typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.nexus-typing-indicator span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00CED1;
+  animation: nexus-typing 1.4s ease-in-out infinite;
+}
+
+.nexus-typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.nexus-typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes nexus-typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* Error */
+.nexus-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #EF4444;
+  font-size: 13px;
+}
+
+.nexus-error svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* --- Citations --- */
+.nexus-citations {
+  margin-top: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.nexus-citations-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nexus-citations-header svg {
+  width: 14px;
+  height: 14px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.nexus-citations-header span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.nexus-citations-count {
+  margin-left: auto;
+  padding: 2px 6px;
+  background: rgba(0, 206, 209, 0.1);
+  border-radius: 10px;
+  font-size: 9px;
+  color: #00CED1;
+}
+
+.nexus-citations-list {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nexus-citation {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.nexus-citation-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.nexus-citation-index {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: #00CED1;
+}
+
+.nexus-citation-title {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nexus-citation-relevance {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #22C55E;
+}
+
+.nexus-citation-excerpt {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin: 0 0 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nexus-citation-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #00CED1;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.nexus-citation-link:hover {
+  opacity: 1;
+}
+
+.nexus-citation-link svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* --- Input Area --- */
+.nexus-panel-input-container {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nexus-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 4px 4px 4px 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nexus-input-wrapper:focus-within {
+  border-color: rgba(0, 206, 209, 0.4);
+  box-shadow: 0 0 0 3px rgba(0, 206, 209, 0.1);
+}
+
+.nexus-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #fff;
+}
+
+.nexus-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.nexus-input:disabled {
+  opacity: 0.5;
+}
+
+.nexus-send {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #00CED1 0%, #0891B2 100%);
+  border: none;
+  border-radius: 8px;
+  color: #0a0a1e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nexus-send:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 206, 209, 0.3);
+}
+
+.nexus-send:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nexus-send svg {
+  width: 18px;
+  height: 18px;
+}
+
+.nexus-input-hint {
+  margin-top: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+.nexus-hint-key {
+  display: inline-block;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .nexus-launcher-glow,
+  .nexus-launcher-pulse::before,
+  .nexus-typing-indicator span {
+    animation: none;
+  }
+  .nexus-panel {
+    transition: none;
+  }
+}
+
+/* === REMASTERED HEADER UTILITIES === */
+/* Gold Trace Hover Effect */
+.nav-link { position: relative; }
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: #ffd700;
+  box-shadow: 0 0 8px #ffd700;
+  transition: width 0.3s ease;
+}
+.nav-link:hover::after { width: 75%; }
+.nav-link:hover .bracket { color: #ffd700; }
+
+/* Scanline Effect */
+.scanline-overlay {
+  background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.15) 50%),
+              linear-gradient(90deg, rgba(255,0,0,0.02), rgba(0,255,0,0.01), rgba(0,0,255,0.02));
+  background-size: 100% 2px, 3px 100%;
+}
+
+/* Volumetric Glow */
+.volumetric-glow {
+  filter: drop-shadow(0 0 8px rgba(0, 206, 209, 0.5));
+}
+.volumetric-glow:hover {
+  filter: drop-shadow(0 0 15px rgba(0, 206, 209, 0.7));
+}
+
+/* Header Scroll State */
+.header-scrolled {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  background: rgba(10, 10, 30, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-top {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  background: transparent;
+  border-bottom: none;
+}
+
+/* Neural Ambient Glow - CSS-only, GPU-accelerated */
+#neural-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -20;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.neural-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+.neural-orb-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 206, 209, 0.18) 0%, transparent 70%);
+  top: -200px;
+  right: -100px;
+  animation: neural-drift-1 45s ease-in-out infinite;
+}
+
+.neural-orb-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+  bottom: -150px;
+  left: -100px;
+  animation: neural-drift-2 60s ease-in-out infinite;
+}
+
+.neural-orb-3 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 206, 209, 0.18) 0%, transparent 70%);
+  top: 40%;
+  left: 30%;
+  animation: neural-drift-3 50s ease-in-out infinite;
+}
+
+@keyframes neural-drift-1 {
+  0%, 100% {
+    transform: translate(0, 0) translateZ(0);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translate(-50px, 80px) translateZ(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-100px, 40px) translateZ(0);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translate(-30px, 100px) translateZ(0);
+    opacity: 0.5;
+  }
+}
+
+@keyframes neural-drift-2 {
+  0%, 100% {
+    transform: translate(0, 0) translateZ(0);
+    opacity: 0.3;
+  }
+  33% {
+    transform: translate(80px, -60px) translateZ(0);
+    opacity: 0.5;
+  }
+  66% {
+    transform: translate(40px, -100px) translateZ(0);
+    opacity: 0.2;
+  }
+}
+
+@keyframes neural-drift-3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) translateZ(0);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(100px, -50px) scale(1.1) translateZ(0);
+    opacity: 0.4;
+  }
+}
