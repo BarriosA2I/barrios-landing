@@ -191,6 +191,18 @@
     const welcome = messagesContainer.querySelector('.nexus-welcome');
     if (welcome) welcome.style.display = 'none';
 
+    // Lead Capture: Check if user message contains an email
+    if (window.LeadCapture) {
+      const email = window.LeadCapture.extractEmail(message);
+      if (email && !window.LeadCapture.isCaptured(email)) {
+        window.LeadCapture.capture({
+          email: email,
+          message: message.substring(0, 500),
+          source: 'nexus_chat'
+        });
+      }
+    }
+
     // Add user message
     const userMsg = document.createElement('div');
     userMsg.className = 'nexus-message nexus-message--user';

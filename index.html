@@ -2712,6 +2712,9 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
     </script>
     <script src="js/intake-terminal.js"></script>
 
+    <!-- Lead Capture System -->
+    <script src="js/lead-capture.js"></script>
+
     <!-- Nexus Brain Chat System -->
     <script src="js/nexus-chat.js"></script>
     <script src="js/nexus-panel.js"></script>
@@ -2721,5 +2724,62 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
     <script src="js/config.js"></script>
     <script src="js/proof-sections.js"></script>
     <script src="js/revenue-activation.js"></script>
+
+    <!-- Footer Email Capture -->
+    <script>
+    (function() {
+      // Wire up all footer email inputs
+      document.querySelectorAll('input[type="email"]').forEach(function(input) {
+        const button = input.parentElement.querySelector('button');
+        if (!button) return;
+
+        // Handle click
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          captureFooterEmail(input, button);
+        });
+
+        // Handle enter key
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            captureFooterEmail(input, button);
+          }
+        });
+      });
+
+      function captureFooterEmail(input, button) {
+        const email = input.value.trim();
+        if (!email || !email.includes('@')) {
+          // Visual feedback - shake input
+          input.style.borderColor = '#ef4444';
+          setTimeout(() => input.style.borderColor = '', 1000);
+          return;
+        }
+
+        // Capture the lead
+        if (window.LeadCapture) {
+          window.LeadCapture.capture({
+            email: email,
+            source: 'footer_newsletter',
+            message: 'Newsletter signup'
+          });
+        }
+
+        // Visual feedback - success
+        input.value = '';
+        input.placeholder = 'Signal received!';
+        input.style.borderColor = '#22c55e';
+        button.innerHTML = '<iconify-icon icon="lucide:check" width="16" class="text-green-500"></iconify-icon>';
+
+        // Reset after 3 seconds
+        setTimeout(function() {
+          input.placeholder = 'Enter frequency...';
+          input.style.borderColor = '';
+          button.innerHTML = '<iconify-icon icon="lucide:send" width="16" class="text-brand-blue group-hover:scale-110 transition-transform"></iconify-icon>';
+        }, 3000);
+      }
+    })();
+    </script>
 
 </body></html>
