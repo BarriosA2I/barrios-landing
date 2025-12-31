@@ -34,16 +34,62 @@
     </script>
 </head>
 <body class="bg-obsidian min-h-screen text-white">
-    <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 bg-obsidian/80 backdrop-blur-xl border-b border-white/5">
-        <nav class="max-w-7xl mx-auto flex items-center justify-between">
-            <a href="/" class="flex items-center gap-3 group">
-                <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="w-8 h-8 object-contain">
-                <span class="text-white font-black tracking-tighter text-xl">BARRIOS <span class="text-brand-gold">A2I</span></span>
+    <!-- ========== GLOBAL HEADER (Unified Component) ========== -->
+    <header id="global-header" class="fixed top-0 left-0 right-0 z-[100] px-4 md:px-6 py-3 md:py-6 transition-all duration-300">
+        <!-- Glassmorphism Background -->
+        <div class="absolute inset-0 bg-transparent backdrop-blur-none transition-all duration-300" id="header-bg"></div>
+
+        <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
+            <!-- Brand Section with Status Indicator -->
+            <a href="/" class="flex items-center gap-4 md:gap-5 group">
+                <div class="relative">
+                    <!-- Shard Logo with Volumetric Glow -->
+                    <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
+                        <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="relative w-12 h-12 md:w-16 md:h-16 object-contain transition-all duration-300">
+                    </div>
+                    <!-- Active Status Dot -->
+                    <div class="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-2.5 h-2.5 md:w-3 md:h-3 bg-brand-gold rounded-full animate-pulse"></div>
+                </div>
+                <div class="hidden md:flex flex-col">
+                    <span class="text-brand-teal font-mono text-xs tracking-[0.2em] leading-none mb-1">SYSTEM_CONNECTED</span>
+                    <span class="text-white font-black tracking-tighter text-2xl leading-none">BARRIOS <span class="text-brand-gold">A2I</span></span>
+                </div>
             </a>
-            <a href="/" class="text-[11px] font-mono text-gray-400 hover:text-white transition-colors">[ RETURN_HOME ]</a>
+
+            <!-- Navigation -->
+            <div class="flex items-center gap-4 md:gap-6">
+                <a href="/" class="nav-link group flex items-center px-3 py-1.5 transition-all">
+                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
+                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">RETURN_HOME</span>
+                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
+                </a>
+            </div>
         </nav>
     </header>
+
+    <!-- Header Scroll Behavior Script -->
+    <script>
+    (function() {
+        const header = document.getElementById('global-header');
+        const headerBg = document.getElementById('header-bg');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            const isMobile = window.innerWidth < 768;
+            if (currentScroll > 10) {
+                header.classList.remove('py-3', 'md:py-6');
+                header.classList.add(isMobile ? 'py-2' : 'py-3');
+                headerBg.classList.remove('bg-transparent', 'backdrop-blur-none');
+                headerBg.classList.add('bg-obsidian/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+            } else {
+                header.classList.remove('py-2', 'py-3');
+                header.classList.add('py-3', 'md:py-6');
+                headerBg.classList.remove('bg-obsidian/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+                headerBg.classList.add('bg-transparent', 'backdrop-blur-none');
+            }
+        });
+    })();
+    </script>
 
     <!-- Content -->
     <main class="pt-32 pb-20 px-6 min-h-screen flex items-center justify-center">

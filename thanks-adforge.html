@@ -607,12 +607,54 @@
   </style>
 </head>
 <body>
+  <!-- ========== GLOBAL NAV HEADER (Unified Component) ========== -->
+  <nav id="global-header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 12px 24px; transition: all 0.3s;">
+    <div id="header-bg" style="position: absolute; inset: 0; background: transparent; backdrop-filter: none; transition: all 0.3s;"></div>
+    <div style="max-width: 1280px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: space-between;">
+      <!-- Brand Section with Status Indicator -->
+      <a href="/" style="display: flex; align-items: center; gap: 16px; text-decoration: none;">
+        <div style="position: relative; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; inset: 0; background: var(--primary); filter: blur(20px); opacity: 0.2; border-radius: 9999px;"></div>
+          <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" style="position: relative; width: 48px; height: 48px; object-fit: contain;">
+          <div style="position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; background: var(--accent); border-radius: 9999px; animation: pulse 2s infinite;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <span style="font-family: var(--font-mono); font-size: 10px; color: var(--primary); letter-spacing: 0.2em;">SYSTEM_CONNECTED</span>
+          <span style="color: white; font-weight: 900; font-size: 20px; letter-spacing: -0.02em;">BARRIOS <span style="color: var(--accent);">A2I</span></span>
+        </div>
+      </a>
+      <!-- Navigation -->
+      <a href="/" style="display: flex; align-items: center; padding: 6px 12px; text-decoration: none;">
+        <span style="font-family: var(--font-mono); font-size: 12px; color: rgba(0,206,209,0.4);">[</span>
+        <span style="margin: 0 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; color: #9ca3af;">RETURN_HOME</span>
+        <span style="font-family: var(--font-mono); font-size: 12px; color: rgba(0,206,209,0.4);">]</span>
+      </a>
+    </div>
+  </nav>
+  <script>
+  (function() {
+    const header = document.getElementById('global-header');
+    const headerBg = document.getElementById('header-bg');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 10) {
+        headerBg.style.background = 'rgba(10,10,15,0.9)';
+        headerBg.style.backdropFilter = 'blur(20px)';
+        headerBg.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+      } else {
+        headerBg.style.background = 'transparent';
+        headerBg.style.backdropFilter = 'none';
+        headerBg.style.borderBottom = 'none';
+      }
+    });
+  })();
+  </script>
+
   <!-- Background Effects -->
   <div class="bg-grid"></div>
   <div class="bg-glow"></div>
   <div class="bg-vignette"></div>
-  
-  <!-- Main Container -->
+
+  <!-- Main Container (with top padding for fixed header) -->
   <div class="container">
     <!-- Header -->
     <header class="header">

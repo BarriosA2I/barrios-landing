@@ -138,19 +138,35 @@
 </head>
 <body class="h-screen w-full flex flex-col font-sans selection:bg-cyan/20 selection:text-cyan">
 
-    <!-- HEADER -->
-    <header class="h-12 border-b border-border bg-panel flex items-center justify-between px-4 z-40 relative shrink-0">
+    <!-- HEADER - Unified Barrios A2I Component -->
+    <header class="h-14 border-b border-border bg-panel/95 backdrop-blur-xl flex items-center justify-between px-4 z-[100] relative shrink-0">
         <div class="flex items-center gap-4">
+            <!-- Barrios A2I Brand -->
+            <a href="/" class="flex items-center gap-3 group">
+                <div class="relative w-10 h-10 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-cyan blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
+                    <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="relative w-8 h-8 object-contain">
+                    <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-gold rounded-full animate-pulse"></div>
+                </div>
+                <div class="hidden sm:flex flex-col">
+                    <span class="text-cyan font-mono text-[9px] tracking-[0.15em] leading-none mb-0.5">SYSTEM_CONNECTED</span>
+                    <span class="text-white font-black tracking-tight text-sm leading-none">BARRIOS <span class="text-gold">A2I</span></span>
+                </div>
+            </a>
+
+            <div class="h-6 w-px bg-white/10"></div>
+
+            <!-- Command Center Badge -->
             <div class="flex items-center gap-2">
                 <i data-lucide="cpu" class="w-4 h-4 text-cyan"></i>
-                <span class="text-xs font-bold tracking-widest text-white font-mono">NEXUS_CORE</span>
+                <span class="text-xs font-bold tracking-widest text-white font-mono">COMMAND_CENTER</span>
                 <span class="text-[9px] text-white/40 font-mono">v5.0</span>
             </div>
 
-            <div class="h-4 w-px bg-white/10"></div>
+            <div class="h-4 w-px bg-white/10 hidden md:block"></div>
 
             <!-- Protected Badge -->
-            <div class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald/10 border border-emerald/30">
+            <div class="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald/10 border border-emerald/30">
                 <div class="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse"></div>
                 <span class="text-[10px] font-bold text-emerald tracking-wide">PROTECTED</span>
             </div>

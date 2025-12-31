@@ -166,25 +166,29 @@
     <div class="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent z-50"></div>
 
     <!-- ========== SECTION 1: NAVIGATION (REMASTERED) ========== -->
-    <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+    <header id="global-header" class="fixed top-0 left-0 right-0 z-[100] px-4 md:px-6 py-3 md:py-6 transition-all duration-300">
         <!-- Glassmorphism Background -->
-        <div class="absolute inset-0 bg-obsidian/80 backdrop-blur-xl border-b border-brand-teal/20 transition-all duration-300"></div>
+        <div class="absolute inset-0 bg-transparent backdrop-blur-none transition-all duration-300" id="header-bg"></div>
 
         <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
-            <!-- Official Shard Logo with Volumetric Glow (2x size) -->
-            <a href="/" class="flex items-center gap-5 group">
-                <div class="relative w-20 h-20 flex items-center justify-center">
-                    <!-- Volumetric Glow Behind Logo -->
-                    <div class="absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
-                    <img
-                        src="brand/barrios-a2i-shard-logo.png"
-                        alt="Barrios A2I"
-                        class="relative w-16 h-16 object-contain volumetric-glow transition-all duration-300"
-                    >
+            <!-- Official Shard Logo with Volumetric Glow -->
+            <a href="/" class="flex items-center gap-4 md:gap-5 group">
+                <div class="relative">
+                    <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center">
+                        <!-- Volumetric Glow Behind Logo -->
+                        <div class="absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
+                        <img
+                            src="brand/barrios-a2i-shard-logo.png"
+                            alt="Barrios A2I"
+                            class="relative w-12 h-12 md:w-16 md:h-16 object-contain volumetric-glow transition-all duration-300"
+                        >
+                    </div>
+                    <!-- Active Status Dot -->
+                    <div class="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-2.5 h-2.5 md:w-3 md:h-3 bg-brand-gold rounded-full animate-pulse"></div>
                 </div>
                 <div class="hidden md:flex flex-col">
-                    <span class="text-brand-teal font-mono text-xs tracking-[0.3em] font-bold">SYSTEM_CONNECTED</span>
-                    <span class="text-white font-black text-2xl tracking-tighter">BARRIOS A2I</span>
+                    <a href="/status" class="text-brand-teal font-mono text-xs tracking-[0.2em] leading-none mb-1 hover:text-green-500 transition-colors">SYSTEM_CONNECTED</a>
+                    <span class="text-white font-black tracking-tighter text-2xl leading-none">BARRIOS <span class="text-brand-gold">A2I</span></span>
                 </div>
             </a>
 
@@ -239,6 +243,29 @@
             </div>
         </nav>
     </header>
+
+    <!-- Header Scroll Behavior Script -->
+    <script>
+    (function() {
+        const header = document.getElementById('global-header');
+        const headerBg = document.getElementById('header-bg');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            const isMobile = window.innerWidth < 768;
+            if (currentScroll > 10) {
+                header.classList.remove('py-3', 'md:py-6');
+                header.classList.add(isMobile ? 'py-2' : 'py-3');
+                headerBg.classList.remove('bg-transparent', 'backdrop-blur-none');
+                headerBg.classList.add('bg-obsidian/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+            } else {
+                header.classList.remove('py-2', 'py-3');
+                header.classList.add('py-3', 'md:py-6');
+                headerBg.classList.remove('bg-obsidian/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+                headerBg.classList.add('bg-transparent', 'backdrop-blur-none');
+            }
+        });
+    })();
+    </script>
 
     <main class="relative pt-16">
         
