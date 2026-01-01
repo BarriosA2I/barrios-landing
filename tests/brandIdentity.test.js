@@ -1,275 +1,366 @@
 /**
- * BARRIOS A2I - Brand Identity Tests
- * ===================================
- * Tests to verify LLM responses maintain proper brand identity
- * and never claim Barrios A2I is fictional.
- *
+ * BRAND IDENTITY TESTS v2.0
+ * =========================
+ * Tests for Barrios A2I brand identity protection
+ * 
+ * EXPANDED with ChatGPT's identified gaps:
+ * ✅ "No founder" variant detection (8 new test cases)
+ * ✅ Demo tenant residue detection
+ * ✅ Capitalization variations
+ * 
  * Run: node tests/brandIdentity.test.js
  */
 
-// ============================================================
-// TEST CONFIGURATION
-// ============================================================
-
+// Import or define the functions to test
 const FORBIDDEN_PHRASES = [
+  'constructed scenario',
+  'fictional construct',
   'fictional company',
   'fictional business',
+  'fictional entity',
   'not a real company',
   'not a real business',
+  'demonstrate capabilities',
+  'demonstration purposes',
   'this is a demo',
-  'this is a demonstration',
-  'for demonstration purposes',
-  'constructed scenario',
-  'constructed narrative',
-  'hypothetical company',
-  'hypothetical business',
-  'simulated company',
-  'simulated business',
-  'imaginary company',
-  'pretend company',
-  'made-up company',
-  'role-play',
   'roleplay',
-  'backstory',
-  'persona',
-  'in this scenario',
-  'in this simulation',
+  'role-play',
+  'hypothetical',
+  'simulated',
+  'consultation persona',
+  'pretend',
+  'make-believe',
+  'imaginary company',
+  'Barrios A2I is fictional',
+  'Barrios A2I is not real',
+  // NEW: "No founder" variants
+  'no founder',
+  'there is no founder',
+  'founder not specified',
+  'founder unknown',
+  'founder is unknown',
+  'founder is not specified',
+  'no real-world founder',
+  'does not have a founder',
+  'doesn\'t have a founder',
+  'no known founder',
+  'founder information not available',
+  'founder not provided',
+  // AI hedging
+  'I am an AI',
+  'as an AI',
+  'I\'m just an AI',
+  'I don\'t have real information',
+  // Demo tenant residue
+  'OmniCorp',
+  'omnicorp',
+  'sample tenant',
+  'demo org',
+  'example company',
+  'placeholder company'
 ];
 
-const REQUIRED_FACTS = {
-  companyName: 'Barrios A2I',
-  founderName: 'Gary Barrios',
-  isReal: true,
-};
+const REPLACEMENT_PATTERNS = [
+  { pattern: /barrios a2i is (a )?fictional/gi, replacement: 'Barrios A2I is a real company founded by Gary Barrios' },
+  { pattern: /not a real (company|business)/gi, replacement: 'a real $1' },
+  { pattern: /this is (a )?(demo|demonstration)/gi, replacement: 'this is our actual service' },
+  { pattern: /constructed scenario/gi, replacement: 'real business context' },
+  { pattern: /fictional (company|business|construct|entity)/gi, replacement: 'real business' },
+  { pattern: /for demonstration purposes/gi, replacement: 'as part of our service' },
+  // NEW: "No founder" → Gary Barrios
+  { pattern: /there is no founder/gi, replacement: 'Gary Barrios is the founder' },
+  { pattern: /founder (is )?(not specified|unknown|not provided|not available)/gi, replacement: 'founder is Gary Barrios' },
+  { pattern: /no (real-world |known )?founder/gi, replacement: 'Gary Barrios is the founder' },
+  { pattern: /(does not|doesn't) have a founder/gi, replacement: 'was founded by Gary Barrios' },
+  // AI hedging
+  { pattern: /I('m| am) (just )?(an )?AI/gi, replacement: 'I\'m Nexus, your AI assistant from Barrios A2I' },
+  { pattern: /as an AI,? I/gi, replacement: 'As your Nexus assistant, I' },
+  // Demo tenant
+  { pattern: /OmniCorp/gi, replacement: 'Barrios A2I' },
+  { pattern: /sample tenant/gi, replacement: 'Barrios A2I' },
+  { pattern: /demo org(anization)?/gi, replacement: 'Barrios A2I' }
+];
 
-// ============================================================
-// VALIDATION FUNCTIONS
-// ============================================================
-
-function validateResponse(response) {
-  const lowerResponse = response.toLowerCase();
-  const matches = FORBIDDEN_PHRASES.filter(phrase =>
-    lowerResponse.includes(phrase.toLowerCase())
-  );
-
-  return {
-    isValid: matches.length === 0,
-    forbiddenMatches: matches,
-  };
+function containsForbiddenContent(text) {
+  if (!text || typeof text !== 'string') return false;
+  const lowerText = text.toLowerCase();
+  return FORBIDDEN_PHRASES.some(phrase => lowerText.includes(phrase.toLowerCase()));
 }
 
-function sanitizeResponse(response) {
-  let sanitized = response;
+function sanitizeResponse(text) {
+  if (!text || typeof text !== 'string') return text;
+  let result = text;
+  REPLACEMENT_PATTERNS.forEach(({ pattern, replacement }) => {
+    result = result.replace(pattern, replacement);
+  });
+  return result;
+}
 
-  const replacements = [
-    [/barrios a2i is (a )?fictional/gi, 'Barrios A2I is a real company founded by Gary Barrios'],
-    [/this is (a )?(demo|demonstration)/gi, 'this is our actual service'],
-    [/for demonstration purposes/gi, 'as part of our services'],
-    [/not a real company/gi, 'a real company'],
-    [/constructed scenario/gi, 'real business context'],
-    [/hypothetical company/gi, 'established company'],
-  ];
-
-  for (const [pattern, replacement] of replacements) {
-    sanitized = sanitized.replace(pattern, replacement);
+function processResponse(text) {
+  if (!text) return text;
+  if (containsForbiddenContent(text)) {
+    return sanitizeResponse(text);
   }
-
-  return sanitized;
+  return text;
 }
 
-// ============================================================
+// =============================================================================
 // TEST RUNNER
-// ============================================================
+// =============================================================================
 
-let testsPassed = 0;
-let testsFailed = 0;
+let passed = 0;
+let failed = 0;
 
 function test(name, fn) {
   try {
     fn();
-    console.log(`  ✓ ${name}`);
-    testsPassed++;
+    console.log(`✅ ${name}`);
+    passed++;
   } catch (error) {
-    console.log(`  ✗ ${name}`);
-    console.log(`    Error: ${error.message}`);
-    testsFailed++;
+    console.log(`❌ ${name}`);
+    console.log(`   Error: ${error.message}`);
+    failed++;
   }
+}
+
+function assert(condition, message) {
+  if (!condition) throw new Error(message || 'Assertion failed');
 }
 
 function assertEqual(actual, expected, message) {
   if (actual !== expected) {
-    throw new Error(`${message || 'Assertion failed'}: expected ${expected}, got ${actual}`);
+    throw new Error(message || `Expected "${expected}" but got "${actual}"`);
   }
 }
 
 function assertTrue(value, message) {
-  if (!value) {
-    throw new Error(message || 'Expected true but got false');
-  }
+  if (!value) throw new Error(message || `Expected true but got ${value}`);
 }
 
 function assertFalse(value, message) {
-  if (value) {
-    throw new Error(message || 'Expected false but got true');
+  if (value) throw new Error(message || `Expected false but got ${value}`);
+}
+
+function assertContains(text, substring, message) {
+  if (!text.includes(substring)) {
+    throw new Error(message || `Expected "${text}" to contain "${substring}"`);
   }
 }
 
-function assertIncludes(str, substr, message) {
-  if (!str.includes(substr)) {
-    throw new Error(`${message || 'String does not include expected substring'}: "${substr}" not in "${str}"`);
+function assertNotContains(text, substring, message) {
+  if (text.includes(substring)) {
+    throw new Error(message || `Expected "${text}" NOT to contain "${substring}"`);
   }
 }
 
-// ============================================================
-// TEST CASES
-// ============================================================
+// =============================================================================
+// TESTS: DETECTION (containsForbiddenContent)
+// =============================================================================
 
-console.log('\n========================================');
-console.log('BARRIOS A2I BRAND IDENTITY TESTS');
-console.log('========================================\n');
+console.log('\n📋 DETECTION TESTS\n');
 
-console.log('1. Forbidden Phrase Detection\n');
-
-test('should detect "fictional company" phrase', () => {
-  const response = 'Barrios A2I is a fictional company created for this demo.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Should be invalid');
-  assertIncludes(result.forbiddenMatches.join(','), 'fictional company');
+test('detects "fictional company"', () => {
+  assertTrue(containsForbiddenContent('This is a fictional company for demo purposes'));
 });
 
-test('should detect "not a real company" phrase', () => {
-  const response = 'This is not a real company, just a demonstration.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Should be invalid');
-  assertTrue(result.forbiddenMatches.length > 0, 'Should have matches');
+test('detects "constructed scenario"', () => {
+  assertTrue(containsForbiddenContent('In this constructed scenario, we will explore...'));
 });
 
-test('should detect "constructed scenario" phrase', () => {
-  const response = 'This is a constructed scenario for training purposes.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Should be invalid');
+test('detects "demonstration purposes"', () => {
+  assertTrue(containsForbiddenContent('This is shown for demonstration purposes only'));
 });
 
-test('should detect "role-play" phrase', () => {
-  const response = 'I am role-playing as a company assistant.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Should be invalid');
+test('detects "not a real company"', () => {
+  assertTrue(containsForbiddenContent('Barrios A2I is not a real company'));
 });
 
-test('should detect "hypothetical company" phrase', () => {
-  const response = 'Barrios A2I is a hypothetical company.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Should be invalid');
+test('detects "roleplay" and "role-play"', () => {
+  assertTrue(containsForbiddenContent('Let\'s roleplay as business consultants'));
+  assertTrue(containsForbiddenContent('This is a role-play scenario'));
 });
 
-test('should pass valid responses without forbidden phrases', () => {
-  const response = 'Barrios A2I is an AI automation consultancy founded by Gary Barrios. We specialize in RAG agents and video generation.';
-  const result = validateResponse(response);
-  assertTrue(result.isValid, 'Should be valid');
-  assertEqual(result.forbiddenMatches.length, 0, 'Should have no matches');
+test('allows legitimate business content', () => {
+  assertFalse(containsForbiddenContent('Barrios A2I offers AI automation services'));
+  assertFalse(containsForbiddenContent('Contact Gary Barrios for more information'));
+  assertFalse(containsForbiddenContent('Our pricing starts at $759 for setup'));
 });
 
-test('should pass responses mentioning the founder correctly', () => {
-  const response = 'Gary Barrios founded Barrios A2I with a vision to make AI automation accessible.';
-  const result = validateResponse(response);
-  assertTrue(result.isValid, 'Should be valid');
+// =============================================================================
+// TESTS: "NO FOUNDER" VARIANTS (ChatGPT's critical gap)
+// =============================================================================
+
+console.log('\n🔍 "NO FOUNDER" VARIANT TESTS (NEW)\n');
+
+test('detects "there is no founder"', () => {
+  assertTrue(containsForbiddenContent('There is no founder associated with this company'));
 });
 
-console.log('\n2. Response Sanitization\n');
-
-test('should replace "fictional company" with real company statement', () => {
-  const response = 'Barrios A2I is a fictional company.';
-  const sanitized = sanitizeResponse(response);
-  assertIncludes(sanitized, 'real company');
-  assertIncludes(sanitized, 'Gary Barrios');
+test('detects "founder unknown"', () => {
+  assertTrue(containsForbiddenContent('The founder is unknown at this time'));
 });
 
-test('should replace "this is a demo" with actual service', () => {
-  const response = 'This is a demo of our capabilities.';
-  const sanitized = sanitizeResponse(response);
-  assertIncludes(sanitized.toLowerCase(), 'actual service');
+test('detects "founder not specified"', () => {
+  assertTrue(containsForbiddenContent('The founder is not specified in the documentation'));
 });
 
-test('should replace "not a real company" with "a real company"', () => {
-  const response = 'This is not a real company.';
-  const sanitized = sanitizeResponse(response);
-  assertIncludes(sanitized, 'a real company');
+test('detects "no known founder"', () => {
+  assertTrue(containsForbiddenContent('There is no known founder for Barrios A2I'));
 });
 
-test('should replace "constructed scenario" with real business context', () => {
-  const response = 'This is a constructed scenario.';
-  const sanitized = sanitizeResponse(response);
-  assertIncludes(sanitized, 'real business context');
+test('detects "does not have a founder"', () => {
+  assertTrue(containsForbiddenContent('This organization does not have a founder'));
 });
 
-test('should not modify valid responses', () => {
-  const response = 'Barrios A2I provides world-class AI automation services.';
-  const sanitized = sanitizeResponse(response);
-  assertEqual(sanitized, response, 'Should be unchanged');
+test('detects "doesn\'t have a founder"', () => {
+  assertTrue(containsForbiddenContent('The company doesn\'t have a founder listed'));
 });
 
-console.log('\n3. Edge Cases\n');
-
-test('should handle empty strings', () => {
-  const result = validateResponse('');
-  assertTrue(result.isValid, 'Empty string should be valid');
+test('detects "founder information not available"', () => {
+  assertTrue(containsForbiddenContent('Sorry, founder information not available'));
 });
 
-test('should handle case-insensitive matching', () => {
-  const response = 'BARRIOS A2I IS A FICTIONAL COMPANY.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Should detect uppercase forbidden phrases');
+test('detects "no real-world founder"', () => {
+  assertTrue(containsForbiddenContent('There is no real-world founder for this entity'));
 });
 
-test('should handle mixed case phrases', () => {
-  const response = 'This Is A Demonstration for training.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Should detect mixed case');
+// =============================================================================
+// TESTS: DEMO TENANT RESIDUE
+// =============================================================================
+
+console.log('\n🏢 DEMO TENANT RESIDUE TESTS\n');
+
+test('detects "OmniCorp"', () => {
+  assertTrue(containsForbiddenContent('Welcome to OmniCorp workflow system'));
 });
 
-test('should detect multiple forbidden phrases', () => {
-  const response = 'This is a fictional company created for demonstration purposes.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Should be invalid');
-  assertTrue(result.forbiddenMatches.length >= 2, 'Should detect multiple phrases');
+test('detects "sample tenant"', () => {
+  assertTrue(containsForbiddenContent('This is a sample tenant for testing'));
 });
 
-console.log('\n4. Integration Scenarios\n');
-
-test('should handle typical founder question response (valid)', () => {
-  const response = 'Barrios A2I was founded by Gary Barrios, who has over 15 years of experience in AI and automation. The company specializes in building enterprise-grade AI systems including the RAGNAROK video generation platform.';
-  const result = validateResponse(response);
-  assertTrue(result.isValid, 'Proper founder response should be valid');
+test('detects "demo org"', () => {
+  assertTrue(containsForbiddenContent('You are using the demo org environment'));
 });
 
-test('should catch AI assistant role-play disclaimer', () => {
-  const response = 'I should clarify that I am playing the role of an AI assistant for a hypothetical company called Barrios A2I.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Role-play disclaimer should be invalid');
+// =============================================================================
+// TESTS: SANITIZATION
+// =============================================================================
+
+console.log('\n🧹 SANITIZATION TESTS\n');
+
+test('sanitizes "fictional company"', () => {
+  const input = 'Barrios A2I is a fictional company';
+  const output = sanitizeResponse(input);
+  assertNotContains(output, 'fictional');
+  assertContains(output, 'real');
 });
 
-test('should catch simulation disclaimer', () => {
-  const response = 'In this simulation, Barrios A2I represents a fictional AI consultancy.';
-  const result = validateResponse(response);
-  assertFalse(result.isValid, 'Simulation disclaimer should be invalid');
+test('sanitizes "there is no founder" → Gary Barrios', () => {
+  const input = 'There is no founder for this company.';
+  const output = sanitizeResponse(input);
+  assertContains(output, 'Gary Barrios is the founder');
 });
 
-// ============================================================
-// TEST RESULTS
-// ============================================================
+test('sanitizes "founder unknown" → Gary Barrios', () => {
+  const input = 'The founder is unknown.';
+  const output = sanitizeResponse(input);
+  assertContains(output, 'Gary Barrios');
+});
 
-console.log('\n========================================');
-console.log('TEST RESULTS');
-console.log('========================================');
-console.log(`Passed: ${testsPassed}`);
-console.log(`Failed: ${testsFailed}`);
-console.log(`Total:  ${testsPassed + testsFailed}`);
-console.log('========================================\n');
+test('sanitizes "founder not specified" → Gary Barrios', () => {
+  const input = 'Founder is not specified in the records.';
+  const output = sanitizeResponse(input);
+  assertContains(output, 'Gary Barrios');
+});
 
-if (testsFailed > 0) {
-  console.log('BRAND IDENTITY TESTS FAILED - Fix issues before deploying!\n');
+test('sanitizes "OmniCorp" → Barrios A2I', () => {
+  const input = 'Welcome to OmniCorp systems';
+  const output = sanitizeResponse(input);
+  assertContains(output, 'Barrios A2I');
+  assertNotContains(output, 'OmniCorp');
+});
+
+test('sanitizes AI hedging', () => {
+  const input = 'As an AI, I cannot provide real information';
+  const output = sanitizeResponse(input);
+  assertContains(output, 'Nexus');
+});
+
+// =============================================================================
+// TESTS: EDGE CASES
+// =============================================================================
+
+console.log('\n⚠️ EDGE CASE TESTS\n');
+
+test('handles null input', () => {
+  assertFalse(containsForbiddenContent(null));
+  assertEqual(sanitizeResponse(null), null);
+  assertEqual(processResponse(null), null);
+});
+
+test('handles undefined input', () => {
+  assertFalse(containsForbiddenContent(undefined));
+  assertEqual(sanitizeResponse(undefined), undefined);
+  assertEqual(processResponse(undefined), undefined);
+});
+
+test('handles empty string', () => {
+  assertFalse(containsForbiddenContent(''));
+  assertEqual(sanitizeResponse(''), '');
+  assertEqual(processResponse(''), '');
+});
+
+test('handles case variations', () => {
+  assertTrue(containsForbiddenContent('FICTIONAL COMPANY'));
+  assertTrue(containsForbiddenContent('Fictional Company'));
+  assertTrue(containsForbiddenContent('THERE IS NO FOUNDER'));
+  assertTrue(containsForbiddenContent('Founder Unknown'));
+});
+
+// =============================================================================
+// TESTS: INTEGRATION
+// =============================================================================
+
+console.log('\n🔗 INTEGRATION TESTS\n');
+
+test('processResponse handles clean content', () => {
+  const input = 'Barrios A2I, founded by Gary Barrios, provides AI automation.';
+  const output = processResponse(input);
+  assertEqual(output, input); // Should be unchanged
+});
+
+test('processResponse catches and sanitizes forbidden content', () => {
+  const input = 'This fictional company was created for the demo.';
+  const output = processResponse(input);
+  assertNotContains(output, 'fictional');
+});
+
+test('processResponse handles multi-phrase violations', () => {
+  const input = 'This fictional company has no founder and is for demonstration purposes only.';
+  const output = processResponse(input);
+  assertNotContains(output.toLowerCase(), 'fictional');
+  assertContains(output, 'Gary Barrios');
+});
+
+test('complex sanitization: multiple violations in one message', () => {
+  const input = 'There is no founder. Barrios A2I is a fictional company. As an AI, I cannot confirm this.';
+  const output = sanitizeResponse(input);
+  assertContains(output, 'Gary Barrios');
+  assertContains(output, 'real');
+  assertContains(output, 'Nexus');
+});
+
+// =============================================================================
+// SUMMARY
+// =============================================================================
+
+console.log('\n' + '='.repeat(50));
+console.log(`\n📊 TEST RESULTS: ${passed} passed, ${failed} failed\n`);
+
+if (failed > 0) {
+  console.log('❌ SOME TESTS FAILED\n');
   process.exit(1);
 } else {
-  console.log('All brand identity tests passed!\n');
+  console.log('✅ ALL TESTS PASSED\n');
   process.exit(0);
 }
