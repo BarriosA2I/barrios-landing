@@ -338,6 +338,9 @@
     </style>
 
     <!-- Payment handled via Stripe Payment Link -->
+
+    <!-- NEXUS BRIDGE SSE Client for real-time production tracking -->
+    <script src="js/nexus_sse_client.js"></script>
 </head>
 <body class="antialiased font-sans selection:bg-neon selection:text-white">
     <div id="canvas-container"></div>
@@ -1821,6 +1824,107 @@
             // Start fresh session for clean state
             initSession();
         });
+
+        // =============================================================================
+        // NEXUS BRIDGE INTEGRATION
+        // =============================================================================
+
+        let productionClient = null;
+
+        /**
+         * Show the Start Production button after brief approval
+         * Hook this into your existing brief approval handler
+         */
+        function showStartProductionButton() {
+            const btn = document.getElementById('start-production-btn');
+            if (btn) {
+                btn.style.display = 'inline-block';
+                // Scroll to make button visible
+                btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        /**
+         * Start legendary production pipeline with NEXUS BRIDGE
+         */
+        async function startLegendaryProduction() {
+            // Get session ID from your existing session management
+            const sessionId = window.currentSessionId ||
+                              localStorage.getItem('creative_session_id') ||
+                              sessionStorage.getItem('session_id');
+
+            if (!sessionId) {
+                alert('No session found. Please complete the intake process first.');
+                return;
+            }
+
+            console.log('🚀 Starting legendary production for session:', sessionId);
+
+            // Hide start button
+            const btn = document.getElementById('start-production-btn');
+            if (btn) btn.style.display = 'none';
+
+            // Show production container
+            const container = document.getElementById('production-container');
+            if (container) {
+                container.style.display = 'block';
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Initialize production with the global function from nexus_sse_client.js
+            // This function creates the progress bar UI and starts SSE streaming
+            if (typeof initLegendaryProduction === 'function') {
+                productionClient = initLegendaryProduction(sessionId);
+            } else {
+                console.error('initLegendaryProduction not available from nexus_sse_client.js');
+            }
+        }
+
+        /**
+         * Cancel production (emergency stop)
+         */
+        async function cancelProduction() {
+            if (productionClient) {
+                const confirmed = confirm('Are you sure you want to cancel? Costs incurred cannot be refunded.');
+                if (confirmed) {
+                    productionClient.cancel('User requested cancellation');
+                }
+            }
+        }
     </script>
+
+    <!-- NEXUS BRIDGE Production Pipeline Container -->
+    <div id="production-container" class="production-pipeline" style="
+        display: none;
+        margin-top: 24px;
+        padding: 24px;
+        background: linear-gradient(135deg, rgba(0, 206, 209, 0.05), rgba(139, 0, 139, 0.05));
+        border: 1px solid rgba(0, 206, 209, 0.3);
+        border-radius: 16px;
+    "></div>
+
+    <!-- Start Production Button (shown after brief approval) -->
+    <button
+        id="start-production-btn"
+        onclick="startLegendaryProduction()"
+        style="
+            display: none;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        "
+        onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 20px rgba(255, 215, 0, 0.4)';"
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(255, 215, 0, 0.3)';"
+    >
+        🚀 START LEGENDARY PRODUCTION
+    </button>
 </body>
 </html>
