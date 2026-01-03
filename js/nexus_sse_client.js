@@ -946,6 +946,9 @@
     window.initLegendaryProduction = initLegendaryProduction;
     window.NexusProductionClient = NexusProductionClient;
 
+    // Dispatch ready event for integrations (e.g., agent-visuals-integration.js)
+    window.dispatchEvent(new CustomEvent('nexus-client-ready'));
+
     // Log that client is loaded
     console.log('✅ NEXUS SSE Client v1.0 loaded - use initLegendaryProduction(sessionId) to start');
 
