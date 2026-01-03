@@ -20,9 +20,9 @@
 // =============================================================================
 
 const NEURAL_CONFIG = {
-    // API endpoints
-    apiBase: '/api/neural',
-    sseEndpoint: '/api/neural/stream',
+    // API endpoints - Production URLs (Render backend)
+    apiBase: 'https://creative-director-api.onrender.com/api/neural',
+    sseEndpoint: 'https://creative-director-api.onrender.com/api/neural/stream',
     
     // UI selectors
     selectors: {
