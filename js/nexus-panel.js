@@ -237,18 +237,30 @@
   }
 
   function renderMetrics(metrics) {
+    // Cognitive mode icons and descriptions
+    const modeConfig = {
+      'NRC': { icon: '&#9889;', title: 'Neural Response Composer - Fast Path' },
+      'NQR': { icon: '&#128269;', title: 'Neural Query Router - Retrieval' },
+      'NDR': { icon: '&#128209;', title: 'Neural Document Reasoner - Deep' },
+      'NSC': { icon: '&#128279;', title: 'Neural Synthesis Coordinator' },
+      'NAD': { icon: '&#129504;', title: 'Neural Analytical Debater - Complex' }
+    };
+
+    const mode = modeConfig[metrics.mode] || { icon: '&#128161;', title: metrics.mode };
+
     return `
       <div class="nexus-message-metrics">
-        <span class="nexus-metric">
+        <span class="nexus-metric" title="Processing latency">
           <span class="nexus-metric-icon">&#9889;</span>
-          ${metrics.latency}ms
+          <span>${metrics.latency}ms</span>
         </span>
-        <span class="nexus-metric">
+        <span class="nexus-metric" title="Confidence score">
           <span class="nexus-metric-icon">&#127919;</span>
-          ${Math.round(metrics.confidence * 100)}%
+          <span>${Math.round(metrics.confidence * 100)}%</span>
         </span>
-        <span class="nexus-metric nexus-metric--mode">
-          ${metrics.mode}
+        <span class="nexus-metric nexus-metric--mode" title="${mode.title}">
+          <span class="nexus-mode-icon">${mode.icon}</span>
+          <span class="nexus-mode-text">${metrics.mode}</span>
         </span>
       </div>
     `;
