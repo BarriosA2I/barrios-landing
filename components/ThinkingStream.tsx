@@ -51,6 +51,30 @@ interface ThinkingEvent {
   content?: string;    // Thought content
 }
 
+// Genesis Lead Data interface
+interface LeadData {
+  businessName: string;
+  industry: string;
+  goals: string[];
+  painPoints?: string[];
+  targetAudience?: string;
+  score: number;
+}
+
+// Genesis Pipeline Event interface
+interface GenesisEvent {
+  event: string;
+  pipeline_id: string;
+  stage?: string;
+  agent?: string;
+  status?: string;
+  progress?: number;
+  message?: string;
+  result?: Record<string, any>;
+  error?: string;
+  timestamp: number;
+}
+
 interface ThinkingStreamProps {
   sessionId: string;
   wsUrl?: string;
@@ -59,6 +83,12 @@ interface ThinkingStreamProps {
   maxEvents?: number;
   showMetrics?: boolean;
   className?: string;
+  // Genesis Integration Props
+  qualificationScore?: number;
+  leadData?: LeadData;
+  genesisApiUrl?: string;
+  onGenesisComplete?: (result: any) => void;
+  showGenesisButton?: boolean;
 }
 
 // =============================================================================
@@ -129,6 +159,29 @@ const PHASE_CONFIG: Record<string, { phase: string; progress: number; color: str
   answer_accepted: { phase: 'Accepted', progress: 95, color: '#10B981' },
   complete: { phase: 'Complete', progress: 100, color: '#10B981' },
   error: { phase: 'Error', progress: 0, color: '#FF4757' },
+};
+
+// =============================================================================
+// GENESIS PIPELINE CONFIGURATION
+// =============================================================================
+
+const GENESIS_AGENTS = {
+  trend_scout: { name: 'Trend Scout', icon: '🔍', color: '#00C2FF' },
+  market_analyst: { name: 'Market Analyst', icon: '📊', color: '#A855F7' },
+  competitor_tracker: { name: 'Competitor Tracker', icon: '🎯', color: '#FF6B6B' },
+  strategy_synthesizer: { name: 'Strategy Synthesizer', icon: '🧠', color: '#FFD700' },
+  ragnarok: { name: 'RAGNAROK Video Gen', icon: '🎬', color: '#10B981' },
+};
+
+const GENESIS_STAGES: Record<string, { phase: string; progress: number; color: string }> = {
+  pipeline_started: { phase: 'Initializing', progress: 5, color: '#00CED1' },
+  trend_analysis: { phase: 'Trend Analysis', progress: 15, color: '#00C2FF' },
+  market_research: { phase: 'Market Research', progress: 30, color: '#A855F7' },
+  competitor_scan: { phase: 'Competitor Scan', progress: 45, color: '#FF6B6B' },
+  strategy_synthesis: { phase: 'Strategy Synthesis', progress: 65, color: '#FFD700' },
+  video_generation: { phase: 'Video Generation', progress: 85, color: '#10B981' },
+  pipeline_complete: { phase: 'Complete', progress: 100, color: '#10B981' },
+  pipeline_error: { phase: 'Error', progress: 0, color: '#FF4757' },
 };
 
 // =============================================================================
@@ -356,13 +409,181 @@ const SupernodeDampened: React.FC<SupernodeDampenedProps> = ({ degree, dampening
         Node with {degree} connections reduced to {(dampeningFactor * 100).toFixed(0)}% signal
       </div>
     </div>
-    <div 
+    <div
       className="text-sm font-mono font-bold"
       style={{ color: '#FFD700' }}
     >
       ×{dampeningFactor.toFixed(2)}
     </div>
   </motion.div>
+);
+
+// =============================================================================
+// GENESIS PIPELINE VISUALIZATION COMPONENTS
+// =============================================================================
+
+interface GenesisAgentProgressProps {
+  agent: string;
+  status: string;
+  message?: string;
+  progress?: number;
+}
+
+const GenesisAgentProgress: React.FC<GenesisAgentProgressProps> = ({
+  agent,
+  status,
+  message,
+  progress
+}) => {
+  const agentConfig = GENESIS_AGENTS[agent as keyof typeof GENESIS_AGENTS] || {
+    name: agent,
+    icon: '🤖',
+    color: '#00CED1'
+  };
+
+  const isActive = status === 'running' || status === 'processing';
+  const isComplete = status === 'complete' || status === 'success';
+  const isError = status === 'error' || status === 'failed';
+
+  return (
+    <motion.div
+      initial={{ x: -10, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      className="flex items-center gap-3 p-3 rounded-xl my-2"
+      style={{
+        background: isError
+          ? 'rgba(255, 71, 87, 0.1)'
+          : isComplete
+            ? 'rgba(16, 185, 129, 0.1)'
+            : `${agentConfig.color}15`,
+        border: `1px solid ${isError ? 'rgba(255, 71, 87, 0.3)' : isComplete ? 'rgba(16, 185, 129, 0.3)' : `${agentConfig.color}40`}`,
+      }}
+    >
+      {/* Agent Icon with pulse animation when active */}
+      <div className="relative w-10 h-10 flex items-center justify-center">
+        {isActive && (
+          <span
+            className="absolute inset-0 rounded-full animate-ping opacity-30"
+            style={{ backgroundColor: agentConfig.color }}
+          />
+        )}
+        <span className="text-2xl z-10">{agentConfig.icon}</span>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span
+            className="text-xs font-bold tracking-wider"
+            style={{ color: isError ? '#FF4757' : isComplete ? '#10B981' : agentConfig.color }}
+          >
+            {agentConfig.name.toUpperCase()}
+          </span>
+          <span
+            className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+            style={{
+              backgroundColor: isError
+                ? 'rgba(255, 71, 87, 0.2)'
+                : isComplete
+                  ? 'rgba(16, 185, 129, 0.2)'
+                  : isActive
+                    ? 'rgba(255, 215, 0, 0.2)'
+                    : 'rgba(255, 255, 255, 0.1)',
+              color: isError ? '#FF4757' : isComplete ? '#10B981' : isActive ? '#FFD700' : '#fff'
+            }}
+          >
+            {status.toUpperCase()}
+          </span>
+        </div>
+        {message && (
+          <div className="text-[11px] text-white/60 mt-1 truncate">
+            {message}
+          </div>
+        )}
+        {progress !== undefined && isActive && (
+          <div className="mt-2 h-1 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+            <motion.div
+              className="h-full rounded-full"
+              style={{ backgroundColor: agentConfig.color }}
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Status icon */}
+      <div className="text-lg">
+        {isComplete ? '✅' : isError ? '❌' : isActive ? '⏳' : '⏸️'}
+      </div>
+    </motion.div>
+  );
+};
+
+interface GenesisStrategyButtonProps {
+  onClick: () => void;
+  isLoading: boolean;
+  disabled: boolean;
+  qualificationScore: number;
+}
+
+const GenesisStrategyButton: React.FC<GenesisStrategyButtonProps> = ({
+  onClick,
+  isLoading,
+  disabled,
+  qualificationScore
+}) => (
+  <motion.button
+    initial={{ scale: 0.95, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    whileHover={!disabled ? { scale: 1.02 } : undefined}
+    whileTap={!disabled ? { scale: 0.98 } : undefined}
+    onClick={onClick}
+    disabled={disabled || isLoading}
+    className="w-full py-4 px-6 rounded-xl font-bold text-sm relative overflow-hidden transition-all"
+    style={{
+      background: disabled
+        ? 'rgba(107, 114, 128, 0.2)'
+        : 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(0, 206, 209, 0.2))',
+      border: disabled
+        ? '1px solid rgba(107, 114, 128, 0.3)'
+        : '1px solid rgba(16, 185, 129, 0.4)',
+      color: disabled ? '#6B7280' : '#10B981',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+    }}
+  >
+    {/* Animated background gradient */}
+    {!disabled && (
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          background: 'linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent)',
+          animation: 'shimmer 2s infinite',
+        }}
+      />
+    )}
+
+    <div className="flex items-center justify-center gap-3 relative z-10">
+      {isLoading ? (
+        <>
+          <span className="animate-spin">⚡</span>
+          <span>Generating Strategy...</span>
+        </>
+      ) : (
+        <>
+          <span>🚀</span>
+          <span>Generate AI Strategy</span>
+          <span
+            className="text-[10px] px-2 py-0.5 rounded-full ml-2"
+            style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)' }}
+          >
+            Score: {(qualificationScore * 100).toFixed(0)}%
+          </span>
+        </>
+      )}
+    </div>
+  </motion.button>
 );
 
 interface ModeSelectedProps {
@@ -445,6 +666,12 @@ export const ThinkingStream: React.FC<ThinkingStreamProps> = ({
   maxEvents = 100,
   showMetrics = true,
   className = '',
+  // Genesis props
+  qualificationScore = 0,
+  leadData,
+  genesisApiUrl = 'https://barrios-genesis-flawless.onrender.com',
+  onGenesisComplete,
+  showGenesisButton = true,
 }) => {
   const [events, setEvents] = useState<ThinkingEvent[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'reconnecting'>('connecting');
@@ -458,10 +685,18 @@ export const ThinkingStream: React.FC<ThinkingStreamProps> = ({
     supernodesDampened: 0,
   });
   const [isReplaying, setIsReplaying] = useState(false);
-  
+
+  // Genesis Pipeline State
+  const [genesisPipelineId, setGenesisPipelineId] = useState<string | null>(null);
+  const [genesisStatus, setGenesisStatus] = useState<'idle' | 'loading' | 'running' | 'complete' | 'error'>('idle');
+  const [genesisEvents, setGenesisEvents] = useState<GenesisEvent[]>([]);
+  const [genesisProgress, setGenesisProgress] = useState(0);
+  const [genesisPhase, setGenesisPhase] = useState<string>('Ready');
+
   const eventListRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const genesisEventSourceRef = useRef<EventSource | null>(null);
   
   // Auto-scroll
   useEffect(() => {
@@ -574,7 +809,162 @@ export const ThinkingStream: React.FC<ThinkingStreamProps> = ({
       }
     };
   }, [sessionId, wsUrl, maxEvents, onComplete, onError]);
-  
+
+  // =============================================================================
+  // GENESIS PIPELINE INTEGRATION
+  // =============================================================================
+
+  // Trigger Genesis Pipeline
+  const triggerGenesis = useCallback(async () => {
+    if (!leadData || genesisStatus === 'loading' || genesisStatus === 'running') {
+      return;
+    }
+
+    setGenesisStatus('loading');
+    setGenesisEvents([]);
+    setGenesisProgress(0);
+    setGenesisPhase('Initializing');
+
+    try {
+      const response = await fetch(`${genesisApiUrl}/api/genesis/trigger`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          business_name: leadData.businessName,
+          industry: leadData.industry,
+          goals: leadData.goals,
+          pain_points: leadData.painPoints,
+          target_audience: leadData.targetAudience,
+          qualification_score: leadData.score,
+          generate_video: true,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Genesis trigger failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const pipelineId = data.pipeline_id;
+      setGenesisPipelineId(pipelineId);
+      setGenesisStatus('running');
+
+      // Connect to SSE stream
+      connectToGenesisStream(pipelineId);
+
+    } catch (error) {
+      console.error('Genesis trigger error:', error);
+      setGenesisStatus('error');
+      onError?.(error instanceof Error ? error : new Error('Genesis trigger failed'));
+    }
+  }, [leadData, sessionId, genesisApiUrl, genesisStatus, onError]);
+
+  // Connect to Genesis SSE Stream
+  const connectToGenesisStream = useCallback((pipelineId: string) => {
+    // Close existing connection if any
+    if (genesisEventSourceRef.current) {
+      genesisEventSourceRef.current.close();
+    }
+
+    const eventSource = new EventSource(
+      `${genesisApiUrl}/api/genesis/stream/${pipelineId}`
+    );
+    genesisEventSourceRef.current = eventSource;
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data: GenesisEvent = JSON.parse(event.data);
+
+        setGenesisEvents((prev) => [...prev, data]);
+
+        // Update progress and phase based on event
+        if (data.stage && GENESIS_STAGES[data.stage]) {
+          setGenesisProgress(GENESIS_STAGES[data.stage].progress);
+          setGenesisPhase(GENESIS_STAGES[data.stage].phase);
+        }
+
+        if (data.progress !== undefined) {
+          setGenesisProgress(data.progress);
+        }
+
+        // Handle completion
+        if (data.event === 'pipeline_complete' || data.event === 'complete') {
+          setGenesisStatus('complete');
+          setGenesisProgress(100);
+          setGenesisPhase('Complete');
+          eventSource.close();
+          onGenesisComplete?.(data.result);
+        }
+
+        // Handle errors
+        if (data.event === 'pipeline_error' || data.event === 'error') {
+          setGenesisStatus('error');
+          setGenesisPhase('Error');
+          eventSource.close();
+          onError?.(new Error(data.error || 'Pipeline error'));
+        }
+
+      } catch (e) {
+        console.error('Genesis event parse error:', e);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('Genesis SSE error:', error);
+      setGenesisStatus('error');
+      eventSource.close();
+    };
+
+  }, [genesisApiUrl, onGenesisComplete, onError]);
+
+  // Cleanup Genesis EventSource on unmount
+  useEffect(() => {
+    return () => {
+      if (genesisEventSourceRef.current) {
+        genesisEventSourceRef.current.close();
+      }
+    };
+  }, []);
+
+  // Check if Genesis button should be shown
+  const shouldShowGenesisButton = useMemo(() => {
+    return showGenesisButton && qualificationScore >= 0.8 && leadData && genesisStatus === 'idle';
+  }, [showGenesisButton, qualificationScore, leadData, genesisStatus]);
+
+  // Render Genesis event
+  const renderGenesisEvent = (event: GenesisEvent, index: number) => {
+    if (event.agent) {
+      return (
+        <GenesisAgentProgress
+          key={`genesis-${index}`}
+          agent={event.agent}
+          status={event.status || 'running'}
+          message={event.message}
+          progress={event.progress}
+        />
+      );
+    }
+
+    // Generic event display
+    return (
+      <motion.div
+        key={`genesis-${index}`}
+        initial={{ opacity: 0, x: -5 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex items-center gap-2 py-1.5 text-xs"
+      >
+        <span
+          className="w-1.5 h-1.5 rounded-full"
+          style={{ backgroundColor: '#10B981' }}
+        />
+        <span className="text-white/70">
+          {event.message || event.event.replace(/_/g, ' ')}
+        </span>
+      </motion.div>
+    );
+  };
+
   // Calculate progress
   const currentProgress = useMemo(() => {
     const latestEvent = events[events.length - 1];
@@ -853,24 +1243,142 @@ export const ThinkingStream: React.FC<ThinkingStreamProps> = ({
         </div>
       </div>
       
+      {/* Genesis Strategy Button - Shows when qualification score >= 0.8 */}
+      {shouldShowGenesisButton && (
+        <div className="px-5 py-3">
+          <GenesisStrategyButton
+            onClick={triggerGenesis}
+            isLoading={genesisStatus === 'loading'}
+            disabled={!leadData || qualificationScore < 0.8}
+            qualificationScore={qualificationScore}
+          />
+        </div>
+      )}
+
+      {/* Genesis Pipeline Progress - Shows when running */}
+      {(genesisStatus === 'running' || genesisStatus === 'loading') && (
+        <div className="px-5 py-3">
+          <div
+            className="p-4 rounded-xl"
+            style={{
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(0, 206, 209, 0.05))',
+              border: '1px solid rgba(16, 185, 129, 0.2)',
+            }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-lg animate-pulse">⚡</span>
+                <span className="text-sm font-bold" style={{ color: '#10B981' }}>
+                  GENESIS PIPELINE
+                </span>
+              </div>
+              <span
+                className="text-[10px] px-2 py-0.5 rounded-full font-mono"
+                style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#10B981' }}
+              >
+                {genesisPhase}
+              </span>
+            </div>
+
+            {/* Genesis Progress Bar */}
+            <div
+              className="h-2 rounded-full overflow-hidden mb-3"
+              style={{ background: 'rgba(255, 255, 255, 0.05)' }}
+            >
+              <motion.div
+                className="h-full rounded-full"
+                style={{
+                  background: 'linear-gradient(90deg, #10B981, #00CED1)',
+                  boxShadow: '0 0 10px rgba(16, 185, 129, 0.5)',
+                }}
+                initial={{ width: 0 }}
+                animate={{ width: `${genesisProgress}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+
+            <div className="flex justify-between text-[11px]">
+              <span className="text-white/50">
+                {genesisPipelineId ? `Pipeline: ${genesisPipelineId.slice(0, 8)}...` : 'Initializing...'}
+              </span>
+              <span style={{ color: '#10B981' }}>{genesisProgress}%</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Genesis Complete Banner */}
+      {genesisStatus === 'complete' && (
+        <div className="px-5 py-3">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="p-4 rounded-xl"
+            style={{
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(0, 206, 209, 0.1))',
+              border: '1px solid rgba(16, 185, 129, 0.4)',
+            }}
+          >
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-2xl">🎉</span>
+              <div className="text-center">
+                <div className="text-sm font-bold" style={{ color: '#10B981' }}>
+                  STRATEGY GENERATED!
+                </div>
+                <div className="text-[11px] text-white/60 mt-1">
+                  Your AI-powered strategy is ready
+                </div>
+              </div>
+              <span className="text-2xl">🚀</span>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {/* Event Stream */}
-      <div 
+      <div
         ref={eventListRef}
         className="h-96 overflow-y-auto px-5 pb-4"
         style={{ scrollBehavior: 'smooth' }}
       >
         <AnimatePresence mode="popLayout">
-          {events.length === 0 ? (
+          {/* Genesis Events Section */}
+          {genesisEvents.length > 0 && (
+            <div className="mb-4">
+              <div
+                className="text-[10px] uppercase tracking-wider py-2 px-3 rounded-lg mb-2 flex items-center gap-2"
+                style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10B981' }}
+              >
+                <span>⚡</span>
+                <span>Genesis Pipeline Events</span>
+              </div>
+              {genesisEvents.map((event, index) => renderGenesisEvent(event, index))}
+            </div>
+          )}
+
+          {/* Original Events Section */}
+          {events.length === 0 && genesisEvents.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-white/30">
               <span className="text-4xl mb-3">🧠</span>
               <span className="text-sm">Waiting for cognitive events...</span>
             </div>
           ) : (
-            events.map((event, index) => renderEvent(event, index))
+            <>
+              {events.length > 0 && genesisEvents.length > 0 && (
+                <div
+                  className="text-[10px] uppercase tracking-wider py-2 px-3 rounded-lg mb-2 flex items-center gap-2"
+                  style={{ backgroundColor: 'rgba(0, 206, 209, 0.1)', color: '#00CED1' }}
+                >
+                  <span>🧠</span>
+                  <span>Neural Thinking Events</span>
+                </div>
+              )}
+              {events.map((event, index) => renderEvent(event, index))}
+            </>
           )}
         </AnimatePresence>
       </div>
-      
+
       {/* Metrics Footer */}
       {showMetrics && (
         <div 
