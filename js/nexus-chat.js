@@ -287,10 +287,96 @@
     }
   }
 
+  // Neural RAG Brain v3.0 LEGENDARY processing
+  const NEURAL_API_BASE = 'https://creative-director-api.onrender.com';
+
+  async function processWithNeural(message, callbacks = {}) {
+    const startTime = performance.now();
+
+    try {
+      // Store user message
+      addMessageToStore('user', message);
+
+      // Notify start of neural processing
+      if (callbacks.onProcessingStart) {
+        callbacks.onProcessingStart();
+      }
+
+      // Build conversation context from stored messages
+      const storedMessages = getStoredMessages();
+      const contextMessages = storedMessages.slice(-6).map(m =>
+        `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
+      ).join('\n');
+
+      // Call Legendary Neural Engine (sync endpoint)
+      const response = await fetch(`${NEURAL_API_BASE}/api/legendary-neural/process/sync`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-ID': sessionId
+        },
+        body: JSON.stringify({
+          query: message,
+          session_id: sessionId,
+          context: contextMessages || null,
+          domain: 'marketing'
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail?.error || `HTTP ${response.status}`);
+      }
+
+      const result = await response.json();
+      const latency = Math.round(performance.now() - startTime);
+
+      // Validate and sanitize response
+      const sanitizedContent = validateAndSanitize(result.response || '');
+
+      // Store assistant message
+      addMessageToStore('assistant', sanitizedContent);
+
+      // Build metrics object
+      const metrics = {
+        mode: result.cognitive_mode || 'NQR',
+        confidence: result.confidence || 0.85,
+        latency: result.latency_ms || latency,
+        prmScore: result.metadata?.prm_score || null,
+        retrievalCount: result.retrieval_count || 0,
+        reflectionTokens: result.reflection_tokens || null
+      };
+
+      // Notify completion with metrics
+      if (callbacks.onComplete) {
+        callbacks.onComplete(metrics);
+      }
+
+      return {
+        content: sanitizedContent,
+        contentHtml: parseMarkdown(sanitizedContent),
+        metrics: metrics,
+        raw: result
+      };
+
+    } catch (error) {
+      console.error('[NEXUS] Neural processing error:', error.message);
+
+      // Notify error
+      if (callbacks.onError) {
+        callbacks.onError(error);
+      }
+
+      // Fallback to standard streaming
+      throw error;
+    }
+  }
+
   // Public API
   window.NexusChat = {
     stream,
     chat,
+    processWithNeural,
     resetSession: function() {
       clearStoredSession();
       sessionId = createAndStoreSession();
@@ -301,6 +387,10 @@
     getSessionId: function() { return sessionId; },
     setApiBase: function(url) {
       window.NEXUS_API_BASE = url;
+    },
+    setNeuralApiBase: function(url) {
+      // Allow overriding neural API base for testing
+      window.NEURAL_API_BASE = url;
     }
   };
 })();

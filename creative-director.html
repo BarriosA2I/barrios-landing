@@ -335,6 +335,103 @@
         }
 
         .hidden { display: none !important; }
+
+        /* Neural Processing Visualization - Legendary Neural Engine */
+        .nexus-neural-processing {
+            padding: 12px;
+            background: rgba(0, 206, 209, 0.05);
+            border: 1px solid rgba(0, 206, 209, 0.2);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .nexus-neural-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .nexus-neural-mode {
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 10px;
+            padding: 2px 6px;
+            background: rgba(0, 206, 209, 0.2);
+            color: #00CED1;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .nexus-neural-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .nexus-neural-tokens {
+            display: flex;
+            gap: 4px;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 11px;
+        }
+
+        .nexus-token {
+            padding: 2px 4px;
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .nexus-token--active {
+            color: #00CED1;
+            text-shadow: 0 0 8px rgba(0, 206, 209, 0.5);
+        }
+
+        .nexus-neural-progress {
+            margin-top: 8px;
+        }
+
+        .nexus-progress-bar {
+            height: 2px;
+            background: linear-gradient(90deg, #00CED1, #00F3FF);
+            border-radius: 1px;
+            animation: progress-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes progress-pulse {
+            0%, 100% { width: 20%; opacity: 0.5; }
+            50% { width: 80%; opacity: 1; }
+        }
+
+        /* Metrics badge */
+        .nexus-message-metrics {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .nexus-metric {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .nexus-metric-icon {
+            font-size: 9px;
+        }
+
+        .nexus-metric--mode {
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            background: rgba(0, 206, 209, 0.1);
+            padding: 1px 5px;
+            border-radius: 3px;
+            color: #00CED1;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
     </style>
 
     <!-- Payment handled via Stripe Payment Link -->

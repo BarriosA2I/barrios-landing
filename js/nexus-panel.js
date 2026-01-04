@@ -179,13 +179,88 @@
     }
   }
 
-  // Send message
-  function sendMessage(message) {
+  // Neural processing visualization
+  let neuralProcessingEl = null;
+  let tokenAnimationInterval = null;
+
+  function createNeuralProcessingUI() {
+    const el = document.createElement('div');
+    el.className = 'nexus-neural-processing';
+    el.innerHTML = `
+      <div class="nexus-neural-header">
+        <span class="nexus-neural-mode" id="neural-mode">...</span>
+        <span class="nexus-neural-label">Neural Processing</span>
+      </div>
+      <div class="nexus-neural-tokens">
+        <span class="nexus-token" data-token="ret">[RET]</span>
+        <span class="nexus-token" data-token="rel">[REL]</span>
+        <span class="nexus-token" data-token="sup">[SUP]</span>
+        <span class="nexus-token" data-token="use">[USE]</span>
+      </div>
+      <div class="nexus-neural-progress">
+        <div class="nexus-progress-bar"></div>
+      </div>
+    `;
+    return el;
+  }
+
+  function animateTokens(processingEl) {
+    const tokens = ['ret', 'rel', 'sup', 'use'];
+    let i = 0;
+
+    // Reset all tokens
+    tokens.forEach(t => {
+      const tokenEl = processingEl.querySelector(`[data-token="${t}"]`);
+      if (tokenEl) tokenEl.classList.remove('nexus-token--active');
+    });
+
+    tokenAnimationInterval = setInterval(() => {
+      if (i >= tokens.length) {
+        // Loop back for continuous animation
+        i = 0;
+        tokens.forEach(t => {
+          const tokenEl = processingEl.querySelector(`[data-token="${t}"]`);
+          if (tokenEl) tokenEl.classList.remove('nexus-token--active');
+        });
+      }
+      const tokenEl = processingEl.querySelector(`[data-token="${tokens[i]}"]`);
+      if (tokenEl) tokenEl.classList.add('nexus-token--active');
+      i++;
+    }, 300);
+  }
+
+  function stopTokenAnimation() {
+    if (tokenAnimationInterval) {
+      clearInterval(tokenAnimationInterval);
+      tokenAnimationInterval = null;
+    }
+  }
+
+  function renderMetrics(metrics) {
+    return `
+      <div class="nexus-message-metrics">
+        <span class="nexus-metric">
+          <span class="nexus-metric-icon">&#9889;</span>
+          ${metrics.latency}ms
+        </span>
+        <span class="nexus-metric">
+          <span class="nexus-metric-icon">&#127919;</span>
+          ${Math.round(metrics.confidence * 100)}%
+        </span>
+        <span class="nexus-metric nexus-metric--mode">
+          ${metrics.mode}
+        </span>
+      </div>
+    `;
+  }
+
+  // Send message with Neural RAG Brain processing
+  async function sendMessage(message) {
     const input = panelElement.querySelector('#nexus-input');
     const messagesContainer = panelElement.querySelector('#nexus-messages');
 
-    // Set status to connecting
-    updateStatus('connecting');
+    // Set status to neural processing
+    updateStatus('thinking');
 
     // Hide welcome if visible
     const welcome = messagesContainer.querySelector('.nexus-welcome');
@@ -211,8 +286,7 @@
     `;
     messagesContainer.appendChild(userMsg);
 
-    // P0-E: Store user message and show clear button
-    window.NexusChat?.addMessageToStore('user', message);
+    // Update clear button
     updateClearButton();
 
     // Clear input
@@ -220,24 +294,100 @@
     input.disabled = true;
     panelElement.querySelector('#nexus-send').disabled = true;
 
-    // Add assistant message placeholder (Sales-Safe - no trace_id, no citations)
+    // Create assistant message container
     const assistantMsg = document.createElement('div');
     assistantMsg.className = 'nexus-message nexus-message--assistant';
     assistantMsg.innerHTML = `
       <div class="nexus-message-header">
         <span class="nexus-message-label">NEXUS</span>
       </div>
-      <div class="nexus-message-content nexus-message--streaming">
+      <div class="nexus-message-content"></div>
+    `;
+    messagesContainer.appendChild(assistantMsg);
+
+    const contentEl = assistantMsg.querySelector('.nexus-message-content');
+
+    // Check if Neural processing is available
+    if (window.NexusChat?.processWithNeural) {
+      // Show neural processing visualization
+      neuralProcessingEl = createNeuralProcessingUI();
+      contentEl.appendChild(neuralProcessingEl);
+      animateTokens(neuralProcessingEl);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      try {
+        // Process with Legendary Neural Engine
+        const result = await window.NexusChat.processWithNeural(message, {
+          onProcessingStart: () => {
+            updateStatus('thinking');
+          },
+          onComplete: (metrics) => {
+            // Update mode badge while still showing
+            const modeEl = neuralProcessingEl?.querySelector('#neural-mode');
+            if (modeEl) modeEl.textContent = metrics.mode;
+          },
+          onError: (error) => {
+            console.warn('[NEXUS] Neural fallback:', error.message);
+          }
+        });
+
+        // Stop animation and remove processing UI
+        stopTokenAnimation();
+        if (neuralProcessingEl) {
+          neuralProcessingEl.remove();
+          neuralProcessingEl = null;
+        }
+
+        // Render response
+        contentEl.innerHTML = result.contentHtml;
+
+        // Append metrics badge
+        contentEl.insertAdjacentHTML('beforeend', renderMetrics(result.metrics));
+
+        // Update status
+        updateStatus('online');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      } catch (error) {
+        // Neural processing failed, fall back to standard streaming
+        stopTokenAnimation();
+        if (neuralProcessingEl) {
+          neuralProcessingEl.remove();
+          neuralProcessingEl = null;
+        }
+
+        // Show typing indicator and use standard streaming
+        contentEl.classList.add('nexus-message--streaming');
+        contentEl.innerHTML = `
+          <span class="nexus-typing-indicator">
+            <span></span><span></span><span></span>
+          </span>
+        `;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Fallback to standard streaming
+        window.NexusChat?.stream(message, assistantMsg);
+        return;
+      }
+
+      // Re-enable input
+      input.disabled = false;
+      input.focus();
+      panelElement.querySelector('#nexus-send').disabled = true;
+
+    } else {
+      // No neural processing available, use standard streaming
+      contentEl.classList.add('nexus-message--streaming');
+      contentEl.innerHTML = `
         <span class="nexus-typing-indicator">
           <span></span><span></span><span></span>
         </span>
-      </div>
-    `;
-    messagesContainer.appendChild(assistantMsg);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      `;
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-    // Start streaming
-    window.NexusChat?.stream(message, assistantMsg);
+      // Start streaming
+      window.NexusChat?.stream(message, assistantMsg);
+    }
   }
 
   // Poll health status
