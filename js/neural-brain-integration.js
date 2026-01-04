@@ -95,15 +95,31 @@ class CognitiveStatusManager {
     }
     
     createUI() {
+        // Create toggle button first (always visible)
+        if (!document.getElementById('neural-brain-toggle')) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.id = 'neural-brain-toggle';
+            toggleBtn.className = 'neural-brain-toggle';
+            toggleBtn.innerHTML = `
+                <span class="toggle-icon">&#129504;</span>
+                <span class="toggle-label">NEURAL</span>
+            `;
+            toggleBtn.title = 'Toggle Neural Brain Panel';
+            document.body.appendChild(toggleBtn);
+        }
+
         // Create cognitive status container if it doesn't exist
         if (!this.elements.cognitiveStatus) {
             const container = document.createElement('div');
             container.id = 'cognitive-status';
-            container.className = 'cognitive-status-panel glass-panel';
+            container.className = 'cognitive-status-panel glass-panel collapsed'; // Default collapsed
             container.innerHTML = `
                 <div class="cognitive-header">
                     <span class="cognitive-label">NEURAL BRAIN</span>
-                    <span class="connection-indicator" id="neural-connection"></span>
+                    <div class="header-actions">
+                        <span class="connection-indicator" id="neural-connection"></span>
+                        <button class="panel-close-btn" title="Close panel">&#10005;</button>
+                    </div>
                 </div>
                 
                 <div class="cognitive-grid">
@@ -466,17 +482,103 @@ class CognitiveStatusManager {
                 }
             }
             
-            /* Collapsed state for mobile */
+            /* Collapsed state - hide entire panel */
             .cognitive-status-panel.collapsed {
-                height: 44px;
-                overflow: hidden;
+                transform: translateX(calc(100% + 20px));
+                opacity: 0;
+                pointer-events: none;
             }
-            
-            .cognitive-status-panel.collapsed .cognitive-grid,
-            .cognitive-status-panel.collapsed .reflection-tokens-container,
-            .cognitive-status-panel.collapsed .quality-container,
-            .cognitive-status-panel.collapsed .circuit-status-container {
-                display: none;
+
+            /* Neural Brain Toggle Button */
+            .neural-brain-toggle {
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                width: 48px;
+                height: 48px;
+                padding: 0;
+                background: rgba(10, 15, 30, 0.9);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(0, 206, 209, 0.4);
+                border-radius: 50%;
+                cursor: pointer;
+                z-index: 999;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2px;
+                transition: all 0.3s ease;
+                box-shadow: 0 0 15px rgba(0, 206, 209, 0.2);
+            }
+
+            .neural-brain-toggle:hover {
+                border-color: rgba(0, 206, 209, 0.8);
+                box-shadow: 0 0 25px rgba(0, 206, 209, 0.4);
+                transform: scale(1.05);
+            }
+
+            .neural-brain-toggle .toggle-icon {
+                font-size: 18px;
+                line-height: 1;
+            }
+
+            .neural-brain-toggle .toggle-label {
+                font-size: 7px;
+                font-family: 'JetBrains Mono', monospace;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                color: ${NEURAL_CONFIG.colors.crystallineTeal};
+                text-transform: uppercase;
+            }
+
+            /* Hide toggle when panel is open */
+            .neural-brain-toggle.hidden {
+                opacity: 0;
+                pointer-events: none;
+                transform: scale(0.8);
+            }
+
+            /* Panel header close button */
+            .header-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .panel-close-btn {
+                width: 20px;
+                height: 20px;
+                padding: 0;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 4px;
+                color: rgba(255, 255, 255, 0.5);
+                cursor: pointer;
+                font-size: 12px;
+                line-height: 1;
+                transition: all 0.2s ease;
+            }
+
+            .panel-close-btn:hover {
+                background: rgba(255, 68, 68, 0.2);
+                border-color: rgba(255, 68, 68, 0.4);
+                color: #FF4444;
+            }
+
+            /* Mobile: position toggle at bottom */
+            @media (max-width: 768px) {
+                .neural-brain-toggle {
+                    top: auto;
+                    bottom: 100px;
+                    right: 15px;
+                    width: 44px;
+                    height: 44px;
+                }
+
+                .neural-brain-toggle .toggle-label {
+                    display: none;
+                }
             }
         `;
         
@@ -484,13 +586,20 @@ class CognitiveStatusManager {
     }
     
     bindEvents() {
-        // Toggle collapse on mobile
-        const header = this.elements.cognitiveStatus?.querySelector('.cognitive-header');
-        if (header) {
-            header.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    this.elements.cognitiveStatus.classList.toggle('collapsed');
-                }
+        // Toggle button click - show panel
+        const toggleBtn = document.getElementById('neural-brain-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                this.show();
+            });
+        }
+
+        // Close button click - hide panel
+        const closeBtn = this.elements.cognitiveStatus?.querySelector('.panel-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.hide();
             });
         }
     }
@@ -815,19 +924,34 @@ class CognitiveStatusManager {
     
     show() {
         if (this.elements.cognitiveStatus) {
-            this.elements.cognitiveStatus.classList.remove('hidden');
+            this.elements.cognitiveStatus.classList.remove('collapsed');
+        }
+        // Hide toggle button when panel is open
+        const toggleBtn = document.getElementById('neural-brain-toggle');
+        if (toggleBtn) {
+            toggleBtn.classList.add('hidden');
         }
     }
-    
+
     hide() {
         if (this.elements.cognitiveStatus) {
-            this.elements.cognitiveStatus.classList.add('hidden');
+            this.elements.cognitiveStatus.classList.add('collapsed');
+        }
+        // Show toggle button when panel is hidden
+        const toggleBtn = document.getElementById('neural-brain-toggle');
+        if (toggleBtn) {
+            toggleBtn.classList.remove('hidden');
         }
     }
-    
+
     toggle() {
         if (this.elements.cognitiveStatus) {
-            this.elements.cognitiveStatus.classList.toggle('hidden');
+            const isCollapsed = this.elements.cognitiveStatus.classList.contains('collapsed');
+            if (isCollapsed) {
+                this.show();
+            } else {
+                this.hide();
+            }
         }
     }
     
