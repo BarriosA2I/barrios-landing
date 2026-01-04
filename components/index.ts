@@ -154,18 +154,31 @@ export const THEME = {
 } as const;
 
 // ============================================================================
+// NEURAL RAG BRAIN - THINKING STREAM (v3.0 LEGENDARY)
+// ============================================================================
+
+export {
+  default as ThinkingStream,
+  ThinkingStream as NeuralThinkingStream
+} from './ThinkingStream';
+
+// ============================================================================
 // VERSION INFO
 // ============================================================================
 
 export const VERSION = {
-  components: '4.0.0',
-  neuralRagBrain: '3.0',
+  components: '5.0.0',
+  neuralRagBrain: '3.0-LEGENDARY',
   ragnarok: '7.0-APEX',
-  codename: 'Gemini Upgrade',
+  codename: 'Legendary Upgrade',
   features: [
     'Agent Micro-Visualizations',
     'ExplainModeStrip',
     'Cost-Aware Thompson Sampling',
     'Resumable Multipart Uploads',
+    'ThinkingStream WebSocket',       // NEW
+    'Reflection Token Badges',        // NEW
+    'Graph-of-Thoughts Visualization', // NEW
+    'Black Box Recorder',             // NEW
   ]
 } as const;
