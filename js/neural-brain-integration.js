@@ -190,23 +190,26 @@ class CognitiveStatusManager {
         const styles = document.createElement('style');
         styles.id = 'neural-brain-styles';
         styles.textContent = `
-            /* Neural Brain Cognitive Status Panel */
+            /* Neural Brain Cognitive Status Panel - LEFT side to avoid NEXUS chat overlap */
             .cognitive-status-panel {
                 position: fixed;
-                top: 100px;
-                right: 20px;
-                width: 280px;
+                top: 50%;
+                left: 20px;
+                transform: translateY(-50%);
+                width: 260px;
+                max-height: 80vh;
+                overflow-y: auto;
                 padding: 16px;
-                background: rgba(10, 15, 30, 0.85);
+                background: rgba(10, 15, 30, 0.92);
                 backdrop-filter: blur(20px);
                 border: 1px solid rgba(0, 206, 209, 0.3);
                 border-radius: 12px;
                 font-family: 'JetBrains Mono', 'Inter', monospace;
                 font-size: 12px;
                 color: #E0E0E0;
-                z-index: 1000;
+                z-index: 900;
                 transition: all 0.3s ease;
-                box-shadow: 
+                box-shadow:
                     0 0 20px rgba(0, 206, 209, 0.1),
                     inset 0 0 30px rgba(0, 206, 209, 0.02);
             }
@@ -465,35 +468,54 @@ class CognitiveStatusManager {
                 box-shadow: 0 0 6px ${NEURAL_CONFIG.colors.warning};
             }
             
-            /* Mobile responsive */
-            @media (max-width: 768px) {
+            /* Mobile responsive - hide panel on mobile, show only toggle */
+            @media (max-width: 1024px) {
                 .cognitive-status-panel {
-                    position: fixed;
-                    top: auto;
-                    bottom: 80px;
-                    right: 10px;
                     left: 10px;
-                    width: auto;
+                    width: 240px;
+                    max-height: 60vh;
                     padding: 12px;
                 }
-                
+
+                .cognitive-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 8px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .cognitive-status-panel {
+                    top: auto;
+                    bottom: 100px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: calc(100% - 32px);
+                    max-width: 320px;
+                    max-height: 50vh;
+                }
+
+                .cognitive-status-panel.collapsed {
+                    transform: translateX(-50%) translateY(calc(100% + 120px));
+                }
+
                 .cognitive-grid {
                     grid-template-columns: repeat(4, 1fr);
                 }
             }
             
-            /* Collapsed state - hide entire panel */
+            /* Collapsed state - slide out to left */
             .cognitive-status-panel.collapsed {
-                transform: translateX(calc(100% + 20px));
+                transform: translateX(calc(-100% - 40px)) translateY(-50%);
                 opacity: 0;
                 pointer-events: none;
             }
 
-            /* Neural Brain Toggle Button */
+            /* Neural Brain Toggle Button - LEFT side */
             .neural-brain-toggle {
                 position: fixed;
-                top: 100px;
-                right: 20px;
+                top: 50%;
+                left: 20px;
+                transform: translateY(-50%);
                 width: 48px;
                 height: 48px;
                 padding: 0;
@@ -502,7 +524,7 @@ class CognitiveStatusManager {
                 border: 1px solid rgba(0, 206, 209, 0.4);
                 border-radius: 50%;
                 cursor: pointer;
-                z-index: 999;
+                z-index: 899;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -515,7 +537,7 @@ class CognitiveStatusManager {
             .neural-brain-toggle:hover {
                 border-color: rgba(0, 206, 209, 0.8);
                 box-shadow: 0 0 25px rgba(0, 206, 209, 0.4);
-                transform: scale(1.05);
+                transform: translateY(-50%) scale(1.05);
             }
 
             .neural-brain-toggle .toggle-icon {
@@ -566,14 +588,19 @@ class CognitiveStatusManager {
                 color: #FF4444;
             }
 
-            /* Mobile: position toggle at bottom */
+            /* Mobile: position toggle at bottom left */
             @media (max-width: 768px) {
                 .neural-brain-toggle {
                     top: auto;
-                    bottom: 100px;
-                    right: 15px;
+                    bottom: 160px;
+                    left: 15px;
+                    transform: none;
                     width: 44px;
                     height: 44px;
+                }
+
+                .neural-brain-toggle:hover {
+                    transform: scale(1.05);
                 }
 
                 .neural-brain-toggle .toggle-label {
