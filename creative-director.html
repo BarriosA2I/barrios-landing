@@ -3446,7 +3446,7 @@
                     div.innerHTML = 
                         (f.isImage ? '<img src="' + f.preview + '" alt="' + f.name + '">' : '<div class="file-icon"><span class="text-3xl">' + (FILE_ICONS[f.extension] || FILE_ICONS.default) + '</span></div>') +
                         '<span class="' + assetBadgeClass + '">' + assetBadgeText + '</span>' +
-                        '<button class="remove-btn" onclick="removeFile('' + f.id + '')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
+                        '<button class="remove-btn" onclick="removeFile(\'' + f.id + '\')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
                         '<div class="file-info"><div class="text-[10px] text-white truncate font-mono">' + f.name + '</div></div>';
                     
                     grid.appendChild(div);
@@ -3550,7 +3550,7 @@
                             return '<div class="attached-file-chip">' +
                                 (f.isImage ? '<img src="' + f.preview + '" alt="' + f.name + '">' : '<div class="icon-box">' + (FILE_ICONS[f.extension] || FILE_ICONS.default) + '</div>') +
                                 '<span class="text-[10px] text-white/80 font-mono truncate max-w-[100px]">' + f.name + '</span>' +
-                                '<div class="remove-chip" onclick="removeFile('' + f.id + '')">×</div>' +
+                                '<div class="remove-chip" onclick="removeFile(\'' + f.id + '\')">×</div>' +
                             '</div>';
                         }).join('') +
                     '</div>';
