@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Creative Director | Neural Ad Forge | Barrios A2I</title>
+    <title>AI Creative Director | A2I Commercial Lab | Barrios A2I</title>
     <meta name="description" content="Your AI Creative Director is ready. Build a production-ready commercial brief in minutes with guided questions.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1020,7 +1020,7 @@
                 </a>
                 <a href="/creative-director" class="nav-link group flex items-center px-3 py-1.5 transition-all">
                     <span class="bracket text-brand-gold font-mono text-sm">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-white transition-colors">AD_FORGE</span>
+                    <span class="mx-2 text-[11px] font-mono tracking-widest text-white transition-colors">COMMERCIAL_LAB</span>
                     <span class="bracket text-brand-gold font-mono text-sm">]</span>
                 </a>
             </div>
@@ -1088,7 +1088,7 @@
                                 <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-brand-gold rounded-full animate-pulse"></div>
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-xs font-mono tracking-widest text-white font-bold">AD_FORGE</span>
+                                <span class="text-xs font-mono tracking-widest text-white font-bold">COMMERCIAL_LAB</span>
                                 <span class="text-[9px] font-mono text-brand-gold/70 tracking-wider">CURRENT PAGE</span>
                             </div>
                         </div>
@@ -1603,23 +1603,754 @@
             </div>
         </section>
 
-        <!-- FINAL CTA -->
-        <section class="w-full py-24 px-6 relative z-10">
-            <div class="max-w-4xl mx-auto text-center">
-                <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-4 block">No Signup Required</span>
-                <h2 class="text-4xl md:text-6xl font-semibold tracking-tight text-white mb-6">
-                    Start your brief<span class="text-neon">.</span>
-                    <br><span class="font-serif italic font-normal text-white/50">Right now.</span>
-                </h2>
-                <p class="text-base text-white/60 max-w-xl mx-auto mb-8">
-                    Just answer the questions. In a few minutes, you'll have a production-ready commercial brief &mdash; no account, no credit card, no friction.
-                </p>
-                <a href="#chat" onclick="focusChatInput()" class="inline-flex group relative px-10 py-4 bg-white text-black font-semibold uppercase tracking-widest text-xs hover:bg-neon hover:text-black transition-all duration-300 cursor-pointer">
-                    <span class="relative z-10 flex items-center gap-3">
-                        Begin Intake
-                        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1" stroke-width="1.5"></i>
-                    </span>
-                </a>
+        <!-- ========== PRICING SECTION ========== -->
+        <section id="pricing" class="w-full py-24 px-6 relative z-10">
+            <div class="max-w-7xl mx-auto">
+                <!-- Section Header -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-8 mb-12">
+                    <div>
+                        <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">Subscriptions &bull; Token-Based</span>
+                        <h2 class="text-3xl md:text-5xl font-medium tracking-tight text-white max-w-2xl">
+                            A2I Commercial Lab<span class="text-neon">.</span>
+                            <br><span class="text-white/50 font-serif italic font-normal">Choose your tier.</span>
+                        </h2>
+                    </div>
+                    <div class="flex flex-col items-end gap-3">
+                        <p class="text-sm text-white/60 max-w-md text-right hidden md:block">
+                            64-second commercials engineered from 8-second cinematic scenes. 1 Token = 1 Scene.
+                        </p>
+                        <!-- Billing Toggle -->
+                        <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full p-1">
+                            <button id="billing-monthly" onclick="toggleBilling(false)" class="px-4 py-2 text-xs font-mono tracking-widest text-white bg-neon/20 border border-neon/50 rounded-full transition-all">MONTHLY</button>
+                            <button id="billing-yearly" onclick="toggleBilling(true)" class="px-4 py-2 text-xs font-mono tracking-widest text-white/50 rounded-full transition-all hover:text-white">YEARLY <span class="text-brand-gold">-17%</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Starter Tier -->
+                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-all backdrop-blur-sm overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Starter</h3>
+                                    <p class="text-xs text-white/40 mt-1">For testing the waters</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
+                                    <span class="text-neon font-mono text-sm">8</span>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold text-white price-display" data-tier="starter">$449</span>
+                                    <span class="text-white/40 text-sm">/mo</span>
+                                </div>
+                                <p class="text-xs text-white/30 mt-1 yearly-savings hidden">$374/mo billed yearly</p>
+                            </div>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span><strong class="text-white">8 Tokens</strong> (1× 64s commercial)</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span><strong class="text-white">1 Format</strong> (9:16 or 16:9)</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span>1 Revision round</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span>5-Day Queue</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/30">
+                                    <span class="mt-0.5">✗</span>
+                                    <span>No Voice/Avatar Clone</span>
+                                </li>
+                            </ul>
+                            <button onclick="scrollToSection('chat')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
+                                Get Started
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Creator Tier (Most Popular) -->
+                    <div class="group relative p-6 rounded-2xl bg-white/5 border-2 border-neon/50 hover:border-neon transition-all backdrop-blur-sm overflow-hidden shadow-[0_0_30px_rgba(0,206,209,0.15)]">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent"></div>
+                        <!-- Most Popular Badge -->
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-neon text-black text-[10px] font-bold uppercase tracking-widest rounded-full">
+                            Most Popular
+                        </div>
+                        <div class="relative z-10 pt-2">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Creator</h3>
+                                    <p class="text-xs text-white/40 mt-1">For growing brands</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-lg bg-neon/20 border border-neon/50 flex items-center justify-center">
+                                    <span class="text-neon font-mono text-sm">16</span>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold text-white price-display" data-tier="creator">$899</span>
+                                    <span class="text-white/40 text-sm">/mo</span>
+                                </div>
+                                <p class="text-xs text-white/30 mt-1 yearly-savings hidden">$749/mo billed yearly</p>
+                            </div>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span><strong class="text-white">16 Tokens</strong> (2× 64s commercials)</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span><strong class="text-white">All 4 Formats</strong> (9:16, 16:9, 1:1, 4:5)</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span>2 Revision rounds</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span>3-Day Queue</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-brand-gold">
+                                    <span class="mt-0.5">✓</span>
+                                    <span><strong>Voice Clone</strong> included</span>
+                                </li>
+                            </ul>
+                            <button onclick="scrollToSection('chat')" class="w-full py-3 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all">
+                                Start Creating
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Growth Tier -->
+                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-all backdrop-blur-sm overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Growth</h3>
+                                    <p class="text-xs text-white/40 mt-1">For scaling campaigns</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
+                                    <span class="text-neon font-mono text-sm">32</span>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold text-white price-display" data-tier="growth">$1,699</span>
+                                    <span class="text-white/40 text-sm">/mo</span>
+                                </div>
+                                <p class="text-xs text-white/30 mt-1 yearly-savings hidden">$1,416/mo billed yearly</p>
+                            </div>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span><strong class="text-white">32 Tokens</strong> (4× 64s commercials)</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span><strong class="text-white">All 4 Formats</strong></span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span>3 Revision rounds</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span>48-Hour Queue</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-brand-gold">
+                                    <span class="mt-0.5">✓</span>
+                                    <span><strong>Voice + Avatar Clone</strong></span>
+                                </li>
+                            </ul>
+                            <button onclick="scrollToSection('chat')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
+                                Scale Up
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Scale Tier -->
+                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-brand-gold/30 hover:border-brand-gold/60 transition-all backdrop-blur-sm overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-gold to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Scale</h3>
+                                    <p class="text-xs text-brand-gold/70 mt-1">Enterprise volume</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-lg bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center">
+                                    <span class="text-brand-gold font-mono text-sm">64</span>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-3xl font-bold text-white price-display" data-tier="scale">$3,199</span>
+                                    <span class="text-white/40 text-sm">/mo</span>
+                                </div>
+                                <p class="text-xs text-white/30 mt-1 yearly-savings hidden">$2,666/mo billed yearly</p>
+                            </div>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-brand-gold mt-0.5">✓</span>
+                                    <span><strong class="text-white">64 Tokens</strong> (8× 64s commercials)</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-brand-gold mt-0.5">✓</span>
+                                    <span><strong class="text-white">All 4 Formats</strong></span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-brand-gold mt-0.5">✓</span>
+                                    <span>5 Revision rounds</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-brand-gold mt-0.5">✓</span>
+                                    <span><strong class="text-white">24-Hour Priority</strong></span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-brand-gold">
+                                    <span class="mt-0.5">✓</span>
+                                    <span><strong>Premium Clone Suite</strong></span>
+                                </li>
+                            </ul>
+                            <button onclick="scrollToSection('chat')" class="w-full py-3 bg-brand-gold/20 border border-brand-gold/50 text-brand-gold text-sm font-bold rounded-lg hover:bg-brand-gold hover:text-black transition-all">
+                                Go Enterprise
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token Explainer Note -->
+                <div class="mt-8 text-center">
+                    <p class="text-xs text-white/40 font-mono">
+                        <span class="text-neon">1 TOKEN</span> = 1× 8-second scene &nbsp;|&nbsp;
+                        <span class="text-neon">8 TOKENS</span> = 1× 64-second commercial &nbsp;|&nbsp;
+                        Tokens reset monthly (no rollover)
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TOKEN EXPLAINER SECTION ========== -->
+        <section id="token-explainer" class="w-full py-24 px-6 relative z-10">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-12">
+                    <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">How It Works</span>
+                    <h2 class="text-3xl md:text-4xl font-medium tracking-tight text-white">
+                        From Tokens to Commercial<span class="text-neon">.</span>
+                    </h2>
+                </div>
+
+                <!-- Step Navigation -->
+                <div class="flex justify-center gap-4 mb-8">
+                    <button onclick="showExplainerStep(1)" id="step-btn-1" class="step-btn px-6 py-3 bg-neon/20 border border-neon/50 text-neon text-xs font-mono tracking-widest rounded-full transition-all">
+                        STEP 01
+                    </button>
+                    <button onclick="showExplainerStep(2)" id="step-btn-2" class="step-btn px-6 py-3 bg-white/5 border border-white/20 text-white/50 text-xs font-mono tracking-widest rounded-full transition-all hover:text-white">
+                        STEP 02
+                    </button>
+                    <button onclick="showExplainerStep(3)" id="step-btn-3" class="step-btn px-6 py-3 bg-white/5 border border-white/20 text-white/50 text-xs font-mono tracking-widest rounded-full transition-all hover:text-white">
+                        STEP 03
+                    </button>
+                </div>
+
+                <!-- Step Content Container -->
+                <div class="relative min-h-[300px]">
+                    <!-- Step 1: Generate Scenes -->
+                    <div id="explainer-step-1" class="explainer-step transition-all duration-500">
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl font-semibold text-white mb-2">Generate 8 Cinematic Scenes</h3>
+                            <p class="text-sm text-white/50">Each token creates one 8-second AI-generated scene</p>
+                        </div>
+                        <div class="grid grid-cols-4 md:grid-cols-8 gap-3">
+                            <div class="aspect-square bg-white/5 border border-neon/30 rounded-lg flex items-center justify-center group hover:border-neon/60 transition-all">
+                                <div class="text-center">
+                                    <span class="text-neon text-lg">🎬</span>
+                                    <p class="text-[10px] text-white/40 mt-1">8s</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white/5 border border-neon/30 rounded-lg flex items-center justify-center group hover:border-neon/60 transition-all">
+                                <div class="text-center">
+                                    <span class="text-neon text-lg">🎬</span>
+                                    <p class="text-[10px] text-white/40 mt-1">8s</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white/5 border border-neon/30 rounded-lg flex items-center justify-center group hover:border-neon/60 transition-all">
+                                <div class="text-center">
+                                    <span class="text-neon text-lg">🎬</span>
+                                    <p class="text-[10px] text-white/40 mt-1">8s</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white/5 border border-neon/30 rounded-lg flex items-center justify-center group hover:border-neon/60 transition-all">
+                                <div class="text-center">
+                                    <span class="text-neon text-lg">🎬</span>
+                                    <p class="text-[10px] text-white/40 mt-1">8s</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white/5 border border-neon/30 rounded-lg flex items-center justify-center group hover:border-neon/60 transition-all">
+                                <div class="text-center">
+                                    <span class="text-neon text-lg">🎬</span>
+                                    <p class="text-[10px] text-white/40 mt-1">8s</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white/5 border border-neon/30 rounded-lg flex items-center justify-center group hover:border-neon/60 transition-all">
+                                <div class="text-center">
+                                    <span class="text-neon text-lg">🎬</span>
+                                    <p class="text-[10px] text-white/40 mt-1">8s</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white/5 border border-neon/30 rounded-lg flex items-center justify-center group hover:border-neon/60 transition-all">
+                                <div class="text-center">
+                                    <span class="text-neon text-lg">🎬</span>
+                                    <p class="text-[10px] text-white/40 mt-1">8s</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white/5 border border-neon/30 rounded-lg flex items-center justify-center group hover:border-neon/60 transition-all">
+                                <div class="text-center">
+                                    <span class="text-neon text-lg">🎬</span>
+                                    <p class="text-[10px] text-white/40 mt-1">8s</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-center text-xs text-white/30 mt-4 font-mono">8 TOKENS CONSUMED</p>
+                    </div>
+
+                    <!-- Step 2: VORTEX Assembly -->
+                    <div id="explainer-step-2" class="explainer-step hidden transition-all duration-500">
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl font-semibold text-white mb-2">VORTEX Assembly Pipeline</h3>
+                            <p class="text-sm text-white/50">AI upscaling, color grading, beat-sync, transitions</p>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="relative w-64 h-64">
+                                <!-- Outer spinning ring -->
+                                <div class="absolute inset-0 rounded-full border-2 border-dashed border-neon/30 animate-spin-slow"></div>
+                                <!-- Middle ring -->
+                                <div class="absolute inset-4 rounded-full border border-neon/50 animate-spin-slow" style="animation-direction: reverse; animation-duration: 4s;"></div>
+                                <!-- Inner ring -->
+                                <div class="absolute inset-8 rounded-full border border-neon animate-spin-slow" style="animation-duration: 2s;"></div>
+                                <!-- Center -->
+                                <div class="absolute inset-12 rounded-full bg-neon/20 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <span class="text-3xl">⚡</span>
+                                        <p class="text-[10px] text-neon mt-1 font-mono">VORTEX</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-center text-xs text-white/30 mt-4 font-mono">PROCESSING 8 SCENES...</p>
+                    </div>
+
+                    <!-- Step 3: Final Output -->
+                    <div id="explainer-step-3" class="explainer-step hidden transition-all duration-500">
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl font-semibold text-white mb-2">64-Second Master Commercial</h3>
+                            <p class="text-sm text-white/50">Ready for broadcast across all platforms</p>
+                        </div>
+                        <div class="max-w-md mx-auto">
+                            <div class="bg-white/5 border border-neon/50 rounded-xl p-6 text-center">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-neon/20 border border-neon flex items-center justify-center">
+                                    <span class="text-2xl">▶</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-white mb-2">your_brand_commercial.mp4</h4>
+                                <p class="text-sm text-white/50 mb-4">64 seconds • 4K • Broadcast Ready</p>
+                                <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-neon to-brand-gold w-full"></div>
+                                </div>
+                                <p class="text-xs text-neon mt-2 font-mono">COMPLETE</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-center gap-4 mt-6">
+                            <span class="px-3 py-1 bg-white/5 rounded text-xs text-white/40">9:16 Vertical</span>
+                            <span class="px-3 py-1 bg-white/5 rounded text-xs text-white/40">16:9 Horizontal</span>
+                            <span class="px-3 py-1 bg-white/5 rounded text-xs text-white/40">1:1 Square</span>
+                            <span class="px-3 py-1 bg-white/5 rounded text-xs text-white/40">4:5 Feed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TRIAL OPTION SECTION ========== -->
+        <section id="trial" class="w-full py-24 px-6 relative z-10">
+            <div class="max-w-2xl mx-auto">
+                <div class="relative p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm overflow-hidden group hover:border-neon/50 transition-all">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-50"></div>
+                    <div class="text-center">
+                        <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-4 block">Not Ready for Monthly?</span>
+                        <h3 class="text-2xl md:text-3xl font-semibold text-white mb-2">
+                            Run a Single Lab Test<span class="text-neon">.</span>
+                        </h3>
+                        <div class="flex items-baseline justify-center gap-2 mb-6">
+                            <span class="text-4xl font-bold text-white">$500</span>
+                            <span class="text-white/40">one-time</span>
+                        </div>
+                        <ul class="text-left max-w-sm mx-auto space-y-3 mb-8">
+                            <li class="flex items-start gap-2 text-sm text-white/60">
+                                <span class="text-neon mt-0.5">✓</span>
+                                <span>1× 64-second commercial (8 scenes assembled)</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-sm text-white/60">
+                                <span class="text-neon mt-0.5">✓</span>
+                                <span>1 export format (9:16 OR 16:9)</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-sm text-white/60">
+                                <span class="text-neon mt-0.5">✓</span>
+                                <span>0-1 light revision</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-sm text-white/30">
+                                <span class="mt-0.5">✗</span>
+                                <span>No clone/avatar setup</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-sm text-white/30">
+                                <span class="mt-0.5">✗</span>
+                                <span>Standard queue (slower turnaround)</span>
+                            </li>
+                        </ul>
+                        <button onclick="scrollToSection('chat')" class="px-8 py-4 bg-white/10 border border-neon/50 text-neon text-sm font-bold rounded-lg hover:bg-neon hover:text-black transition-all">
+                            Run the $500 Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== ADD-ONS SECTION ========== -->
+        <section id="addons" class="w-full py-24 px-6 relative z-10">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">Enhance Your Production</span>
+                    <h2 class="text-3xl md:text-4xl font-medium tracking-tight text-white">
+                        Add-Ons & Token Packs<span class="text-neon">.</span>
+                    </h2>
+                </div>
+
+                <!-- Clones/Identity Category -->
+                <div class="mb-12">
+                    <h3 class="text-xs font-mono tracking-widest text-brand-gold mb-4 uppercase">Clones & Identity</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="p-4 rounded-xl bg-white/5 border border-brand-gold/30 hover:border-brand-gold/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">Voice Clone Setup</span>
+                                <span class="text-brand-gold font-mono">$299</span>
+                            </div>
+                            <p class="text-xs text-white/40">One-time setup for your custom voice</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-brand-gold/30 hover:border-brand-gold/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">Avatar Clone Setup</span>
+                                <span class="text-brand-gold font-mono">$1,499</span>
+                            </div>
+                            <p class="text-xs text-white/40">One-time AI avatar training</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-brand-gold/30 hover:border-brand-gold/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">Additional Avatar</span>
+                                <span class="text-brand-gold font-mono">$999</span>
+                            </div>
+                            <p class="text-xs text-white/40">Each additional AI avatar</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-brand-gold/30 hover:border-brand-gold/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">Voice + Avatar Bundle</span>
+                                <span class="text-brand-gold font-mono">$1,599</span>
+                            </div>
+                            <p class="text-xs text-white/40">Save $199 with bundle</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rush/Priority Category -->
+                <div class="mb-12">
+                    <h3 class="text-xs font-mono tracking-widest text-neon mb-4 uppercase">Rush & Priority</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">Rush Delivery</span>
+                                <span class="text-neon font-mono">$249</span>
+                            </div>
+                            <p class="text-xs text-white/40">Skip to front of queue</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">48-Hour Priority Queue</span>
+                                <span class="text-neon font-mono">$399</span>
+                            </div>
+                            <p class="text-xs text-white/40">Guaranteed 48-hour delivery</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token Packs Category -->
+                <div class="mb-12">
+                    <h3 class="text-xs font-mono tracking-widest text-neon mb-4 uppercase">Token Packs</h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">8 Tokens Pack</span>
+                                <span class="text-neon font-mono">$449</span>
+                            </div>
+                            <p class="text-xs text-white/40">1 additional commercial</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">16 Tokens Pack</span>
+                                <span class="text-neon font-mono">$799</span>
+                            </div>
+                            <p class="text-xs text-white/40">2 additional commercials</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">32 Tokens Pack</span>
+                                <span class="text-neon font-mono">$1,499</span>
+                            </div>
+                            <p class="text-xs text-white/40">4 additional commercials</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extras Category -->
+                <div>
+                    <h3 class="text-xs font-mono tracking-widest text-neon mb-4 uppercase">Extras</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">Extra Revision Pack</span>
+                                <span class="text-neon font-mono">$149</span>
+                            </div>
+                            <p class="text-xs text-white/40">2 additional revision passes</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-white font-medium">Variant Pack</span>
+                                <span class="text-neon font-mono">8 tokens + $99</span>
+                            </div>
+                            <p class="text-xs text-white/40">Same commercial, new hooks/variations</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== INTAKE CHECKLIST SECTION ========== -->
+        <section id="checklist" class="w-full py-24 px-6 relative z-10">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">What You'll Provide</span>
+                    <h2 class="text-3xl md:text-4xl font-medium tracking-tight text-white">
+                        Client Intake Checklist<span class="text-neon">.</span>
+                    </h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Brand DNA -->
+                    <div class="p-6 rounded-2xl bg-white/5 border border-neon/30 hover:border-neon/50 transition-all">
+                        <div class="w-12 h-12 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center mb-4">
+                            <span class="text-xl">🏢</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Brand DNA</h3>
+                        <ul class="space-y-2 text-sm text-white/50">
+                            <li>• Business name & URL</li>
+                            <li>• Logo (high-res)</li>
+                            <li>• Style guide (if available)</li>
+                            <li>• Brand colors</li>
+                        </ul>
+                    </div>
+
+                    <!-- The Mission -->
+                    <div class="p-6 rounded-2xl bg-white/5 border border-neon/30 hover:border-neon/50 transition-all">
+                        <div class="w-12 h-12 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center mb-4">
+                            <span class="text-xl">🎯</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">The Mission</h3>
+                        <ul class="space-y-2 text-sm text-white/50">
+                            <li>• Campaign goal</li>
+                            <li>• Target audience</li>
+                            <li>• Geographic focus</li>
+                            <li>• Key message</li>
+                        </ul>
+                    </div>
+
+                    <!-- Creative Intel -->
+                    <div class="p-6 rounded-2xl bg-white/5 border border-neon/30 hover:border-neon/50 transition-all">
+                        <div class="w-12 h-12 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center mb-4">
+                            <span class="text-xl">💡</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Creative Intel</h3>
+                        <ul class="space-y-2 text-sm text-white/50">
+                            <li>• Product description</li>
+                            <li>• Must-say lines</li>
+                            <li>• Competitor references</li>
+                            <li>• Preferred tone</li>
+                        </ul>
+                    </div>
+
+                    <!-- Identity Assets (Tier 2+) -->
+                    <div class="p-6 rounded-2xl bg-white/5 border border-brand-gold/30 hover:border-brand-gold/50 transition-all relative">
+                        <div class="absolute top-4 right-4 px-2 py-1 bg-brand-gold/20 border border-brand-gold/50 rounded text-[10px] text-brand-gold font-mono">TIER 2+</div>
+                        <div class="w-12 h-12 rounded-lg bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center mb-4">
+                            <span class="text-xl">👤</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Identity Assets</h3>
+                        <ul class="space-y-2 text-sm text-white/50">
+                            <li>• Voice sample (30-60s)</li>
+                            <li>• Avatar photos (front/side)</li>
+                            <li>• Video reference footage</li>
+                            <li>• Consent documentation</li>
+                        </ul>
+                    </div>
+
+                    <!-- Technical Specs -->
+                    <div class="p-6 rounded-2xl bg-white/5 border border-neon/30 hover:border-neon/50 transition-all">
+                        <div class="w-12 h-12 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center mb-4">
+                            <span class="text-xl">⚙️</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Technical Specs</h3>
+                        <ul class="space-y-2 text-sm text-white/50">
+                            <li>• Platform priority</li>
+                            <li>• Format preference</li>
+                            <li>• B-roll (optional)</li>
+                            <li>• Music preference</li>
+                        </ul>
+                    </div>
+
+                    <!-- CTA Card -->
+                    <div class="p-6 rounded-2xl bg-neon/10 border border-neon/50 hover:border-neon transition-all flex flex-col justify-center text-center">
+                        <h3 class="text-lg font-semibold text-white mb-2">Ready to Start?</h3>
+                        <p class="text-sm text-white/50 mb-4">Our AI will guide you through each step</p>
+                        <button onclick="scrollToSection('chat')" class="px-6 py-3 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all">
+                            Open Intake Portal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== FAQ SECTION ========== -->
+        <section id="faq" class="w-full py-24 px-6 relative z-10">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-12">
+                    <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">Questions</span>
+                    <h2 class="text-3xl md:text-4xl font-medium tracking-tight text-white">
+                        Frequently Asked<span class="text-neon">.</span>
+                    </h2>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- FAQ 1 -->
+                    <div class="border border-white/10 rounded-xl overflow-hidden">
+                        <button onclick="toggleFaq(1)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-all">
+                            <span class="text-white font-medium">Why 64 seconds instead of 60?</span>
+                            <i data-lucide="chevron-down" id="faq-icon-1" class="w-5 h-5 text-neon transition-transform" stroke-width="1.5"></i>
+                        </button>
+                        <div id="faq-answer-1" class="hidden px-6 pb-4">
+                            <p class="text-sm text-white/50">Our 8-beat structure uses 8× 8-second scenes for optimal retention markers. This creates natural pacing that holds viewer attention longer than arbitrary 60-second cuts.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="border border-white/10 rounded-xl overflow-hidden">
+                        <button onclick="toggleFaq(2)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-all">
+                            <span class="text-white font-medium">Why 8-second scenes?</span>
+                            <i data-lucide="chevron-down" id="faq-icon-2" class="w-5 h-5 text-neon transition-transform" stroke-width="1.5"></i>
+                        </button>
+                        <div id="faq-answer-2" class="hidden px-6 pb-4">
+                            <p class="text-sm text-white/50">Veo 3.1 and similar AI video models produce peak quality in 8-second bursts with zero degradation. Longer generations lose coherence; shorter ones waste compute.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="border border-white/10 rounded-xl overflow-hidden">
+                        <button onclick="toggleFaq(3)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-all">
+                            <span class="text-white font-medium">What is 'VORTEX Assembly'?</span>
+                            <i data-lucide="chevron-down" id="faq-icon-3" class="w-5 h-5 text-neon transition-transform" stroke-width="1.5"></i>
+                        </button>
+                        <div id="faq-answer-3" class="hidden px-6 pb-4">
+                            <p class="text-sm text-white/50">VORTEX is our proprietary post-production pipeline: AI upscaling, professional color grading, beat-synchronized transitions, and audio mixing. It transforms raw scenes into broadcast-ready commercials.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 4 -->
+                    <div class="border border-white/10 rounded-xl overflow-hidden">
+                        <button onclick="toggleFaq(4)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-all">
+                            <span class="text-white font-medium">How do tokens work and do they roll over?</span>
+                            <i data-lucide="chevron-down" id="faq-icon-4" class="w-5 h-5 text-neon transition-transform" stroke-width="1.5"></i>
+                        </button>
+                        <div id="faq-answer-4" class="hidden px-6 pb-4">
+                            <p class="text-sm text-white/50">1 Token = 1× 8-second scene. 8 Tokens = 1× 64-second commercial. Tokens reset at your billing cycle—no rollover. Use them or lose them encourages consistent content creation.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 5 -->
+                    <div class="border border-white/10 rounded-xl overflow-hidden">
+                        <button onclick="toggleFaq(5)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-all">
+                            <span class="text-white font-medium">What's included in the Clone Setup?</span>
+                            <i data-lucide="chevron-down" id="faq-icon-5" class="w-5 h-5 text-neon transition-transform" stroke-width="1.5"></i>
+                        </button>
+                        <div id="faq-answer-5" class="hidden px-6 pb-4">
+                            <p class="text-sm text-white/50">One-time voice training (from 30-60s sample) and/or avatar training (from photos/video). Once trained, your clone is available for all future commercials at no additional cost.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 6 -->
+                    <div class="border border-white/10 rounded-xl overflow-hidden">
+                        <button onclick="toggleFaq(6)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-all">
+                            <span class="text-white font-medium">Can I cancel anytime?</span>
+                            <i data-lucide="chevron-down" id="faq-icon-6" class="w-5 h-5 text-neon transition-transform" stroke-width="1.5"></i>
+                        </button>
+                        <div id="faq-answer-6" class="hidden px-6 pb-4">
+                            <p class="text-sm text-white/50">Yes. No contracts, no commitments. Pause or cancel anytime via Command Center. You keep access until the end of your billing period.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== FINAL CTA STRIP ========== -->
+        <section id="final-cta" class="w-full py-24 px-6 relative z-10">
+            <div class="max-w-4xl mx-auto">
+                <div class="relative p-8 md:p-12 rounded-3xl bg-white/5 border border-neon/30 backdrop-blur-sm overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent"></div>
+                    <div class="absolute -top-24 -right-24 w-96 h-96 bg-neon/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div class="text-center relative z-10">
+                        <span class="inline-block px-4 py-1 bg-brand-gold/20 border border-brand-gold/50 text-brand-gold text-xs font-mono tracking-widest rounded-full mb-6">LIMITED MONTHLY SLOTS AVAILABLE</span>
+
+                        <h2 class="text-3xl md:text-5xl font-semibold tracking-tight text-white mb-4">
+                            Pick a tier<span class="text-neon">.</span> Get your first commercial in motion<span class="text-neon">.</span>
+                        </h2>
+
+                        <p class="text-base text-white/50 max-w-xl mx-auto mb-8">
+                            VORTEX engine standing by. Elite brands are already shipping. Your move.
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                            <button onclick="scrollToSection('pricing')" class="px-8 py-4 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all shadow-[0_0_30px_rgba(0,206,209,0.3)]">
+                                Start Monthly →
+                            </button>
+                            <button onclick="scrollToSection('trial')" class="px-8 py-4 bg-transparent border border-white/30 text-white text-sm font-medium rounded-lg hover:border-neon/50 hover:text-neon transition-all">
+                                Run the $500 Test
+                            </button>
+                        </div>
+
+                        <!-- Platform Badges -->
+                        <div class="flex flex-wrap justify-center gap-4 mb-6">
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs text-white/40">Meta</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs text-white/40">TikTok</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs text-white/40">YouTube</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs text-white/40">Snapchat</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs text-white/40">X</span>
+                        </div>
+
+                        <p class="text-xs text-white/30 font-mono">Built for performance • Scaled by Barrios A2I</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1678,7 +2409,7 @@
                     <li>
                         <a href="/creative-director" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
                             <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            Neural Ad Forge
+                            A2I Commercial Lab
                         </a>
                     </li>
                     <li>
@@ -2373,7 +3104,7 @@
                 <div class="text-neon font-mono text-xs mb-3">[ READY FOR PRODUCTION ]</div>
                 <div class="p-4 bg-gradient-to-r from-brand-gold/20 to-neon/10 border border-brand-gold/50 rounded-lg">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-white font-semibold text-lg">Neural Ad Forge</span>
+                        <span class="text-white font-semibold text-lg">A2I Commercial Lab</span>
                         <span class="text-brand-gold font-mono text-xl">$499</span>
                     </div>
                     <p class="text-white/60 text-sm mb-4">AI-generated commercial with your approved script</p>
@@ -3880,6 +4611,180 @@
 
     <!-- Engine HUD Container -->
     <div id="engine-hud-container" class="engine-hud-wrapper"></div>
+
+    <!-- ========================================================================
+         A2I COMMERCIAL LAB - INTERACTIVITY SCRIPT
+         Billing toggle, Token explainer, FAQ accordion, Smooth scroll
+         ======================================================================== -->
+    <script>
+        // ==================================================================================
+        // PRICING SECTION - Monthly/Yearly Toggle
+        // ==================================================================================
+        const pricingData = {
+            starter: { monthly: 449, yearly: 374 },
+            creator: { monthly: 899, yearly: 749 },
+            growth: { monthly: 1699, yearly: 1416 },
+            scale: { monthly: 3199, yearly: 2666 }
+        };
+
+        let isYearlyBilling = false;
+
+        function toggleBilling(yearly) {
+            isYearlyBilling = yearly;
+
+            // Update toggle button styles
+            const monthlyBtn = document.getElementById('billing-monthly');
+            const yearlyBtn = document.getElementById('billing-yearly');
+
+            if (yearly) {
+                monthlyBtn.classList.remove('bg-neon/20', 'border-neon/50');
+                monthlyBtn.classList.add('text-white/50');
+                yearlyBtn.classList.add('bg-neon/20', 'border', 'border-neon/50');
+                yearlyBtn.classList.remove('text-white/50');
+            } else {
+                monthlyBtn.classList.add('bg-neon/20', 'border-neon/50');
+                monthlyBtn.classList.remove('text-white/50');
+                yearlyBtn.classList.remove('bg-neon/20', 'border', 'border-neon/50');
+                yearlyBtn.classList.add('text-white/50');
+            }
+
+            // Update price displays
+            document.querySelectorAll('.price-display').forEach(el => {
+                const tier = el.dataset.tier;
+                if (tier && pricingData[tier]) {
+                    const price = yearly ? pricingData[tier].yearly : pricingData[tier].monthly;
+                    el.textContent = '$' + price;
+                }
+            });
+
+            // Show/hide yearly savings text
+            document.querySelectorAll('.yearly-savings').forEach(el => {
+                if (yearly) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+        }
+
+        // ==================================================================================
+        // TOKEN EXPLAINER - Step Navigation & Auto-Cycle
+        // ==================================================================================
+        let currentExplainerStep = 1;
+        let explainerInterval = null;
+
+        function showExplainerStep(step) {
+            currentExplainerStep = step;
+
+            // Hide all steps
+            document.querySelectorAll('.explainer-step').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('opacity-100');
+                el.classList.add('opacity-0');
+            });
+
+            // Show selected step
+            const activeStep = document.getElementById('explainer-step-' + step);
+            if (activeStep) {
+                activeStep.classList.remove('hidden');
+                // Trigger reflow for animation
+                void activeStep.offsetWidth;
+                activeStep.classList.remove('opacity-0');
+                activeStep.classList.add('opacity-100');
+            }
+
+            // Update step button styles
+            document.querySelectorAll('.step-btn').forEach((btn, idx) => {
+                if (idx + 1 === step) {
+                    btn.classList.add('bg-neon/20', 'border-neon/50', 'text-neon');
+                    btn.classList.remove('bg-white/5', 'border-white/20', 'text-white/50');
+                } else {
+                    btn.classList.remove('bg-neon/20', 'border-neon/50', 'text-neon');
+                    btn.classList.add('bg-white/5', 'border-white/20', 'text-white/50');
+                }
+            });
+
+            // Reset auto-cycle timer when user clicks
+            if (explainerInterval) {
+                clearInterval(explainerInterval);
+                startExplainerAutoCycle();
+            }
+        }
+
+        function startExplainerAutoCycle() {
+            explainerInterval = setInterval(() => {
+                currentExplainerStep = (currentExplainerStep % 3) + 1;
+                showExplainerStep(currentExplainerStep);
+            }, 4500);
+        }
+
+        // Start auto-cycle when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            startExplainerAutoCycle();
+        });
+
+        // ==================================================================================
+        // FAQ ACCORDION - Expand/Collapse
+        // ==================================================================================
+        function toggleFaq(index) {
+            const answer = document.getElementById('faq-answer-' + index);
+            const icon = document.getElementById('faq-icon-' + index);
+
+            if (!answer) return;
+
+            // Toggle answer visibility
+            if (answer.classList.contains('hidden')) {
+                answer.classList.remove('hidden');
+                if (icon) icon.classList.add('rotate-180');
+            } else {
+                answer.classList.add('hidden');
+                if (icon) icon.classList.remove('rotate-180');
+            }
+        }
+
+        // ==================================================================================
+        // SMOOTH SCROLL - Navigate to sections
+        // ==================================================================================
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    </script>
+
+    <!-- ========================================================================
+         CSS ANIMATIONS - VORTEX Spinner & Glow Effects
+         ======================================================================== -->
+    <style>
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 243, 255, 0.6); }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 6s linear infinite;
+        }
+
+        .animate-pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* FAQ icon rotation transition */
+        #faq-icon-1, #faq-icon-2, #faq-icon-3, #faq-icon-4, #faq-icon-5, #faq-icon-6 {
+            transition: transform 0.3s ease;
+        }
+
+        /* Explainer step fade transitions */
+        .explainer-step {
+            transition: opacity 0.5s ease;
+        }
+    </style>
 
 </body>
 
