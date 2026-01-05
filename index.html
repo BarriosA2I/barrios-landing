@@ -489,6 +489,358 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
         </div>
       </section>
 
+      <!-- ========== LEGENDARY REASONING ENGINE v3.0 - ENGINE SHOWCASE ========== -->
+      <section class="relative py-24 overflow-hidden" id="engine-showcase">
+        <!-- Glow path cursor effect -->
+        <div class="glow-path" id="glow-path"></div>
+
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+          <div class="text-center mb-16">
+            <div class="text-xs font-mono text-primary/80 uppercase tracking-[0.3em] mb-4">[ FRONTIER_MODELS ]</div>
+            <h2 class="text-4xl md:text-5xl font-serif font-semibold mb-6">
+              <span class="bg-gradient-to-r from-primary via-purple-400 to-pink-500 bg-clip-text text-transparent">Three Engines.</span>
+              <br>One Legendary System.
+            </h2>
+            <p class="text-white/60 max-w-2xl mx-auto">
+              Select your reasoning engine. Each model brings unique strengths to your creative strategy.
+            </p>
+          </div>
+
+          <!-- Engine Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <!-- Gemini 3.0 Flash -->
+            <div class="engine-card group relative p-8 bg-void/80 border border-white/10 rounded-2xl cursor-pointer transition-all duration-300 hover:border-primary/50 hover:-translate-y-2" data-engine="gemini_flash_30" onclick="selectHeroEngine('gemini_flash_30')">
+              <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="relative z-10">
+                <span class="text-5xl mb-6 block">💎</span>
+                <h3 class="text-xl font-bold text-white mb-2">Gemini 3.0 Flash</h3>
+                <p class="text-sm text-white/50 mb-4">1M Context • 300ms • PhD Reasoning</p>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="px-3 py-1 bg-primary/20 text-primary rounded-full font-mono">FASTEST</span>
+                  <span class="text-white/40">$0.005/query</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Claude 4.5 Sonnet -->
+            <div class="engine-card group relative p-8 bg-void/80 border border-amber-500/30 rounded-2xl cursor-pointer transition-all duration-300 hover:border-amber-500/60 hover:-translate-y-2 scale-105 shadow-[0_0_40px_rgba(217,119,6,0.2)]" data-engine="claude_sonnet_45" onclick="selectHeroEngine('claude_sonnet_45')">
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full text-[10px] font-bold text-black uppercase tracking-wider">Recommended</div>
+              <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent rounded-2xl"></div>
+              <div class="relative z-10">
+                <span class="text-5xl mb-6 block">🧠</span>
+                <h3 class="text-xl font-bold text-white mb-2">Claude 4.5 Sonnet</h3>
+                <p class="text-sm text-white/50 mb-4">64K Output • Agentic • Extended Thinking</p>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-full font-mono">SMARTEST</span>
+                  <span class="text-white/40">$0.10/query</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ChatGPT 5.2 -->
+            <div class="engine-card group relative p-8 bg-void/80 border border-white/10 rounded-2xl cursor-pointer transition-all duration-300 hover:border-emerald-500/50 hover:-translate-y-2" data-engine="gpt52" onclick="selectHeroEngine('gpt52')">
+              <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="relative z-10">
+                <span class="text-5xl mb-6 block">⚡</span>
+                <h3 class="text-xl font-bold text-white mb-2">ChatGPT 5.2</h3>
+                <p class="text-sm text-white/50 mb-4">400K Context • SOTA Logic • Tool Master</p>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full font-mono">VERSATILE</span>
+                  <span class="text-white/40">$0.15/query</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA Button -->
+          <div class="text-center">
+            <button onclick="initializeSession()" class="group inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-primary to-purple-600 text-black font-bold font-mono text-sm uppercase tracking-wider rounded-xl transition-all duration-300 hover:shadow-[0_0_60px_rgba(0,206,209,0.4)] hover:-translate-y-1 pulse-glow">
+              INITIALIZE_SESSION
+              <iconify-icon icon="lucide:arrow-right" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== 6-AGENT PIPELINE VISUALIZATION ========== -->
+      <section class="relative py-24 overflow-hidden border-y border-white/5" id="pipeline">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="text-center mb-16">
+            <div class="text-xs font-mono text-primary/80 uppercase tracking-[0.3em] mb-4">[ RAGNAROK_PIPELINE ]</div>
+            <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-4">
+              <span class="bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">6 Specialized Agents</span>
+            </h2>
+            <p class="text-white/60">Working in perfect orchestration to generate your commercial strategy</p>
+          </div>
+
+          <!-- Pipeline SVG -->
+          <div class="overflow-x-auto pb-4">
+            <svg viewBox="0 0 1200 300" class="w-full min-w-[800px]">
+              <defs>
+                <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#00CED1;stop-opacity:0" />
+                  <stop offset="50%" style="stop-color:#00CED1;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:0" />
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <!-- Agent Nodes -->
+              <g class="agent-node" transform="translate(100, 150)">
+                <circle r="45" fill="rgba(0, 206, 209, 0.15)" stroke="#00CED1" stroke-width="2"/>
+                <text y="8" text-anchor="middle" fill="#fff" font-size="28">📤</text>
+                <text y="80" text-anchor="middle" fill="#00CED1" font-size="11" font-family="monospace">UPLOAD</text>
+              </g>
+
+              <g class="agent-node" transform="translate(300, 150)">
+                <circle r="45" fill="rgba(217, 119, 6, 0.15)" stroke="#D97706" stroke-width="2"/>
+                <text y="8" text-anchor="middle" fill="#fff" font-size="28">🔍</text>
+                <text y="80" text-anchor="middle" fill="#D97706" font-size="11" font-family="monospace">BRAND ANALYST</text>
+              </g>
+
+              <g class="agent-node" transform="translate(500, 150)">
+                <circle r="45" fill="rgba(16, 185, 129, 0.15)" stroke="#10B981" stroke-width="2"/>
+                <text y="8" text-anchor="middle" fill="#fff" font-size="28">🎯</text>
+                <text y="80" text-anchor="middle" fill="#10B981" font-size="11" font-family="monospace">STRATEGIST</text>
+              </g>
+
+              <g class="agent-node" transform="translate(700, 150)">
+                <circle r="45" fill="rgba(139, 92, 246, 0.15)" stroke="#8B5CF6" stroke-width="2"/>
+                <text y="8" text-anchor="middle" fill="#fff" font-size="28">✍️</text>
+                <text y="80" text-anchor="middle" fill="#8B5CF6" font-size="11" font-family="monospace">SCRIPTWRITER</text>
+              </g>
+
+              <g class="agent-node" transform="translate(900, 150)">
+                <circle r="45" fill="rgba(236, 72, 153, 0.15)" stroke="#EC4899" stroke-width="2"/>
+                <text y="8" text-anchor="middle" fill="#fff" font-size="28">🎬</text>
+                <text y="80" text-anchor="middle" fill="#EC4899" font-size="11" font-family="monospace">DIRECTOR</text>
+              </g>
+
+              <g class="agent-node" transform="translate(1100, 150)">
+                <circle r="45" fill="rgba(0, 206, 209, 0.15)" stroke="#00CED1" stroke-width="2"/>
+                <text y="8" text-anchor="middle" fill="#fff" font-size="28">🎥</text>
+                <text y="80" text-anchor="middle" fill="#00CED1" font-size="11" font-family="monospace">RENDERER</text>
+              </g>
+
+              <!-- Flow Lines with Animation -->
+              <path d="M150 150 L250 150" stroke="url(#flowGradient)" stroke-width="3" filter="url(#glow)" stroke-dasharray="10 5">
+                <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite"/>
+              </path>
+              <path d="M350 150 L450 150" stroke="url(#flowGradient)" stroke-width="3" filter="url(#glow)" stroke-dasharray="10 5">
+                <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite" begin="0.3s"/>
+              </path>
+              <path d="M550 150 L650 150" stroke="url(#flowGradient)" stroke-width="3" filter="url(#glow)" stroke-dasharray="10 5">
+                <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite" begin="0.6s"/>
+              </path>
+              <path d="M750 150 L850 150" stroke="url(#flowGradient)" stroke-width="3" filter="url(#glow)" stroke-dasharray="10 5">
+                <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite" begin="0.9s"/>
+              </path>
+              <path d="M950 150 L1050 150" stroke="url(#flowGradient)" stroke-width="3" filter="url(#glow)" stroke-dasharray="10 5">
+                <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite" begin="1.2s"/>
+              </path>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== REASONING BENCHMARKS ========== -->
+      <section class="relative py-24 overflow-hidden" id="benchmarks">
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="text-center mb-16">
+            <div class="text-xs font-mono text-primary/80 uppercase tracking-[0.3em] mb-4">[ LIVE_BENCHMARKS ]</div>
+            <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-4">
+              Real-Time Performance Metrics
+            </h2>
+            <p class="text-white/60">Compare frontier models across key dimensions</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Gemini Benchmark -->
+            <div class="relative p-8 bg-void/80 border border-white/10 rounded-2xl">
+              <div class="absolute -top-3 right-6 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-[10px] font-mono text-primary">FASTEST</div>
+              <div class="flex items-center gap-3 mb-6">
+                <span class="text-3xl">💎</span>
+                <h3 class="text-lg font-bold">Gemini 3.0 Flash</h3>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Latency</span>
+                    <span class="text-primary font-mono">300ms</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 95%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Context Window</span>
+                    <span class="text-primary font-mono">1M tokens</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 100%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Cost Efficiency</span>
+                    <span class="text-primary font-mono">$0.005</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 98%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Claude Benchmark -->
+            <div class="relative p-8 bg-void/80 border border-amber-500/30 rounded-2xl scale-105 shadow-[0_0_40px_rgba(217,119,6,0.15)]">
+              <div class="absolute -top-3 right-6 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-[10px] font-mono text-amber-400">RECOMMENDED</div>
+              <div class="flex items-center gap-3 mb-6">
+                <span class="text-3xl">🧠</span>
+                <h3 class="text-lg font-bold">Claude 4.5 Sonnet</h3>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Reasoning Depth</span>
+                    <span class="text-amber-400 font-mono">A++</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 98%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Output Length</span>
+                    <span class="text-amber-400 font-mono">64K tokens</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 100%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Agentic Tasks</span>
+                    <span class="text-amber-400 font-mono">★★★</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 95%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- GPT Benchmark -->
+            <div class="relative p-8 bg-void/80 border border-white/10 rounded-2xl">
+              <div class="absolute -top-3 right-6 px-3 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-[10px] font-mono text-emerald-400">SMARTEST</div>
+              <div class="flex items-center gap-3 mb-6">
+                <span class="text-3xl">⚡</span>
+                <h3 class="text-lg font-bold">ChatGPT 5.2</h3>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Knowledge Work</span>
+                    <span class="text-emerald-400 font-mono">SOTA</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 100%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Context Window</span>
+                    <span class="text-emerald-400 font-mono">400K tokens</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 40%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-2">
+                    <span class="text-white/50">Tool Calling</span>
+                    <span class="text-emerald-400 font-mono">★★★</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 100%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Engine Selector Scripts -->
+      <script>
+        // Engine selection for Hero
+        function selectHeroEngine(engineId) {
+          localStorage.setItem('barrios_active_engine', engineId);
+          document.querySelectorAll('.engine-card').forEach(card => {
+            card.classList.remove('active', 'border-primary/50', 'border-amber-500/60', 'border-emerald-500/50');
+            if (card.dataset.engine === engineId) {
+              card.classList.add('active');
+              if (engineId === 'gemini_flash_30') card.classList.add('border-primary/50');
+              if (engineId === 'claude_sonnet_45') card.classList.add('border-amber-500/60');
+              if (engineId === 'gpt52') card.classList.add('border-emerald-500/50');
+            }
+          });
+        }
+
+        function initializeSession() {
+          const engine = localStorage.getItem('barrios_active_engine') || 'claude_sonnet_45';
+          if (window.GenesisSession) {
+            GenesisSession.init();
+            GenesisSession.setEngine(engine);
+          }
+          window.location.href = '/creative-director.html';
+        }
+
+        // Glow path cursor effect
+        document.addEventListener('mousemove', (e) => {
+          const glowPath = document.getElementById('glow-path');
+          if (glowPath) {
+            glowPath.style.background = 'radial-gradient(600px circle at ' + e.clientX + 'px ' + e.clientY + 'px, rgba(0, 206, 209, 0.08), transparent 40%)';
+          }
+        });
+
+        // Initialize default engine
+        document.addEventListener('DOMContentLoaded', () => {
+          const savedEngine = localStorage.getItem('barrios_active_engine');
+          if (savedEngine) {
+            selectHeroEngine(savedEngine);
+          } else {
+            selectHeroEngine('claude_sonnet_45');
+          }
+        });
+      </script>
+
+      <style>
+        .glow-path {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          transition: background 0.3s ease;
+        }
+        .engine-card.active {
+          box-shadow: 0 0 40px rgba(0, 206, 209, 0.2);
+        }
+        .pulse-glow {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(0, 206, 209, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(0, 206, 209, 0.6); }
+        }
+      </style>
+
       <!-- INFINITE LOGO MARQUEE (TECH STACK) -->
       <section class="w-full border-y border-white/[0.08] bg-black/[0.2] py-8 mb-0 relative overflow-hidden">
           <div class="absolute inset-0 z-10 marquee-mask pointer-events-none"></div>

@@ -755,6 +755,206 @@
     <script type="module" src="js/agent-visuals-integration.js"></script>
     <!-- Neural RAG Brain v3.0 Cognitive Status Panel -->
     <script src="js/neural-brain-integration.js"></script>
+
+    <!-- Engine HUD Styles - Legendary Reasoning Engine v3.0 -->
+    <style id="engine-hud-styles">
+    /* Engine HUD Wrapper */
+    .engine-hud-wrapper {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    .engine-hud {
+        background: rgba(10, 10, 30, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 206, 209, 0.3);
+        border-radius: 16px;
+        padding: 16px;
+        min-width: 320px;
+        box-shadow: 0 0 40px rgba(0, 206, 209, 0.2);
+    }
+
+    .hud-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 12px;
+        color: #00CED1;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 12px;
+        text-shadow: 0 0 10px rgba(0, 206, 209, 0.5);
+    }
+
+    .engine-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .engine-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .engine-option:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(4px);
+    }
+
+    .engine-option.active {
+        background: rgba(0, 206, 209, 0.1);
+        border-color: rgba(0, 206, 209, 0.5);
+    }
+
+    .engine-icon {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+    }
+
+    .engine-info { flex: 1; }
+
+    .engine-name {
+        font-weight: 600;
+        color: #fff;
+        font-size: 14px;
+    }
+
+    .engine-strength {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 2px;
+    }
+
+    .engine-cost {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 12px;
+        color: #8B5CF6;
+    }
+
+    .brain-profile {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .profile-strength {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 12px;
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .stat {
+        text-align: center;
+        padding: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .stat-value {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #00CED1;
+        margin-top: 4px;
+    }
+
+    /* Pulse glow animation */
+    .pulse-glow {
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(0, 206, 209, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(0, 206, 209, 0.6); }
+    }
+
+    /* Strategy button */
+    .strategy-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 16px 32px;
+        background: linear-gradient(135deg, rgba(0, 206, 209, 0.2), rgba(139, 92, 246, 0.2));
+        border: 1px solid rgba(0, 206, 209, 0.5);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .strategy-btn:hover {
+        background: linear-gradient(135deg, rgba(0, 206, 209, 0.3), rgba(139, 92, 246, 0.3));
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(0, 206, 209, 0.3);
+    }
+
+    /* Loading spinner */
+    .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #00CED1;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .engine-hud-wrapper {
+            bottom: 100px;
+            right: 10px;
+            left: 10px;
+        }
+        .engine-hud {
+            min-width: auto;
+        }
+    }
+    </style>
 </head>
 <body class="antialiased font-sans selection:bg-neon selection:text-white">
     <div id="canvas-container"></div>
@@ -3674,6 +3874,12 @@
             }
         });
     </script>
+
+    <!-- Legendary Reasoning Engine v3.0 -->
+    <script src="js/genesis-legendary-v3.js"></script>
+
+    <!-- Engine HUD Container -->
+    <div id="engine-hud-container" class="engine-hud-wrapper"></div>
 
 </body>
 
