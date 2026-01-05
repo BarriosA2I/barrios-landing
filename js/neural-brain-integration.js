@@ -1128,9 +1128,9 @@ class NeuralBrainIntegration {
             window.originalSendMessage = window.sendMessage;
             
             window.sendMessage = async (message) => {
-                // Show cognitive status panel
-                this.statusManager.show();
-                
+                // NOTE: Panel no longer auto-opens - user can toggle via 🧠 button
+                // this.statusManager.show();
+
                 // Process through Neural Brain
                 try {
                     const result = await this.apiClient.processMessage(
