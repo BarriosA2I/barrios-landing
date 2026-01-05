@@ -745,6 +745,379 @@
                 transform: translateY(0);
             }
         }
+
+        /* ============================================
+           P0 FIX: Descender Clipping (g/y/p/q/j)
+           ============================================ */
+        .a2i-type-safe {
+            line-height: 1.18;
+            padding-bottom: 0.14em;
+            overflow: visible !important;
+            text-rendering: geometricPrecision;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .a2i-text-wrap {
+            overflow: visible !important;
+        }
+
+        .a2i-text-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* ============================================
+           EARLY FEEDBACK SECTION
+           ============================================ */
+        .a2i-ef { position: relative; padding: 72px 16px; }
+        .a2i-ef__inner { max-width: 1100px; margin: 0 auto; }
+        .a2i-ef__grid {
+            display: grid;
+            gap: 18px;
+            grid-template-columns: 1.35fr 0.85fr;
+        }
+        @media (max-width: 920px) {
+            .a2i-ef__grid { grid-template-columns: 1fr; }
+        }
+
+        .a2i-ef__quoteCard,
+        .a2i-ef__statsCard {
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 0 0 1px rgba(0, 191, 255, 0.08), 0 40px 120px rgba(0, 0, 0, 0.55);
+            position: relative;
+        }
+
+        .a2i-ef__quoteCard { padding: 28px; overflow: visible; }
+        .a2i-ef__statsCard { padding: 24px; overflow: visible; }
+
+        .a2i-ef__quoteCard::before,
+        .a2i-ef__statsCard::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 20px;
+            background: radial-gradient(500px 200px at 20% 0%, rgba(0, 191, 255, 0.18), transparent 60%),
+                        radial-gradient(500px 200px at 90% 40%, rgba(16, 185, 129, 0.10), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .a2i-ef__tag {
+            display: inline-flex;
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            font-weight: 800;
+            color: rgba(0, 191, 255, 0.92);
+            border: 1px solid rgba(0, 191, 255, 0.22);
+            background: rgba(0, 191, 255, 0.06);
+            padding: 8px 12px;
+            border-radius: 999px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .a2i-ef__quoteWrap { margin-top: 20px; position: relative; z-index: 1; }
+
+        .a2i-ef__bigMark {
+            font-size: 64px;
+            line-height: 1;
+            color: rgba(0, 191, 255, 0.25);
+            margin-bottom: -16px;
+            font-family: Georgia, serif;
+        }
+
+        .a2i-ef__quote {
+            font-size: clamp(20px, 2.2vw, 28px);
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.92);
+            max-width: 48ch;
+            line-height: 1.4;
+        }
+
+        .a2i-ef__highlight {
+            color: rgba(0, 191, 255, 1);
+        }
+
+        .a2i-ef__who {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .a2i-ef__avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(0, 191, 255, 0.6), rgba(10, 10, 30, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .a2i-ef__name {
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 13px;
+        }
+
+        .a2i-ef__meta {
+            color: rgba(255, 255, 255, 0.50);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .a2i-ef__underline {
+            height: 1px;
+            margin: 24px 0 16px;
+            background: linear-gradient(90deg, rgba(0, 191, 255, 0.35), rgba(255, 255, 255, 0.08), transparent);
+            position: relative;
+            z-index: 1;
+        }
+
+        .a2i-ef__micro {
+            color: rgba(255, 255, 255, 0.50);
+            font-size: 12px;
+            max-width: 70ch;
+            position: relative;
+            z-index: 1;
+        }
+
+        .a2i-ef__statsHead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        .a2i-ef__statsTitle {
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .a2i-ef__liveDot {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.16em;
+            color: rgba(16, 185, 129, 0.95);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .a2i-ef__liveDot span {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.95);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+            animation: a2iPulse 1.6s infinite;
+        }
+
+        @keyframes a2iPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.6; }
+        }
+
+        .a2i-ef__statsGrid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: 1fr;
+            position: relative;
+            z-index: 1;
+        }
+
+        .a2i-ef__stat {
+            padding: 16px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.30);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .a2i-ef__statNum {
+            font-size: 26px;
+            font-weight: 950;
+            color: rgba(0, 191, 255, 0.95);
+            letter-spacing: -0.02em;
+        }
+
+        .a2i-ef__statLabel {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.55);
+            margin-top: 4px;
+        }
+
+        .a2i-ef__statsFoot {
+            margin-top: 16px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+            position: relative;
+            z-index: 1;
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           HOW IT WORKS SECTION
+           ============================================ */
+        .a2i-hiw { position: relative; padding: 80px 16px 60px; }
+        .a2i-hiw__inner { max-width: 1100px; margin: 0 auto; }
+
+        .a2i-hiw__head { margin-bottom: 32px; }
+
+        .a2i-hiw__kicker {
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            font-weight: 900;
+            color: rgba(0, 191, 255, 0.72);
+        }
+
+        .a2i-hiw__title {
+            margin-top: 12px;
+            font-size: clamp(36px, 4.5vw, 60px);
+            font-weight: 950;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: -0.03em;
+        }
+
+        .a2i-hiw__sub {
+            margin-top: 8px;
+            font-size: clamp(18px, 2.2vw, 26px);
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .a2i-hiw__bar {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .a2i-hiw__pill {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.60);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 8px 14px;
+            border-radius: 999px;
+        }
+
+        .a2i-hiw__steps {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @media (max-width: 980px) {
+            .a2i-hiw__steps { grid-template-columns: 1fr; }
+        }
+
+        .a2i-hiw__card {
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            padding: 24px;
+            position: relative;
+            overflow: visible;
+            box-shadow: 0 0 0 1px rgba(0, 191, 255, 0.06), 0 40px 120px rgba(0, 0, 0, 0.55);
+            transition: border-color 0.3s ease;
+        }
+
+        .a2i-hiw__card:hover {
+            border-color: rgba(255, 255, 255, 0.20);
+        }
+
+        .a2i-hiw__card::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 20px;
+            background:
+                radial-gradient(500px 220px at 30% 0%, rgba(0, 191, 255, 0.12), transparent 60%),
+                radial-gradient(500px 220px at 100% 30%, rgba(255, 215, 0, 0.06), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .a2i-hiw__top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 16px;
+        }
+
+        .a2i-hiw__stepNum {
+            font-size: 12px;
+            font-weight: 950;
+            letter-spacing: 0.18em;
+            color: rgba(0, 191, 255, 0.85);
+            border: 1px solid rgba(0, 191, 255, 0.20);
+            background: rgba(0, 191, 255, 0.06);
+            padding: 8px 12px;
+            border-radius: 999px;
+        }
+
+        .a2i-hiw__icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+        }
+
+        .a2i-hiw__icon--cyan {
+            background: radial-gradient(circle at 30% 30%, rgba(0, 191, 255, 0.55), rgba(255, 255, 255, 0.06));
+        }
+
+        .a2i-hiw__icon--green {
+            background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.50), rgba(255, 255, 255, 0.06));
+        }
+
+        .a2i-hiw__icon--gold {
+            background: radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.45), rgba(255, 255, 255, 0.06));
+        }
+
+        .a2i-hiw__cardTitle {
+            position: relative;
+            z-index: 1;
+            font-size: 20px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.92);
+            margin-top: 8px;
+        }
+
+        .a2i-hiw__cardText {
+            position: relative;
+            z-index: 1;
+            margin-top: 12px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 1.6;
+            max-width: 52ch;
+        }
+
+        .a2i-hiw__phase {
+            position: relative;
+            z-index: 1;
+            margin-top: 20px;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+        }
+
+        .a2i-hiw__phase--cyan { color: rgba(0, 191, 255, 0.75); }
+        .a2i-hiw__phase--green { color: rgba(16, 185, 129, 0.75); }
+        .a2i-hiw__phase--gold { color: rgba(255, 215, 0, 0.75); }
     </style>
 
     <!-- Payment handled via Stripe Payment Link -->
@@ -1392,81 +1765,127 @@
             </div>
         </section>
 
-        <!-- HOW IT WORKS -->
-        <section id="how-it-works" class="flex flex-col z-10 w-full pt-24 px-6 pb-24 relative items-center">
-            <div class="max-w-7xl mx-auto w-full space-y-12">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-8">
-                    <div>
-                        <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">The Process &bull; 3 Steps</span>
-                        <h2 class="text-3xl md:text-5xl font-medium tracking-tight text-white max-w-2xl">
-                            How It Works<span class="text-neon">.</span>
-                            <br><span class="text-white/50">We guide. You answer. Done.</span>
-                        </h2>
+        <!-- ========== HOW IT WORKS (REMASTERED) ========== -->
+        <section class="a2i-hiw" id="how-it-works">
+            <div class="a2i-hiw__inner">
+
+                <header class="a2i-hiw__head">
+                    <div class="a2i-hiw__kicker">THE PROCESS &bull; 3 STEPS</div>
+                    <h2 class="a2i-hiw__title a2i-type-safe">How It Works.</h2>
+                    <p class="a2i-hiw__sub a2i-type-safe">We guide. You answer. Done.</p>
+
+                    <div class="a2i-hiw__bar">
+                        <div class="a2i-hiw__pill a2i-type-safe">10 guided phases</div>
+                        <div class="a2i-hiw__pill a2i-type-safe">&lt;5 min average</div>
+                        <div class="a2i-hiw__pill a2i-type-safe">Production-ready brief</div>
                     </div>
-                    <p class="text-sm text-white/60 max-w-md text-right hidden md:block">
-                        No blank prompts. No creative guesswork. Our AI walks you through a proven structure that captures everything production needs.
-                    </p>
+                </header>
+
+                <div class="a2i-hiw__steps">
+
+                    <!-- Step 01: Define Business -->
+                    <article class="a2i-hiw__card">
+                        <div class="a2i-hiw__top">
+                            <div class="a2i-hiw__stepNum">01</div>
+                            <div class="a2i-hiw__icon a2i-hiw__icon--cyan"></div>
+                        </div>
+                        <h3 class="a2i-hiw__cardTitle a2i-type-safe">Define Your Business</h3>
+                        <p class="a2i-hiw__cardText a2i-type-safe">
+                            Tell us what you sell, who it's for, and what outcome you want. We lock the offer and the core message.
+                        </p>
+                        <div class="a2i-hiw__phase a2i-hiw__phase--cyan a2i-type-safe">PHASES 1&ndash;3</div>
+                    </article>
+
+                    <!-- Step 02: Identify Audience -->
+                    <article class="a2i-hiw__card">
+                        <div class="a2i-hiw__top">
+                            <div class="a2i-hiw__stepNum">02</div>
+                            <div class="a2i-hiw__icon a2i-hiw__icon--green"></div>
+                        </div>
+                        <h3 class="a2i-hiw__cardTitle a2i-type-safe">Identify Your Audience</h3>
+                        <p class="a2i-hiw__cardText a2i-type-safe">
+                            We extract pain points, objections, and motivations &mdash; then shape hooks that match how your buyers think.
+                        </p>
+                        <div class="a2i-hiw__phase a2i-hiw__phase--green a2i-type-safe">PHASES 4&ndash;6</div>
+                    </article>
+
+                    <!-- Step 03: Creative Direction -->
+                    <article class="a2i-hiw__card">
+                        <div class="a2i-hiw__top">
+                            <div class="a2i-hiw__stepNum">03</div>
+                            <div class="a2i-hiw__icon a2i-hiw__icon--gold"></div>
+                        </div>
+                        <h3 class="a2i-hiw__cardTitle a2i-type-safe">Set Creative Direction</h3>
+                        <p class="a2i-hiw__cardText a2i-type-safe">
+                            Choose tone, pacing, and CTA. You walk away with a brief that a production team can execute immediately.
+                        </p>
+                        <div class="a2i-hiw__phase a2i-hiw__phase--gold a2i-type-safe">PHASES 7&ndash;10</div>
+                    </article>
+
                 </div>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 bg-gradient-to-b from-neon/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-[10px] uppercase tracking-widest text-white/40">Step One</span>
-                                <span class="text-[10px] font-mono text-neon">01</span>
+
+            </div>
+        </section>
+
+        <!-- ========== EARLY FEEDBACK (REMASTERED) ========== -->
+        <section class="a2i-ef" id="early-feedback">
+            <div class="a2i-ef__inner">
+                <div class="a2i-ef__grid">
+
+                    <!-- LEFT: Quote Card -->
+                    <div class="a2i-ef__quoteCard">
+                        <div class="a2i-ef__tag">EARLY ACCESS FEEDBACK</div>
+
+                        <div class="a2i-ef__quoteWrap a2i-text-wrap a2i-text-stack">
+                            <div class="a2i-ef__bigMark">"</div>
+                            <p class="a2i-ef__quote a2i-type-safe">
+                                I came in with a vague idea. The guided questions pulled out details I hadn't thought to include. Walked away with a brief I could <span class="a2i-ef__highlight">actually hand to production</span>.
+                            </p>
+
+                            <div class="a2i-ef__who">
+                                <div class="a2i-ef__avatar"></div>
+                                <div class="a2i-ef__whoText a2i-text-stack">
+                                    <div class="a2i-ef__name a2i-type-safe">Sarah M., Founder</div>
+                                    <div class="a2i-ef__meta a2i-type-safe">Professional Services</div>
+                                </div>
                             </div>
-                            <div class="h-24 rounded-lg bg-black/50 border border-white/5 mb-6 flex items-center justify-center">
-                                <i data-lucide="building-2" class="w-12 h-12 text-neon/50" stroke-width="1"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-white mb-2">Define Your Business</h3>
-                            <p class="text-xs text-white/50 leading-relaxed mb-4">Tell us your business name, what you offer, and the core value you deliver to customers.</p>
-                            <div class="flex items-center gap-2 text-[10px] text-neon uppercase tracking-wider">
-                                <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                                Phases 1&ndash;3
-                            </div>
+                        </div>
+
+                        <div class="a2i-ef__underline"></div>
+                        <div class="a2i-ef__micro a2i-type-safe">
+                            Output delivered as a production-ready brief &mdash; hooks, CTA, tone, and scene direction included.
                         </div>
                     </div>
 
-                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 bg-gradient-to-b from-neon/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-[10px] uppercase tracking-widest text-white/40">Step Two</span>
-                                <span class="text-[10px] font-mono text-neon">02</span>
-                            </div>
-                            <div class="h-24 rounded-lg bg-black/50 border border-white/5 mb-6 flex items-center justify-center">
-                                <i data-lucide="users" class="w-12 h-12 text-neon/50" stroke-width="1"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-white mb-2">Identify Your Audience</h3>
-                            <p class="text-xs text-white/50 leading-relaxed mb-4">Describe who you're speaking to, what problems they face, and what outcome they want.</p>
-                            <div class="flex items-center gap-2 text-[10px] text-neon uppercase tracking-wider">
-                                <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                                Phases 4&ndash;6
+                    <!-- RIGHT: Stats Card -->
+                    <aside class="a2i-ef__statsCard">
+                        <div class="a2i-ef__statsHead">
+                            <div class="a2i-ef__statsTitle a2i-type-safe">INTAKE STATS</div>
+                            <div class="a2i-ef__liveDot">
+                                <span></span> LIVE
                             </div>
                         </div>
-                    </div>
 
-                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-colors backdrop-blur-sm overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 bg-gradient-to-b from-neon/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-[10px] uppercase tracking-widest text-white/40">Step Three</span>
-                                <span class="text-[10px] font-mono text-neon">03</span>
+                        <div class="a2i-ef__statsGrid">
+                            <div class="a2i-ef__stat">
+                                <div class="a2i-ef__statNum a2i-type-safe">10</div>
+                                <div class="a2i-ef__statLabel a2i-type-safe">Guided Phases</div>
                             </div>
-                            <div class="h-24 rounded-lg bg-black/50 border border-white/5 mb-6 flex items-center justify-center">
-                                <i data-lucide="sparkles" class="w-12 h-12 text-neon/50" stroke-width="1"></i>
+                            <div class="a2i-ef__stat">
+                                <div class="a2i-ef__statNum a2i-type-safe">&lt;5min</div>
+                                <div class="a2i-ef__statLabel a2i-type-safe">Average Completion</div>
                             </div>
-                            <h3 class="text-lg font-medium text-white mb-2">Set the Creative Direction</h3>
-                            <p class="text-xs text-white/50 leading-relaxed mb-4">Choose your tone, confirm your call-to-action, and receive your complete production brief.</p>
-                            <div class="flex items-center gap-2 text-[10px] text-neon uppercase tracking-wider">
-                                <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                                Phases 7&ndash;10
+                            <div class="a2i-ef__stat">
+                                <div class="a2i-ef__statNum a2i-type-safe">100%</div>
+                                <div class="a2i-ef__statLabel a2i-type-safe">Production Ready</div>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="a2i-ef__statsFoot a2i-type-safe">
+                            Built to remove founder ambiguity &mdash; and hand your idea directly to video production.
+                        </div>
+                    </aside>
+
                 </div>
             </div>
         </section>
