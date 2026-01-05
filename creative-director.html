@@ -1126,9 +1126,23 @@
                             </div>
                         </div>
 
+                        <!-- Attached Files Bar (populated by JS) -->
+                        <div id="attached-files-bar"></div>
+                        
                         <!-- Input -->
                         <div class="flex gap-3">
                             <input type="text" id="chat-input" placeholder="Type your answer here..." class="flex-1 bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-neon/50 transition-colors" onkeypress="if(event.key==='Enter')sendMessage()">
+                            
+                            <button id="upload-btn" onclick="openUploadModal()" class="px-3 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all group relative" title="Upload Brand Assets for AI Analysis">
+                                <svg class="w-5 h-5 text-white/50 group-hover:text-neon transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                </svg>
+                                <span class="absolute -top-1 -right-1 flex h-3 w-3 hidden" id="upload-badge">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-3 w-3 bg-neon"></span>
+                                </span>
+                            </button>
+
                             <button id="send-btn" onclick="sendMessage()" class="px-4 py-3 bg-neon/20 border border-neon/50 rounded-lg hover:bg-neon/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                 <i data-lucide="send" class="w-4 h-4 text-neon" stroke-width="1.5"></i>
                             </button>
@@ -2986,5 +3000,680 @@
             };
         })();
     </script>
+
+    <!-- ========================================================================
+         FLAWLESS GENESIS - ASSET UPLOAD SYSTEM
+         All agents collaborate to analyze uploads and create commercials
+         ======================================================================== -->
+    <div id="file-upload-modal" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-300 opacity-0" id="upload-modal-backdrop"></div>
+        
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-[#0a0a1e]/95 border border-white/10 shadow-[0_0_50px_rgba(0,206,209,0.1)] transition-all opacity-0 scale-95 duration-300" id="upload-modal-panel">
+                    
+                    <!-- Modal Header -->
+                    <div class="relative px-6 py-4 border-b border-white/10 bg-white/5 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon/20 to-purple-500/20 border border-neon/30 flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.2)]">
+                                <span class="text-xl">📁</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white tracking-tight">Upload Brand Assets</h3>
+                                <p class="text-xs text-white/50 font-mono">LOGOS • PRODUCT SHOTS • BRAND GUIDES</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="closeUploadModal()" class="text-white/40 hover:text-white hover:rotate-90 transition-all duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Agent Integration Notice -->
+                    <div class="px-6 py-3 bg-gradient-to-r from-neon/5 to-purple-500/5 border-b border-white/5">
+                        <div class="flex items-center gap-2 text-xs text-white/60">
+                            <span class="text-neon">🧠</span>
+                            <span>Our <strong class="text-white">7 AI agents</strong> will collaborate to analyze your assets and create a personalized commercial gameplan.</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal Body -->
+                    <div class="p-6">
+                        <!-- Drop Zone -->
+                        <div id="drop-zone" class="relative border-2 border-dashed border-white/10 rounded-xl p-8 text-center transition-all duration-300 hover:border-neon/50 hover:bg-neon/5 cursor-pointer group" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('file-input-hidden').click()">
+                            <input type="file" id="file-input-hidden" class="hidden" multiple accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.ai,.psd,.svg" onchange="handleFileSelect(event)">
+                            
+                            <div class="space-y-4">
+                                <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-neon/5 to-purple-500/5 border border-white/5 flex items-center justify-center group-hover:scale-110 group-hover:border-neon/30 group-hover:shadow-[0_0_30px_rgba(0,243,255,0.15)] transition-all duration-500">
+                                    <svg class="w-10 h-10 text-white/30 group-hover:text-neon transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-white font-medium">Drop files to attach</p>
+                                    <p class="text-xs text-white/40 mt-2"><span class="text-neon">Browse</span> or drag & drop</p>
+                                </div>
+                                <div class="flex flex-wrap justify-center gap-2 mt-4">
+                                    <span class="px-2 py-1 text-[10px] font-mono bg-white/5 rounded text-white/40">PNG</span>
+                                    <span class="px-2 py-1 text-[10px] font-mono bg-white/5 rounded text-white/40">JPG</span>
+                                    <span class="px-2 py-1 text-[10px] font-mono bg-white/5 rounded text-white/40">PDF</span>
+                                    <span class="px-2 py-1 text-[10px] font-mono bg-white/5 rounded text-white/40">SVG</span>
+                                    <span class="px-2 py-1 text-[10px] font-mono bg-white/5 rounded text-white/40">AI</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Drag Overlay -->
+                            <div id="drag-overlay" class="absolute inset-0 bg-[#0a0a1e]/90 border-2 border-neon rounded-xl items-center justify-center z-20 backdrop-blur-sm" style="display: none;">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-2 animate-bounce">📥</div>
+                                    <span class="text-neon font-bold text-lg tracking-widest">RELEASE TO UPLOAD</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- File Counter -->
+                        <div class="flex items-center justify-between mt-6 px-1 border-b border-white/5 pb-2">
+                            <span id="file-counter" class="text-[10px] font-mono text-white/40 uppercase tracking-wider">0 / 10 FILES ATTACHED</span>
+                            <button onclick="clearAllFiles()" id="clear-all-btn" class="text-[10px] font-mono text-red-400/50 hover:text-red-400 transition-colors hidden uppercase tracking-wider">Clear all</button>
+                        </div>
+                        
+                        <!-- File Preview Grid -->
+                        <div id="file-preview-grid" class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[240px] overflow-y-auto custom-scrollbar min-h-[100px]">
+                            <div id="empty-state" class="col-span-full flex flex-col items-center justify-center py-8 text-white/10">
+                                <span class="text-4xl mb-2 grayscale opacity-20">📂</span>
+                                <span class="text-xs">No files yet</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Asset Type Detection -->
+                        <div id="asset-hints" class="mt-4 hidden">
+                            <div class="text-[10px] font-mono text-white/40 uppercase tracking-wider mb-2">Detected Asset Types:</div>
+                            <div id="asset-type-badges" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal Footer -->
+                    <div class="px-6 py-4 border-t border-white/10 bg-black/40 flex justify-between items-center">
+                        <div class="text-[10px] text-white/30 font-mono hidden sm:block">
+                            <span class="text-neon">🎨</span> Brand Analyst + <span class="text-purple-400">🎬</span> Visual Strategist will process your assets
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="closeUploadModal()" class="px-4 py-2 text-xs font-mono text-white/50 hover:text-white transition-colors uppercase tracking-wider">Cancel</button>
+                            <button onclick="confirmUpload()" id="confirm-upload-btn" class="px-6 py-2 bg-gradient-to-r from-neon to-purple-600 rounded-lg text-xs font-bold text-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none" disabled>
+                                Attach Files <span id="attach-count" class="hidden ml-1 opacity-70">(0)</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         FILE UPLOAD STYLES
+         ======================================================================== -->
+    <style>
+        .file-preview-card {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .file-preview-card:hover {
+            border-color: #00F3FF;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .file-preview-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .file-preview-card:hover img {
+            transform: scale(1.1);
+        }
+        .file-preview-card .file-icon {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .file-preview-card .remove-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        .file-preview-card:hover .remove-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .file-preview-card .remove-btn:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+        .file-preview-card .file-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .file-preview-card:hover .file-info {
+            transform: translateY(0);
+        }
+        .file-preview-card .asset-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            padding: 2px 6px;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+        .file-preview-card .asset-badge.logo { background: rgba(168, 85, 247, 0.8); color: white; }
+        .file-preview-card .asset-badge.product { background: rgba(0, 206, 209, 0.8); color: black; }
+        .file-preview-card .asset-badge.brand { background: rgba(245, 158, 11, 0.8); color: black; }
+        .file-preview-card .asset-badge.image { background: rgba(16, 185, 129, 0.8); color: white; }
+        
+        /* Inline Chat Chips */
+        #attached-files-bar {
+            display: none;
+            padding: 12px;
+            background: rgba(0, 206, 209, 0.03);
+            border: 1px solid rgba(0, 206, 209, 0.15);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        #attached-files-bar.has-files { display: block; }
+        
+        .attached-file-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px 4px 4px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        .attached-file-chip:hover {
+            background: rgba(0, 243, 255, 0.1);
+            border-color: rgba(0, 243, 255, 0.3);
+        }
+        .attached-file-chip img {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+        .attached-file-chip .icon-box {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .attached-file-chip .remove-chip {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            margin-left: 4px;
+        }
+        .attached-file-chip .remove-chip:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.2); border-radius: 2px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0, 243, 255, 0.5); }
+        
+        /* Upload Button Glow */
+        #upload-btn.has-files {
+            color: #00F3FF !important;
+            border-color: rgba(0, 243, 255, 0.5) !important;
+            background: rgba(0, 243, 255, 0.1) !important;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+        
+        /* Asset Analysis Animation */
+        @keyframes analyzeAsset {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 243, 255, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px 5px rgba(0, 243, 255, 0.2); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 243, 255, 0); }
+        }
+        .file-preview-card.analyzing {
+            animation: analyzeAsset 1.5s ease-in-out infinite;
+        }
+    </style>
+
+    <!-- ========================================================================
+         FILE UPLOAD JAVASCRIPT + AGENT PIPELINE INTEGRATION
+         ======================================================================== -->
+    <script>
+        // ==================================================================================
+        // FLAWLESS GENESIS - ASSET-AWARE FILE SYSTEM
+        // ==================================================================================
+        
+        window.uploadedFiles = [];
+        const MAX_FILES = 10;
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+        
+        const FILE_ICONS = { 
+            'pdf': '📄', 'doc': '📝', 'docx': '📝', 
+            'ppt': '📊', 'pptx': '📊', 'xls': '📈', 'xlsx': '📈', 
+            'txt': '📃', 'ai': '🎨', 'psd': '🎨', 'svg': '🔷',
+            'default': '📁' 
+        };
+        
+        // Asset type detection patterns
+        const ASSET_PATTERNS = {
+            logo: /logo|brand.*mark|icon|favicon|emblem|symbol/i,
+            product: /product|item|merchandise|goods|hero.*shot|packshot|catalog/i,
+            brand: /brand.*guide|style.*guide|guideline|standards|identity|manual/i,
+            image: /photo|image|picture|shot|banner|background|lifestyle/i
+        };
+        
+        function detectAssetType(filename) {
+            for (const [type, pattern] of Object.entries(ASSET_PATTERNS)) {
+                if (pattern.test(filename)) return type;
+            }
+            // Default based on file type
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(ext)) return 'brand';
+            return 'image';
+        }
+        
+        function openUploadModal() {
+            const modal = document.getElementById('file-upload-modal');
+            const backdrop = document.getElementById('upload-modal-backdrop');
+            const panel = document.getElementById('upload-modal-panel');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            backdrop.classList.remove('opacity-0'); backdrop.classList.add('opacity-100');
+            panel.classList.remove('opacity-0', 'scale-95'); panel.classList.add('opacity-100', 'scale-100');
+            renderFilePreviewGrid();
+        }
+        
+        function closeUploadModal() {
+            const modal = document.getElementById('file-upload-modal');
+            const backdrop = document.getElementById('upload-modal-backdrop');
+            const panel = document.getElementById('upload-modal-panel');
+            if (!modal) return;
+            backdrop.classList.remove('opacity-100'); backdrop.classList.add('opacity-0');
+            panel.classList.remove('opacity-100', 'scale-100'); panel.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+        
+        function handleFileSelect(e) {
+            processFiles(Array.from(e.target.files));
+            e.target.value = '';
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.getElementById('drop-zone').classList.remove('border-neon', 'bg-neon/10');
+            document.getElementById('drag-overlay').style.display = 'none';
+            processFiles(Array.from(e.dataTransfer.files));
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.getElementById('drop-zone').classList.add('border-neon', 'bg-neon/10');
+            document.getElementById('drag-overlay').style.display = 'flex';
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.getElementById('drop-zone').classList.remove('border-neon', 'bg-neon/10');
+            document.getElementById('drag-overlay').style.display = 'none';
+        }
+        
+        function processFiles(files) {
+            const remaining = MAX_FILES - window.uploadedFiles.length;
+            if (remaining <= 0) {
+                showUploadToast('Max 10 files allowed', 'warning');
+                return;
+            }
+            
+            let addedCount = 0;
+            files.slice(0, remaining).forEach(file => {
+                if (file.size > MAX_FILE_SIZE) {
+                    showUploadToast(file.name + ' is too large (Max 10MB)', 'error');
+                    return;
+                }
+                
+                const isImage = file.type.startsWith('image/');
+                const extension = file.name.split('.').pop().toLowerCase();
+                const assetType = detectAssetType(file.name);
+                
+                window.uploadedFiles.push({
+                    id: Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                    file: file,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    isImage: isImage,
+                    preview: isImage ? URL.createObjectURL(file) : null,
+                    extension: extension,
+                    assetType: assetType,
+                    lastModified: file.lastModified
+                });
+                addedCount++;
+            });
+            
+            if (addedCount > 0) {
+                showUploadToast(addedCount + ' file(s) added', 'success');
+            }
+            
+            renderFilePreviewGrid();
+            updateAttachedFilesBar();
+            updateAssetHints();
+        }
+        
+        function showUploadToast(message, type) {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300' :
+                           type === 'error' ? 'bg-red-500/20 border-red-500/30 text-red-300' :
+                           'bg-amber-500/20 border-amber-500/30 text-amber-300';
+            toast.className = 'fixed bottom-4 right-4 ' + bgColor + ' border px-6 py-3 rounded-xl z-[9999] font-mono text-sm shadow-lg';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+        
+        function renderFilePreviewGrid() {
+            const grid = document.getElementById('file-preview-grid');
+            const empty = document.getElementById('empty-state');
+            
+            if (window.uploadedFiles.length === 0) {
+                empty.classList.remove('hidden');
+                grid.innerHTML = '';
+                grid.appendChild(empty);
+            } else {
+                empty.classList.add('hidden');
+                Array.from(grid.children).forEach(c => c.id !== 'empty-state' && c.remove());
+                
+                window.uploadedFiles.forEach(f => {
+                    const div = document.createElement('div');
+                    div.className = 'file-preview-card';
+                    
+                    const assetBadgeClass = 'asset-badge ' + f.assetType;
+                    const assetBadgeText = f.assetType.charAt(0).toUpperCase() + f.assetType.slice(1);
+                    
+                    div.innerHTML = 
+                        (f.isImage ? '<img src="' + f.preview + '" alt="' + f.name + '">' : '<div class="file-icon"><span class="text-3xl">' + (FILE_ICONS[f.extension] || FILE_ICONS.default) + '</span></div>') +
+                        '<span class="' + assetBadgeClass + '">' + assetBadgeText + '</span>' +
+                        '<button class="remove-btn" onclick="removeFile('' + f.id + '')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
+                        '<div class="file-info"><div class="text-[10px] text-white truncate font-mono">' + f.name + '</div></div>';
+                    
+                    grid.appendChild(div);
+                });
+            }
+            
+            const count = window.uploadedFiles.length;
+            document.getElementById('file-counter').textContent = count + ' / 10 FILES ATTACHED';
+            document.getElementById('attach-count').textContent = '(' + count + ')';
+            document.getElementById('attach-count').classList.toggle('hidden', count === 0);
+            document.getElementById('clear-all-btn').classList.toggle('hidden', count === 0);
+            document.getElementById('confirm-upload-btn').disabled = count === 0;
+        }
+        
+        function updateAssetHints() {
+            const hints = document.getElementById('asset-hints');
+            const badges = document.getElementById('asset-type-badges');
+            
+            if (window.uploadedFiles.length === 0) {
+                hints.classList.add('hidden');
+                return;
+            }
+            
+            hints.classList.remove('hidden');
+            
+            const typeCounts = {};
+            window.uploadedFiles.forEach(f => {
+                typeCounts[f.assetType] = (typeCounts[f.assetType] || 0) + 1;
+            });
+            
+            const colors = {
+                logo: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+                product: 'bg-neon/20 text-neon border-neon/30',
+                brand: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+                image: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+            };
+            
+            badges.innerHTML = Object.entries(typeCounts).map(function(entry) {
+                const type = entry[0];
+                const count = entry[1];
+                return '<span class="px-2 py-1 text-[10px] font-mono border rounded ' + colors[type] + '">' + count + ' ' + type + (count > 1 ? 's' : '') + '</span>';
+            }).join('');
+        }
+        
+        function removeFile(id) {
+            const file = window.uploadedFiles.find(f => f.id === id);
+            if (file && file.preview) {
+                URL.revokeObjectURL(file.preview);
+            }
+            window.uploadedFiles = window.uploadedFiles.filter(f => f.id !== id);
+            renderFilePreviewGrid();
+            updateAttachedFilesBar();
+            updateAssetHints();
+        }
+        
+        function clearAllFiles() {
+            window.uploadedFiles.forEach(f => f.preview && URL.revokeObjectURL(f.preview));
+            window.uploadedFiles = [];
+            renderFilePreviewGrid();
+            updateAttachedFilesBar();
+            updateAssetHints();
+        }
+        
+        function confirmUpload() {
+            closeUploadModal();
+            updateAttachedFilesBar();
+            
+            if (window.uploadedFiles.length > 0) {
+                const logos = window.uploadedFiles.filter(f => f.assetType === 'logo').length;
+                const products = window.uploadedFiles.filter(f => f.assetType === 'product').length;
+                const brands = window.uploadedFiles.filter(f => f.assetType === 'brand').length;
+                
+                let summary = window.uploadedFiles.length + ' asset(s) attached';
+                const parts = [];
+                if (logos > 0) parts.push(logos + ' logo(s)');
+                if (products > 0) parts.push(products + ' product shot(s)');
+                if (brands > 0) parts.push(brands + ' brand doc(s)');
+                if (parts.length > 0) summary += ' - ' + parts.join(', ');
+                
+                showUploadToast(summary, 'success');
+            }
+        }
+        
+        function updateAttachedFilesBar() {
+            const bar = document.getElementById('attached-files-bar');
+            const btn = document.getElementById('upload-btn');
+            
+            if (!bar) return;
+            
+            if (window.uploadedFiles.length > 0) {
+                bar.classList.add('has-files');
+                if (btn) btn.classList.add('has-files');
+                
+                bar.innerHTML = 
+                    '<div class="flex items-center justify-between mb-2">' +
+                        '<span class="text-[10px] font-mono text-neon tracking-widest uppercase">📎 Brand Assets (' + window.uploadedFiles.length + ') - Ready for Agent Analysis</span>' +
+                        '<button onclick="openUploadModal()" class="text-[10px] text-white/50 hover:text-white transition-colors uppercase tracking-wider">+ Manage</button>' +
+                    '</div>' +
+                    '<div class="flex flex-wrap">' +
+                        window.uploadedFiles.map(function(f) {
+                            return '<div class="attached-file-chip">' +
+                                (f.isImage ? '<img src="' + f.preview + '" alt="' + f.name + '">' : '<div class="icon-box">' + (FILE_ICONS[f.extension] || FILE_ICONS.default) + '</div>') +
+                                '<span class="text-[10px] text-white/80 font-mono truncate max-w-[100px]">' + f.name + '</span>' +
+                                '<div class="remove-chip" onclick="removeFile('' + f.id + '')">×</div>' +
+                            '</div>';
+                        }).join('') +
+                    '</div>';
+            } else {
+                bar.classList.remove('has-files');
+                bar.innerHTML = '';
+                if (btn) btn.classList.remove('has-files');
+            }
+        }
+
+        // ==================================================================================
+        // GENESIS PIPELINE INTEGRATION - ALL AGENTS COLLABORATE ON ASSETS
+        // ==================================================================================
+        (function() {
+            // 1. Extend collectedLeadData to include assets
+            if (typeof collectedLeadData !== 'undefined') {
+                collectedLeadData.uploadedAssets = [];
+            }
+            
+            // 2. Hook into triggerGenesisStrategy to include assets in API payload
+            const _originalTrigger = window.triggerGenesisStrategy;
+            if (_originalTrigger) {
+                window.triggerGenesisStrategy = async function() {
+                    console.log('⚡ GENESIS: Preparing assets for collaborative agent analysis...');
+                    
+                    // Prepare asset metadata for ALL agents
+                    if (typeof collectedLeadData !== 'undefined') {
+                        collectedLeadData.uploadedAssets = window.uploadedFiles.map(f => ({
+                            id: f.id,
+                            name: f.name,
+                            type: f.type,
+                            size: f.size,
+                            extension: f.extension,
+                            assetType: f.assetType,
+                            isImage: f.isImage,
+                            lastModified: f.lastModified,
+                            // Base64 preview for Brand Analyst vision analysis
+                            preview: f.preview
+                        }));
+                        
+                        // Log asset summary for debugging
+                        const logos = window.uploadedFiles.filter(f => f.assetType === 'logo');
+                        const products = window.uploadedFiles.filter(f => f.assetType === 'product');
+                        const brands = window.uploadedFiles.filter(f => f.assetType === 'brand');
+                        const images = window.uploadedFiles.filter(f => f.assetType === 'image');
+                        
+                        console.log('📁 ASSET SUMMARY FOR AGENT COLLABORATION:');
+                        console.log('   🎨 Brand Analyst will process:', logos.length, 'logos,', brands.length, 'brand docs');
+                        console.log('   🎬 Visual Strategist will plan:', products.length, 'product shots,', images.length, 'images');
+                        console.log('   🔍 Trend Scout + 📊 Market + 🎯 Competitor will use brand context');
+                        console.log('   🧬 Synthesizer will create commercial gameplan');
+                    }
+                    
+                    // Call original trigger with enhanced payload
+                    return _originalTrigger.apply(this, arguments);
+                };
+            }
+            
+            // 3. Enhance strategy modal with asset analysis results
+            const _originalShowModal = window.showStrategyModal;
+            if (_originalShowModal) {
+                window.showStrategyModal = function(data) {
+                    // Add asset analysis section to modal data
+                    if (window.uploadedFiles.length > 0 && data) {
+                        data.assetsAnalyzed = {
+                            total: window.uploadedFiles.length,
+                            logos: window.uploadedFiles.filter(f => f.assetType === 'logo').length,
+                            products: window.uploadedFiles.filter(f => f.assetType === 'product').length,
+                            brandDocs: window.uploadedFiles.filter(f => f.assetType === 'brand').length,
+                            images: window.uploadedFiles.filter(f => f.assetType === 'image').length
+                        };
+                        
+                        // Add visual plan context if available
+                        if (data.strategy && data.strategy.visual_plan) {
+                            data.scenesPlanned = data.strategy.visual_plan.scenes ? data.strategy.visual_plan.scenes.length : 0;
+                            data.assetsUsedInScenes = Object.keys(data.strategy.visual_plan.asset_usage_map || {}).length;
+                        }
+                    }
+                    return _originalShowModal.apply(this, arguments);
+                };
+            }
+            
+            // 4. Add asset context to SSE progress messages
+            const _originalRenderAgent = window.renderAgentProgress;
+            if (_originalRenderAgent) {
+                window.renderAgentProgress = function(agentName, message, progress) {
+                    // Enhance messages with asset context
+                    if (window.uploadedFiles.length > 0) {
+                        if (agentName.includes('Brand')) {
+                            const logos = window.uploadedFiles.filter(f => f.assetType === 'logo').length;
+                            if (logos > 0 && message.includes('complete')) {
+                                message = message.replace('complete', 'complete - extracted brand DNA from ' + logos + ' logo(s)');
+                            }
+                        }
+                        if (agentName.includes('Visual')) {
+                            const assets = window.uploadedFiles.length;
+                            if (message.includes('planning')) {
+                                message = message + ' using ' + assets + ' uploaded assets';
+                            }
+                        }
+                    }
+                    return _originalRenderAgent.apply(this, arguments);
+                };
+            }
+        })();
+        
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('file-upload-modal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeUploadModal();
+                }
+            }
+        });
+        
+        // Close on backdrop click
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'upload-modal-backdrop') {
+                closeUploadModal();
+            }
+        });
+    </script>
+
 </body>
 
