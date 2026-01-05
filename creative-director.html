@@ -747,18 +747,71 @@
         }
 
         /* ============================================
-           P0 FIX: Descender Clipping (g/y/p/q/j)
+           NUCLEAR FIX: Descender Clipping (g/y/p/q/j)
            ============================================ */
-        .a2i-type-safe {
-            line-height: 1.18;
-            padding-bottom: 0.14em;
-            overflow: visible !important;
+
+        /* Force all text in these sections to have breathing room */
+        .a2i-ef,
+        .a2i-ef *,
+        .a2i-hiw,
+        .a2i-hiw * {
             text-rendering: geometricPrecision;
             -webkit-font-smoothing: antialiased;
         }
 
+        /* Quote text specifically - this is where the clipping happens */
+        .a2i-ef__quote,
+        .a2i-ef__name,
+        .a2i-ef__meta,
+        .a2i-ef__micro,
+        .a2i-ef__statNum,
+        .a2i-ef__statLabel,
+        .a2i-ef__statsFoot,
+        .a2i-hiw__title,
+        .a2i-hiw__sub,
+        .a2i-hiw__cardTitle,
+        .a2i-hiw__cardText,
+        .a2i-hiw__phase {
+            line-height: 1.4 !important;
+            padding-bottom: 4px !important;
+            overflow: visible !important;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* The quote specifically needs extra room for descenders */
+        .a2i-ef__quote {
+            line-height: 1.5 !important;
+            padding-bottom: 8px !important;
+        }
+
+        /* CRITICAL: Card content wrapper must NOT clip */
+        .a2i-ef__quoteCard,
+        .a2i-ef__statsCard,
+        .a2i-hiw__card {
+            overflow: visible !important;
+        }
+
+        /* Only clip the pseudo-element glow, not the content */
+        .a2i-ef__quoteCard::before,
+        .a2i-ef__statsCard::before,
+        .a2i-hiw__card::before {
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        /* Ensure text wrapper has no clipping */
+        .a2i-ef__quoteWrap,
         .a2i-text-wrap {
             overflow: visible !important;
+        }
+
+        /* If using backdrop-filter, it can create clipping - ensure z-index hierarchy */
+        .a2i-ef__quoteCard > *,
+        .a2i-ef__statsCard > *,
+        .a2i-hiw__card > * {
+            position: relative;
+            z-index: 1;
         }
 
         .a2i-text-stack {
@@ -1971,52 +2024,6 @@
                             <h3 class="text-base font-medium text-white">Complete Brief Document</h3>
                         </div>
                         <p class="text-sm text-white/50 leading-relaxed">Everything consolidated into one production-ready document you can use immediately.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TESTIMONIAL -->
-        <section class="flex flex-col w-full py-24 px-6 relative z-10">
-            <div class="max-w-7xl mx-auto w-full">
-                <div class="border border-white/10 bg-white/5 backdrop-blur-xl rounded-3xl p-8 md:p-12 overflow-hidden relative group">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div class="absolute -top-24 -right-24 w-96 h-96 bg-neon/10 rounded-full blur-3xl pointer-events-none"></div>
-                    <div class="flex flex-col md:flex-row gap-12 relative z-10">
-                        <div class="flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-8">Early Feedback</div>
-                                <h2 class="text-2xl md:text-4xl font-medium tracking-tight text-white mb-8 leading-snug">
-                                    "I came in with a vague idea. The guided questions pulled out details I hadn't thought to include. Walked away with a brief I could actually hand to production."
-                                </h2>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <div class="h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/10 bg-gradient-to-br from-neon/20 to-cyan-500/20 flex items-center justify-center">
-                                    <i data-lucide="user" class="w-6 h-6 text-white/60" stroke-width="1.5"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-medium text-white">Founder</div>
-                                    <div class="text-xs text-white/40 uppercase tracking-wider">Local Services Company</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-80 bg-black/40 rounded-2xl p-6 border border-white/10 flex flex-col justify-center gap-6">
-                            <div class="text-xs font-semibold tracking-widest text-white/30 uppercase">Intake Stats</div>
-                            <div class="space-y-1">
-                                <div class="text-4xl font-mono text-neon font-medium">10</div>
-                                <div class="text-sm text-white/50">Guided Phases</div>
-                            </div>
-                            <div class="w-full h-px bg-white/10"></div>
-                            <div class="space-y-1">
-                                <div class="text-4xl font-mono text-neon font-medium">&lt;5min</div>
-                                <div class="text-sm text-white/50">Average Completion</div>
-                            </div>
-                            <div class="w-full h-px bg-white/10"></div>
-                            <div class="space-y-1">
-                                <div class="text-4xl font-mono text-neon font-medium">100%</div>
-                                <div class="text-sm text-white/50">Production Ready</div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
