@@ -1665,8 +1665,8 @@
                 </div>
             </div>
 
-            <!-- Chat Widget -->
-            <div id="chat" class="w-full max-w-xl lg:max-w-lg" style="animation: fadeSlideIn 0.8s ease-out 1.2s both;">
+            <!-- Chat Widget (HIDDEN - replaced by Neural Interface floating widget) -->
+            <div id="chat" class="hidden w-full max-w-xl lg:max-w-lg" style="animation: fadeSlideIn 0.8s ease-out 1.2s both;">
                 <div class="relative p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden group">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-50"></div>
                     <div class="absolute -top-24 -right-24 w-64 h-64 bg-neon/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -5210,7 +5210,732 @@
         .explainer-step {
             transition: opacity 0.5s ease;
         }
+
+        /* ============================================
+           NEURAL INTERFACE - Floating Chat Widget
+           ============================================ */
+
+        :root {
+            --ni-bg: rgba(10, 10, 15, 0.95);
+            --ni-glass: rgba(255, 255, 255, 0.03);
+            --ni-border: rgba(255, 255, 255, 0.08);
+            --ni-cyan: #00bfff;
+            --ni-gold: #ffd700;
+            --ni-emerald: #10b981;
+            --ni-text: #e5e5e5;
+            --ni-text-muted: #737373;
+        }
+
+        /* FAB Button */
+        .ni-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 64px;
+            height: 64px;
+            z-index: 9999;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ni-fab-bg {
+            position: absolute;
+            inset: 0;
+            background: var(--ni-bg);
+            border-radius: 50%;
+            border: 1px solid var(--ni-border);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+
+        .ni-fab:hover .ni-fab-bg {
+            border-color: rgba(0, 191, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.15);
+        }
+
+        .ni-ring {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: var(--ni-cyan);
+            border-right-color: rgba(0, 191, 255, 0.3);
+            animation: ni-spin 8s linear infinite;
+        }
+
+        .ni-fab-icon {
+            position: relative;
+            z-index: 1;
+            width: 28px;
+            height: 28px;
+            color: var(--ni-cyan);
+        }
+
+        .ni-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--ni-gold);
+            color: #0a0a0f;
+            font-size: 9px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 2px 6px;
+            border-radius: 10px;
+            z-index: 2;
+            animation: ni-pulse 2s ease-in-out infinite;
+        }
+
+        .ni-badge-ping {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 24px;
+            height: 16px;
+            background: var(--ni-gold);
+            border-radius: 10px;
+            animation: ni-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        /* Chat Window */
+        .ni-window {
+            position: fixed;
+            bottom: 104px;
+            right: 24px;
+            width: 380px;
+            height: 560px;
+            z-index: 9998;
+            background: var(--ni-bg);
+            border: 1px solid var(--ni-border);
+            border-radius: 16px;
+            backdrop-filter: blur(24px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: ni-fade-in 0.3s ease-out;
+        }
+
+        .ni-window.hidden {
+            display: none;
+        }
+
+        .ni-window.closing {
+            animation: ni-fade-out 0.2s ease-in forwards;
+        }
+
+        /* Scanline overlay */
+        .ni-scanline {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.08) 50%),
+                        linear-gradient(90deg, rgba(255,0,0,0.01), rgba(0,255,0,0.005), rgba(0,0,255,0.01));
+            background-size: 100% 2px, 3px 100%;
+            z-index: 100;
+            border-radius: 16px;
+        }
+
+        /* Header */
+        .ni-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--ni-border);
+            background: linear-gradient(to bottom, rgba(0, 191, 255, 0.05), transparent);
+        }
+
+        .ni-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ni-header-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--ni-cyan);
+        }
+
+        .ni-header-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            color: var(--ni-cyan);
+        }
+
+        .ni-status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--ni-emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--ni-emerald);
+        }
+
+        .ni-close-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: transparent;
+            border: none;
+            color: var(--ni-text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ni-close-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--ni-text);
+        }
+
+        /* Phase Stepper */
+        .ni-phases {
+            display: flex;
+            padding: 12px 20px;
+            gap: 8px;
+            border-bottom: 1px solid var(--ni-border);
+            overflow-x: auto;
+        }
+
+        .ni-phases::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ni-phase {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--ni-text-muted);
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+
+        .ni-phase-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--ni-text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .ni-phase.active {
+            color: var(--ni-cyan);
+        }
+
+        .ni-phase.active .ni-phase-dot {
+            background: var(--ni-cyan);
+            box-shadow: 0 0 8px var(--ni-cyan);
+        }
+
+        .ni-phase.completed {
+            color: var(--ni-emerald);
+        }
+
+        .ni-phase.completed .ni-phase-dot {
+            background: var(--ni-emerald);
+        }
+
+        .ni-phase-connector {
+            width: 12px;
+            height: 1px;
+            background: var(--ni-border);
+        }
+
+        /* Messages Container */
+        .ni-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ni-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .ni-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .ni-messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 191, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        /* Message Bubbles */
+        .ni-msg {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .ni-msg-label {
+            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+        }
+
+        .ni-msg-content {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .ni-msg-ai .ni-msg-label {
+            color: var(--ni-cyan);
+        }
+
+        .ni-msg-ai .ni-msg-content {
+            background: var(--ni-glass);
+            border-left: 2px solid var(--ni-cyan);
+            color: var(--ni-text);
+        }
+
+        .ni-msg-user .ni-msg-label {
+            color: var(--ni-gold);
+            text-align: right;
+        }
+
+        .ni-msg-user .ni-msg-content {
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 2px solid var(--ni-gold);
+            color: var(--ni-text);
+        }
+
+        /* Typing Indicator */
+        .ni-typing {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 16px;
+            background: var(--ni-glass);
+            border-left: 2px solid var(--ni-cyan);
+            border-radius: 8px;
+        }
+
+        .ni-typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--ni-cyan);
+            border-radius: 50%;
+            animation: ni-bounce 1.4s infinite ease-in-out both;
+        }
+
+        .ni-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .ni-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        .ni-typing-dot:nth-child(3) { animation-delay: 0s; }
+
+        /* Input Bar */
+        .ni-input-bar {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--ni-border);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .ni-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--ni-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--ni-text);
+            transition: all 0.3s ease;
+        }
+
+        .ni-input::placeholder {
+            color: var(--ni-text-muted);
+        }
+
+        .ni-input:focus {
+            outline: none;
+            border-color: rgba(0, 191, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.1);
+        }
+
+        .ni-send-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 191, 255, 0.1);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 8px;
+            color: var(--ni-cyan);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ni-send-btn:hover {
+            background: rgba(0, 191, 255, 0.2);
+            border-color: var(--ni-cyan);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
+        }
+
+        .ni-send-btn:hover svg {
+            transform: rotate(45deg);
+        }
+
+        .ni-send-btn svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Keyframes */
+        @keyframes ni-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes ni-pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        @keyframes ni-ping {
+            75%, 100% { transform: scale(2); opacity: 0; }
+        }
+
+        @keyframes ni-fade-in {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes ni-fade-out {
+            from { opacity: 1; transform: scale(1) translateY(0); }
+            to { opacity: 0; transform: scale(0.95) translateY(10px); }
+        }
+
+        @keyframes ni-bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 640px) {
+            .ni-fab {
+                bottom: 16px;
+                right: 16px;
+                width: 56px;
+                height: 56px;
+            }
+
+            .ni-window {
+                bottom: 0;
+                right: 0;
+                left: 0;
+                width: 100%;
+                height: 90vh;
+                border-radius: 16px 16px 0 0;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .ni-fab {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .ni-window {
+                width: 360px;
+                height: 500px;
+                bottom: 96px;
+                right: 20px;
+            }
+        }
     </style>
+
+    <!-- ============================================
+         NEURAL INTERFACE - Floating Chat Widget
+         ============================================ -->
+
+    <!-- FAB Button -->
+    <div id="ni-fab" class="ni-fab" onclick="toggleNeuralInterface()">
+        <div class="ni-ring"></div>
+        <div class="ni-fab-bg"></div>
+        <div class="ni-badge-ping"></div>
+        <div class="ni-badge">AI</div>
+        <svg class="ni-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/>
+            <circle cx="8" cy="14" r="1.5"/>
+            <circle cx="16" cy="14" r="1.5"/>
+        </svg>
+    </div>
+
+    <!-- Chat Window -->
+    <div id="ni-window" class="ni-window hidden">
+        <div class="ni-scanline"></div>
+
+        <!-- Header -->
+        <div class="ni-header">
+            <div class="ni-header-left">
+                <svg class="ni-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M7 8h10M7 12h6M7 16h8"/>
+                </svg>
+                <span class="ni-header-title">NEURAL INTERFACE</span>
+                <div class="ni-status-dot"></div>
+            </div>
+            <button class="ni-close-btn" onclick="closeNeuralInterface()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Phase Stepper -->
+        <div class="ni-phases">
+            <div class="ni-phase active" data-phase="intake">
+                <div class="ni-phase-dot"></div>
+                <span>INTAKE</span>
+            </div>
+            <div class="ni-phase-connector"></div>
+            <div class="ni-phase" data-phase="research">
+                <div class="ni-phase-dot"></div>
+                <span>RESEARCH</span>
+            </div>
+            <div class="ni-phase-connector"></div>
+            <div class="ni-phase" data-phase="concepts">
+                <div class="ni-phase-dot"></div>
+                <span>CONCEPTS</span>
+            </div>
+            <div class="ni-phase-connector"></div>
+            <div class="ni-phase" data-phase="script">
+                <div class="ni-phase-dot"></div>
+                <span>SCRIPT</span>
+            </div>
+            <div class="ni-phase-connector"></div>
+            <div class="ni-phase" data-phase="review">
+                <div class="ni-phase-dot"></div>
+                <span>REVIEW</span>
+            </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="ni-messages" class="ni-messages">
+            <!-- Initial AI Message -->
+            <div class="ni-msg ni-msg-ai">
+                <div class="ni-msg-label">SYS_OVERRIDE</div>
+                <div class="ni-msg-content">
+                    Hello! I'm your AI Creative Director. Let's build your commercial brief together. What's your business name, and what product or service are we creating this commercial for?
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Bar -->
+        <div class="ni-input-bar">
+            <input
+                type="text"
+                id="ni-input"
+                class="ni-input"
+                placeholder="Enter command..."
+                onkeypress="if(event.key==='Enter')sendNIMessage()"
+            >
+            <button class="ni-send-btn" onclick="sendNIMessage()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Neural Interface JavaScript -->
+    <script>
+        // Neural Interface State
+        let niIsOpen = false;
+
+        // Toggle Neural Interface
+        function toggleNeuralInterface() {
+            const window = document.getElementById('ni-window');
+            const fab = document.getElementById('ni-fab');
+
+            if (niIsOpen) {
+                closeNeuralInterface();
+            } else {
+                window.classList.remove('hidden');
+                niIsOpen = true;
+                // Focus input when opened
+                setTimeout(() => {
+                    document.getElementById('ni-input').focus();
+                }, 100);
+            }
+        }
+
+        // Close Neural Interface
+        function closeNeuralInterface() {
+            const window = document.getElementById('ni-window');
+            window.classList.add('closing');
+
+            setTimeout(() => {
+                window.classList.add('hidden');
+                window.classList.remove('closing');
+                niIsOpen = false;
+            }, 200);
+        }
+
+        // Send Message from Neural Interface
+        function sendNIMessage() {
+            const input = document.getElementById('ni-input');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Append user message
+            appendNIMessage('user', message);
+            input.value = '';
+
+            // Show typing indicator
+            showNITyping();
+
+            // Call existing chat backend
+            sendToCreativeDirector(message);
+        }
+
+        // Append message to Neural Interface
+        function appendNIMessage(role, content) {
+            const container = document.getElementById('ni-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `ni-msg ni-msg-${role}`;
+
+            const label = role === 'ai' ? 'SYS_OVERRIDE' : 'COMMAND';
+
+            msgDiv.innerHTML = `
+                <div class="ni-msg-label">${label}</div>
+                <div class="ni-msg-content">${content}</div>
+            `;
+
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showNITyping() {
+            const container = document.getElementById('ni-messages');
+
+            // Remove existing typing indicator
+            const existingTyping = container.querySelector('.ni-typing');
+            if (existingTyping) existingTyping.remove();
+
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'ni-typing';
+            typingDiv.id = 'ni-typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="ni-typing-dot"></div>
+                <div class="ni-typing-dot"></div>
+                <div class="ni-typing-dot"></div>
+            `;
+
+            container.appendChild(typingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideNITyping() {
+            const typing = document.getElementById('ni-typing-indicator');
+            if (typing) typing.remove();
+        }
+
+        // Update phase in Neural Interface
+        function updateNIPhase(phase) {
+            const phases = ['intake', 'research', 'concepts', 'script', 'review'];
+            const phaseElements = document.querySelectorAll('.ni-phase');
+            const currentIndex = phases.indexOf(phase.toLowerCase());
+
+            phaseElements.forEach((el, index) => {
+                el.classList.remove('active', 'completed');
+                if (index < currentIndex) {
+                    el.classList.add('completed');
+                } else if (index === currentIndex) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        // Send to Creative Director backend (bridge to existing functionality)
+        async function sendToCreativeDirector(message) {
+            try {
+                // Use existing session ID if available
+                const sessionId = window.creativeDirectorSessionId || generateSessionId();
+                window.creativeDirectorSessionId = sessionId;
+
+                const response = await fetch('https://barrios-api-gateway.onrender.com/api/creative-director/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                });
+
+                if (!response.ok) throw new Error('API Error');
+
+                const data = await response.json();
+                hideNITyping();
+
+                // Append AI response
+                appendNIMessage('ai', data.response || data.message || 'Processing your request...');
+
+                // Update phase if provided
+                if (data.phase) {
+                    updateNIPhase(data.phase);
+                }
+
+            } catch (error) {
+                console.error('Creative Director Error:', error);
+                hideNITyping();
+                appendNIMessage('ai', 'I apologize, but I encountered an error. Please try again.');
+            }
+        }
+
+        // Generate session ID
+        function generateSessionId() {
+            return 'cd-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
+        }
+
+        // Click outside to close
+        document.addEventListener('click', (e) => {
+            const window = document.getElementById('ni-window');
+            const fab = document.getElementById('ni-fab');
+
+            if (niIsOpen &&
+                !window.contains(e.target) &&
+                !fab.contains(e.target)) {
+                closeNeuralInterface();
+            }
+        });
+
+        // ESC key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && niIsOpen) {
+                closeNeuralInterface();
+            }
+        });
+
+        // Prevent click propagation inside window
+        document.getElementById('ni-window')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    </script>
 
 </body>
 
