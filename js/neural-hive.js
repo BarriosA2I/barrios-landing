@@ -865,26 +865,34 @@
         const styles = document.createElement('style');
         styles.id = 'neural-hive-styles';
         styles.textContent = `
-            /* Neural Hive Container */
+            /* Neural Hive Container - Fixed Floating Panel */
             #neural-hive-container {
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                width: 420px;
+                max-width: calc(100vw - 40px);
+                max-height: calc(100vh - 120px);
+                overflow-y: auto;
                 display: none;
                 flex-direction: column;
                 gap: 12px;
                 padding: 16px;
-                background: rgba(10, 10, 30, 0.95);
+                background: rgba(10, 10, 30, 0.98);
                 backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(139, 92, 246, 0.3);
                 border-radius: 12px;
-                margin-top: 16px;
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(20px) scale(0.95);
                 transition: opacity 0.3s ease, transform 0.3s ease;
+                z-index: 9998;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(139, 92, 246, 0.1);
             }
 
             #neural-hive-container.visible {
                 display: flex;
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
 
             #neural-hive-container.complete {
@@ -1141,35 +1149,49 @@
                 to { transform: rotate(360deg); }
             }
 
-            /* Toggle Button */
+            /* Toggle Button - Fixed FAB */
             #neural-hive-toggle {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
                 display: flex;
                 align-items: center;
-                gap: 6px;
-                padding: 6px 12px;
-                background: rgba(139, 92, 246, 0.1);
-                border: 1px solid rgba(139, 92, 246, 0.3);
-                border-radius: 6px;
+                gap: 8px;
+                padding: 12px 16px;
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(0, 206, 209, 0.1));
+                border: 1px solid rgba(139, 92, 246, 0.4);
+                border-radius: 30px;
                 color: #a1a1aa;
                 font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 0.05em;
                 cursor: pointer;
-                transition: all 0.2s ease;
+                transition: all 0.3s ease;
+                z-index: 9999;
+                box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);
             }
 
             #neural-hive-toggle:hover {
-                background: rgba(139, 92, 246, 0.2);
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(0, 206, 209, 0.2));
                 border-color: #8B5CF6;
                 color: #fafafa;
+                transform: scale(1.05);
+                box-shadow: 0 6px 30px rgba(139, 92, 246, 0.3);
             }
 
             #neural-hive-toggle.active {
-                background: rgba(139, 92, 246, 0.2);
-                border-color: #8B5CF6;
-                color: #8B5CF6;
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(0, 206, 209, 0.3));
+                border-color: #00CED1;
+                color: #00CED1;
+                box-shadow: 0 0 20px rgba(0, 206, 209, 0.3);
             }
 
             #neural-hive-toggle .toggle-icon {
-                font-size: 14px;
+                font-size: 18px;
+            }
+
+            #neural-hive-toggle .toggle-text {
+                font-family: 'JetBrains Mono', monospace;
             }
 
             /* Responsive */
@@ -1198,29 +1220,21 @@
         // Inject styles
         injectStyles();
 
-        // Find genesis container and inject Neural Hive
-        const genesisContainer = document.getElementById('genesis-container');
-        if (genesisContainer) {
-            // Create toggle button
-            const toggleBtn = document.createElement('button');
-            toggleBtn.id = 'neural-hive-toggle';
-            toggleBtn.innerHTML = '<span class="toggle-icon">🧠</span> Neural Hive';
-            toggleBtn.onclick = toggleNeuralHive;
+        // Create floating Neural Hive panel (independent of genesis-container)
+        const hiveContainer = document.createElement('div');
+        hiveContainer.id = 'neural-hive-container';
+        document.body.appendChild(hiveContainer);
 
-            // Insert toggle after genesis header
-            const genesisHeader = genesisContainer.querySelector('.flex.items-center.justify-between');
-            if (genesisHeader) {
-                genesisHeader.appendChild(toggleBtn);
-            }
+        // Create floating toggle button (FAB style)
+        const toggleBtn = document.createElement('button');
+        toggleBtn.id = 'neural-hive-toggle';
+        toggleBtn.innerHTML = '<span class="toggle-icon">🧠</span><span class="toggle-text">HIVE</span>';
+        toggleBtn.onclick = toggleNeuralHive;
+        toggleBtn.title = 'Toggle Neural Hive - 23 Agent Dashboard';
+        document.body.appendChild(toggleBtn);
 
-            // Create Neural Hive container
-            const hiveContainer = document.createElement('div');
-            hiveContainer.id = 'neural-hive-container';
-            genesisContainer.appendChild(hiveContainer);
-
-            // Initial render
-            renderNeuralHive();
-        }
+        // Initial render
+        renderNeuralHive();
 
         // Expose to window for external control
         window.NeuralHive = {
