@@ -5068,14 +5068,14 @@
             --ni-text-muted: #737373;
         }
 
-        /* FAB Button */
+        /* FAB Button - z-index 10001 to stay above Neural Hive (9999) */
         .ni-fab {
             position: fixed;
             bottom: 24px;
             right: 24px;
             width: 64px;
             height: 64px;
-            z-index: 9999;
+            z-index: 10001;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -5141,14 +5141,14 @@
             animation: ni-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
 
-        /* Chat Window */
+        /* Chat Window - z-index 10000 to stay above Neural Hive (9998) */
         .ni-window {
             position: fixed;
             bottom: 104px;
             right: 24px;
             width: 380px;
             height: 560px;
-            z-index: 9998;
+            z-index: 10000;
             background: var(--ni-bg);
             border: 1px solid var(--ni-border);
             border-radius: 16px;

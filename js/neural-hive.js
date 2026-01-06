@@ -865,11 +865,11 @@
         const styles = document.createElement('style');
         styles.id = 'neural-hive-styles';
         styles.textContent = `
-            /* Neural Hive Container - Fixed Floating Panel */
+            /* Neural Hive Container - LEFT side to avoid NI chat overlap */
             #neural-hive-container {
                 position: fixed;
                 bottom: 80px;
-                right: 20px;
+                left: 20px;
                 width: 420px;
                 max-width: calc(100vw - 40px);
                 max-height: calc(100vh - 120px);
@@ -885,7 +885,7 @@
                 opacity: 0;
                 transform: translateY(20px) scale(0.95);
                 transition: opacity 0.3s ease, transform 0.3s ease;
-                z-index: 9998;
+                z-index: 9996;
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(139, 92, 246, 0.1);
             }
 
@@ -1149,11 +1149,11 @@
                 to { transform: rotate(360deg); }
             }
 
-            /* Toggle Button - Fixed FAB */
+            /* Neural Hive Toggle - LEFT side to avoid NI chat FAB overlap */
             #neural-hive-toggle {
                 position: fixed;
                 bottom: 20px;
-                right: 20px;
+                left: 20px;
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -1167,7 +1167,7 @@
                 letter-spacing: 0.05em;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                z-index: 9999;
+                z-index: 9997;
                 box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);
             }
 
