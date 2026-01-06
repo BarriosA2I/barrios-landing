@@ -706,10 +706,7 @@
                         <span class="stat-label">PROGRESS</span>
                         <span class="stat-value">${NeuralHiveState.progress}%</span>
                     </div>
-                    <div class="neural-hive-stat">
-                        <span class="stat-label">COST</span>
-                        <span class="stat-value">$${NeuralHiveState.totalCost.toFixed(2)}</span>
-                    </div>
+                    <!-- COST display removed - internal business data -->
                     <div class="neural-hive-stat neural-hive-connection ${NeuralHiveState.isConnected ? 'connected' : ''}">
                         <span class="connection-dot"></span>
                         <span class="stat-label">${NeuralHiveState.isConnected ? 'LIVE' : 'OFFLINE'}</span>
