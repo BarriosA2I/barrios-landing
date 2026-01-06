@@ -1565,7 +1565,16 @@
                                     <i data-lucide="bot" class="w-4 h-4 text-neon" stroke-width="1.5"></i>
                                 </div>
                                 <div class="flex-1 p-3 rounded-lg bg-white/5 border border-white/10">
-                                    <p class="text-sm text-white/80">Hello! I'm your AI Creative Director. Let's build your commercial brief together. What's your business name, and what product or service are we creating this commercial for?</p>
+                                    <p class="text-sm text-white/80 mb-3">Welcome to the A2I Commercial Lab! I'm your AI Creative Director, here to help you create a stunning commercial video for your business.</p>
+                                    <p class="text-sm text-white/60 mb-4">Whether you need a TikTok ad, Instagram Reel, YouTube commercial, or Facebook video ad - I'll guide you through everything we need to make it amazing.</p>
+                                    <div class="flex gap-2 flex-wrap">
+                                        <button onclick="window.CommercialIntake.start()" class="px-4 py-2 bg-gradient-to-r from-neon to-purple-500 text-black text-xs font-semibold rounded-lg hover:opacity-90 transition-all">
+                                            🎬 Start Your Commercial Brief
+                                        </button>
+                                        <button onclick="document.getElementById('chat-input').focus()" class="px-4 py-2 bg-white/5 border border-white/20 text-white/80 text-xs rounded-lg hover:bg-white/10 transition-all">
+                                            💬 Chat Freely
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -5994,7 +6003,7 @@
             <div class="ni-msg ni-msg-ai">
                 <div class="ni-msg-label">SYS_OVERRIDE</div>
                 <div class="ni-msg-content">
-                    Hello! I'm your AI Creative Director. Let's build your commercial brief together. What's your business name, and what product or service are we creating this commercial for?
+                    Welcome to the A2I Commercial Lab! I'm your AI Creative Director. Whether you need a TikTok ad, Instagram Reel, or YouTube commercial - let's create something amazing together.
                 </div>
             </div>
         </div>
@@ -6500,6 +6509,9 @@
 
     <!-- NEURAL HIVE v1.0 - 23-Agent Real-Time Monitoring -->
     <script src="js/neural-hive.js"></script>
+
+    <!-- COMMERCIAL INTAKE FLOW v1.0 - 40-Question Brief System -->
+    <script src="js/commercial-intake.js"></script>
 
 </body>
 
