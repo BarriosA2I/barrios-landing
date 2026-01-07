@@ -21,8 +21,8 @@
 
 const NEURAL_CONFIG = {
     // API endpoints - Production URLs (Render backend)
-    apiBase: 'https://creative-director-api.onrender.com/api/neural',
-    sseEndpoint: 'https://creative-director-api.onrender.com/api/neural/stream',
+    apiBase: 'https://barrios-genesis-flawless.onrender.com/api/neural',
+    sseEndpoint: 'https://barrios-genesis-flawless.onrender.com/api/neural/stream',
     
     // UI selectors
     selectors: {

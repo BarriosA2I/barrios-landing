@@ -288,7 +288,7 @@
   }
 
   // Neural RAG Brain v3.0 LEGENDARY processing
-  const NEURAL_API_BASE = 'https://creative-director-api.onrender.com';
+  const NEURAL_API_BASE = 'https://barrios-genesis-flawless.onrender.com';
 
   async function processWithNeural(message, callbacks = {}) {
     const startTime = performance.now();

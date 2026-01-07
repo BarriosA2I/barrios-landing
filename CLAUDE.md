@@ -177,3 +177,24 @@ python vercel_deploy.py barrios-landing
 ```
 
 See `C:\Users\gary\chromadon\CHROMADON.md` for full documentation.
+
+## Backend Reference
+
+The frontend connects to **ONE backend**: GENESIS
+
+| Property | Value |
+|----------|-------|
+| URL | https://barrios-genesis-flawless.onrender.com |
+| Repo | C:\Users\gary\python-genesis-flawless |
+
+**Key Endpoints:**
+- `/api/chat` - Main chat endpoint (23-agent system)
+- `/api/genesis/trigger` - Trigger full pipeline
+- `/api/trinity/analyze` - TRINITY 3-agent intelligence
+- `/health` - Health check
+
+**DEPRECATED (DO NOT USE):**
+- creative-director-api.onrender.com
+- nexus-api.onrender.com
+
+Full backend reference: `C:\Users\gary\.claude\memory\BACKENDS.md`
