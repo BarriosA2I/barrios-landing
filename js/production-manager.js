@@ -81,10 +81,11 @@ const ProductionManager = (() => {
             };
 
             // Also send POST to trigger production
+            // brief already contains {business_name, industry, style, goals, target_platforms, brief}
             await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ brief })
+                body: JSON.stringify(brief)
             });
 
         } catch (error) {
