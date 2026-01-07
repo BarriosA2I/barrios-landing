@@ -592,7 +592,8 @@
     // =========================================================================
 
     function renderIntakeUI() {
-        const chatContainer = document.getElementById('chat-messages');
+        // Support both Neural Interface (ni-messages) and legacy chat (chat-messages)
+        const chatContainer = document.getElementById('ni-messages') || document.getElementById('chat-messages');
         if (!chatContainer) return;
 
         const question = getCurrentQuestion();
@@ -914,7 +915,7 @@
     }
 
     function renderBriefSummary() {
-        const chatContainer = document.getElementById('chat-messages');
+        const chatContainer = document.getElementById('ni-messages') || document.getElementById('chat-messages');
         if (!chatContainer) return;
 
         const html = `
@@ -1086,7 +1087,7 @@
         intakeState.isSubmitting = true;
 
         // Show loading state
-        const chatContainer = document.getElementById('chat-messages');
+        const chatContainer = document.getElementById('ni-messages') || document.getElementById('chat-messages');
         if (chatContainer) {
             const loadingHtml = `
                 <div class="intake-loading" style="
@@ -1156,7 +1157,7 @@
     }
 
     function showPipelineStarted(result) {
-        const chatContainer = document.getElementById('chat-messages');
+        const chatContainer = document.getElementById('ni-messages') || document.getElementById('chat-messages');
         if (!chatContainer) return;
 
         const loading = chatContainer.querySelector('.intake-loading');
@@ -1193,7 +1194,7 @@
     }
 
     function showIntakeError(message) {
-        const chatContainer = document.getElementById('chat-messages');
+        const chatContainer = document.getElementById('ni-messages') || document.getElementById('chat-messages');
         if (!chatContainer) return;
 
         const errorDiv = document.createElement('div');
@@ -1241,7 +1242,7 @@
         };
 
         // Add welcome message
-        const chatContainer = document.getElementById('chat-messages');
+        const chatContainer = document.getElementById('ni-messages') || document.getElementById('chat-messages');
         if (chatContainer) {
             // Clear existing messages
             chatContainer.innerHTML = '';
