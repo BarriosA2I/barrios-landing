@@ -1299,7 +1299,7 @@
                 </a>
 
                 <!-- Desktop CTA -->
-                <a href="#chat" onclick="focusChatInput()" class="hidden md:flex group relative px-5 py-2 bg-white/5 border border-brand-teal/30 backdrop-blur-md overflow-hidden hover:border-brand-gold transition-all duration-300">
+                <a href="#" onclick="toggleNeuralInterface(); return false;" class="hidden md:flex group relative px-5 py-2 bg-white/5 border border-brand-teal/30 backdrop-blur-md overflow-hidden hover:border-brand-gold transition-all duration-300">
                     <div class="absolute inset-0 bg-brand-teal/5 group-hover:bg-brand-gold/10 transition-colors"></div>
                     <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-teal to-transparent"></div>
                     <div class="relative flex items-center gap-3">
@@ -1384,7 +1384,7 @@
 
                 <!-- Mobile CTA -->
                 <div class="p-4 pt-0">
-                    <a href="#chat" onclick="focusChatInput()" class="group flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-teal/10 border border-brand-teal/30 transition-all hover:bg-brand-teal/20 hover:border-brand-teal/50">
+                    <a href="#" onclick="toggleNeuralInterface(); closeMobileMenu(); return false;" class="group flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-teal/10 border border-brand-teal/30 transition-all hover:bg-brand-teal/20 hover:border-brand-teal/50">
                         <iconify-icon icon="lucide:terminal" width="14" class="text-brand-teal"></iconify-icon>
                         <span class="text-[11px] font-mono font-bold text-white tracking-[0.15em]">BEGIN_INTAKE</span>
                     </a>
@@ -1503,7 +1503,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4" style="animation: fadeSlideIn 0.8s ease-out 1.4s both;">
-                    <a href="#chat" onclick="focusChatInput()" class="cta-glow group relative px-8 py-4 bg-transparent overflow-hidden border border-neon text-white transition-all hover:border-neon cursor-pointer">
+                    <a href="#" onclick="toggleNeuralInterface(); return false;" class="cta-glow group relative px-8 py-4 bg-transparent overflow-hidden border border-neon text-white transition-all hover:border-neon cursor-pointer">
                         <div class="absolute inset-0 w-0 bg-neon transition-all duration-[250ms] ease-out group-hover:w-full opacity-80"></div>
                         <span class="relative flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-widest group-hover:text-white">
                             Begin Your Brief
@@ -1518,166 +1518,7 @@
                 </div>
             </div>
 
-            <!-- Chat Widget (HIDDEN - replaced by Neural Interface floating widget) -->
-            <div id="chat" class="hidden w-full max-w-xl lg:max-w-lg" style="animation: fadeSlideIn 0.8s ease-out 1.2s both;">
-                <div class="relative p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden group">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-50"></div>
-                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-neon/10 rounded-full blur-3xl pointer-events-none"></div>
-
-                    <div class="relative z-10">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-lg font-medium text-white tracking-tight">AI Creative Director</h3>
-                                <p class="text-xs text-white/50 mt-1">I'll guide you through each step. Just answer naturally.</p>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span id="pipeline-badge" class="pipeline-badge hidden">6-AGENT</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="relative flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-neon"></span>
-                                    </span>
-                                    <span id="status-text" class="text-xs text-neon uppercase tracking-wider font-medium">Ready</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pipeline Phase Indicator -->
-                        <div id="pipeline-phases" class="pipeline-phases hidden">
-                            <span class="phase-dot active" data-phase="intake">Intake</span>
-                            <span class="phase-dot" data-phase="research">Research</span>
-                            <span class="phase-dot" data-phase="ideation">Concepts</span>
-                            <span class="phase-dot" data-phase="script">Script</span>
-                            <span class="phase-dot" data-phase="review">Review</span>
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="mb-4 p-3 rounded-lg bg-black/40 border border-white/5">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs text-white/50 uppercase tracking-wider">Brief Progress</span>
-                                <span id="phase-tag" class="text-xs text-neon font-mono">Phase 1: Introduction</span>
-                            </div>
-                            <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                <div id="progress-bar" class="h-full bg-gradient-to-r from-neon to-cyan-400 rounded-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                            <div class="flex justify-between mt-1">
-                                <span id="progress-percent" class="text-xs text-white/40 font-mono">0%</span>
-                                <span id="completion-status" class="text-xs text-white/40">10 phases remaining</span>
-                            </div>
-                        </div>
-
-                        <!-- Chat Messages -->
-                        <div id="chat-messages" class="chat-container h-64 overflow-y-auto space-y-4 mb-4 pr-2">
-                            <div class="flex gap-3">
-                                <div class="w-8 h-8 rounded-full bg-neon/20 border border-neon/50 flex items-center justify-center flex-shrink-0">
-                                    <i data-lucide="bot" class="w-4 h-4 text-neon" stroke-width="1.5"></i>
-                                </div>
-                                <div class="flex-1 p-3 rounded-lg bg-white/5 border border-white/10">
-                                    <p class="text-sm text-white/80 mb-3">Welcome to the A2I Commercial Lab! I'm your AI Creative Director, here to help you create a stunning commercial video for your business.</p>
-                                    <p class="text-sm text-white/60 mb-4">Whether you need a TikTok ad, Instagram Reel, YouTube commercial, or Facebook video ad - I'll guide you through everything we need to make it amazing.</p>
-                                    <div class="flex gap-2 flex-wrap">
-                                        <button onclick="window.CommercialIntake.start()" class="px-4 py-2 bg-gradient-to-r from-neon to-purple-500 text-black text-xs font-semibold rounded-lg hover:opacity-90 transition-all">
-                                            🎬 Start Your Commercial Brief
-                                        </button>
-                                        <button onclick="document.getElementById('chat-input').focus()" class="px-4 py-2 bg-white/5 border border-white/20 text-white/80 text-xs rounded-lg hover:bg-white/10 transition-all">
-                                            💬 Chat Freely
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Concept Cards Container (for pipeline) -->
-                        <div id="concept-cards" class="concept-cards hidden"></div>
-
-                        <!-- Script Preview Container (for pipeline) -->
-                        <div id="script-preview" class="script-preview hidden">
-                            <div class="script-header">
-                                <span>📝 Your Script</span>
-                                <span id="script-duration" class="script-duration"></span>
-                            </div>
-                            <div id="script-scenes" class="script-scenes"></div>
-                            <div class="script-actions">
-                                <button onclick="approveScript()" class="btn-approve">✓ Approve & Produce</button>
-                                <button onclick="requestRevision()" class="btn-revise">↻ Revise</button>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div id="quick-actions" class="flex flex-wrap gap-2 mb-4 hidden"></div>
-
-                        <!-- Error Message -->
-                        <div id="error-container" class="hidden mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30">
-                            <div class="flex items-center justify-between">
-                                <span id="error-message" class="text-xs text-red-400"></span>
-                                <button onclick="retryLastMessage()" class="text-xs text-red-400 hover:text-red-300 underline">Retry</button>
-                            </div>
-                        </div>
-
-                        <!-- Attached Files Bar (populated by JS) -->
-                        <div id="attached-files-bar"></div>
-                        
-                        <!-- Input -->
-                        <div class="flex gap-3">
-                            <input type="text" id="chat-input" placeholder="Type your answer here..." class="flex-1 bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-neon/50 transition-colors" onkeypress="if(event.key==='Enter')sendMessage()">
-                            
-                            <button id="upload-btn" onclick="openUploadModal()" class="px-3 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all group relative" title="Upload Brand Assets for AI Analysis">
-                                <svg class="w-5 h-5 text-white/50 group-hover:text-neon transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                                </svg>
-                                <span class="absolute -top-1 -right-1 flex h-3 w-3 hidden" id="upload-badge">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-3 w-3 bg-neon"></span>
-                                </span>
-                            </button>
-
-                            <button id="send-btn" onclick="sendMessage()" class="px-4 py-3 bg-neon/20 border border-neon/50 rounded-lg hover:bg-neon/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i data-lucide="send" class="w-4 h-4 text-neon" stroke-width="1.5"></i>
-                            </button>
-                        </div>
-
-                        <!-- FLAWLESS GENESIS Strategy Button (shows when qualification >= 0.8) -->
-                        <div id="genesis-btn-container" class="mt-4 hidden">
-                            <button id="genesis-strategy-btn" onclick="triggerGenesisStrategy()" class="w-full px-6 py-4 bg-gradient-to-r from-purple-600/30 to-neon/30 border border-purple-500/50 rounded-xl hover:from-purple-600/40 hover:to-neon/40 transition-all duration-300 group">
-                                <div class="flex items-center justify-center gap-3">
-                                    <span class="text-2xl group-hover:animate-pulse">🚀</span>
-                                    <div class="text-left">
-                                        <div class="text-sm font-medium text-white">Generate AI Strategy</div>
-                                        <div class="text-xs text-white/60">Launch FLAWLESS GENESIS Pipeline</div>
-                                    </div>
-                                    <i data-lucide="sparkles" class="w-5 h-5 text-purple-400 group-hover:text-neon transition-colors" stroke-width="1.5"></i>
-                                </div>
-                            </button>
-                            <div class="mt-2 text-center">
-                                <span class="text-xs text-white/40">Qualification Score: <span id="genesis-score-display" class="text-neon font-mono">0%</span></span>
-                            </div>
-                        </div>
-
-                        <!-- FLAWLESS GENESIS Progress Container -->
-                        <div id="genesis-container" class="mt-4 hidden">
-                            <div class="p-4 rounded-xl bg-black/60 border border-purple-500/30">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="text-sm font-medium text-white">⚡ FLAWLESS GENESIS</span>
-                                    <span id="genesis-status-text" class="text-xs text-neon font-mono">INITIALIZING</span>
-                                </div>
-
-                                <!-- Progress Bar -->
-                                <div class="h-2 bg-black/50 rounded-full overflow-hidden mb-3">
-                                    <div id="genesis-progress-bar" class="h-full bg-gradient-to-r from-purple-600 to-neon transition-all duration-500 ease-out" style="width: 0%"></div>
-                                </div>
-
-                                <!-- Phase Text -->
-                                <div id="genesis-phase-text" class="text-xs text-white/60 mb-4"></div>
-
-                                <!-- Agent Grid -->
-                                <div id="genesis-agent-panel" class="grid grid-cols-5 gap-2">
-                                    <!-- Agents will be rendered here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- NOTE: Old embedded chat widget removed - use Neural Interface FAB (ni-fab) instead -->
         </section>
 
         <!-- ========== HOW IT WORKS (REMASTERED) ========== -->
