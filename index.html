@@ -156,11 +156,13 @@ document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
                 <div class="relative">
                     <!-- Shard Logo with LEGENDARY Breathing Glow -->
                     <div class="relative w-16 h-16 md:w-24 md:h-24 flex items-center justify-center">
-                        <div class="absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
+                        <!-- Blur glow hidden on mobile to prevent WebKit rendering bug causing black silhouette -->
+                        <div class="hidden md:block absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
                         <img
                             src="brand/barrios-a2i-shard-logo.png"
                             alt="Barrios A2I"
                             class="relative w-14 h-14 md:w-20 md:h-20 object-contain transition-all duration-300"
+                            style="-webkit-filter: none !important; filter: none !important;"
                         >
                     </div>
                     <!-- Active Status Dot with Pulse -->
