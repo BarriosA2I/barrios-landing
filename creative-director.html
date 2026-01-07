@@ -5778,6 +5778,503 @@
                 display: none;
             }
         }
+
+        /* ===========================================
+           PRODUCTION STATUS UI - RAGNAROK Pipeline
+           =========================================== */
+
+        .production-status {
+            display: none;
+            background: linear-gradient(135deg, rgba(0, 206, 209, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid rgba(0, 206, 209, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .production-status.active {
+            display: block;
+            animation: fadeSlideIn 0.4s ease-out;
+        }
+
+        .production-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .production-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00CED1;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .production-timer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #a1a1aa;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        /* 8-Phase Progress Indicators */
+        .production-phases {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .prod-phase {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 60px;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+
+        .prod-phase.completed {
+            opacity: 1;
+        }
+
+        .prod-phase.completed .prod-phase-icon {
+            background: rgba(0, 206, 209, 0.2);
+            border-color: #00CED1;
+            color: #00CED1;
+        }
+
+        .prod-phase.active {
+            opacity: 1;
+        }
+
+        .prod-phase.active .prod-phase-icon {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8B5CF6;
+            color: #8B5CF6;
+            animation: pulse-glow 2s infinite;
+        }
+
+        .prod-phase-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .prod-phase-name {
+            font-size: 9px;
+            font-weight: 500;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .prod-phase-connector {
+            flex: 0 0 12px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1px;
+        }
+
+        .prod-phase-connector.completed {
+            background: linear-gradient(90deg, #00CED1 0%, rgba(0, 206, 209, 0.3) 100%);
+        }
+
+        /* Progress Bar */
+        .production-progress-container {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .production-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00CED1 0%, #8B5CF6 100%);
+            border-radius: 2px;
+            transition: width 0.5s ease-out;
+            width: 0%;
+        }
+
+        /* Status Message */
+        .production-message {
+            font-size: 12px;
+            color: #a1a1aa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .production-message::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #00CED1;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Delivery Modal */
+        .delivery-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .delivery-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .delivery-content {
+            background: #141414;
+            border: 1px solid rgba(0, 206, 209, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .delivery-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .delivery-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fafafa;
+            margin: 0 0 8px 0;
+        }
+
+        .delivery-header p {
+            color: #a1a1aa;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .delivery-preview {
+            aspect-ratio: 16/9;
+            background: #0a0a0a;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delivery-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .delivery-formats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .format-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #fafafa;
+        }
+
+        .format-btn:hover {
+            background: rgba(0, 206, 209, 0.1);
+            border-color: rgba(0, 206, 209, 0.3);
+        }
+
+        .format-btn.active {
+            background: rgba(0, 206, 209, 0.2);
+            border-color: #00CED1;
+        }
+
+        .format-btn-icon {
+            font-size: 24px;
+        }
+
+        .format-btn-label {
+            font-size: 11px;
+            color: #a1a1aa;
+        }
+
+        .delivery-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .delivery-btn-primary {
+            flex: 1;
+            background: linear-gradient(135deg, #00CED1 0%, #8B5CF6 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            color: #0a0a0a;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delivery-btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 206, 209, 0.3);
+        }
+
+        .delivery-btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 14px 24px;
+            color: #fafafa;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delivery-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .delivery-cost {
+            text-align: center;
+            font-size: 13px;
+            color: #a1a1aa;
+        }
+
+        .delivery-cost span {
+            color: #00CED1;
+            font-weight: 600;
+        }
+
+        .delivery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .delivery-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            color: #a1a1aa;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delivery-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fafafa;
+        }
+
+        .delivery-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+        }
+
+        .delivery-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .delivery-stat-label {
+            font-size: 11px;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .delivery-stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fafafa;
+        }
+
+        .delivery-formats h4 {
+            font-size: 13px;
+            color: #a1a1aa;
+            margin: 0 0 12px 0;
+            font-weight: 500;
+        }
+
+        .format-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .format-icon {
+            font-size: 24px;
+        }
+
+        .format-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fafafa;
+        }
+
+        .format-desc {
+            font-size: 10px;
+            color: #71717a;
+        }
+
+        .delivery-action-btn {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delivery-action-primary {
+            background: linear-gradient(135deg, #00CED1 0%, #8B5CF6 100%);
+            color: #0a0a0a;
+        }
+
+        .delivery-action-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 206, 209, 0.3);
+        }
+
+        .delivery-action-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fafafa;
+        }
+
+        .delivery-action-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive for delivery modal */
+        @media (max-width: 480px) {
+            .delivery-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .format-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .delivery-actions {
+                flex-direction: column;
+            }
+        }
+
+        .delivery-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fafafa;
+            font-size: 18px;
+        }
+
+        .delivery-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Mobile responsive for production */
+        @media (max-width: 640px) {
+            .production-phases {
+                gap: 2px;
+            }
+
+            .prod-phase {
+                min-width: 45px;
+            }
+
+            .prod-phase-icon {
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
+            }
+
+            .prod-phase-name {
+                font-size: 7px;
+            }
+
+            .delivery-formats {
+                grid-template-columns: 1fr;
+            }
+
+            .delivery-actions {
+                flex-direction: column;
+            }
+        }
     </style>
 
     <!-- ============================================
@@ -5855,6 +6352,68 @@
                     Welcome to the A2I Commercial Lab! I'm your AI Creative Director. Whether you need a TikTok ad, Instagram Reel, or YouTube commercial - let's create something amazing together.
                 </div>
             </div>
+        </div>
+
+        <!-- Production Status (hidden until production starts) -->
+        <div id="production-status" class="production-status">
+            <div class="production-header">
+                <div class="production-header-left">
+                    <span class="production-icon">🎬</span>
+                    <h3>Commercial_Lab Production</h3>
+                </div>
+                <div class="production-header-right">
+                    <span class="production-timer" id="production-timer">00:00</span>
+                    <button class="production-cancel" id="production-cancel" onclick="ProductionManager.cancel()">✕</button>
+                </div>
+            </div>
+
+            <div class="production-phases" id="production-phases">
+                <div class="prod-phase" data-phase="intake">
+                    <div class="prod-phase-icon">📋</div>
+                    <span class="prod-phase-name">INTAKE</span>
+                </div>
+                <div class="prod-phase-connector"></div>
+                <div class="prod-phase" data-phase="intelligence">
+                    <div class="prod-phase-icon">🔍</div>
+                    <span class="prod-phase-name">INTEL</span>
+                </div>
+                <div class="prod-phase-connector"></div>
+                <div class="prod-phase" data-phase="story">
+                    <div class="prod-phase-icon">📖</div>
+                    <span class="prod-phase-name">STORY</span>
+                </div>
+                <div class="prod-phase-connector"></div>
+                <div class="prod-phase" data-phase="prompts">
+                    <div class="prod-phase-icon">🎨</div>
+                    <span class="prod-phase-name">PROMPTS</span>
+                </div>
+                <div class="prod-phase-connector"></div>
+                <div class="prod-phase" data-phase="video">
+                    <div class="prod-phase-icon">🎥</div>
+                    <span class="prod-phase-name">VIDEO</span>
+                </div>
+                <div class="prod-phase-connector"></div>
+                <div class="prod-phase" data-phase="voice">
+                    <div class="prod-phase-icon">🎙️</div>
+                    <span class="prod-phase-name">VOICE</span>
+                </div>
+                <div class="prod-phase-connector"></div>
+                <div class="prod-phase" data-phase="assembly">
+                    <div class="prod-phase-icon">🔧</div>
+                    <span class="prod-phase-name">ASSEMBLY</span>
+                </div>
+                <div class="prod-phase-connector"></div>
+                <div class="prod-phase" data-phase="qa">
+                    <div class="prod-phase-icon">✅</div>
+                    <span class="prod-phase-name">QA</span>
+                </div>
+            </div>
+
+            <div class="production-progress-container">
+                <div class="production-progress-bar" id="production-progress"></div>
+            </div>
+
+            <div class="production-message" id="production-message">Initializing RAGNAROK pipeline...</div>
         </div>
 
         <!-- Reasoning Engine Selector -->
@@ -6359,8 +6918,77 @@
     <!-- NEURAL HIVE v1.0 - 23-Agent Real-Time Monitoring -->
     <script src="js/neural-hive.js"></script>
 
+    <!-- PRODUCTION MANAGER v1.0 - RAGNAROK 8-Phase Pipeline Controller -->
+    <script src="js/production-manager.js"></script>
+
     <!-- COMMERCIAL INTAKE FLOW v1.0 - 40-Question Brief System -->
     <script src="js/commercial-intake.js"></script>
+
+    <!-- Delivery Modal -->
+    <div id="delivery-modal" class="delivery-modal">
+        <div class="delivery-content">
+            <div class="delivery-header">
+                <h2>🎉 Production Complete!</h2>
+                <button class="delivery-close" onclick="ProductionManager.closeDelivery()">✕</button>
+            </div>
+
+            <div class="delivery-preview">
+                <video id="delivery-video" controls poster="">
+                    <source src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="delivery-stats">
+                <div class="delivery-stat">
+                    <span class="delivery-stat-label">Duration</span>
+                    <span class="delivery-stat-value" id="delivery-duration">--</span>
+                </div>
+                <div class="delivery-stat">
+                    <span class="delivery-stat-label">Resolution</span>
+                    <span class="delivery-stat-value" id="delivery-resolution">--</span>
+                </div>
+                <div class="delivery-stat">
+                    <span class="delivery-stat-label">Format</span>
+                    <span class="delivery-stat-value" id="delivery-format">--</span>
+                </div>
+                <div class="delivery-stat">
+                    <span class="delivery-stat-label">Size</span>
+                    <span class="delivery-stat-value" id="delivery-size">--</span>
+                </div>
+            </div>
+
+            <div class="delivery-formats">
+                <h4>Download Formats</h4>
+                <div class="format-buttons">
+                    <button class="format-btn" data-format="mp4" onclick="ProductionManager.download('mp4')">
+                        <span class="format-icon">📹</span>
+                        <span class="format-name">MP4</span>
+                        <span class="format-desc">Universal</span>
+                    </button>
+                    <button class="format-btn" data-format="webm" onclick="ProductionManager.download('webm')">
+                        <span class="format-icon">🌐</span>
+                        <span class="format-name">WebM</span>
+                        <span class="format-desc">Web optimized</span>
+                    </button>
+                    <button class="format-btn" data-format="gif" onclick="ProductionManager.download('gif')">
+                        <span class="format-icon">🎞️</span>
+                        <span class="format-name">GIF</span>
+                        <span class="format-desc">Social preview</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="delivery-actions">
+                <button class="delivery-action-btn delivery-action-primary" onclick="ProductionManager.download('mp4')">
+                    ⬇️ Download Commercial
+                </button>
+                <button class="delivery-action-btn delivery-action-secondary" onclick="ProductionManager.newProduction()">
+                    🎬 Create Another
+                </button>
+            </div>
+        </div>
+    </div>
 
 </body>
 
