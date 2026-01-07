@@ -1105,7 +1105,7 @@
                         animation: spin 1s linear infinite;
                     "></div>
                     <div style="font-size: 16px; color: ${CONFIG.COLORS.textPrimary}; margin-bottom: 8px;">
-                        Initializing 23-Agent Pipeline...
+                        Initializing RAGNAROK Pipeline...
                     </div>
                     <div style="font-size: 12px; color: ${CONFIG.COLORS.textSecondary};">
                         Your commercial is being prepared
@@ -1124,29 +1124,44 @@
         }
 
         try {
-            // Prepare the brief data
-            const briefData = {
-                session_id: intakeState.sessionId,
-                brief: intakeState.answers,
-                completed_at: Date.now(),
-                duration_seconds: Math.round((Date.now() - intakeState.startTime) / 1000)
+            const answers = intakeState.answers;
+
+            // Build GENESIS-compatible payload
+            const briefPayload = {
+                business_name: answers.businessName || 'Unknown Business',
+                industry: answers.industry || 'technology',
+                style: answers.visualStyle || 'cinematic',
+                goals: answers.primaryGoal ? [answers.primaryGoal] : ['brand_awareness'],
+                target_platforms: answers.platforms || ['tiktok', 'instagram'],
+                brief: {
+                    description: answers.businessDescription || answers.productService || '',
+                    ideal_customer: answers.idealCustomer || '',
+                    key_benefit: answers.keyBenefit || '',
+                    call_to_action: answers.callToAction || '',
+                    tone: answers.videoTone || [],
+                    duration: answers.duration || '30',
+                    aspect_ratio: answers.aspectRatio || '9:16',
+                    voiceover: answers.wantsVoiceover === 'yes',
+                    voice_style: answers.voiceStyle || 'either',
+                    language: answers.language || 'English',
+                    polish_level: answers.polishLevel || '8',
+                    full_answers: answers
+                }
             };
 
-            // Submit to API
-            const response = await fetch(`${CONFIG.API_URL}/api/legendary/start`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(briefData)
-            });
+            // Remove loading
+            const loading = chatContainer?.querySelector('.intake-loading');
+            if (loading) loading.remove();
 
-            if (!response.ok) {
-                throw new Error('Failed to submit brief');
+            // Check if ProductionManager exists and call it
+            if (typeof ProductionManager !== 'undefined' && ProductionManager.start) {
+                console.log('[CommercialIntake] Starting ProductionManager with session:', intakeState.sessionId);
+                ProductionManager.start(intakeState.sessionId, briefPayload);
+                showPipelineStarted({ session_id: intakeState.sessionId });
+            } else {
+                console.error('[CommercialIntake] ProductionManager not available');
+                throw new Error('Production system not available');
             }
-
-            const result = await response.json();
-
-            // Show success and transition to pipeline view
-            showPipelineStarted(result);
 
         } catch (error) {
             console.error('Brief submission error:', error);

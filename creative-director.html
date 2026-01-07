@@ -6106,20 +6106,25 @@
         }
 
         .delivery-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
             background: rgba(255, 255, 255, 0.1);
             border: none;
+            border-radius: 8px;
             width: 32px;
             height: 32px;
-            border-radius: 8px;
-            color: #a1a1aa;
-            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            color: #fafafa;
+            font-size: 18px;
             transition: all 0.2s ease;
         }
 
         .delivery-close:hover {
             background: rgba(255, 255, 255, 0.2);
-            color: #fafafa;
         }
 
         .delivery-stats {
@@ -6224,27 +6229,6 @@
             .delivery-actions {
                 flex-direction: column;
             }
-        }
-
-        .delivery-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 8px;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #fafafa;
-            font-size: 18px;
-        }
-
-        .delivery-close:hover {
-            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Mobile responsive for production */
@@ -6502,7 +6486,7 @@
                 <input type="file" id="niFileInput" onchange="niHandleFile(event)" accept="image/*,.pdf,.doc,.docx,.txt">
             </div>
             <!-- Send Button -->
-            <button class="ni-send-btn" onclick="sendNIMessage()">
+            <button id="ni-send" class="ni-send-btn" onclick="sendNIMessage()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
                 </svg>
@@ -6887,16 +6871,20 @@
             return 'cd-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
         }
 
-        // Click outside to close
+        // Click outside to close - FIXED: robust click-outside detection
         document.addEventListener('click', (e) => {
-            const window = document.getElementById('ni-window');
+            if (!niIsOpen) return;
+
+            const niWindow = document.getElementById('ni-window');
             const fab = document.getElementById('ni-fab');
 
-            if (niIsOpen &&
-                !window.contains(e.target) &&
-                !fab.contains(e.target)) {
-                closeNeuralInterface();
-            }
+            // Don't close if clicking inside the panel or FAB
+            if (!niWindow || !fab) return;
+            if (niWindow.contains(e.target)) return;
+            if (fab.contains(e.target)) return;
+
+            // Only close if click is truly outside
+            closeNeuralInterface();
         });
 
         // ESC key to close
@@ -6906,10 +6894,15 @@
             }
         });
 
-        // Prevent click propagation inside window
-        document.getElementById('ni-window')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
+        // Prevent click propagation inside window - CRITICAL for stability
+        (function() {
+            const niWindow = document.getElementById('ni-window');
+            if (niWindow) {
+                niWindow.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+        })();
     </script>
 
     <!-- VORTEX v2.1 Video Assembly SSE Client -->
