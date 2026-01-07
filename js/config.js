@@ -17,8 +17,8 @@ const BARRIOS_CONFIG = {
   // Nexus Personal - $299 house call (one-time)
   STRIPE_HOUSE_CALL_URL: 'https://buy.stripe.com/cNi00kbh7bW1g1727HeME04',
 
-  // Neural Ad Forge - $499 (one-time)
-  STRIPE_ADFORGE_URL: 'https://buy.stripe.com/00w4gA84Ve498yF27HeME05',
+  // Commercial Lab - $499 (one-time)
+  STRIPE_COMMERCIAL_LAB_URL: 'https://buy.stripe.com/00w4gA84Ve498yF27HeME05',
 
   // ========================================
   // CALENDLY BOOKING LINKS

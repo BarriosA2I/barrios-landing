@@ -45,11 +45,12 @@
         el.style.cursor = 'pointer';
       }
 
-      // INITIALIZE AD FORGE → Stripe $499
-      if (text.includes('INITIALIZE AD FORGE') || text.includes('INITIALIZE_AD_FORGE')) {
+      // INITIALIZE COMMERCIAL LAB → Stripe $499
+      if (text.includes('INITIALIZE COMMERCIAL LAB') || text.includes('INITIALIZE_COMMERCIAL_LAB') ||
+          text.includes('INITIALIZE AD FORGE') || text.includes('INITIALIZE_AD_FORGE')) {
         el.addEventListener('click', (e) => {
           e.preventDefault();
-          window.open(CONFIG.STRIPE_ADFORGE_URL, '_blank');
+          window.open(CONFIG.STRIPE_COMMERCIAL_LAB_URL, '_blank');
         });
         el.style.cursor = 'pointer';
       }
