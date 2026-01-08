@@ -1,8 +1,9 @@
 /**
- * ProductionManager v1.0
+ * ProductionManager v1.1
  * RAGNAROK 8-Phase Production Pipeline Controller
  *
- * Handles SSE streaming from GENESIS production endpoints
+ * Handles SSE streaming from GENESIS production endpoints via fetch
+ * Uses ReadableStream for POST endpoints (not EventSource which is GET-only)
  * Manages phase progress, timer, and delivery modal
  */
 
@@ -11,7 +12,7 @@ const ProductionManager = (() => {
     const GENESIS_URL = 'https://barrios-genesis-flawless.onrender.com';
 
     // State
-    let eventSource = null;
+    let abortController = null;
     let timerInterval = null;
     let startTime = null;
     let sessionId = null;
@@ -58,35 +59,65 @@ const ProductionManager = (() => {
         updateMessage('Connecting to RAGNAROK pipeline...');
 
         try {
-            // Start SSE connection
+            // Use fetch streaming for POST with SSE response
             const url = `${GENESIS_URL}/api/production/start/${sessionId}`;
-            eventSource = new EventSource(url);
+            console.log('[ProductionManager] Starting production via fetch streaming...');
 
-            eventSource.onopen = () => {
-                console.log('[ProductionManager] SSE connected');
-                updateMessage('Pipeline connected. Starting production...');
-            };
+            // Create abort controller for cancellation
+            abortController = new AbortController();
 
-            eventSource.onmessage = (event) => {
-                handleSSEMessage(event);
-            };
-
-            eventSource.onerror = (error) => {
-                console.error('[ProductionManager] SSE error:', error);
-                if (eventSource.readyState === EventSource.CLOSED) {
-                    updateMessage('Connection lost. Attempting to reconnect...');
-                    // Attempt reconnection after 3 seconds
-                    setTimeout(() => reconnect(), 3000);
-                }
-            };
-
-            // Also send POST to trigger production
-            // brief already contains {business_name, industry, style, goals, target_platforms, brief}
-            await fetch(url, {
+            const response = await fetch(url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(brief)
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'text/event-stream'
+                },
+                body: JSON.stringify(brief),
+                signal: abortController.signal
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            console.log('[ProductionManager] SSE connected via fetch');
+            updateMessage('Pipeline connected. Starting production...');
+
+            // Read SSE stream using ReadableStream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+
+                if (done) {
+                    console.log('[ProductionManager] Stream completed');
+                    break;
+                }
+
+                // Decode chunk and add to buffer
+                buffer += decoder.decode(value, { stream: true });
+
+                // Process complete SSE messages (format: "data: {...}\n\n")
+                const lines = buffer.split('\n\n');
+                buffer = lines.pop() || ''; // Keep incomplete message in buffer
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const eventData = line.slice(6); // Remove "data: " prefix
+                        handleSSEMessage({ data: eventData });
+                    }
+                }
+            }
+
+            // Process any remaining data in buffer
+            if (buffer.startsWith('data: ')) {
+                const eventData = buffer.slice(6);
+                if (eventData.trim()) {
+                    handleSSEMessage({ data: eventData });
+                }
+            }
 
         } catch (error) {
             console.error('[ProductionManager] Start error:', error);
@@ -208,11 +239,8 @@ const ProductionManager = (() => {
         // Stop timer
         stopTimer();
 
-        // Close SSE
-        if (eventSource) {
-            eventSource.close();
-            eventSource = null;
-        }
+        // Clear abort controller (stream completes naturally with fetch)
+        abortController = null;
 
         // Mark all phases complete
         PHASES.forEach(phase => {
@@ -326,9 +354,10 @@ const ProductionManager = (() => {
      * Cancel production
      */
     function cancel() {
-        if (eventSource) {
-            eventSource.close();
-            eventSource = null;
+        // Abort fetch stream
+        if (abortController) {
+            abortController.abort();
+            abortController = null;
         }
 
         stopTimer();
@@ -447,16 +476,16 @@ const ProductionManager = (() => {
     }
 
     /**
-     * Reconnect SSE
+     * Check production status (reconnection not supported with fetch streaming)
+     * Production must be restarted if connection is lost
      */
-    function reconnect() {
-        if (sessionId && !eventSource) {
-            const url = `${GENESIS_URL}/api/production/start/${sessionId}`;
-            eventSource = new EventSource(url);
-            eventSource.onmessage = handleSSEMessage;
-            eventSource.onerror = (error) => {
-                console.error('[ProductionManager] Reconnect error:', error);
-            };
+    async function checkStatus() {
+        if (sessionId) {
+            const status = await getStatus();
+            if (status) {
+                console.log('[ProductionManager] Production status:', status);
+                updateMessage(`Status: ${status.phase} - ${status.status}`);
+            }
         }
     }
 
@@ -481,6 +510,7 @@ const ProductionManager = (() => {
         cancel,
         reset,
         getStatus,
+        checkStatus,
         closeDelivery,
         download,
         newProduction,
@@ -493,4 +523,4 @@ if (typeof window !== 'undefined') {
     window.ProductionManager = ProductionManager;
 }
 
-console.log('[ProductionManager] v1.0 loaded - RAGNAROK 8-Phase Pipeline Controller');
+console.log('[ProductionManager] v1.1 loaded - RAGNAROK 8-Phase Pipeline Controller (fetch streaming)');
