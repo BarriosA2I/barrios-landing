@@ -6759,8 +6759,39 @@
             // Show typing indicator
             showNITyping();
 
-            // Call existing chat backend with model info
-            sendToCreativeDirector(message, selectedModel);
+            // Check for production triggers - start 23-agent RAGNAROK pipeline
+            const productionTriggers = ['create', 'generate', 'make', 'build', 'produce', 'start production', 'create commercial', 'generate video', 'make video'];
+            const lowerMessage = message.toLowerCase();
+            const isProductionRequest = productionTriggers.some(trigger => lowerMessage.includes(trigger));
+
+            if (isProductionRequest && window.ProductionManager) {
+                // Trigger GENESIS 23-agent pipeline via ProductionManager
+                hideNITyping();
+                appendNIMessage('ai', '🚀 Initializing RAGNAROK 23-Agent Pipeline...');
+
+                // Generate session ID if not exists
+                const sessionId = window.creativeDirectorSessionId || generateSessionId();
+                window.creativeDirectorSessionId = sessionId;
+
+                // Extract brief from message
+                const brief = {
+                    description: message,
+                    target_audience: 'Marketing directors at mid-size companies',
+                    tone: 'professional',
+                    duration: 30,
+                    platforms: ['youtube', 'tiktok', 'instagram'],
+                    session_id: sessionId
+                };
+
+                // Close Neural Interface to show production panel
+                closeNeuralInterface();
+
+                // Start production pipeline with SSE streaming
+                ProductionManager.start(sessionId, brief);
+            } else {
+                // Regular chat - use existing Claude API
+                sendToCreativeDirector(message, selectedModel);
+            }
         }
 
         // Append message to Neural Interface
