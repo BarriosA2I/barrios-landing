@@ -136,13 +136,32 @@ class ThinkingStreamClient {
     
     /**
      * Stream via Server-Sent Events
+     * NOTE: /api/legendary-neural/stream endpoint not implemented on GENESIS
      */
     async _streamSSE(query, options) {
         return new Promise((resolve, reject) => {
-            const url = `${this.baseUrl}/api/legendary-neural/stream`;
+            // Endpoint not implemented - return gracefully with error event
+            const endpoint = '/api/legendary-neural/stream';
+            console.log(`[ThinkingStream] SSE endpoint ${endpoint} not available - using fallback`);
+
+            // Emit error event and resolve
+            this._emit(StreamEventType.ERROR, {
+                code: 'ENDPOINT_NOT_IMPLEMENTED',
+                message: 'Legendary neural stream endpoint not available'
+            });
+            resolve({
+                response: '',
+                cached: false,
+                cognitiveMode: 'unavailable',
+                metrics: { fallback: true }
+            });
+            return;
+
+            // Original code below (unreachable - kept for future implementation)
+            const url = `${this.baseUrl}${endpoint}`;
             let fullResponse = '';
             let completed = false;
-            
+
             // Create POST request with SSE response
             fetch(url, {
                 method: 'POST',

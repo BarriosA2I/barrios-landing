@@ -21,8 +21,10 @@
 
 const NEURAL_CONFIG = {
     // API endpoints - Production URLs (Render backend)
+    // NOTE: Neural stream endpoint not implemented on GENESIS - SSE disabled
     apiBase: 'https://barrios-genesis-flawless.onrender.com/api/neural',
-    sseEndpoint: 'https://barrios-genesis-flawless.onrender.com/api/neural/stream',
+    sseEndpoint: null, // Disabled - /api/neural/stream doesn't exist on GENESIS
+    sseEnabled: false,
     
     // UI selectors
     selectors: {
@@ -636,25 +638,33 @@ class CognitiveStatusManager {
     // =========================================================================
     
     connect(sessionId) {
+        // Skip SSE connection if disabled or endpoint not configured
+        if (!this.config.sseEnabled || !this.config.sseEndpoint) {
+            console.log('[NeuralBrain] SSE disabled - endpoint not available');
+            this.isConnected = false;
+            this.updateConnectionStatus(false);
+            return;
+        }
+
         if (this.eventSource) {
             this.eventSource.close();
         }
-        
+
         const url = `${this.config.sseEndpoint}?session_id=${sessionId}`;
         this.eventSource = new EventSource(url);
-        
+
         this.eventSource.onopen = () => {
             this.isConnected = true;
             this.updateConnectionStatus(true);
             console.log('[NeuralBrain] SSE connected');
         };
-        
+
         this.eventSource.onerror = (error) => {
             this.isConnected = false;
             this.updateConnectionStatus(false);
             console.error('[NeuralBrain] SSE error:', error);
         };
-        
+
         // Register event handlers
         this.registerEventHandlers();
     }

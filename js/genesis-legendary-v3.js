@@ -533,23 +533,12 @@ const GenesisSession = {
     
     /**
      * Sync session to backend
+     * NOTE: Session sync endpoint not implemented on GENESIS - using local storage only
      */
     async _syncToBackend(session) {
-        try {
-            await fetch('/api/genesis/session/sync', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    session_id: session.id,
-                    phase: session.phase,
-                    engine: session.activeEngine,
-                    answers: session.answers,
-                    metrics: session.metrics
-                })
-            });
-        } catch (e) {
-            console.warn('[GenesisSession v3] Backend sync failed:', e);
-        }
+        // Session sync disabled - endpoint /api/genesis/session/sync doesn't exist
+        // Data is persisted to localStorage instead
+        console.debug('[GenesisSession v3] Session sync skipped (local storage only)');
     },
     
     /**
