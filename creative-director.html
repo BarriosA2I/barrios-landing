@@ -6850,14 +6850,23 @@
                 // Trigger GENESIS 24-agent autonomous pipeline
                 hideNITyping();
 
-                // Show what we extracted
+                // Show what we extracted + asset upload prompt
                 const companyDisplay = extractedCompany || 'your company';
                 appendNIMessage('ai', `🚀 <strong>AUTONOMOUS PRODUCTION INITIATED</strong><br><br>` +
                     `Company: <span style="color: #00CED1;">${companyDisplay}</span><br>` +
                     `${extractedUrl ? `Website: <span style="color: #00CED1;">${extractedUrl}</span><br>` : ''}` +
-                    `<br>24 AI agents are now researching your market, competitors, and audience. ` +
-                    `<strong>Zero questions asked.</strong><br><br>` +
-                    `ETA: ~4 minutes`);
+                    `<br>24 AI agents are now researching your market, competitors, and audience.<br><br>` +
+                    `<div style="background: rgba(0,206,209,0.1); border: 1px solid rgba(0,206,209,0.3); border-radius: 8px; padding: 12px; margin: 8px 0;">` +
+                    `<strong style="color: #00CED1;">📎 OPTIONAL:</strong> Enhance your commercial with assets<br>` +
+                    `<span style="color: #a1a1aa; font-size: 0.9em;">` +
+                    `• Company logo (PNG/SVG preferred)<br>` +
+                    `• Brand colors or style guide<br>` +
+                    `• Product photos or screenshots<br>` +
+                    `• Existing marketing materials<br>` +
+                    `• Specific taglines or messaging</span><br><br>` +
+                    `<em style="color: #71717a; font-size: 0.85em;">Drag & drop files anytime, or let agents work with what they find online.</em>` +
+                    `</div>` +
+                    `<br><strong>ETA: ~4 minutes</strong>`);
 
                 // Generate session ID if not exists
                 const sessionId = window.creativeDirectorSessionId || generateSessionId();
