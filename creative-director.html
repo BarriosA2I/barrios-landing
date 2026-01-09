@@ -6935,6 +6935,10 @@
             if (niWindow.contains(e.target)) return;
             if (fab.contains(e.target)) return;
 
+            // Don't close if clicking ANY element that toggles the interface
+            // This includes "BEGIN YOUR BRIEF" and other toggle buttons
+            if (e.target.closest('[onclick*="toggleNeuralInterface"]')) return;
+
             // Only close if click is truly outside
             closeNeuralInterface();
         });
