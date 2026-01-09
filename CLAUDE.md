@@ -1,5 +1,24 @@
 # Barrios A2I - Project Instructions
 
+## VERIFICATION RULES
+
+**NEVER trust JavaScript measurements or computed styles for visual fixes.**
+
+When verifying any UI/CSS fix:
+1. ALWAYS take a screenshot AFTER deployment
+2. VISUALLY inspect the screenshot - look with your eyes at the actual pixels
+3. Compare to the original issue description
+4. If the visual problem still exists, THE FIX DID NOT WORK - keep trying
+5. Do NOT report success based on:
+   - getComputedStyle() values
+   - offsetWidth/offsetHeight measurements
+   - Element.getBoundingClientRect()
+   - Any JavaScript DOM inspection
+
+The user sees PIXELS, not JavaScript objects. Verify what the user sees.
+
+---
+
 ## Auto-Invoke Skills
 
 **ALWAYS use the frontend-design skill** (located in `.claude/skills/frontend-design/SKILL.md`) when:
