@@ -6,8 +6,8 @@
 (function() {
   'use strict';
 
-  // API Base URL - same as nexus-chat.js
-  const NEXUS_API_BASE = window.NEXUS_API_BASE || 'https://nexus-api-wud4.onrender.com/api/nexus';
+  // API Base URL - Updated to use GENESIS backend
+  const NEXUS_API_BASE = window.NEXUS_API_BASE || 'https://barrios-genesis-flawless.onrender.com/api/nexus';
   let hasRestoredMessages = false;
 
   const PANEL_ID = 'nexus-panel';
@@ -412,12 +412,13 @@
       const data = await response.json();
 
       statusEl.className = 'nexus-status';
-      if (data.status === 'DEGRADED') {
-        statusEl.classList.add('nexus-status--degraded');
-        statusEl.querySelector('.nexus-status-text').textContent = 'DEGRADED';
-      } else if (data.status === 'ONLINE' || response.ok) {
+      // GENESIS NEXUS Brain returns: { status: "online", version: "1.0.0", ... }
+      if (data.status === 'online' || response.ok) {
         statusEl.classList.add('nexus-status--online');
         statusEl.querySelector('.nexus-status-text').textContent = 'ONLINE';
+      } else if (data.status === 'degraded') {
+        statusEl.classList.add('nexus-status--degraded');
+        statusEl.querySelector('.nexus-status-text').textContent = 'DEGRADED';
       } else {
         statusEl.classList.add('nexus-status--offline');
         statusEl.querySelector('.nexus-status-text').textContent = 'OFFLINE';

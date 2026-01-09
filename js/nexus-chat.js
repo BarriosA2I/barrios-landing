@@ -7,9 +7,9 @@
 (function() {
   'use strict';
 
-  // API endpoint - Production: Render, Development: localhost
+  // API endpoint - Production: GENESIS, Development: localhost
   // Configure via window.NEXUS_API_BASE before loading this script
-  const NEXUS_API_BASE = window.NEXUS_API_BASE || 'https://barrios-api-gateway.onrender.com';
+  const NEXUS_API_BASE = window.NEXUS_API_BASE || 'https://barrios-genesis-flawless.onrender.com';
 
   const STORAGE_KEYS = {
     SESSION_ID: 'nexus_session_id',
