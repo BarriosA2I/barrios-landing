@@ -1304,7 +1304,7 @@
                 </a>
 
                 <!-- Desktop CTA -->
-                <a href="#" onclick="toggleNeuralInterface(); return false;" class="hidden md:flex group relative px-5 py-2 bg-white/5 border border-brand-teal/30 backdrop-blur-md overflow-hidden hover:border-brand-gold transition-all duration-300">
+                <a href="#" onclick="event.stopPropagation(); toggleNeuralInterface(); return false;" class="hidden md:flex group relative px-5 py-2 bg-white/5 border border-brand-teal/30 backdrop-blur-md overflow-hidden hover:border-brand-gold transition-all duration-300">
                     <div class="absolute inset-0 bg-brand-teal/5 group-hover:bg-brand-gold/10 transition-colors"></div>
                     <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-teal to-transparent"></div>
                     <div class="relative flex items-center gap-3">
@@ -1394,7 +1394,7 @@
 
                 <!-- Mobile CTA -->
                 <div class="p-4 pt-0">
-                    <a href="#" onclick="toggleNeuralInterface(); closeMobileMenu(); return false;" class="group flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-teal/10 border border-brand-teal/30 transition-all hover:bg-brand-teal/20 hover:border-brand-teal/50">
+                    <a href="#" onclick="event.stopPropagation(); toggleNeuralInterface(); closeMobileMenu(); return false;" class="group flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-teal/10 border border-brand-teal/30 transition-all hover:bg-brand-teal/20 hover:border-brand-teal/50">
                         <iconify-icon icon="lucide:terminal" width="14" class="text-brand-teal"></iconify-icon>
                         <span class="text-[11px] font-mono font-bold text-white tracking-[0.15em]">BEGIN_INTAKE</span>
                     </a>
@@ -1513,7 +1513,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4" style="animation: fadeSlideIn 0.8s ease-out 1.4s both;">
-                    <a href="#" onclick="toggleNeuralInterface(); return false;" class="cta-glow group relative px-8 py-4 bg-transparent overflow-hidden border border-neon text-white transition-all hover:border-neon cursor-pointer">
+                    <a href="#" onclick="event.stopPropagation(); toggleNeuralInterface(); return false;" class="cta-glow group relative px-8 py-4 bg-transparent overflow-hidden border border-neon text-white transition-all hover:border-neon cursor-pointer">
                         <div class="absolute inset-0 w-0 bg-neon transition-all duration-[250ms] ease-out group-hover:w-full opacity-80"></div>
                         <span class="relative flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-widest group-hover:text-white">
                             Begin Your Brief
@@ -6276,7 +6276,7 @@
          ============================================ -->
 
     <!-- FAB Button -->
-    <div id="ni-fab" class="ni-fab" onclick="toggleNeuralInterface()">
+    <div id="ni-fab" class="ni-fab" data-testid="chat-widget" onclick="event.stopPropagation(); toggleNeuralInterface();">
         <div class="ni-ring"></div>
         <div class="ni-fab-bg"></div>
         <div class="ni-badge-ping"></div>
@@ -6484,6 +6484,7 @@
                 type="text"
                 id="ni-input"
                 class="ni-input"
+                data-testid="chat-input"
                 placeholder="Enter command..."
                 onkeypress="if(event.key==='Enter')sendNIMessage()"
             >
@@ -6496,7 +6497,7 @@
                 <input type="file" id="niFileInput" onchange="niHandleFile(event)" accept="image/*,.pdf,.doc,.docx,.txt">
             </div>
             <!-- Send Button -->
-            <button id="ni-send" class="ni-send-btn" onclick="sendNIMessage()">
+            <button id="ni-send" class="ni-send-btn" data-testid="send-button" onclick="sendNIMessage()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
                 </svg>
