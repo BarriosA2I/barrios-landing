@@ -6780,47 +6780,110 @@
             // Show typing indicator
             showNITyping();
 
-            // Check for production triggers - start 23-agent RAGNAROK pipeline
-            // Use explicit multi-word phrases to avoid false positives during brief collection
+            // =================================================================
+            // AUTONOMOUS PRODUCTION DETECTION
+            // Detect company name/URL and trigger 24-agent pipeline immediately
+            // NO QUESTIONS ASKED - agents do all the research
+            // =================================================================
+
+            const lowerMessage = message.toLowerCase();
+
+            // Pattern 1: "create/make/generate a commercial/video for [company]"
+            const companyPatterns = [
+                /(?:create|make|generate|produce|build)\s+(?:a\s+)?(?:commercial|video|ad)\s+(?:for|about)\s+(.+?)(?:\.|$)/i,
+                /(?:commercial|video|ad)\s+(?:for|about)\s+(.+?)(?:\.|$)/i,
+                /(?:for|about)\s+(?:my\s+)?(?:company\s+)?(.+?)(?:\.com|\.io|\.ai|\.co|$)/i
+            ];
+
+            // Pattern 2: URL detection
+            const urlPattern = /(https?:\/\/[^\s]+|[a-zA-Z0-9-]+\.(com|io|ai|co|net|org)[^\s]*)/i;
+
+            // Extract company info from message
+            let extractedCompany = null;
+            let extractedUrl = null;
+
+            // Try URL first
+            const urlMatch = message.match(urlPattern);
+            if (urlMatch) {
+                extractedUrl = urlMatch[0];
+                // Extract company name from URL
+                const domain = extractedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[.\/]/)[0];
+                extractedCompany = domain.charAt(0).toUpperCase() + domain.slice(1);
+            }
+
+            // Try company name patterns
+            if (!extractedCompany) {
+                for (const pattern of companyPatterns) {
+                    const match = message.match(pattern);
+                    if (match && match[1]) {
+                        extractedCompany = match[1].trim();
+                        break;
+                    }
+                }
+            }
+
+            // Production triggers (explicit commands)
             const productionTriggers = [
                 'start production', 'begin production', 'launch production',
                 'generate the video', 'generate my video', 'create the video', 'create my video',
                 'make the video', 'make my video', 'produce the video', 'produce my video',
-                // Commercial triggers (most common user phrase!)
                 'create the commercial', 'create my commercial', 'generate the commercial', 'generate my commercial',
                 'make the commercial', 'make my commercial', 'produce the commercial', 'produce my commercial',
                 'create a commercial', 'generate a commercial', 'make a commercial', 'produce a commercial',
-                // General triggers
                 'ready to produce', "let's produce", "let's generate", "let's create it",
                 'go ahead and', 'proceed with production', 'start the production', 'begin the production'
             ];
-            const lowerMessage = message.toLowerCase();
-            const isProductionRequest = productionTriggers.some(trigger => lowerMessage.includes(trigger));
 
-            if (isProductionRequest && window.ProductionManager) {
-                // Trigger GENESIS 23-agent pipeline via ProductionManager
+            const hasProductionTrigger = productionTriggers.some(trigger => lowerMessage.includes(trigger));
+
+            // NEW: Also trigger if we detect a company + creation intent
+            const creationIntents = ['create', 'make', 'generate', 'produce', 'build', 'want a', 'need a', 'give me'];
+            const hasCreationIntent = creationIntents.some(intent => lowerMessage.includes(intent));
+            const hasContentType = ['commercial', 'video', 'ad', 'advertisement'].some(type => lowerMessage.includes(type));
+
+            // Trigger production if:
+            // 1. Explicit trigger phrase, OR
+            // 2. Company detected + creation intent + content type mentioned
+            const shouldTriggerProduction = hasProductionTrigger || (extractedCompany && hasCreationIntent && hasContentType);
+
+            if (shouldTriggerProduction && window.ProductionManager) {
+                // Trigger GENESIS 24-agent autonomous pipeline
                 hideNITyping();
-                appendNIMessage('ai', '🚀 Initializing RAGNAROK 23-Agent Pipeline...');
+
+                // Show what we extracted
+                const companyDisplay = extractedCompany || 'your company';
+                appendNIMessage('ai', `🚀 <strong>AUTONOMOUS PRODUCTION INITIATED</strong><br><br>` +
+                    `Company: <span style="color: #00CED1;">${companyDisplay}</span><br>` +
+                    `${extractedUrl ? `Website: <span style="color: #00CED1;">${extractedUrl}</span><br>` : ''}` +
+                    `<br>24 AI agents are now researching your market, competitors, and audience. ` +
+                    `<strong>Zero questions asked.</strong><br><br>` +
+                    `ETA: ~4 minutes`);
 
                 // Generate session ID if not exists
                 const sessionId = window.creativeDirectorSessionId || generateSessionId();
                 window.creativeDirectorSessionId = sessionId;
 
-                // Extract brief from message
+                // Extract brief with company info - agents will fill in the rest!
                 const brief = {
-                    description: message,
-                    target_audience: 'Marketing directors at mid-size companies',
-                    tone: 'professional',
-                    duration: 30,
-                    platforms: ['youtube', 'tiktok', 'instagram'],
-                    session_id: sessionId
+                    company_name: extractedCompany || 'Unknown Company',
+                    website_url: extractedUrl || null,
+                    raw_request: message,
+                    // Agents will determine these autonomously:
+                    target_audience: null,  // MARKET_ANALYST will find this
+                    tone: null,             // TONE_CALIBRATOR will determine
+                    duration: 30,           // Default, PERFORMANCE_PREDICTOR can adjust
+                    platforms: ['linkedin', 'youtube', 'tiktok'],
+                    session_id: sessionId,
+                    autonomous_mode: true   // Flag for full agent autonomy
                 };
 
                 // Close Neural Interface to show production panel
-                closeNeuralInterface();
+                setTimeout(() => {
+                    closeNeuralInterface();
+                    // Start production pipeline with SSE streaming
+                    ProductionManager.start(sessionId, brief);
+                }, 2000);  // 2 second delay so user sees the message
 
-                // Start production pipeline with SSE streaming
-                ProductionManager.start(sessionId, brief);
             } else {
                 // Regular chat - use existing Claude API
                 sendToCreativeDirector(message, selectedModel);
