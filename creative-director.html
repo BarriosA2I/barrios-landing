@@ -6781,7 +6781,14 @@
             showNITyping();
 
             // Check for production triggers - start 23-agent RAGNAROK pipeline
-            const productionTriggers = ['create', 'generate', 'make', 'build', 'produce', 'start production', 'create commercial', 'generate video', 'make video'];
+            // Use explicit multi-word phrases to avoid false positives during brief collection
+            const productionTriggers = [
+                'start production', 'begin production', 'launch production',
+                'generate the video', 'generate my video', 'create the video', 'create my video',
+                'make the video', 'make my video', 'produce the video', 'produce my video',
+                'ready to produce', "let's produce", "let's generate", "let's create it",
+                'go ahead and', 'proceed with production'
+            ];
             const lowerMessage = message.toLowerCase();
             const isProductionRequest = productionTriggers.some(trigger => lowerMessage.includes(trigger));
 
