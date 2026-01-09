@@ -2839,30 +2839,23 @@
                 console.log('Pipeline not available, falling back to basic session');
             }
 
-            // Fallback to basic session
+            // Fallback to local session (no backend call needed)
             try {
-                const res = await fetch(`${API_URL}/api/session/start`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})
-                });
-                if (!res.ok) throw new Error('Session start failed');
-                const data = await res.json();
-                sessionId = data.session_id;
+                // Generate a local session ID
+                sessionId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 localStorage.setItem('barrios_creative_director_session', sessionId);
+                console.log('Local session created:', sessionId);
 
-                if (data.greeting) {
-                    const container = document.getElementById('chat-messages');
+                // Show default greeting
+                const container = document.getElementById('chat-messages');
+                if (container) {
                     container.innerHTML = '';
-                    addMessage(data.greeting, false, data.quick_actions || []);
-                }
-
-                if (data.phase) {
-                    updateProgress(data.completion_percentage || 0, data.phase, false);
+                    addMessage("Welcome to the Creative Director! I'm here to help you create stunning AI-powered commercials. What would you like to discuss today?", false, []);
                 }
             } catch (e) {
                 console.error('Session init error:', e);
-                showError('Unable to connect. Please refresh and try again.');
+                // Don't show error - session init failure is non-critical
+                console.log('Continuing without session');
             }
         }
 
@@ -2873,12 +2866,22 @@
         }
 
         function showError(msg) {
-            document.getElementById('error-container').classList.remove('hidden');
-            document.getElementById('error-message').textContent = msg;
+            const container = document.getElementById('error-container');
+            const message = document.getElementById('error-message');
+            if (container && message) {
+                container.classList.remove('hidden');
+                message.textContent = msg;
+            } else {
+                // Fallback: log to console if error container doesn't exist
+                console.error('Error:', msg);
+            }
         }
 
         function hideError() {
-            document.getElementById('error-container').classList.add('hidden');
+            const container = document.getElementById('error-container');
+            if (container) {
+                container.classList.add('hidden');
+            }
         }
 
         function addMessage(content, isUser = false, quickActions = []) {
@@ -5014,8 +5017,9 @@
             position: fixed;
             bottom: 104px;
             right: 24px;
-            width: 420px;
-            height: 620px;
+            width: 480px;
+            max-width: 95vw;
+            height: 640px;
             z-index: 10000;
             background: var(--ni-bg);
             border: 1px solid var(--ni-border);
@@ -5952,11 +5956,31 @@
             flex-direction: column;
             gap: 8px;
             margin: 12px 0;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .voice-selector::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .voice-selector::-webkit-scrollbar-track {
+            background: rgba(0, 206, 209, 0.1);
+            border-radius: 3px;
+        }
+
+        .voice-selector::-webkit-scrollbar-thumb {
+            background: rgba(0, 206, 209, 0.4);
+            border-radius: 3px;
         }
 
         .voice-card {
-            background: rgba(20, 20, 24, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 206, 209, 0.06);
+            border: 1px solid rgba(0, 206, 209, 0.2);
             border-radius: 8px;
             padding: 10px 14px;
             cursor: pointer;
@@ -5964,73 +5988,99 @@
         }
 
         .voice-card:hover {
-            border-color: rgba(0, 206, 209, 0.4);
-            background: rgba(0, 206, 209, 0.05);
-        }
-
-        .voice-card.selected {
-            border: 1px solid #00CED1;
+            border-color: rgba(0, 206, 209, 0.5);
             background: rgba(0, 206, 209, 0.1);
         }
 
-        /* Horizontal header row: Name | Category | Preview */
+        .voice-card.selected {
+            border: 2px solid #00CED1;
+            background: rgba(0, 206, 209, 0.15);
+        }
+
+        .voice-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
         .voice-card-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 4px;
         }
 
         .voice-name {
             font-weight: 600;
             color: #fafafa;
-            font-size: 13px;
-            min-width: 65px;
+            font-size: 14px;
         }
 
         .voice-category {
-            font-size: 9px;
-            color: #0a0a0a;
-            background: linear-gradient(135deg, #00CED1, #00B4B8);
+            font-size: 10px;
+            color: #00CED1;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .voice-preview-btn {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: transparent;
-            border: 1px solid rgba(0, 206, 209, 0.4);
-            border-radius: 4px;
-            padding: 3px 10px;
-            color: #00CED1;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .voice-preview-btn:hover {
             background: rgba(0, 206, 209, 0.15);
-            border-color: #00CED1;
-        }
-
-        .voice-preview-btn.playing {
-            background: #00CED1;
-            color: #0a0a0a;
-            border-color: #00CED1;
+            padding: 2px 6px;
+            border-radius: 4px;
         }
 
         .voice-description {
             font-size: 11px;
             color: #71717a;
-            margin: 0;
-            padding-left: 2px;
+        }
+
+        .voice-preview-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 206, 209, 0.2);
+            border: 1px solid rgba(0, 206, 209, 0.3);
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: #00CED1;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .voice-preview-btn:hover {
+            background: rgba(0, 206, 209, 0.3);
+        }
+
+        .voice-preview-btn.playing {
+            background: #00CED1;
+            color: #0a0a0a;
+        }
+
+        .voice-pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 8px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .voice-nav-btn {
+            background: rgba(0, 206, 209, 0.15);
+            border: 1px solid rgba(0, 206, 209, 0.25);
+            border-radius: 6px;
+            padding: 6px 14px;
+            color: #00CED1;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .voice-nav-btn:hover:not(:disabled) {
+            background: rgba(0, 206, 209, 0.25);
+        }
+
+        .voice-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
 
         .voice-confirm-btn {
@@ -6902,15 +6952,27 @@
 
         // Show voice selector in chat
         function showVoiceSelector() {
+            // Get brief from window - set by production trigger
             pendingBrief = window.currentProductionBrief;
             pendingSessionId = window.currentProductionBrief?.session_id;
+
+            // Debug log
+            console.log('Voice Selector - Brief:', pendingBrief);
+            console.log('Voice Selector - Session ID:', pendingSessionId);
+
+            if (!pendingBrief || !pendingSessionId) {
+                console.error('Voice Selector Error: Missing brief or session ID');
+                appendNIMessage('ai', `<div style="color: #ef4444;">⚠️ Error: Production brief not found. Please try again.</div>`);
+                return;
+            }
+
             currentVoicePage = 0;
             selectedVoice = null;
 
             renderVoiceSelector();
         }
 
-        // Render voice selector with pagination
+        // Render voice selector with pagination - SINGLE COLUMN LAYOUT
         function renderVoiceSelector() {
             const voices = getVoicesForPage(currentVoicePage);
             const totalPages = getTotalVoicePages();
@@ -6921,14 +6983,16 @@
                 const isSelected = selectedVoice === voice.id;
                 voiceCardsHTML += `
                     <div class="voice-card ${isSelected ? 'selected' : ''}" data-voice-id="${voice.id}" onclick="selectVoice('${voice.id}')">
-                        <div class="voice-card-header">
-                            <span class="voice-name">${voice.name}</span>
-                            <span class="voice-category">${voice.category}</span>
-                            <button class="voice-preview-btn" onclick="event.stopPropagation(); playVoiceSample('${voice.id}', this)">
-                                ▶ Preview
-                            </button>
+                        <div class="voice-card-info">
+                            <div class="voice-card-header">
+                                <span class="voice-name">${voice.name}</span>
+                                <span class="voice-category">${voice.category}</span>
+                            </div>
+                            <div class="voice-description">${voice.description}</div>
                         </div>
-                        <div class="voice-description">${voice.description}</div>
+                        <button class="voice-preview-btn" onclick="event.stopPropagation(); playVoiceSample('${voice.id}', this)">
+                            ▶ Preview
+                        </button>
                     </div>
                 `;
             });
@@ -6937,16 +7001,14 @@
 
             // Pagination controls
             voiceCardsHTML += `
-                <div class="voice-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 0 4px;">
-                    <button class="voice-nav-btn" onclick="prevVoicePage()" ${currentVoicePage === 0 ? 'disabled' : ''}
-                        style="background: rgba(0,206,209,0.2); border: 1px solid rgba(0,206,209,0.3); border-radius: 6px; padding: 8px 16px; color: #00CED1; cursor: pointer; font-size: 13px; ${currentVoicePage === 0 ? 'opacity: 0.3; cursor: not-allowed;' : ''}">
-                        ← Previous
+                <div class="voice-pagination">
+                    <button class="voice-nav-btn" onclick="prevVoicePage()" ${currentVoicePage === 0 ? 'disabled' : ''}>
+                        ← Prev
                     </button>
-                    <span style="color: #a1a1aa; font-size: 12px;">
-                        Page ${currentVoicePage + 1} of ${totalPages} (${VOICE_OPTIONS.length} voices)
+                    <span style="color: #71717a; font-size: 11px;">
+                        ${currentVoicePage + 1} / ${totalPages} · ${VOICE_OPTIONS.length} voices
                     </span>
-                    <button class="voice-nav-btn" onclick="nextVoicePage()" ${currentVoicePage >= totalPages - 1 ? 'disabled' : ''}
-                        style="background: rgba(0,206,209,0.2); border: 1px solid rgba(0,206,209,0.3); border-radius: 6px; padding: 8px 16px; color: #00CED1; cursor: pointer; font-size: 13px; ${currentVoicePage >= totalPages - 1 ? 'opacity: 0.3; cursor: not-allowed;' : ''}">
+                    <button class="voice-nav-btn" onclick="nextVoicePage()" ${currentVoicePage >= totalPages - 1 ? 'disabled' : ''}>
                         Next →
                     </button>
                 </div>
@@ -6956,7 +7018,7 @@
             const selectedVoiceObj = VOICE_OPTIONS.find(v => v.id === selectedVoice);
             voiceCardsHTML += `
                 <button class="voice-confirm-btn" id="voiceConfirmBtn" onclick="confirmVoiceSelection()" ${!selectedVoice ? 'disabled' : ''}>
-                    ${selectedVoice ? `Continue with ${selectedVoiceObj?.name}` : 'Select a voice to continue'}
+                    ${selectedVoice ? `✓ Continue with ${selectedVoiceObj?.name}` : 'Select a voice to continue'}
                 </button>
             `;
 
@@ -6964,15 +7026,15 @@
             const existingSelector = document.querySelector('.voice-selector-container');
             if (existingSelector) {
                 existingSelector.innerHTML = `
-                    <div style="color: #00CED1; font-weight: bold; margin-bottom: 8px;">🎙️ SELECT VOICEOVER VOICE</div>
-                    <div style="color: #71717a; font-size: 12px; margin-bottom: 12px;">Choose the voice that best represents your brand</div>
+                    <div style="color: #00CED1; font-weight: 600; font-size: 13px; margin-bottom: 6px;">🎙️ SELECT VOICE</div>
+                    <div style="color: #52525b; font-size: 11px; margin-bottom: 10px;">Choose your commercial's voiceover</div>
                     ${voiceCardsHTML}
                 `;
             } else {
                 appendNIMessage('ai', `
                     <div class="voice-selector-container">
-                        <div style="color: #00CED1; font-weight: bold; margin-bottom: 8px;">🎙️ SELECT VOICEOVER VOICE</div>
-                        <div style="color: #71717a; font-size: 12px; margin-bottom: 12px;">Choose the voice that best represents your brand</div>
+                        <div style="color: #00CED1; font-weight: 600; font-size: 13px; margin-bottom: 6px;">🎙️ SELECT VOICE</div>
+                        <div style="color: #52525b; font-size: 11px; margin-bottom: 10px;">Choose your commercial's voiceover</div>
                         ${voiceCardsHTML}
                     </div>
                 `);
@@ -7007,14 +7069,16 @@
                     const isSelected = selectedVoice === voice.id;
                     voiceCardsHTML += `
                         <div class="voice-card ${isSelected ? 'selected' : ''}" data-voice-id="${voice.id}" onclick="selectVoice('${voice.id}')">
-                            <div class="voice-card-header">
-                                <span class="voice-name">${voice.name}</span>
-                                <span class="voice-category">${voice.category}</span>
-                                <button class="voice-preview-btn" onclick="event.stopPropagation(); playVoiceSample('${voice.id}', this)">
-                                    ▶ Preview
-                                </button>
+                            <div class="voice-card-info">
+                                <div class="voice-card-header">
+                                    <span class="voice-name">${voice.name}</span>
+                                    <span class="voice-category">${voice.category}</span>
+                                </div>
+                                <div class="voice-description">${voice.description}</div>
                             </div>
-                            <div class="voice-description">${voice.description}</div>
+                            <button class="voice-preview-btn" onclick="event.stopPropagation(); playVoiceSample('${voice.id}', this)">
+                                ▶ Preview
+                            </button>
                         </div>
                     `;
                 });
@@ -7022,16 +7086,14 @@
 
                 // Pagination
                 voiceCardsHTML += `
-                    <div class="voice-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 0 4px;">
-                        <button class="voice-nav-btn" onclick="prevVoicePage()" ${currentVoicePage === 0 ? 'disabled' : ''}
-                            style="background: rgba(0,206,209,0.2); border: 1px solid rgba(0,206,209,0.3); border-radius: 6px; padding: 8px 16px; color: #00CED1; cursor: pointer; font-size: 13px; ${currentVoicePage === 0 ? 'opacity: 0.3; cursor: not-allowed;' : ''}">
-                            ← Previous
+                    <div class="voice-pagination">
+                        <button class="voice-nav-btn" onclick="prevVoicePage()" ${currentVoicePage === 0 ? 'disabled' : ''}>
+                            ← Prev
                         </button>
-                        <span style="color: #a1a1aa; font-size: 12px;">
-                            Page ${currentVoicePage + 1} of ${totalPages} (${VOICE_OPTIONS.length} voices)
+                        <span style="color: #71717a; font-size: 11px;">
+                            ${currentVoicePage + 1} / ${totalPages} · ${VOICE_OPTIONS.length} voices
                         </span>
-                        <button class="voice-nav-btn" onclick="nextVoicePage()" ${currentVoicePage >= totalPages - 1 ? 'disabled' : ''}
-                            style="background: rgba(0,206,209,0.2); border: 1px solid rgba(0,206,209,0.3); border-radius: 6px; padding: 8px 16px; color: #00CED1; cursor: pointer; font-size: 13px; ${currentVoicePage >= totalPages - 1 ? 'opacity: 0.3; cursor: not-allowed;' : ''}">
+                        <button class="voice-nav-btn" onclick="nextVoicePage()" ${currentVoicePage >= totalPages - 1 ? 'disabled' : ''}>
                             Next →
                         </button>
                     </div>
@@ -7041,13 +7103,13 @@
                 const selectedVoiceObj = VOICE_OPTIONS.find(v => v.id === selectedVoice);
                 voiceCardsHTML += `
                     <button class="voice-confirm-btn" id="voiceConfirmBtn" onclick="confirmVoiceSelection()" ${!selectedVoice ? 'disabled' : ''}>
-                        ${selectedVoice ? `Continue with ${selectedVoiceObj?.name}` : 'Select a voice to continue'}
+                        ${selectedVoice ? `✓ Continue with ${selectedVoiceObj?.name}` : 'Select a voice to continue'}
                     </button>
                 `;
 
                 container.innerHTML = `
-                    <div style="color: #00CED1; font-weight: bold; margin-bottom: 8px;">🎙️ SELECT VOICEOVER VOICE</div>
-                    <div style="color: #71717a; font-size: 12px; margin-bottom: 12px;">Choose the voice that best represents your brand</div>
+                    <div style="color: #00CED1; font-weight: 600; font-size: 13px; margin-bottom: 6px;">🎙️ SELECT VOICE</div>
+                    <div style="color: #52525b; font-size: 11px; margin-bottom: 10px;">Choose your commercial's voiceover</div>
                     ${voiceCardsHTML}
                 `;
             }
@@ -7061,7 +7123,7 @@
                 currentAudio = null;
                 document.querySelectorAll('.voice-preview-btn.playing').forEach(btn => {
                     btn.classList.remove('playing');
-                    btn.innerHTML = '<span class="preview-icon">▶</span> Preview';
+                    btn.textContent = '▶ Preview';
                 });
             }
 
@@ -7069,7 +7131,7 @@
             if (!voice) return;
 
             btnElement.classList.add('playing');
-            btnElement.innerHTML = '<span class="preview-icon">⏳</span> Loading...';
+            btnElement.textContent = '⏳ Loading...';
 
             try {
                 // Call GENESIS API for voice preview
@@ -7094,21 +7156,21 @@
                 const utterance = new SpeechSynthesisUtterance(`Hi, I'm ${voice.name}. ${voice.description}.`);
                 speechSynthesis.speak(utterance);
                 btnElement.classList.remove('playing');
-                btnElement.innerHTML = '<span class="preview-icon">▶</span> Preview';
+                btnElement.textContent = '▶ Preview';
                 return;
             }
 
-            btnElement.innerHTML = '<span class="preview-icon">⏸</span> Playing...';
+            btnElement.textContent = '⏸ Playing...';
 
             currentAudio.onended = () => {
                 btnElement.classList.remove('playing');
-                btnElement.innerHTML = '<span class="preview-icon">▶</span> Preview';
+                btnElement.textContent = '▶ Preview';
                 currentAudio = null;
             };
 
             currentAudio.onerror = () => {
                 btnElement.classList.remove('playing');
-                btnElement.innerHTML = '<span class="preview-icon">▶</span> Preview';
+                btnElement.textContent = '▶ Preview';
             };
 
             await currentAudio.play();
@@ -7135,15 +7197,32 @@
 
         // Confirm voice selection and start production
         function confirmVoiceSelection() {
-            if (!selectedVoice || !pendingBrief || !pendingSessionId) return;
+            if (!selectedVoice) {
+                console.error('No voice selected');
+                return;
+            }
+
+            // Re-fetch brief from window in case it changed
+            const brief = window.currentProductionBrief;
+            const sessionId = brief?.session_id;
+
+            if (!brief || !sessionId) {
+                console.error('Brief or session ID missing');
+                appendNIMessage('ai', `<div style="color: #ef4444;">⚠️ Error: Session expired. Please start over.</div>`);
+                return;
+            }
 
             const voice = VOICE_OPTIONS.find(v => v.id === selectedVoice);
-            pendingBrief.voice_id = selectedVoice;
-            pendingBrief.voice_name = voice?.name || 'Adam';
 
-            appendNIMessage('ai', `✅ <strong>Voice Selected: ${voice?.name}</strong><br>` +
-                `<span style="color: #a1a1aa;">${voice?.category} - ${voice?.description}</span><br><br>` +
-                `<span style="color: #00CED1;">🎬 Starting 24-agent production pipeline...</span>`);
+            // Add voice to brief
+            brief.voice_id = selectedVoice;
+            brief.voice_name = voice?.name || 'Adam';
+
+            console.log('Starting production with brief:', brief);
+
+            appendNIMessage('ai', `✅ <strong>Voice: ${voice?.name}</strong><br>` +
+                `<span style="color: #71717a; font-size: 12px;">${voice?.category}</span><br><br>` +
+                `<span style="color: #00CED1;">🎬 Starting production...</span>`);
 
             if (currentAudio) {
                 currentAudio.pause();
@@ -7152,8 +7231,15 @@
 
             setTimeout(() => {
                 closeNeuralInterface();
-                ProductionManager.start(pendingSessionId, pendingBrief);
 
+                // Ensure ProductionManager exists and start
+                if (typeof ProductionManager !== 'undefined' && ProductionManager.start) {
+                    ProductionManager.start(sessionId, brief);
+                } else {
+                    console.error('ProductionManager not found');
+                }
+
+                // Clear state
                 selectedVoice = null;
                 pendingBrief = null;
                 pendingSessionId = null;
