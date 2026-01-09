@@ -513,15 +513,15 @@ const GenesisSession = {
      */
     async _registerWithBackend(session) {
         try {
-            const response = await fetch('/api/genesis/session', {
+            const response = await fetch('https://barrios-genesis-flawless.onrender.com/api/genesis/session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     session_id: session.id,
                     engine: session.activeEngine
                 })
             });
-            
+
             if (response.ok) {
                 const data = await response.json();
                 console.log('[GenesisSession v3] Registered with backend:', data);
