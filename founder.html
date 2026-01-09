@@ -1,998 +1,547 @@
 <!DOCTYPE html>
-<html lang="en" class="dark overflow-x-hidden"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gary Barrios - Founder | Barrios A2I</title>
-<meta name="description" content="Gary Barrios - Founder & AI Systems Architect at Barrios A2I. From pipe welding to production-grade AI systems. Building distributed multi-agent orchestration platforms.">
-<meta name="keywords" content="Gary Barrios, AI Systems Architect, Barrios A2I founder, multi-agent systems, LangGraph, RAG agents">
-<meta name="author" content="Barrios A2I">
-<meta property="og:title" content="Gary Barrios - Founder | Barrios A2I">
-<meta property="og:description" content="From pipe welding to production-grade AI systems. Building distributed multi-agent orchestration platforms that enterprises actually ship.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://barrios-landing.vercel.app/founder">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Gary Barrios - Founder | Barrios A2I">
-<meta name="twitter:description" content="AI Systems Architect building distributed multi-agent orchestration platforms.">
-<!-- Fonts: Inter, Playfair Display, JetBrains Mono -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
-<!-- Tailwind CSS (Local Build) -->
-<link rel="stylesheet" href="/dist/output.css">
-<!-- Iconify -->
-<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
-
-<!-- Founder Page Animations -->
-<style>
-/* Nuclear mobile overflow prevention */
-html, body {
-  overflow-x: hidden !important;
-  max-width: 100vw !important;
-}
-
-@keyframes breathingGlow {
-  0%, 100% {
-    filter: drop-shadow(0 0 15px rgba(0, 206, 209, 0.4));
-  }
-  50% {
-    filter: drop-shadow(0 0 30px rgba(0, 206, 209, 0.7));
-  }
-}
-
-@keyframes borderGlow {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.8; }
-}
-
-@keyframes pulseIndicator {
-  0%, 100% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.3); opacity: 1; }
-}
-
-@keyframes dash {
-  to {
-    stroke-dashoffset: -100;
-  }
-}
-
-.logo-breathing {
-  animation: breathingGlow 3s ease-in-out infinite;
-}
-
-@media (max-width: 768px) {
-  .logo-breathing {
-    animation: none !important;
-    filter: none !important;
-  }
-  .volumetric-glow {
-    filter: none !important;
-  }
-}
-
-.header-glow-border {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 206, 209, 0.5), transparent);
-  animation: borderGlow 4s ease-in-out infinite;
-}
-
-.status-pulse {
-  animation: pulseIndicator 2s ease-in-out infinite;
-}
-
-/* Founder page specific styles */
-.hero-name-bg {
-  font-size: clamp(15vw, 20vw, 25vw);
-  color: rgba(39, 39, 42, 0.5);
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-}
-
-.metric-card:hover {
-  background: #09090b;
-}
-
-.arch-card:hover .arch-icon {
-  color: #00CED1;
-}
-
-.tech-card {
-  transition: all 0.5s ease;
-}
-
-.tech-card:hover {
-  background: #18181b;
-}
-
-.tech-card.core {
-  border-color: rgba(0, 206, 209, 0.3);
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #000;
-}
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #444;
-}
-
-/* Selection */
-::selection {
-  background: rgba(6, 182, 212, 0.3);
-  color: white;
-}
-</style>
-</head>
-
-<body class="bg-black text-white font-sans antialiased min-h-screen w-full overflow-x-clip flex flex-col selection:bg-primary/20" id="main-body">
-
-<!-- Background Effects -->
-<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[90] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-
-<!-- ========== GLOBAL HEADER (LEGENDARY REMASTER + MOBILE NAV) ========== -->
-<header id="global-header" class="fixed top-0 left-0 right-0 z-[100] px-4 md:px-6 py-3 md:py-6 transition-all duration-300">
-    <!-- Glassmorphism Background -->
-    <div class="absolute inset-0 bg-transparent backdrop-blur-none transition-all duration-300" id="header-bg"></div>
-    <!-- LEGENDARY Animated Border Glow -->
-    <div class="header-glow-border"></div>
-
-    <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
-        <!-- Brand Section with Status Indicator -->
-        <a href="/" class="flex items-center gap-4 md:gap-5 group">
-            <div class="relative">
-                <!-- Shard Logo with LEGENDARY Breathing Glow -->
-                <div class="relative w-16 h-16 md:w-24 md:h-24 flex items-center justify-center">
-                    <div class="hidden md:block absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
-                    <img
-                        src="/brand/barrios-a2i-shard-logo.png?v=20260107"
-                        alt="Barrios A2I"
-                        class="relative w-14 h-14 md:w-20 md:h-20 object-contain transition-all duration-300"
-                        style="-webkit-filter: none !important; filter: none !important;"
-                    >
-                </div>
-                <!-- Active Status Dot with Pulse -->
-                <div class="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-2.5 h-2.5 md:w-3 md:h-3 bg-brand-gold rounded-full status-pulse"></div>
-            </div>
-            <div class="hidden md:flex flex-col">
-                <a href="/status" class="text-brand-teal font-mono text-xs tracking-[0.2em] leading-none mb-1 hover:text-green-500 transition-colors">SYSTEM_CONNECTED</a>
-                <span class="text-white font-black tracking-tighter text-2xl leading-none">
-                    BARRIOS <span class="text-brand-gold">A2I</span>
-                </span>
-            </div>
-        </a>
-
-        <!-- Center Navigation with Gold Trace (Desktop) - LEGENDARY REMASTER -->
-        <div class="hidden lg:flex items-center gap-2">
-            <a href="/#pricing" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">PRICING</span>
-                <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-            </a>
-            <a href="/nexus-personal" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                <span class="mx-2 text-[11px] font-mono tracking-widest text-white transition-colors flex items-center gap-2">
-                    NEXUS
-                    <span class="w-1.5 h-1.5 bg-brand-teal rounded-full shadow-[0_0_8px_#00CED1] status-pulse"></span>
-                </span>
-                <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-            </a>
-            <a href="/creative-director" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">COMMERCIAL_LAB</span>
-                <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-            </a>
-            <a href="/founder" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                <span class="bracket text-brand-teal font-mono text-sm">[</span>
-                <span class="mx-2 text-[11px] font-mono tracking-widest text-brand-teal transition-colors">FOUNDER</span>
-                <span class="bracket text-brand-teal font-mono text-sm">]</span>
-            </a>
-            <a href="/status" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">STATUS</span>
-                <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-            </a>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex items-center gap-3 md:gap-6">
-            <a href="/login" class="hidden sm:block text-[10px] font-mono text-gray-500 hover:text-brand-gold transition-colors tracking-widest">
-                AUTH_LOGIN
-            </a>
-
-            <!-- Desktop CTA -->
-            <a href="/#pricing" class="hidden md:flex group relative px-5 py-2 bg-white/5 border border-brand-teal/30 backdrop-blur-md overflow-hidden hover:border-brand-gold transition-all duration-300">
-                <div class="absolute inset-0 bg-brand-teal/5 group-hover:bg-brand-gold/10 transition-colors"></div>
-                <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-teal to-transparent"></div>
-                <div class="relative flex items-center gap-3">
-                    <iconify-icon icon="lucide:terminal" width="14" class="text-brand-teal group-hover:text-brand-gold transition-colors"></iconify-icon>
-                    <span class="text-[11px] font-mono font-bold text-white tracking-[0.15em]">INITIALIZE_LOGIC</span>
-                </div>
-                <div class="absolute top-0 left-0 w-1 h-1 border-t border-l border-brand-teal/50 group-hover:border-brand-gold transition-colors"></div>
-                <div class="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-brand-teal/50 group-hover:border-brand-gold transition-colors"></div>
-            </a>
-
-            <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-toggle" class="lg:hidden relative w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 bg-white/5 backdrop-blur-md transition-all hover:border-brand-teal/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal/50" aria-label="Toggle navigation menu" aria-expanded="false">
-                <div class="relative w-5 h-4 flex flex-col justify-between">
-                    <span id="menu-line-1" class="block w-full h-0.5 bg-brand-teal transition-all duration-300 origin-center"></span>
-                    <span id="menu-line-2" class="block w-full h-0.5 bg-brand-teal transition-all duration-300"></span>
-                    <span id="menu-line-3" class="block w-full h-0.5 bg-brand-teal transition-all duration-300 origin-center"></span>
-                </div>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Mobile Navigation Drawer -->
-    <div id="mobile-nav-drawer" class="lg:hidden absolute left-0 right-0 top-full overflow-hidden transition-all duration-300 ease-out" style="max-height: 0; opacity: 0;">
-        <div class="mx-4 mt-2 rounded-2xl border border-white/10 bg-black/95 backdrop-blur-xl shadow-2xl overflow-hidden">
-            <nav class="p-4 space-y-1">
-                <a href="/#pricing" class="mobile-nav-link group flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5">
-                    <iconify-icon icon="lucide:rocket" width="16" class="text-brand-teal/60 group-hover:text-brand-teal transition-colors"></iconify-icon>
-                    <span class="text-xs font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">PRICING</span>
-                </a>
-                <div class="my-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-                <a href="/creative-director" class="mobile-nav-link group relative flex items-center gap-3 px-4 py-4 rounded-xl transition-all bg-brand-teal/5 border border-brand-teal/20 hover:bg-brand-teal/10 hover:border-brand-teal/40">
-                    <div class="relative flex items-center gap-3">
-                        <iconify-icon icon="lucide:sparkles" width="18" class="text-brand-teal transition-colors"></iconify-icon>
-                        <div class="flex flex-col">
-                            <span class="text-xs font-mono tracking-widest text-white font-bold">COMMERCIAL_LAB</span>
-                            <span class="text-[9px] font-mono text-brand-teal/70 tracking-wider">AI-POWERED AD STUDIO</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="/nexus-personal" class="mobile-nav-link group flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5">
-                    <iconify-icon icon="lucide:brain" width="16" class="text-brand-teal/60 group-hover:text-brand-teal transition-colors"></iconify-icon>
-                    <span class="text-xs font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors flex items-center gap-2">
-                        NEXUS
-                        <span class="w-1.5 h-1.5 bg-brand-teal rounded-full shadow-[0_0_6px_#00CED1]"></span>
-                    </span>
-                </a>
-                <!-- FOUNDER Link - Active -->
-                <a href="/founder" class="mobile-nav-link group relative flex items-center gap-3 px-4 py-4 rounded-xl transition-all bg-brand-teal/10 border border-brand-teal/40">
-                    <div class="relative flex items-center gap-3">
-                        <iconify-icon icon="lucide:user" width="18" class="text-brand-teal transition-colors"></iconify-icon>
-                        <div class="flex flex-col">
-                            <span class="text-xs font-mono tracking-widest text-brand-teal font-bold">FOUNDER</span>
-                            <span class="text-[9px] font-mono text-brand-teal/70 tracking-wider">GARY BARRIOS</span>
-                        </div>
-                    </div>
-                </a>
-                <a href="/status" class="mobile-nav-link group flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5">
-                    <iconify-icon icon="lucide:activity" width="16" class="text-green-500/60 group-hover:text-green-500 transition-colors"></iconify-icon>
-                    <span class="text-xs font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors flex items-center gap-2">
-                        SYSTEM_STATUS
-                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_6px_#22C55E]"></span>
-                    </span>
-                </a>
-            </nav>
-            <div class="p-4 pt-0">
-                <a href="/#pricing" class="group flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-teal/10 border border-brand-teal/30 transition-all hover:bg-brand-teal/20 hover:border-brand-teal/50">
-                    <iconify-icon icon="lucide:terminal" width="14" class="text-brand-teal"></iconify-icon>
-                    <span class="text-[11px] font-mono font-bold text-white tracking-[0.15em]">INITIALIZE_LOGIC</span>
-                </a>
-            </div>
-        </div>
-    </div>
-</header>
-
-<!-- Header Scroll Behavior + Mobile Menu Script -->
-<script>
-(function() {
-    const header = document.getElementById('global-header');
-    const headerBg = document.getElementById('header-bg');
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
-    const menuLine1 = document.getElementById('menu-line-1');
-    const menuLine2 = document.getElementById('menu-line-2');
-    const menuLine3 = document.getElementById('menu-line-3');
-
-    let isMenuOpen = false;
-
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.scrollY;
-        const isMobile = window.innerWidth < 768;
-
-        if (currentScroll > 10) {
-            header.classList.remove('py-3', 'md:py-6');
-            header.classList.add(isMobile ? 'py-2' : 'py-3');
-            headerBg.classList.remove('bg-transparent', 'backdrop-blur-none');
-            headerBg.classList.add('bg-black/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
-        } else {
-            header.classList.remove('py-2', 'py-3');
-            header.classList.add('py-3', 'md:py-6');
-            headerBg.classList.remove('bg-black/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
-            headerBg.classList.add('bg-transparent', 'backdrop-blur-none');
-        }
-    });
-
-    function toggleMenu() {
-        isMenuOpen = !isMenuOpen;
-        mobileMenuToggle.setAttribute('aria-expanded', isMenuOpen);
-
-        if (isMenuOpen) {
-            mobileNavDrawer.style.maxHeight = mobileNavDrawer.scrollHeight + 'px';
-            mobileNavDrawer.style.opacity = '1';
-            menuLine1.style.transform = 'translateY(7px) rotate(45deg)';
-            menuLine2.style.opacity = '0';
-            menuLine3.style.transform = 'translateY(-7px) rotate(-45deg)';
-        } else {
-            mobileNavDrawer.style.maxHeight = '0';
-            mobileNavDrawer.style.opacity = '0';
-            menuLine1.style.transform = '';
-            menuLine2.style.opacity = '1';
-            menuLine3.style.transform = '';
-        }
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gary Barrios — Founder | Barrios A2I</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              900: '#0a0a1e',
+              800: '#0f0f2a',
+            },
+            cyan: {
+              400: '#00bfff',
+              500: '#00a8e8',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
     }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #0a0a1e;
+      color: #94a3b8;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: rgba(0, 191, 255, 0.3); color: white; }
+    
+    /* Animations */
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px currentColor; }
+      50% { opacity: 0.6; box-shadow: 0 0 4px currentColor; }
+    }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    
+    @keyframes reveal-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; }
+    .reveal.active { animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    
+    /* Scrollbar hide */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Glass effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Card hover */
+    .card-hover {
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+                  box-shadow 0.5s ease,
+                  border-color 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 191, 255, 0.3);
+      box-shadow: 0 0 50px rgba(0, 191, 255, 0.15);
+    }
+    
+    /* Portrait effect */
+    .portrait-img {
+      filter: grayscale(100%);
+      transition: filter 0.7s ease, transform 0.7s ease;
+    }
+    .portrait-container:hover .portrait-img {
+      filter: grayscale(0%);
+      transform: scale(1.05);
+    }
+    
+    /* CTA Button */
+    .btn-primary {
+      background: #00bfff;
+      color: #0a0a1e;
+      box-shadow: 0 4px 0 0 #0086b3, 0 0 25px rgba(0, 191, 255, 0.3);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.2s ease;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 4px 0 0 #0086b3, 0 0 35px rgba(0, 191, 255, 0.5);
+    }
+    .btn-primary:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 0 #0086b3;
+    }
+    
+    /* Shimmer line */
+    .shimmer-line {
+      height: 1px;
+      width: 0;
+      background: linear-gradient(90deg, rgba(0, 191, 255, 0.5), transparent);
+      transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-hover:hover .shimmer-line { width: 100%; }
+    
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; }
+      .reveal.active { animation: none; }
+      .animate-pulse-glow { animation: none; }
+      .card-hover:hover { transform: none; }
+      .portrait-img { filter: grayscale(0%); }
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
 
-    mobileMenuToggle.addEventListener('click', toggleMenu);
-})();
-</script>
-
-<main class="flex-1 pt-24 md:pt-32">
-    <!-- ========== HERO SECTION ========== -->
-    <section class="relative min-h-[80vh] flex flex-col justify-end pb-16 md:pb-24">
-        <!-- Background Elements -->
-        <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#00CED1]/5 rounded-full blur-[120px]"></div>
-            <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#FFD700]/5 rounded-full blur-[100px]"></div>
-
-            <!-- Large Background Name -->
-            <div class="absolute bottom-20 left-0 right-0 flex justify-center pointer-events-none select-none">
-                <span class="hero-name-bg">GARY</span>
-            </div>
+  <!-- ================================================================== -->
+  <!-- HEADER - Matching barrios-landing.vercel.app -->
+  <!-- ================================================================== -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="relative w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 border border-cyan-400/30 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
         </div>
-
-        <div class="relative max-w-7xl mx-auto px-6 lg:px-8 w-full">
-            <div class="grid lg:grid-cols-2 gap-16 items-end">
-                <!-- Left Content -->
-                <div class="space-y-8">
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span class="text-xs font-mono text-zinc-400 tracking-widest">AVAILABLE FOR PROJECTS</span>
-                        </div>
-                        <h1 class="text-5xl md:text-7xl font-bold leading-[0.9] tracking-tight">
-                            <span class="text-white">Gary Barrios</span>
-                        </h1>
-                        <p class="text-xl md:text-2xl font-mono text-[#00CED1]">
-                            AI Systems Architect
-                        </p>
-                    </div>
-
-                    <p class="text-lg text-zinc-400 leading-relaxed max-w-xl">
-                        From pipe welding to production-grade AI systems. I architect distributed
-                        multi-agent orchestration platforms that enterprises actually ship in production.
-                        Event-driven, fault-tolerant, observable by design.
-                    </p>
-
-                    <a href="/contact" class="group inline-flex items-center gap-3 text-white text-lg hover:gap-5 transition-all duration-300">
-                        <span class="border-b border-[#00CED1]/50 pb-1">Start a conversation</span>
-                        <iconify-icon icon="lucide:arrow-right" width="20" class="text-[#00CED1]"></iconify-icon>
-                    </a>
-                </div>
-
-                <!-- Right Content - Social Links -->
-                <div class="flex gap-16 md:gap-24 justify-start lg:justify-end">
-                    <div class="space-y-4">
-                        <h4 class="text-xs font-mono text-zinc-500 tracking-widest">SOCIALS</h4>
-                        <div class="space-y-3">
-                            <a href="https://twitter.com/barriosa2i" target="_blank" class="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                <span class="text-sm">Twitter / X</span>
-                            </a>
-                            <a href="https://github.com/barriosa2i" target="_blank" class="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                                <span class="text-sm">GitHub</span>
-                            </a>
-                            <a href="https://linkedin.com/company/barriosa2i" target="_blank" class="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                                <span class="text-sm">LinkedIn</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <h4 class="text-xs font-mono text-zinc-500 tracking-widest">SITEMAP</h4>
-                        <div class="space-y-3">
-                            <a href="/" class="block text-sm text-zinc-400 hover:text-white transition-colors">Home</a>
-                            <a href="/creative-director" class="block text-sm text-zinc-400 hover:text-white transition-colors">Commercial Lab</a>
-                            <a href="/nexus-personal" class="block text-sm text-zinc-400 hover:text-white transition-colors">NEXUS</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="flex flex-col">
+          <span class="text-xs text-cyan-400 font-mono tracking-wider">SYSTEM_CONNECTED</span>
+          <span class="font-bold text-white tracking-tight">BARRIOS A2I</span>
         </div>
-    </section>
+      </a>
 
-    <!-- ========== METRICS SECTION ========== -->
-    <section class="py-16 md:py-24 border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid md:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden">
-                <!-- Metric 1 -->
-                <div class="metric-card bg-black p-8 lg:p-12 transition-colors duration-500">
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs font-mono text-zinc-600">01</span>
-                            <span class="text-xs font-mono text-zinc-500 tracking-widest">— LATENCY</span>
-                        </div>
-                        <div class="flex items-baseline gap-1">
-                            <span class="text-6xl lg:text-7xl font-bold text-white tracking-tighter">&lt;50</span>
-                            <span class="text-2xl lg:text-3xl text-zinc-500 font-light">ms</span>
-                        </div>
-                        <p class="text-sm text-zinc-500 leading-relaxed max-w-xs">
-                            P95 response time across distributed agent networks. Every orchestration call feels instant.
-                        </p>
-                    </div>
-                </div>
-                <!-- Metric 2 -->
-                <div class="metric-card bg-black p-8 lg:p-12 transition-colors duration-500">
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs font-mono text-zinc-600">02</span>
-                            <span class="text-xs font-mono text-zinc-500 tracking-widest">— UPTIME</span>
-                        </div>
-                        <div class="flex items-baseline gap-1">
-                            <span class="text-6xl lg:text-7xl font-bold text-white tracking-tighter">99.9</span>
-                            <span class="text-2xl lg:text-3xl text-zinc-500 font-light">%</span>
-                        </div>
-                        <p class="text-sm text-zinc-500 leading-relaxed max-w-xs">
-                            Production SLA with circuit breakers and graceful degradation. Zero unplanned downtime.
-                        </p>
-                    </div>
-                </div>
-                <!-- Metric 3 -->
-                <div class="metric-card bg-black p-8 lg:p-12 transition-colors duration-500">
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs font-mono text-zinc-600">03</span>
-                            <span class="text-xs font-mono text-zinc-500 tracking-widest">— THROUGHPUT</span>
-                        </div>
-                        <div class="flex items-baseline gap-1">
-                            <span class="text-6xl lg:text-7xl font-bold text-white tracking-tighter">10K+</span>
-                            <span class="text-2xl lg:text-3xl text-zinc-500 font-light">/sec</span>
-                        </div>
-                        <p class="text-sm text-zinc-500 leading-relaxed max-w-xs">
-                            Agents processed per second with horizontal scaling and worker pool orchestration.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+      <!-- Desktop Nav -->
+      <nav class="hidden lg:flex items-center gap-1">
+        <a href="/#pricing" class="px-4 py-2 text-xs font-mono tracking-wider text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all">[ PRICING ]</a>
+        <a href="/nexus-personal" class="px-4 py-2 text-xs font-mono tracking-wider text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all">[ NEXUS ]</a>
+        <a href="/creative-director" class="px-4 py-2 text-xs font-mono tracking-wider text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all">[ COMMERCIAL_LAB ]</a>
+        <a href="/founder" class="px-4 py-2 text-xs font-mono tracking-wider text-cyan-400 bg-cyan-400/10 border border-cyan-400/30 rounded-lg">[ FOUNDER ]</a>
+        <a href="/command-center" class="px-4 py-2 text-xs font-mono tracking-wider text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all">[ COMMAND ]</a>
+        <a href="/status" class="px-4 py-2 text-xs font-mono tracking-wider text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all">[ STATUS ]</a>
+      </nav>
 
-    <!-- ========== ARCHITECTURE SECTION ========== -->
-    <section class="py-16 md:py-24">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <!-- Header -->
-            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
-                <h2 class="text-4xl lg:text-6xl font-bold text-white tracking-tight">
-                    System Architecture
-                </h2>
-                <div class="flex items-center gap-4 text-xs font-mono text-zinc-500 tracking-widest">
-                    <span>// STRUCTURE</span>
-                    <span>// PATTERNS</span>
-                    <span>// FLOW</span>
-                </div>
-            </div>
+      <!-- Desktop CTAs -->
+      <div class="hidden lg:flex items-center gap-3">
+        <a href="/login" class="px-4 py-2 text-xs font-mono text-slate-400 hover:text-white transition-colors">AUTH_LOGIN</a>
+        <a href="/#pricing" class="px-6 py-3 bg-cyan-400 text-navy-900 font-bold text-xs tracking-wider rounded-lg hover:bg-cyan-300 transition-all shadow-lg shadow-cyan-400/25">INITIALIZE_LOGIC</a>
+      </div>
 
-            <!-- Grid -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 rounded-2xl overflow-hidden">
-                <!-- Card 1 -->
-                <div class="arch-card bg-black p-8 transition-all duration-500 hover:bg-zinc-950 relative">
-                    <div class="flex items-start justify-between mb-16">
-                        <span class="text-xs font-mono text-zinc-600">01</span>
-                        <iconify-icon icon="lucide:layers" width="20" class="arch-icon text-zinc-600 transition-colors"></iconify-icon>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold text-white">Agent Orchestration</h3>
-                        <p class="text-sm text-zinc-500 leading-relaxed">
-                            Distributed multi-agent systems with state machines and workflow DAGs for complex task coordination.
-                        </p>
-                    </div>
-                </div>
-                <!-- Card 2 -->
-                <div class="arch-card bg-black p-8 transition-all duration-500 hover:bg-zinc-950 relative">
-                    <div class="flex items-start justify-between mb-16">
-                        <span class="text-xs font-mono text-zinc-600">02</span>
-                        <iconify-icon icon="lucide:component" width="20" class="arch-icon text-zinc-600 transition-colors"></iconify-icon>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold text-white">Event-Driven Architecture</h3>
-                        <p class="text-sm text-zinc-500 leading-relaxed">
-                            Message queues with retry mechanisms, circuit breakers, and graceful degradation patterns.
-                        </p>
-                    </div>
-                </div>
-                <!-- Card 3 -->
-                <div class="arch-card bg-black p-8 transition-all duration-500 hover:bg-zinc-950 relative">
-                    <div class="flex items-start justify-between mb-16">
-                        <span class="text-xs font-mono text-zinc-600">03</span>
-                        <iconify-icon icon="lucide:shield" width="20" class="arch-icon text-zinc-600 transition-colors"></iconify-icon>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold text-white">Fault Tolerance</h3>
-                        <p class="text-sm text-zinc-500 leading-relaxed">
-                            Dead letter queues, backpressure handling, and automatic recovery from transient failures.
-                        </p>
-                    </div>
-                </div>
-                <!-- Card 4 -->
-                <div class="arch-card bg-black p-8 transition-all duration-500 hover:bg-zinc-950 relative">
-                    <div class="flex items-start justify-between mb-16">
-                        <span class="text-xs font-mono text-zinc-600">04</span>
-                        <iconify-icon icon="lucide:refresh-cw" width="20" class="arch-icon text-zinc-600 transition-colors"></iconify-icon>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold text-white">Real-Time Sync</h3>
-                        <p class="text-sm text-zinc-500 leading-relaxed">
-                            Optimistic updates with Redis pub/sub ensuring perceptible zero-latency across distributed nodes.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== PHILOSOPHY SECTION ========== -->
-    <section class="py-16 md:py-24 border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-                <!-- Left - Title -->
-                <div>
-                    <h2 class="text-4xl lg:text-6xl font-bold text-white tracking-tight">
-                        Modern Stack
-                    </h2>
-                </div>
-
-                <!-- Right - Philosophy Text -->
-                <div class="space-y-8">
-                    <p class="text-lg text-zinc-400 leading-relaxed font-mono">
-                        We believe that
-                        <span class="px-2 py-1 bg-white text-black rounded">perfection</span>
-                        is achieved not when there is nothing more to add, but when there is
-                        <span class="px-2 py-1 bg-white text-black rounded">nothing left to take away</span>.
-                    </p>
-
-                    <p class="text-lg text-zinc-400 leading-relaxed font-mono">
-                        Every line of code is a liability until it proves itself an
-                        <span class="px-2 py-1 bg-white text-black rounded">asset</span>.
-                        We build systems that are robust by definition, not by
-                        <span class="px-2 py-1 bg-white text-black rounded">exception</span>.
-                    </p>
-
-                    <div class="flex items-center gap-8 pt-8">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-mono text-zinc-500">STATUS:</span>
-                            <span class="text-xs font-mono text-emerald-400">OPTIMAL</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-mono text-zinc-500">ENTROPY:</span>
-                            <span class="text-xs font-mono text-zinc-400">0%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== TECH STACK SECTION ========== -->
-    <section class="py-16 md:py-24">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <!-- Header -->
-            <div class="text-center mb-20">
-                <h2 class="text-4xl lg:text-6xl font-bold mb-4">
-                    <span class="text-white">Tech</span>
-                    <br>
-                    <span class="text-zinc-600">Stack</span>
-                </h2>
-                <p class="text-zinc-500 text-lg">
-                    Orchestrating the best tools for the job
-                </p>
-            </div>
-
-            <!-- Tech Cards -->
-            <div class="grid md:grid-cols-4 gap-6">
-                <!-- LangGraph -->
-                <div class="tech-card core bg-zinc-950 border border-[#00CED1]/30 rounded-2xl p-6 relative">
-                    <span class="absolute -top-3 right-6 px-3 py-1 bg-zinc-800 border border-white/10 rounded-full text-[10px] font-mono text-white tracking-wider">
-                        CORE
-                    </span>
-                    <div class="flex items-center gap-3 mb-4">
-                        <iconify-icon icon="lucide:git-branch" width="24" class="text-[#00CED1]"></iconify-icon>
-                        <span class="text-lg font-semibold text-white">LangGraph</span>
-                    </div>
-                    <ul class="space-y-2">
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">State Machines</span>
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Workflow DAGs</span>
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Agent Routing</span>
-                        </li>
-                    </ul>
-                    <div class="flex gap-2 mt-4">
-                        <span class="px-2 py-1 bg-zinc-800 rounded text-[10px] font-mono text-zinc-400">SSR</span>
-                        <span class="px-2 py-1 bg-zinc-800 rounded text-[10px] font-mono text-zinc-400">Edge</span>
-                    </div>
-                </div>
-
-                <!-- RabbitMQ -->
-                <div class="tech-card bg-zinc-950 border border-white/5 rounded-2xl p-6 -translate-y-4">
-                    <div class="flex items-center gap-3 mb-4">
-                        <iconify-icon icon="lucide:radio" width="24" class="text-[#00CED1]"></iconify-icon>
-                        <span class="text-lg font-semibold text-white">RabbitMQ</span>
-                    </div>
-                    <p class="text-sm text-zinc-500 mb-4">Message broker for distributed agent coordination with guaranteed delivery.</p>
-                    <ul class="space-y-2">
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Event-Driven</span>
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Dead Letter Queues</span>
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Backpressure</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Redis -->
-                <div class="tech-card bg-zinc-950 border border-white/5 rounded-2xl p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <iconify-icon icon="lucide:database" width="24" class="text-[#00CED1]"></iconify-icon>
-                        <span class="text-lg font-semibold text-white">Redis</span>
-                    </div>
-                    <ul class="space-y-2">
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Pub/Sub</span>
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Caching</span>
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Session State</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- OpenTelemetry -->
-                <div class="tech-card bg-zinc-950 border border-white/5 rounded-2xl p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <iconify-icon icon="lucide:activity" width="24" class="text-[#00CED1]"></iconify-icon>
-                        <span class="text-lg font-semibold text-white">OpenTelemetry</span>
-                    </div>
-                    <ul class="space-y-2">
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Tracing</span>
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Metrics</span>
-                        </li>
-                        <li class="flex items-center gap-2 text-sm text-zinc-400">
-                            <span class="w-1 h-1 rounded-full bg-[#00CED1]"></span>
-                            <span class="font-mono text-xs">Observability</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== TESTIMONIALS SECTION ========== -->
-    <section class="py-16 md:py-24 border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <!-- Header -->
-            <div class="mb-16">
-                <h2 class="text-4xl lg:text-6xl font-bold">
-                    <span class="text-white">Recent</span>
-                    <span class="text-zinc-600">Collaborations</span>
-                </h2>
-            </div>
-
-            <!-- Testimonial Cards -->
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="bg-zinc-950 border border-white/5 rounded-2xl p-8 hover:bg-zinc-900 hover:border-white/10 transition-all duration-500">
-                    <p class="text-zinc-300 leading-relaxed mb-8">
-                        "The multi-agent orchestration transformed our legacy pipeline. The event-driven architecture handles 10x our previous load with zero downtime."
-                    </p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#00CED1] to-cyan-600 flex items-center justify-center text-white font-bold text-sm">S</div>
-                        <div>
-                            <div class="text-white font-medium">Sarah L.</div>
-                            <div class="text-xs font-mono text-zinc-500">CTO, Fintech Inc.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-zinc-950 border border-white/5 rounded-2xl p-8 hover:bg-zinc-900 hover:border-white/10 transition-all duration-500">
-                    <p class="text-zinc-300 leading-relaxed mb-8">
-                        "Deployed a production-grade RAG system in 72 hours. The fault tolerance and observability hooks were enterprise-ready from day one."
-                    </p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#00CED1] to-cyan-600 flex items-center justify-center text-white font-bold text-sm">M</div>
-                        <div>
-                            <div class="text-white font-medium">Marcus D.</div>
-                            <div class="text-xs font-mono text-zinc-500">VP Engineering, SaaS Co.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-zinc-900 border border-white/5 rounded-2xl p-8 hover:border-white/10 transition-all duration-500">
-                    <p class="text-zinc-300 leading-relaxed mb-8">
-                        "A rare combination of distributed systems expertise and rapid delivery. The circuit breakers and dead letter queues saved us countless incidents."
-                    </p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#00CED1] to-cyan-600 flex items-center justify-center text-white font-bold text-sm">E</div>
-                        <div>
-                            <div class="text-white font-medium">Elena R.</div>
-                            <div class="text-xs font-mono text-zinc-500">Founder, Studio X</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== PROFILE SECTION ========== -->
-    <section class="py-16 md:py-24">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <!-- Image -->
-                <div class="relative">
-                    <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-zinc-900">
-                        <img
-                            src="/assets/gary-corporate.jpg"
-                            alt="Gary Barrios - AI Systems Architect"
-                            class="w-full h-full object-cover"
-                        >
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    </div>
-
-                    <!-- Floating Badge -->
-                    <div class="absolute -bottom-6 -right-6 bg-black border border-white/10 rounded-2xl p-6">
-                        <div class="flex items-center gap-3">
-                            <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
-                            <span class="text-sm font-mono text-zinc-400">AVAILABLE FOR PROJECTS</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Content -->
-                <div class="space-y-8">
-                    <div>
-                        <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">
-                            Gary Barrios
-                        </h2>
-                        <p class="text-xl text-[#00CED1] font-mono">
-                            AI Systems Architect
-                        </p>
-                    </div>
-
-                    <p class="text-lg text-zinc-400 leading-relaxed">
-                        From pipe welding to production-grade AI systems. I architect distributed
-                        multi-agent orchestration platforms that enterprises actually ship in production.
-                        Event-driven, fault-tolerant, observable by design.
-                    </p>
-
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <div class="text-3xl font-bold text-white">48-72h</div>
-                            <div class="text-sm text-zinc-500">Average delivery time</div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="text-3xl font-bold text-white">0</div>
-                            <div class="text-sm text-zinc-500">Production incidents</div>
-                        </div>
-                    </div>
-
-                    <a href="/contact" class="group inline-flex items-center gap-3 text-white text-lg hover:gap-5 transition-all duration-300">
-                        <span class="border-b border-[#00CED1]/50 pb-1">Schedule architecture review</span>
-                        <iconify-icon icon="lucide:arrow-right" width="20" class="text-[#00CED1]"></iconify-icon>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-
-<!-- ========== GLOBAL FOOTER (INTELLIGENCE ARCHITECTURE) ========== -->
-<footer class="relative w-full bg-[#050508] pt-16 md:pt-24 pb-8 md:pb-12 px-4 md:px-6 border-t border-white/5 overflow-hidden">
-    <!-- Volumetric Glow Background - Hidden on mobile -->
-    <div class="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[200px] bg-[#00CED1]/5 blur-[100px] rounded-full pointer-events-none"></div>
-
-    <!-- Subtle Grid Pattern -->
-    <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-30 pointer-events-none"></div>
-
-    <div class="max-w-7xl mx-auto relative z-10">
-
-        <!-- Top Section: Brand + Tagline + Status -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 md:mb-16 pb-8 md:pb-12 border-b border-white/5">
-            <!-- Brand Block -->
-            <div class="group">
-                <a href="/" class="flex items-center gap-3 mb-3">
-                    <img src="/brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="w-10 h-10 md:w-12 md:h-12 object-contain opacity-90 group-hover:opacity-100 transition-opacity">
-                    <h2 class="text-2xl md:text-3xl font-black tracking-tighter text-white transition-colors group-hover:text-[#00CED1]">
-                        BARRIOS <span class="text-[#FFD700]">A2I</span>
-                    </h2>
-                </a>
-                <p class="text-[#94a3b8] font-mono text-[10px] md:text-xs tracking-[0.2em] uppercase">
-                    The Intelligence Architecture
-                </p>
-            </div>
-
-            <!-- System Status Indicator -->
-            <div class="flex items-center gap-3 px-4 py-2 bg-white/[0.03] backdrop-blur-sm border border-white/5 rounded-lg">
-                <span class="relative flex h-2.5 w-2.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                </span>
-                <span class="font-mono text-[10px] md:text-xs text-emerald-400 tracking-wider uppercase">All Systems Operational</span>
-            </div>
-        </div>
-
-        <!-- Navigation Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
-
-            <!-- Products Column -->
-            <div>
-                <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
-                    <span class="text-[#00CED1]/40">[</span>
-                    Products
-                    <span class="text-[#00CED1]/40">]</span>
-                </h4>
-                <ul class="space-y-3">
-                    <li>
-                        <a href="/nexus-personal" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            NEXUS Personal
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/creative-director" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            A2I Commercial Lab
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/command-center" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            Command Center
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Company Column -->
-            <div>
-                <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
-                    <span class="text-[#00CED1]/40">[</span>
-                    Company
-                    <span class="text-[#00CED1]/40">]</span>
-                </h4>
-                <ul class="space-y-3">
-                    <li>
-                        <a href="/founder" class="text-sm text-[#00CED1] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1] rounded-full"></span>
-                            Founder
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/contact" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            Contact
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/status" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            System Status
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Legal Column -->
-            <div>
-                <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
-                    <span class="text-[#00CED1]/40">[</span>
-                    Legal
-                    <span class="text-[#00CED1]/40">]</span>
-                </h4>
-                <ul class="space-y-3">
-                    <li>
-                        <a href="/privacy-directive" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            Privacy Directive
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/terms-of-service" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            Terms of Service
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/data-sovereignty" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
-                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
-                            Data Sovereignty
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Connect Column -->
-            <div>
-                <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
-                    <span class="text-[#00CED1]/40">[</span>
-                    Connect
-                    <span class="text-[#00CED1]/40">]</span>
-                </h4>
-                <!-- Social Icons -->
-                <div class="flex items-center gap-4 mb-6">
-                    <a href="https://linkedin.com/company/barriosa2i" target="_blank" rel="noopener"
-                       class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                    </a>
-                    <a href="https://twitter.com/barriosa2i" target="_blank" rel="noopener"
-                       class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                    </a>
-                    <a href="https://instagram.com/barriosa2i" target="_blank" rel="noopener"
-                       class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                    </a>
-                </div>
-                <!-- Email -->
-                <a href="mailto:alienation2innovation@gmail.com" class="text-sm text-[#94a3b8] hover:text-[#00CED1] transition-colors duration-200 font-mono">
-                    alienation2innovation@gmail.com
-                </a>
-            </div>
-        </div>
-
-        <!-- Bottom Bar: Copyright -->
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/5">
-            <p class="font-mono text-[10px] md:text-xs text-[#64748b] tracking-wider">
-                &copy; <span id="footer-year">2025</span> BARRIOS A2I INC. ALL RIGHTS RESERVED.
-            </p>
-            <div class="flex items-center gap-6">
-                <a href="/privacy-directive" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Privacy</a>
-                <a href="/terms-of-service" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Terms</a>
-                <a href="/data-sovereignty" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Data</a>
-            </div>
-        </div>
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="lg:hidden p-2 text-white" aria-label="Toggle menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
     </div>
 
-    <!-- Update year dynamically -->
-    <script>
-        document.getElementById('footer-year').textContent = new Date().getFullYear();
-    </script>
-</footer>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-navy-900/98 backdrop-blur-xl border-t border-white/10">
+      <div class="px-6 py-6 space-y-2">
+        <a href="/#pricing" class="block px-4 py-3 text-sm font-mono text-slate-300 hover:bg-white/5 rounded-lg">PRICING</a>
+        <a href="/nexus-personal" class="block px-4 py-3 text-sm font-mono text-slate-300 hover:bg-white/5 rounded-lg">NEXUS</a>
+        <a href="/creative-director" class="block px-4 py-3 text-sm font-mono text-slate-300 hover:bg-white/5 rounded-lg">COMMERCIAL_LAB</a>
+        <a href="/founder" class="block px-4 py-3 text-sm font-mono text-cyan-400 bg-cyan-400/10 rounded-lg">FOUNDER</a>
+        <a href="/command-center" class="block px-4 py-3 text-sm font-mono text-slate-300 hover:bg-white/5 rounded-lg">COMMAND</a>
+        <a href="/status" class="block px-4 py-3 text-sm font-mono text-slate-300 hover:bg-white/5 rounded-lg">STATUS</a>
+        <div class="pt-4 border-t border-white/10">
+          <a href="/#pricing" class="block w-full py-4 bg-cyan-400 text-navy-900 font-bold text-center text-sm rounded-lg">INITIALIZE_LOGIC</a>
+        </div>
+      </div>
+    </div>
+  </header>
 
+  <!-- ================================================================== -->
+  <!-- MAIN CONTENT -->
+  <!-- ================================================================== -->
+  <main class="relative pt-24">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+      <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-transparent"></div>
+      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-cyan-500/5 rounded-full blur-[150px]"></div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- HERO SECTION -->
+    <!-- ============================================================== -->
+    <section class="relative z-10 min-h-[85vh] flex items-center py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-6 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          
+          <!-- Left Column - Content -->
+          <div class="lg:col-span-7 order-2 lg:order-1 space-y-8">
+            <div class="reveal flex items-center gap-3" data-delay="0">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse-glow shadow-lg shadow-cyan-400/50"></span>
+              <span class="text-xs font-mono text-cyan-400 tracking-[0.15em] uppercase">FOUNDER_PROFILE</span>
+            </div>
+
+            <div class="reveal" data-delay="100">
+              <h1 class="font-bold tracking-tight leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-slate-100 to-slate-400" style="font-size: clamp(42px, 8vw, 80px); letter-spacing: -0.03em;">
+                Founder, Operator,<br>System Builder
+              </h1>
+              <div class="mt-4 h-0.5 w-32 bg-gradient-to-r from-cyan-400 to-transparent"></div>
+            </div>
+
+            <p class="reveal text-lg md:text-xl text-slate-400 leading-relaxed max-w-lg" data-delay="200">
+              Barrios A2I was built from real-world pressure, craftsmanship, and purpose.
+            </p>
+
+            <!-- Experience Chips -->
+            <div class="reveal flex flex-wrap gap-3" data-delay="300">
+              <span class="px-4 py-2 rounded-full glass text-sm font-medium text-white hover:bg-white/10 transition-all cursor-default">Boilermaker</span>
+              <span class="px-4 py-2 rounded-full glass text-sm font-medium text-white hover:bg-white/10 transition-all cursor-default">Pipe Welder</span>
+              <span class="px-4 py-2 rounded-full glass text-sm font-medium text-white hover:bg-white/10 transition-all cursor-default">Millwright</span>
+              <span class="px-4 py-2 rounded-full glass text-sm font-medium text-white hover:bg-white/10 transition-all cursor-default">Semi-Pro Billiards</span>
+              <span class="px-4 py-2 rounded-full bg-cyan-400/10 border border-cyan-400/30 text-sm font-medium text-cyan-400">AI Systems</span>
+            </div>
+
+            <!-- CTAs -->
+            <div class="reveal flex flex-col sm:flex-row gap-4 pt-4" data-delay="400">
+              <a href="/contact" class="btn-primary inline-flex items-center justify-center gap-2 px-8 py-4 font-bold text-sm tracking-wider rounded-lg">
+                BOOK STRATEGY
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </a>
+              <a href="#origin-section" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/20 text-white font-bold text-sm tracking-wider rounded-lg hover:bg-white/5 hover:border-white/40 transition-all">
+                READ ORIGIN STORY
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Column - Portrait -->
+          <div class="reveal lg:col-span-5 order-1 lg:order-2" data-delay="200">
+            <div class="portrait-container relative rounded-2xl overflow-hidden glass shadow-2xl shadow-cyan-500/10 group">
+              <div class="absolute inset-0 border border-cyan-400/20 rounded-2xl pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity z-10"></div>
+              <div class="aspect-[4/5] relative overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop&crop=face&auto=format&q=80" alt="Gary Barrios, Founder of Barrios A2I" class="portrait-img w-full h-full object-cover object-top">
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 p-6 z-20" style="background: linear-gradient(to top, #0a0a1e 0%, transparent 100%);">
+                <h3 class="text-xl font-bold text-white">Gary Barrios</h3>
+                <div class="flex justify-between items-center mt-1">
+                  <p class="text-sm text-cyan-400">Founder, Barrios A2I</p>
+                  <span class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    ACTIVE
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- ORIGIN STORY SECTION -->
+    <!-- ============================================================== -->
+    <section id="origin-section" class="relative z-10 py-24 md:py-32">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="reveal relative glass rounded-3xl p-8 md:p-12 lg:p-16 shadow-2xl shadow-cyan-500/10" data-delay="0">
+          <div class="flex items-center gap-3 mb-6">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <span class="text-xs font-mono text-cyan-400 tracking-[0.15em] uppercase">ORIGIN_PROTOCOL</span>
+          </div>
+
+          <h2 class="font-bold tracking-tight mb-8 text-slate-200" style="font-size: clamp(28px, 5vw, 52px); letter-spacing: -0.02em;">
+            Why Barrios A2I Exists
+          </h2>
+
+          <div class="space-y-6 text-base md:text-lg text-slate-400 leading-relaxed">
+            <p>For 20 years I worked out of <span class="text-white font-medium">Boilermakers Local 154</span>, traveling across the country and overseas, where precision isn't a preference, it's survival.</p>
+            <p>I mastered pipe welding the hard way, with my father teaching me what craftsmanship actually means: <span class="italic">do it right, or do it again.</span></p>
+            <p>After that, I spent four years in a steel mill as a millwright in maintenance, keeping systems running under real-world pressure, where failure is expensive and excuses don't exist.</p>
+            <p>Somewhere in the middle of building a life, I lost access to the people I was building it for.</p>
+            <p class="text-slate-200 font-medium">I was alienated from my children, and it rewired everything.</p>
+            <p class="font-medium italic text-cyan-400 underline underline-offset-8">That's where Barrios A2I comes from.</p>
+            <p>This company wasn't born from trends, it was born from purpose, to build something my kids can be proud of, and to turn adversity into execution.</p>
+            <p>Today I apply that same discipline to businesses, building autonomous intelligence systems that remove bottlenecks, restore clarity, and run with consistency.</p>
+          </div>
+
+          <div class="mt-12 pt-8 border-t border-slate-700/50">
+            <span class="text-white font-bold text-lg relative inline-block">
+              Gary Barrios
+              <span class="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-transparent"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- EXPERIENCE GRID -->
+    <!-- ============================================================== -->
+    <section class="relative z-10 py-16 md:py-20">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-10">
+          <span class="font-mono text-xs text-slate-500 tracking-[0.15em] uppercase">EXPERIENCE_LOG</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Card 1 -->
+          <div class="reveal card-hover glass rounded-2xl p-8 group" data-delay="0">
+            <div class="flex flex-col gap-4">
+              <div class="w-12 h-12 rounded-lg bg-cyan-400/10 border border-white/10 flex items-center justify-center text-cyan-400 group-hover:border-cyan-400/50 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-white tracking-tight">Boilermakers Local 154</h4>
+                <p class="text-sm text-slate-400 mt-1">20 years of field precision</p>
+              </div>
+              <div class="shimmer-line"></div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="reveal card-hover glass rounded-2xl p-8 group" data-delay="100">
+            <div class="flex flex-col gap-4">
+              <div class="w-12 h-12 rounded-lg bg-cyan-400/10 border border-white/10 flex items-center justify-center text-cyan-400 group-hover:border-cyan-400/50 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-white tracking-tight">Pipe Welding Mastery</h4>
+                <p class="text-sm text-slate-400 mt-1">Trained by father, precision-led</p>
+              </div>
+              <div class="shimmer-line"></div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="reveal card-hover glass rounded-2xl p-8 group" data-delay="200">
+            <div class="flex flex-col gap-4">
+              <div class="w-12 h-12 rounded-lg bg-cyan-400/10 border border-white/10 flex items-center justify-center text-cyan-400 group-hover:border-cyan-400/50 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-white tracking-tight">Steel Mill Millwright</h4>
+                <p class="text-sm text-slate-400 mt-1">Maintenance, 4 years heavy pressure</p>
+              </div>
+              <div class="shimmer-line"></div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="reveal card-hover glass rounded-2xl p-8 group" data-delay="300">
+            <div class="flex flex-col gap-4">
+              <div class="w-12 h-12 rounded-lg bg-cyan-400/10 border border-white/10 flex items-center justify-center text-cyan-400 group-hover:border-cyan-400/50 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-white tracking-tight">Semi-Pro Billiards</h4>
+                <p class="text-sm text-slate-400 mt-1">Competitive strategic execution</p>
+              </div>
+              <div class="shimmer-line"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- MISSION SECTION -->
+    <!-- ============================================================== -->
+    <section class="relative z-10 py-20 md:py-28">
+      <div class="max-w-4xl mx-auto px-6 text-center space-y-8">
+        <div class="reveal flex items-center justify-center gap-3" data-delay="0">
+          <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+          <span class="text-xs font-mono text-cyan-400 tracking-[0.15em] uppercase">MISSION</span>
+        </div>
+
+        <h2 class="reveal font-bold tracking-tight text-slate-200" style="font-size: clamp(28px, 5vw, 52px); letter-spacing: -0.02em;" data-delay="100">
+          Built for my kids, engineered for execution
+        </h2>
+
+        <div class="reveal glass rounded-3xl p-8 md:p-10 text-left max-w-3xl mx-auto" data-delay="200">
+          <p class="text-base md:text-lg text-slate-400 leading-relaxed">
+            Every system we build serves a simple purpose. Remove the friction that keeps businesses stuck in chaos. Replace inconsistency with autonomous execution that runs without constant oversight.
+          </p>
+          <p class="text-base md:text-lg text-slate-400 leading-relaxed mt-6">
+            The result is clarity, speed, and consistency. Operations that scale without scaling headcount. Processes that execute the same way every time. Intelligence layers that make decisions while you focus on what matters.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- FINAL CTA -->
+    <!-- ============================================================== -->
+    <section class="relative z-10 py-32">
+      <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at center, rgba(0, 191, 255, 0.08) 0%, transparent 60%);"></div>
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="reveal relative bg-gradient-to-br from-white/10 to-transparent backdrop-blur-xl border border-white/10 rounded-[40px] p-12 md:p-20 text-center overflow-hidden" data-delay="0">
+          <!-- Status Badge -->
+          <div class="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-lg shadow-emerald-400/50"></span>
+            <span class="text-slate-500 font-bold text-[10px] tracking-[0.15em]">SYSTEM_READY</span>
+          </div>
+
+          <h2 class="font-bold tracking-tight text-slate-200 mb-6" style="font-size: clamp(28px, 5vw, 52px); letter-spacing: -0.02em;">
+            Work with Barrios A2I
+          </h2>
+
+          <p class="text-slate-400 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
+            Autonomous systems that remove bottlenecks and increase conversion velocity.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="/contact" class="btn-primary inline-flex items-center justify-center gap-2 px-10 py-5 font-bold tracking-wider rounded-xl w-full sm:w-auto">
+              BOOK STRATEGY
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+            <a href="/#stack" class="inline-flex items-center justify-center gap-2 px-10 py-5 border border-white/20 text-white font-bold tracking-wider rounded-xl hover:bg-white/5 hover:border-white/40 transition-all w-full sm:w-auto">
+              SEE THE SYSTEM
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================================================================== -->
+  <!-- FOOTER - Matching barrios-landing.vercel.app -->
+  <!-- ================================================================== -->
+  <footer class="relative z-10 border-t border-white/10 bg-navy-900/95 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+        <!-- Brand Column -->
+        <div class="lg:col-span-2">
+          <a href="/" class="flex items-center gap-3 mb-4">
+            <div class="relative w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 border border-cyan-400/30 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <span class="font-bold text-white tracking-tight text-lg">BARRIOS A2I</span>
+          </a>
+          <p class="text-slate-500 text-sm mb-4">The Intelligence Architecture</p>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs text-slate-500">All Systems Operational</span>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div>
+          <h4 class="text-xs font-mono text-slate-400 tracking-wider mb-4">[ Products ]</h4>
+          <ul class="space-y-3">
+            <li><a href="/nexus-personal" class="text-sm text-slate-500 hover:text-white transition-colors">NEXUS Personal</a></li>
+            <li><a href="/creative-director" class="text-sm text-slate-500 hover:text-white transition-colors">A2I Commercial Lab</a></li>
+            <li><a href="/command-center" class="text-sm text-slate-500 hover:text-white transition-colors">Command Center</a></li>
+          </ul>
+        </div>
+
+        <!-- Company -->
+        <div>
+          <h4 class="text-xs font-mono text-slate-400 tracking-wider mb-4">[ Company ]</h4>
+          <ul class="space-y-3">
+            <li><a href="/founder" class="text-sm text-cyan-400 hover:text-cyan-300 transition-colors">Founder</a></li>
+            <li><a href="/contact" class="text-sm text-slate-500 hover:text-white transition-colors">Contact</a></li>
+            <li><a href="/status" class="text-sm text-slate-500 hover:text-white transition-colors">System Status</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div>
+          <h4 class="text-xs font-mono text-slate-400 tracking-wider mb-4">[ Legal ]</h4>
+          <ul class="space-y-3">
+            <li><a href="/privacy-directive" class="text-sm text-slate-500 hover:text-white transition-colors">Privacy Directive</a></li>
+            <li><a href="/terms-of-service" class="text-sm text-slate-500 hover:text-white transition-colors">Terms of Service</a></li>
+            <li><a href="/data-sovereignty" class="text-sm text-slate-500 hover:text-white transition-colors">Data Sovereignty</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-slate-600">© 2025 BARRIOS A2I INC. ALL RIGHTS RESERVED.</p>
+        <div class="flex items-center gap-6">
+          <a href="/privacy-directive" class="text-xs text-slate-600 hover:text-slate-400 transition-colors">Privacy</a>
+          <a href="/terms-of-service" class="text-xs text-slate-600 hover:text-slate-400 transition-colors">Terms</a>
+          <a href="/data-sovereignty" class="text-xs text-slate-600 hover:text-slate-400 transition-colors">Data</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Header scroll effect
+      const header = document.getElementById('header');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('bg-navy-900/95', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+        } else {
+          header.classList.remove('bg-navy-900/95', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+        }
+      }, { passive: true });
+
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        const icon = mobileMenuBtn.querySelector('svg');
+        if (mobileMenu.classList.contains('hidden')) {
+          icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>';
+        } else {
+          icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+        }
+      });
+
+      // Reveal animations
+      if (!prefersReducedMotion) {
+        const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const delay = parseInt(entry.target.dataset.delay) || 0;
+              setTimeout(() => {
+                entry.target.classList.add('active');
+              }, delay);
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+
+        document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+      } else {
+        document.querySelectorAll('.reveal').forEach((el) => el.classList.add('active'));
+      }
+    });
+  </script>
 </body>
 </html>
