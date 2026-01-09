@@ -1,10 +1,12 @@
 /**
- * ProductionManager v1.1
+ * ProductionManager v1.2
  * RAGNAROK 8-Phase Production Pipeline Controller
  *
  * Handles SSE streaming from GENESIS production endpoints via fetch
  * Uses ReadableStream for POST endpoints (not EventSource which is GET-only)
  * Manages phase progress, timer, and delivery modal
+ *
+ * v1.2: Fixed request body format to match GENESIS ProductionStartRequest schema
  */
 
 const ProductionManager = (() => {
@@ -35,7 +37,7 @@ const ProductionManager = (() => {
     /**
      * Start production pipeline
      * @param {string} sid - Session ID from chat
-     * @param {Object} brief - Creative brief data
+     * @param {Object} brief - Creative brief data from frontend
      */
     async function start(sid, brief = {}) {
         sessionId = sid;
@@ -62,9 +64,33 @@ const ProductionManager = (() => {
             // Use fetch streaming for POST with SSE response
             const url = `${GENESIS_URL}/api/production/start/${sessionId}`;
             console.log('[ProductionManager] Starting production via fetch streaming...');
+            console.log('[ProductionManager] Input brief:', brief);
 
             // Create abort controller for cancellation
             abortController = new AbortController();
+
+            // Transform frontend brief to GENESIS ProductionStartRequest format
+            // GENESIS expects: { brief: {...}, industry: string, business_name: string }
+            const productionRequest = {
+                brief: {
+                    concept: brief.raw_request || brief.concept || `Commercial for ${brief.company_name || 'business'}`,
+                    key_messages: brief.key_messages || [],
+                    visual_style: brief.visual_style || brief.style || 'professional',
+                    tone: brief.tone || 'professional',
+                    target_audience: brief.target_audience || 'general audience',
+                    call_to_action: brief.call_to_action || brief.cta || 'Learn more',
+                    duration: brief.duration || '30 seconds',
+                    voice_id: brief.voice_id || null,
+                    voice_name: brief.voice_name || null
+                },
+                industry: brief.industry || 'general',
+                business_name: brief.company_name || brief.business_name || 'Business',
+                style: brief.style || 'cinematic',
+                goals: brief.goals || ['brand_awareness'],
+                target_platforms: brief.target_platforms || ['youtube', 'instagram']
+            };
+
+            console.log('[ProductionManager] Transformed request:', productionRequest);
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -72,7 +98,7 @@ const ProductionManager = (() => {
                     'Content-Type': 'application/json',
                     'Accept': 'text/event-stream'
                 },
-                body: JSON.stringify(brief),
+                body: JSON.stringify(productionRequest),
                 signal: abortController.signal
             });
 
@@ -523,4 +549,4 @@ if (typeof window !== 'undefined') {
     window.ProductionManager = ProductionManager;
 }
 
-console.log('[ProductionManager] v1.1 loaded - RAGNAROK 8-Phase Pipeline Controller (fetch streaming)');
+console.log('[ProductionManager] v1.2 loaded - RAGNAROK 8-Phase Pipeline Controller (fetch streaming, fixed ProductionStartRequest schema)');
