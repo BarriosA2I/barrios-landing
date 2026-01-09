@@ -6714,12 +6714,17 @@
 
         // Toggle Neural Interface
         function toggleNeuralInterface() {
+            console.log('=== toggleNeuralInterface called ===');
+            console.log('niIsOpen before:', niIsOpen);
+
             const window = document.getElementById('ni-window');
             const fab = document.getElementById('ni-fab');
 
             if (niIsOpen) {
+                console.log('>>> CLOSING (was already open)');
                 closeNeuralInterface();
             } else {
+                console.log('>>> OPENING');
                 window.classList.remove('hidden');
                 niIsOpen = true;
                 // Focus input when opened
@@ -6727,17 +6732,22 @@
                     document.getElementById('ni-input').focus();
                 }, 100);
             }
+
+            console.log('niIsOpen after:', niIsOpen);
         }
 
         // Close Neural Interface
         function closeNeuralInterface() {
+            console.log('=== closeNeuralInterface called ===');
+            console.trace('Call stack:');
+
             const window = document.getElementById('ni-window');
+            niIsOpen = false;  // Set immediately, not after animation
             window.classList.add('closing');
 
             setTimeout(() => {
                 window.classList.add('hidden');
                 window.classList.remove('closing');
-                niIsOpen = false;
             }, 200);
         }
 
