@@ -6786,8 +6786,13 @@
                 'start production', 'begin production', 'launch production',
                 'generate the video', 'generate my video', 'create the video', 'create my video',
                 'make the video', 'make my video', 'produce the video', 'produce my video',
+                // Commercial triggers (most common user phrase!)
+                'create the commercial', 'create my commercial', 'generate the commercial', 'generate my commercial',
+                'make the commercial', 'make my commercial', 'produce the commercial', 'produce my commercial',
+                'create a commercial', 'generate a commercial', 'make a commercial', 'produce a commercial',
+                // General triggers
                 'ready to produce', "let's produce", "let's generate", "let's create it",
-                'go ahead and', 'proceed with production'
+                'go ahead and', 'proceed with production', 'start the production', 'begin the production'
             ];
             const lowerMessage = message.toLowerCase();
             const isProductionRequest = productionTriggers.some(trigger => lowerMessage.includes(trigger));
