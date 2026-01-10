@@ -569,16 +569,17 @@ const GenesisIntake = {
      */
     init() {
         const session = GenesisSession.get();
-        
-        // Restore UI state
-        this._updateProgressBar(session.phase);
+
+        // Restore UI state - initialize with 0% and all fields missing
+        const allRequiredFields = ['business_name', 'primary_offering', 'target_demographic', 'call_to_action', 'tone'];
+        this._updateProgressBar(0, allRequiredFields);
         this._restoreConversation(session.conversationHistory);
         this._restoreUploadedAssets(session.uploadedAssets);
-        
+
         // Initialize engine HUD
         GenesisSession._updateEngineHUD(session.activeEngine);
-        
-        console.log(`[GenesisIntake v3] Initialized at phase ${session.phase} with ${session.activeEngine}`);
+
+        console.log(`[GenesisIntake v3] Initialized with ${session.activeEngine}`);
     },
     
     /**
@@ -602,45 +603,48 @@ const GenesisIntake = {
         this._showTypingIndicator(engine);
         
         try {
-            const response = await fetch(`${this.API_BASE}/api/genesis/intake`, {
+            const response = await fetch(`${this.API_BASE}/api/genesis/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     session_id: session.id,
-                    engine: engine,
-                    phase: session.phase,
-                    user_message: userMessage,
-                    thinking_level: thinkingLevel
+                    message: userMessage,
+                    conversation_history: session.conversationHistory || []
                 })
             });
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
-            
+
             const data = await response.json();
-            
-            // Record AI response with full metrics
-            GenesisSession.recordResponse(session.phase, data.ai_response, {
-                cost: data.cost_usd,
-                latency: data.latency_ms,
-                engine: data.engine_used,
-                inputTokens: data.input_tokens,
-                outputTokens: data.tokens_used,
+
+            // Record AI response with Phase 2 fields
+            GenesisSession.recordResponse(session.phase, data.response, {
+                cost: data.cost_usd || 0,
+                latency: data.latency_ms || 0,
+                engine: engine,
+                inputTokens: data.input_tokens || 0,
+                outputTokens: data.tokens_used || 0,
                 thinkingTokens: data.thinking_tokens || 0
             });
-            
-            // Update UI
+
+            // Update UI with Phase 2 progress tracking
             this._hideTypingIndicator();
-            this._appendMessage('assistant', data.ai_response, data.engine_used);
-            this._updateProgressBar(data.phase);
+            this._appendMessage('assistant', data.response, engine);
+            this._updateProgressBar(data.progress_percentage, data.missing_fields);
             this._updateMetricsDisplay(session.metrics);
-            
-            // Check if intake complete
-            if (data.phase > 10) {
-                this._showStrategyTrigger();
+
+            // Show brief summary when complete
+            if (data.is_complete) {
+                this._showBriefSummary(data.extracted_data);
             }
-            
+
+            // Auto-trigger production if ready
+            if (data.trigger_production) {
+                this._startProduction(session.id);
+            }
+
             return data;
             
         } catch (error) {
@@ -761,17 +765,44 @@ const GenesisIntake = {
     },
     
     /**
-     * Update progress bar
+     * Update progress bar with Phase 2 fields
      */
-    _updateProgressBar(phase) {
+    _updateProgressBar(progressPercentage, missingFields) {
         const progressBar = document.querySelector('.brief-progress-fill');
         const phaseLabel = document.querySelector('.phase-indicator');
-        
+
+        // Update progress bar width (0-100%)
         if (progressBar) {
-            progressBar.style.width = `${(phase / 10) * 100}%`;
+            progressBar.style.width = `${progressPercentage || 0}%`;
+
+            // Change color to green when complete
+            if (progressPercentage >= 100) {
+                progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+            } else {
+                progressBar.style.background = 'linear-gradient(90deg, #00ced1, #0891b2)';
+            }
         }
+
+        // Update status label
         if (phaseLabel) {
-            phaseLabel.textContent = `Phase ${Math.min(phase, 10)}/10: ${this._getPhaseName(phase)}`;
+            if (progressPercentage >= 100) {
+                phaseLabel.textContent = '✓ Brief Complete - Ready for Production';
+                phaseLabel.style.color = '#10b981';
+            } else if (missingFields && missingFields.length > 0) {
+                const fieldLabels = {
+                    business_name: 'Business',
+                    primary_offering: 'Product',
+                    target_demographic: 'Audience',
+                    call_to_action: 'CTA',
+                    tone: 'Tone'
+                };
+                const missing = missingFields.map(f => fieldLabels[f] || f).join(', ');
+                phaseLabel.textContent = `${progressPercentage}% Complete • Need: ${missing}`;
+                phaseLabel.style.color = '#00ced1';
+            } else {
+                phaseLabel.textContent = `${progressPercentage}% Complete`;
+                phaseLabel.style.color = '#00ced1';
+            }
         }
     },
     
@@ -793,7 +824,95 @@ const GenesisIntake = {
         };
         return names[phase] || 'Complete';
     },
-    
+
+    /**
+     * Show brief summary when complete
+     */
+    _showBriefSummary(extractedData) {
+        if (!extractedData) return;
+
+        const container = document.querySelector('.chat-messages');
+        if (!container) return;
+
+        // Create summary card
+        const summaryHTML = `
+            <div class="brief-summary-card">
+                <div class="summary-header">
+                    <span class="summary-icon">✓</span>
+                    <h3>Brief Complete</h3>
+                </div>
+                <div class="summary-content">
+                    ${extractedData.business_name ? `<div class="summary-field"><strong>Business:</strong> ${extractedData.business_name}</div>` : ''}
+                    ${extractedData.primary_offering ? `<div class="summary-field"><strong>Product:</strong> ${extractedData.primary_offering}</div>` : ''}
+                    ${extractedData.target_demographic ? `<div class="summary-field"><strong>Audience:</strong> ${extractedData.target_demographic}</div>` : ''}
+                    ${extractedData.call_to_action ? `<div class="summary-field"><strong>CTA:</strong> ${extractedData.call_to_action}</div>` : ''}
+                    ${extractedData.tone ? `<div class="summary-field"><strong>Tone:</strong> ${extractedData.tone}</div>` : ''}
+                </div>
+                <div class="summary-actions">
+                    <button onclick="GenesisIntake._confirmProduction()" class="btn-primary pulse-glow">
+                        Launch Production →
+                    </button>
+                </div>
+            </div>
+        `;
+
+        const summaryDiv = document.createElement('div');
+        summaryDiv.className = 'message-wrapper brief-summary';
+        summaryDiv.innerHTML = summaryHTML;
+        container.appendChild(summaryDiv);
+        container.scrollTop = container.scrollHeight;
+    },
+
+    /**
+     * Confirm and start production
+     */
+    _confirmProduction() {
+        const session = GenesisSession.get();
+        this._startProduction(session.id);
+    },
+
+    /**
+     * Start RAGNAROK production pipeline
+     */
+    async _startProduction(sessionId) {
+        console.log('[GenesisIntake v3] Starting RAGNAROK production for session:', sessionId);
+
+        try {
+            this._showTypingIndicator('Initializing RAGNAROK production pipeline...');
+
+            const response = await fetch(`${this.API_BASE}/api/genesis/trigger`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    trigger_type: 'ragnarok_production'
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Production trigger failed: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            this._hideTypingIndicator();
+
+            // Show production status
+            const statusMessage = data.job_id
+                ? `Production started! Job ID: ${data.job_id}. You'll receive updates as your video is created.`
+                : 'Production pipeline initiated. Check your dashboard for progress.';
+
+            this._appendMessage('assistant', statusMessage, 'system');
+
+            console.log('[GenesisIntake v3] Production started:', data);
+
+        } catch (error) {
+            console.error('[GenesisIntake v3] Production trigger error:', error);
+            this._hideTypingIndicator();
+            this._showError('Failed to start production. Please try again or contact support.');
+        }
+    },
+
     /**
      * Restore conversation history
      */
