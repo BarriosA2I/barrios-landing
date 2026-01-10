@@ -619,6 +619,12 @@ const GenesisIntake = {
 
             const data = await response.json();
 
+            // DEBUG: Log full API response
+            console.log('[Phase3] API Response:', data);
+            console.log('[Phase3] progress_percentage:', data.progress_percentage);
+            console.log('[Phase3] missing_fields:', data.missing_fields);
+            console.log('[Phase3] extracted_fields:', data.metadata?.extracted_fields);
+
             // Record AI response with Phase 2 fields
             GenesisSession.recordResponse(session.phase, data.response, {
                 cost: data.cost_usd || 0,
@@ -632,6 +638,7 @@ const GenesisIntake = {
             // Update UI with Phase 2 progress tracking
             this._hideTypingIndicator();
             this._appendMessage('assistant', data.response, engine);
+            console.log('[Phase3] Calling _updateProgressBar with:', data.progress_percentage, data.missing_fields);
             this._updateProgressBar(data.progress_percentage, data.missing_fields);
             this._updateMetricsDisplay(session.metrics);
 
