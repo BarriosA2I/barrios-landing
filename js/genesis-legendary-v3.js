@@ -768,8 +768,36 @@ const GenesisIntake = {
      * Update progress bar with Phase 2 fields
      */
     _updateProgressBar(progressPercentage, missingFields) {
-        const progressBar = document.querySelector('.brief-progress-fill');
-        const phaseLabel = document.querySelector('.phase-indicator');
+        // FIXED: Use correct selector for progress bar (was .brief-progress-fill)
+        const progressBar = document.getElementById('ni-progress-bar');
+
+        // FIXED: Create status label if it doesn't exist
+        let phaseLabel = document.getElementById('ni-phase-status');
+        if (!phaseLabel) {
+            // Create status label element dynamically
+            phaseLabel = document.createElement('div');
+            phaseLabel.id = 'ni-phase-status';
+            phaseLabel.style.cssText = `
+                position: absolute;
+                top: 6px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                z-index: 101;
+                color: #00ced1;
+                text-shadow: 0 0 8px rgba(0, 206, 209, 0.6);
+                white-space: nowrap;
+                pointer-events: none;
+            `;
+
+            // Insert after progress bar container
+            const progressContainer = document.getElementById('ni-progress-bar-container');
+            if (progressContainer && progressContainer.parentElement) {
+                progressContainer.parentElement.insertBefore(phaseLabel, progressContainer.nextSibling);
+            }
+        }
 
         // Update progress bar width (0-100%)
         if (progressBar) {
@@ -778,16 +806,19 @@ const GenesisIntake = {
             // Change color to green when complete
             if (progressPercentage >= 100) {
                 progressBar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+                progressBar.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.6)';
             } else {
-                progressBar.style.background = 'linear-gradient(90deg, #00ced1, #0891b2)';
+                progressBar.style.background = 'linear-gradient(90deg, #00CED1, #00FFFF, #00CED1)';
+                progressBar.style.boxShadow = '0 0 10px rgba(0, 206, 209, 0.5)';
             }
         }
 
         // Update status label
         if (phaseLabel) {
             if (progressPercentage >= 100) {
-                phaseLabel.textContent = '✓ Brief Complete - Ready for Production';
+                phaseLabel.textContent = '✓ BRIEF COMPLETE - READY FOR PRODUCTION';
                 phaseLabel.style.color = '#10b981';
+                phaseLabel.style.textShadow = '0 0 8px rgba(16, 185, 129, 0.6)';
             } else if (missingFields && missingFields.length > 0) {
                 const fieldLabels = {
                     business_name: 'Business',
@@ -797,11 +828,13 @@ const GenesisIntake = {
                     tone: 'Tone'
                 };
                 const missing = missingFields.map(f => fieldLabels[f] || f).join(', ');
-                phaseLabel.textContent = `${progressPercentage}% Complete • Need: ${missing}`;
+                phaseLabel.textContent = `${progressPercentage}% COMPLETE • NEED: ${missing.toUpperCase()}`;
                 phaseLabel.style.color = '#00ced1';
+                phaseLabel.style.textShadow = '0 0 8px rgba(0, 206, 209, 0.6)';
             } else {
-                phaseLabel.textContent = `${progressPercentage}% Complete`;
+                phaseLabel.textContent = `${progressPercentage}% COMPLETE`;
                 phaseLabel.style.color = '#00ced1';
+                phaseLabel.style.textShadow = '0 0 8px rgba(0, 206, 209, 0.6)';
             }
         }
     },
