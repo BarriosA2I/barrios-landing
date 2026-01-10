@@ -1,5 +1,5 @@
 /**
- * ProductionManager v1.2
+ * ProductionManager v2.0
  * RAGNAROK 8-Phase Production Pipeline Controller
  *
  * Handles SSE streaming from GENESIS production endpoints via fetch
@@ -7,6 +7,7 @@
  * Manages phase progress, timer, and delivery modal
  *
  * v1.2: Fixed request body format to match GENESIS ProductionStartRequest schema
+ * v2.0: Phase 2 - Added SSE streaming from /api/production/status/{id}/stream endpoint
  */
 
 const ProductionManager = (() => {
@@ -530,9 +531,158 @@ const ProductionManager = (() => {
         }
     }
 
+    /**
+     * Phase 2: Connect to SSE streaming endpoint for real-time updates
+     * Uses EventSource for GET endpoint at /api/production/status/{id}/stream
+     */
+    let eventSource = null;
+
+    function connectToSSE(sid) {
+        if (eventSource) {
+            eventSource.close();
+        }
+
+        sessionId = sid;
+        const url = `${GENESIS_URL}/api/production/status/${sessionId}/stream`;
+        console.log('[ProductionManager] Connecting to SSE stream:', url);
+
+        eventSource = new EventSource(url);
+
+        eventSource.addEventListener('status', (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('[ProductionManager] SSE status:', data);
+
+                // Update phase indicator
+                const step = data.step;
+                if (step) {
+                    // Map step names to our phase IDs
+                    const stepToPhase = {
+                        'script': 'story',
+                        'visuals': 'prompts',
+                        'voice': 'voice',
+                        'edit': 'assembly',
+                        'upload': 'qa',
+                        'queued': 'intake'
+                    };
+                    const phaseId = stepToPhase[step] || step;
+                    currentPhase = phaseId;
+
+                    const phaseEl = document.querySelector(`[data-phase="${phaseId}"]`);
+                    if (phaseEl) {
+                        phaseEl.classList.add('active');
+                    }
+                }
+
+                // Update progress bar
+                if (data.overall_progress !== undefined) {
+                    updateProgressBar(data.overall_progress, 100);
+                }
+
+                // Update timer from server elapsed time
+                if (data.elapsed !== undefined) {
+                    const minutes = Math.floor(data.elapsed / 60).toString().padStart(2, '0');
+                    const seconds = (data.elapsed % 60).toString().padStart(2, '0');
+                    const timerEl = document.getElementById('production-timer');
+                    if (timerEl) {
+                        timerEl.textContent = `${minutes}:${seconds}`;
+                    }
+                }
+
+                // Update estimated remaining
+                if (data.estimated_remaining !== undefined) {
+                    updateMessage(`Processing... ~${Math.ceil(data.estimated_remaining / 60)} min remaining`);
+                }
+            } catch (e) {
+                console.error('[ProductionManager] SSE status parse error:', e);
+            }
+        });
+
+        eventSource.addEventListener('complete', (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('[ProductionManager] SSE complete:', data);
+
+                handleProductionComplete({
+                    assets: {
+                        video_url: data.video_url,
+                        duration: `${data.total_time}s`
+                    }
+                });
+
+                eventSource.close();
+                eventSource = null;
+            } catch (e) {
+                console.error('[ProductionManager] SSE complete parse error:', e);
+            }
+        });
+
+        eventSource.addEventListener('error', (event) => {
+            if (event.data) {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleError(data);
+                } catch (e) {
+                    handleError({ message: 'Stream error' });
+                }
+            } else {
+                console.warn('[ProductionManager] SSE connection error, will retry...');
+            }
+        });
+
+        eventSource.onerror = (error) => {
+            console.error('[ProductionManager] EventSource error:', error);
+            // EventSource auto-reconnects, but we log the error
+        };
+
+        return eventSource;
+    }
+
+    /**
+     * Phase 2: Disconnect SSE stream
+     */
+    function disconnectSSE() {
+        if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+        }
+    }
+
+    /**
+     * Phase 2: Start production with SSE streaming from Phase 2 endpoint
+     * This uses the simpler GET SSE endpoint instead of POST streaming
+     */
+    async function startWithSSE(sid, brief = {}) {
+        sessionId = sid;
+        startTime = Date.now();
+        completedPhases = [];
+        currentPhase = null;
+
+        // Show production status panel
+        const statusPanel = document.getElementById('production-status');
+        if (statusPanel) {
+            statusPanel.classList.add('active');
+        }
+
+        // Reset phase indicators
+        resetPhaseIndicators();
+
+        // Start timer
+        startTimer();
+
+        // Update message
+        updateMessage('Connecting to production stream...');
+
+        // Connect to SSE stream
+        connectToSSE(sid);
+    }
+
     // Public API
     return {
         start,
+        startWithSSE,       // Phase 2
+        connectToSSE,       // Phase 2
+        disconnectSSE,      // Phase 2
         cancel,
         reset,
         getStatus,
@@ -549,4 +699,4 @@ if (typeof window !== 'undefined') {
     window.ProductionManager = ProductionManager;
 }
 
-console.log('[ProductionManager] v1.2 loaded - RAGNAROK 8-Phase Pipeline Controller (fetch streaming, fixed ProductionStartRequest schema)');
+console.log('[ProductionManager] v2.0 loaded - RAGNAROK 8-Phase Pipeline Controller (Phase 2: SSE streaming endpoint)');

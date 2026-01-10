@@ -3034,6 +3034,22 @@
                 const data = await res.json();
                 removeTypingIndicator();
 
+                // Phase 2: Handle escalation
+                if (data.escalated) {
+                    handleEscalation(data);
+                    return;
+                }
+
+                // Phase 2: Handle mode changes (fast-track)
+                if (data.mode === 'fast_track') {
+                    handleFastTrackMode();
+                }
+
+                // Phase 2: Handle production status trigger
+                if (data.trigger_production && data.production_status) {
+                    handleProductionStart(data.production_status);
+                }
+
                 addMessage(data.response, false, data.quick_actions || []);
 
                 // Track lead data for FLAWLESS GENESIS qualification
@@ -3053,6 +3069,11 @@
                     }
                 } else {
                     updateProgress(data.completion_percentage || 0, data.phase, data.is_complete);
+
+                    // Phase 2: Check if we should offer fast-track
+                    if (data.metadata?.sentiment?.hurried && !fastTrackDismissed) {
+                        showFastTrackBanner();
+                    }
                 }
 
             } catch (e) {
@@ -3071,6 +3092,124 @@
                 document.getElementById('chat-input').value = lastMessage;
                 sendMessage();
             }
+        }
+
+        // ============= PHASE 2: FAST-TRACK & ESCALATION =============
+
+        let fastTrackDismissed = false;
+        let currentMode = 'standard';
+
+        /**
+         * Show the fast-track banner
+         */
+        function showFastTrackBanner() {
+            const banner = document.getElementById('fast-track-banner');
+            if (banner && !fastTrackDismissed) {
+                banner.classList.remove('hidden');
+            }
+        }
+
+        /**
+         * Hide the fast-track banner
+         */
+        function hideFastTrackBanner() {
+            const banner = document.getElementById('fast-track-banner');
+            if (banner) {
+                banner.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Dismiss fast-track banner permanently for this session
+         */
+        function dismissFastTrack() {
+            fastTrackDismissed = true;
+            hideFastTrackBanner();
+        }
+
+        /**
+         * Enable fast-track mode - sends message to backend
+         */
+        async function enableFastTrack() {
+            hideFastTrackBanner();
+            currentMode = 'fast_track';
+
+            // Send a message to trigger fast-track mode
+            addSystemMessage('⚡ Fast-Track mode enabled! Just 4 quick questions.');
+
+            // The backend will handle the fast-track flow automatically
+            // based on the mode detection in the next user message
+        }
+
+        /**
+         * Handle when server switches to fast-track mode
+         */
+        function handleFastTrackMode() {
+            currentMode = 'fast_track';
+            hideFastTrackBanner();
+
+            // Update UI to show we're in fast-track mode
+            const header = document.querySelector('.ni-header-title');
+            if (header && !header.textContent.includes('FAST')) {
+                header.innerHTML = 'NEURAL INTERFACE <span style="color: #F59E0B; font-size: 10px;">⚡ FAST</span>';
+            }
+        }
+
+        /**
+         * Handle escalation to human
+         */
+        function handleEscalation(data) {
+            // Show escalation notice
+            const notice = document.getElementById('escalation-notice');
+            if (notice) {
+                notice.classList.remove('hidden');
+
+                // Update text based on reason
+                const textEl = notice.querySelector('.escalation-text');
+                if (textEl) {
+                    const reason = data.escalation_reason || 'request';
+                    const messages = {
+                        'explicit_human_request': 'Connecting you with a human specialist...',
+                        'pricing_persistence': 'Let me connect you with our sales team for pricing details...',
+                        'refund_request': 'Routing you to our customer success team...',
+                        'sustained_frustration': 'Let me connect you with someone who can help better...',
+                        'production_failures': 'Connecting you with our technical support team...',
+                    };
+                    textEl.textContent = messages[reason] || 'Connecting you with a human specialist...';
+                }
+            }
+
+            // Add system message
+            addSystemMessage('👤 A human specialist will be with you shortly. Please hold.');
+
+            // Add the AI's response if there is one
+            if (data.response) {
+                addMessage(data.response, false);
+            }
+
+            // Log for analytics
+            console.log('[Phase 2] Escalation triggered:', data.escalation_reason);
+        }
+
+        /**
+         * Handle production start - connect to SSE stream
+         */
+        function handleProductionStart(productionStatus) {
+            console.log('[Phase 2] Production started:', productionStatus);
+
+            // Show the production status panel
+            const statusPanel = document.getElementById('production-status');
+            if (statusPanel) {
+                statusPanel.classList.add('active');
+            }
+
+            // Connect to SSE stream for real-time updates
+            if (window.ProductionManager && productionStatus.session_id) {
+                ProductionManager.connectToSSE(productionStatus.session_id);
+            }
+
+            // Add system message
+            addSystemMessage('🎬 Production started! Watch the progress above.');
         }
 
         // ============= PIPELINE PHASE FUNCTIONS =============
@@ -5164,6 +5303,89 @@
             background: var(--ni-border);
         }
 
+        /* Phase 2: Fast-Track Banner */
+        .fast-track-banner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            animation: fadeSlideIn 0.3s ease;
+        }
+
+        .fast-track-banner.hidden {
+            display: none;
+        }
+
+        .fast-track-icon {
+            font-size: 14px;
+        }
+
+        .fast-track-text {
+            flex: 1;
+            color: var(--ni-text);
+        }
+
+        .fast-track-btn {
+            padding: 4px 12px;
+            background: #F59E0B;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .fast-track-btn:hover {
+            background: #FBBF24;
+            transform: translateY(-1px);
+        }
+
+        .fast-track-dismiss {
+            padding: 4px 8px;
+            background: transparent;
+            color: var(--ni-text-muted);
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .fast-track-dismiss:hover {
+            color: var(--ni-text);
+        }
+
+        /* Phase 2: Escalation Notice */
+        .escalation-notice {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .escalation-notice.hidden {
+            display: none;
+        }
+
+        .escalation-icon {
+            font-size: 16px;
+        }
+
+        .escalation-text {
+            color: var(--ni-text);
+        }
+
         /* Messages Container */
         .ni-messages {
             flex: 1;
@@ -6523,6 +6745,20 @@
         <!-- Phase 1: Progress Bar -->
         <div id="ni-progress-bar-container">
             <div id="ni-progress-bar"></div>
+        </div>
+
+        <!-- Phase 2: Fast-Track Banner -->
+        <div id="fast-track-banner" class="fast-track-banner hidden">
+            <span class="fast-track-icon">⚡</span>
+            <span class="fast-track-text">In a hurry? Switch to Fast-Track mode (4 quick questions)</span>
+            <button class="fast-track-btn" onclick="enableFastTrack()">Enable</button>
+            <button class="fast-track-dismiss" onclick="dismissFastTrack()">✕</button>
+        </div>
+
+        <!-- Phase 2: Escalation Notice -->
+        <div id="escalation-notice" class="escalation-notice hidden">
+            <span class="escalation-icon">👤</span>
+            <span class="escalation-text">Connecting you with a human specialist...</span>
         </div>
 
         <!-- Header -->
