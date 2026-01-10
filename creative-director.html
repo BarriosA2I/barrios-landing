@@ -7383,7 +7383,12 @@
             // Trigger production if:
             // 1. Explicit trigger phrase, OR
             // 2. Company detected + creation intent + content type mentioned
-            const shouldTriggerProduction = hasProductionTrigger || (extractedCompany && hasCreationIntent && hasContentType);
+            // DISABLED: Let backend handle conversation flow with validation gate
+            // const shouldTriggerProduction = hasProductionTrigger || (extractedCompany && hasCreationIntent && hasContentType);
+
+            // Only trigger autonomous production if backend has confirmed the brief is complete (ragnarok_ready=true)
+            // For now, always go through the conversation flow - backend will set ragnarok_ready when user confirms
+            const shouldTriggerProduction = false; // Disabled - backend handles conversation flow
 
             if (shouldTriggerProduction && window.ProductionManager) {
                 // Trigger GENESIS 24-agent autonomous pipeline

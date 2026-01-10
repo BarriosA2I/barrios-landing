@@ -22,6 +22,16 @@
   --color-accent-cyan: #00CED1;
   --color-accent-purple: #8B5CF6;
 
+  /* Sentient OS Design Tokens */
+  --color-background: #0a0a1e;
+  --color-accent-primary: #00bfff;
+  --color-accent-secondary: #ffd700;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: 20px;
+  --shadow-cyan-glow: 0 0 20px rgba(0, 191, 255, 0.68);
+  --shadow-gold-glow: 0 0 20px rgba(255, 215, 0, 0.3);
+
   /* Font Families */
   --font-sans: 'Inter', sans-serif;
   --font-serif: 'Playfair Display', serif;
