@@ -7818,10 +7818,61 @@
         }
 
         // Update progress bar
-        function updateProgressBar(percentage) {
+        function updateProgressBar(percentage, missingFields = []) {
+            // Update bar width
             const progressBar = document.getElementById('ni-progress-bar');
             if (progressBar) {
                 progressBar.style.width = Math.min(100, Math.max(0, percentage)) + '%';
+            }
+
+            // Update status text
+            let phaseLabel = document.getElementById('ni-phase-status');
+            if (!phaseLabel) {
+                // Create status label if it doesn't exist
+                phaseLabel = document.createElement('div');
+                phaseLabel.id = 'ni-phase-status';
+                phaseLabel.style.cssText = `
+                    position: absolute;
+                    top: 8px;
+                    right: 12px;
+                    font-size: 10px;
+                    font-weight: 600;
+                    letter-spacing: 1px;
+                    font-family: 'JetBrains Mono', monospace;
+                    color: #00ced1;
+                    text-shadow: 0 0 8px rgba(0, 206, 209, 0.6);
+                    z-index: 101;
+                    pointer-events: none;
+                `;
+                const progressContainer = document.getElementById('ni-progress-bar-container');
+                if (progressContainer && progressContainer.parentElement) {
+                    progressContainer.parentElement.insertBefore(phaseLabel, progressContainer.nextSibling);
+                }
+            }
+
+            // Update status text content
+            if (phaseLabel) {
+                if (percentage >= 100) {
+                    phaseLabel.textContent = '✓ BRIEF COMPLETE - READY FOR PRODUCTION';
+                    phaseLabel.style.color = '#10b981';
+                    phaseLabel.style.textShadow = '0 0 8px rgba(16, 185, 129, 0.6)';
+                } else if (missingFields && missingFields.length > 0) {
+                    const fieldLabels = {
+                        business_name: 'Business',
+                        primary_offering: 'Product',
+                        target_demographic: 'Audience',
+                        call_to_action: 'CTA',
+                        tone: 'Tone'
+                    };
+                    const missing = missingFields.map(f => fieldLabels[f] || f).join(', ');
+                    phaseLabel.textContent = `${percentage}% COMPLETE • NEED: ${missing.toUpperCase()}`;
+                    phaseLabel.style.color = '#00ced1';
+                    phaseLabel.style.textShadow = '0 0 8px rgba(0, 206, 209, 0.6)';
+                } else {
+                    phaseLabel.textContent = `${percentage}% COMPLETE`;
+                    phaseLabel.style.color = '#00ced1';
+                    phaseLabel.style.textShadow = '0 0 8px rgba(0, 206, 209, 0.6)';
+                }
             }
         }
 
@@ -7904,7 +7955,7 @@
                 // PHASE 1: Update progress bar
                 // =================================================================
                 if (data.progress_percentage !== undefined) {
-                    updateProgressBar(data.progress_percentage);
+                    updateProgressBar(data.progress_percentage, data.missing_fields || []);
                 }
 
                 // =================================================================
@@ -7947,7 +7998,7 @@
                 if (data.trigger_production) {
                     console.log('Production triggered with brief:', data.extracted_data);
                     // TODO: Connect to production status SSE endpoint
-                    updateProgressBar(100);
+                    updateProgressBar(100, []);
                 }
 
             } catch (error) {
