@@ -4019,98 +4019,306 @@
                 return;
             }
 
-            // Populate Business Name
-            if (data && data.lead && data.lead.business_name) {
-                document.getElementById('modal-business-name').textContent = data.lead.business_name;
-            } else if (typeof collectedLeadData !== 'undefined' && collectedLeadData.businessName) {
-                document.getElementById('modal-business-name').textContent = collectedLeadData.businessName;
+            // =================================================================
+            // GATHER BUSINESS CONTEXT - Use real data, never hardcoded
+            // =================================================================
+            
+            const businessContext = {
+                name: (data?.lead?.business_name) 
+                    || (data?.strategy?.business_name)
+                    || (typeof collectedLeadData !== 'undefined' && collectedLeadData.businessName)
+                    || null,
+                industry: (data?.lead?.industry)
+                    || (data?.strategy?.industry)
+                    || (typeof collectedLeadData !== 'undefined' && collectedLeadData.industry)
+                    || null,
+                goals: (data?.lead?.goals)
+                    || (data?.strategy?.goals)
+                    || (typeof collectedLeadData !== 'undefined' && collectedLeadData.goals)
+                    || [],
+                painPoints: (data?.lead?.pain_points)
+                    || (data?.strategy?.pain_points)
+                    || (typeof collectedLeadData !== 'undefined' && collectedLeadData.painPoints)
+                    || [],
+                targetAudience: (data?.lead?.target_audience)
+                    || (data?.strategy?.target_audience)
+                    || (typeof collectedLeadData !== 'undefined' && collectedLeadData.targetAudience)
+                    || null,
+                score: (data?.lead?.qualification_score)
+                    || (data?.strategy?.qualification_score)
+                    || (typeof collectedLeadData !== 'undefined' && collectedLeadData.score)
+                    || 0
+            };
+
+            console.log('[StrategyModal] Business context:', businessContext);
+
+            // =================================================================
+            // POPULATE BUSINESS NAME
+            // =================================================================
+            
+            const businessNameEl = document.getElementById('modal-business-name');
+            if (businessNameEl) {
+                businessNameEl.textContent = businessContext.name || 'Your Business';
             }
 
-            // 1. Market Insights
+            // =================================================================
+            // 1. MARKET INSIGHTS - Dynamic generation
+            // =================================================================
+            
             const insightsContainer = document.getElementById('modal-market-insights');
             insightsContainer.innerHTML = '';
-            const insights = (data && data.strategy && data.strategy.market_insights)
-                ? data.strategy.market_insights
-                : (data && data.result && data.result.market_insights)
-                    ? data.result.market_insights
-                    : [
-                        "Market demand is growing in your sector by 12% YoY based on recent search volume.",
-                        "Competitors are currently under-utilizing short-form video marketing channels.",
-                        "AI-generated content is showing 3x higher engagement rates in your vertical.",
-                        "Mobile-first video consumption has increased 47% in your target demographic."
-                    ];
+            
+            let insights = (data?.strategy?.market_insights)
+                || (data?.result?.market_insights)
+                || null;
+            
+            if (!insights || insights.length === 0) {
+                insights = _generateDynamicInsights(businessContext);
+            }
+            
             insights.forEach(text => {
                 const div = document.createElement('div');
                 div.className = 'p-4 rounded-xl bg-white/5 border border-white/10 hover:border-neon/30 transition-all duration-300 hover:bg-white/10';
-                div.innerHTML = '<p class="text-sm text-white/80 leading-relaxed">"' + text + '"</p>';
+                div.innerHTML = '<p class="text-sm text-white/80 leading-relaxed">"' + _escapeHtml(text) + '"</p>';
                 insightsContainer.appendChild(div);
             });
 
-            // 2. Competitor Analysis
-            const compScore = (data && data.strategy && data.strategy.competitor_score)
-                ? data.strategy.competitor_score
-                : (data && data.result && data.result.competitor_score)
-                    ? data.result.competitor_score
-                    : 75;
+            // =================================================================
+            // 2. COMPETITOR ANALYSIS - Calculate from context
+            // =================================================================
+            
+            let compScore = (data?.strategy?.competitor_score)
+                || (data?.result?.competitor_score)
+                || null;
+            
+            if (compScore === null) {
+                compScore = _calculateCompetitorScore(businessContext);
+            }
+            
             setTimeout(() => {
-                document.getElementById('modal-competitor-bar').style.width = compScore + '%';
+                const bar = document.getElementById('modal-competitor-bar');
+                if (bar) bar.style.width = compScore + '%';
             }, 500);
-            document.getElementById('modal-competitor-gap').textContent = (100 - compScore) + '% Opportunity';
+            
+            const gapEl = document.getElementById('modal-competitor-gap');
+            if (gapEl) gapEl.textContent = (100 - compScore) + '% Opportunity';
 
-            const compText = (data && data.strategy && data.strategy.competitor_analysis)
-                ? data.strategy.competitor_analysis
-                : (data && data.result && data.result.competitor_analysis)
-                    ? data.result.competitor_analysis
-                    : 'Your competitors have significant gaps in video content strategy, creating a prime opportunity for market differentiation.';
-            document.getElementById('modal-competitor-text').textContent = compText;
+            let compText = (data?.strategy?.competitor_analysis)
+                || (data?.result?.competitor_analysis)
+                || null;
+            
+            if (!compText) {
+                compText = _generateCompetitorAnalysis(businessContext, compScore);
+            }
+            
+            const compTextEl = document.getElementById('modal-competitor-text');
+            if (compTextEl) compTextEl.textContent = compText;
 
-            // 3. Strategic Recommendations
+            // =================================================================
+            // 3. STRATEGIC RECOMMENDATIONS - Personalized
+            // =================================================================
+            
             const recList = document.getElementById('modal-recommendations');
             recList.innerHTML = '';
-            const recs = (data && data.strategy && data.strategy.recommendations)
-                ? data.strategy.recommendations
-                : (data && data.result && data.result.recommendations)
-                    ? data.result.recommendations
-                    : [
-                        "Launch a 30s hook-based video on Instagram Reels to target the 25-34 demographic.",
-                        "Target lookalike audiences of your top 2 competitors using 'Speed' as the core hook.",
-                        "Focus messaging on convenience to differentiate from legacy providers.",
-                        "Implement retargeting funnel with sequential video content."
-                    ];
+            
+            let recs = (data?.strategy?.recommendations)
+                || (data?.result?.recommendations)
+                || null;
+            
+            if (!recs || recs.length === 0) {
+                recs = _generateDynamicRecommendations(businessContext);
+            }
+            
             recs.forEach(rec => {
                 const li = document.createElement('li');
                 li.className = 'flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/10 hover:bg-amber-500/10 transition-colors';
-                li.innerHTML = '<div class="mt-0.5 min-w-[20px] text-amber-400">✓</div><span class="text-sm text-white/90">' + rec + '</span>';
+                li.innerHTML = '<div class="mt-0.5 min-w-[20px] text-amber-400">✓</div><span class="text-sm text-white/90">' + _escapeHtml(rec) + '</span>';
                 recList.appendChild(li);
             });
 
-            // 4. Action Items
+            // =================================================================
+            // 4. ACTION ITEMS - Context-aware
+            // =================================================================
+            
             const actionContainer = document.getElementById('modal-action-items');
             actionContainer.innerHTML = '';
-            const actions = (data && data.strategy && data.strategy.action_items)
-                ? data.strategy.action_items
-                : (data && data.result && data.result.action_items)
-                    ? data.result.action_items
-                    : ["Approve Script", "Select Voiceover", "Launch Campaign"];
+            
+            let actions = (data?.strategy?.action_items)
+                || (data?.result?.action_items)
+                || null;
+            
+            if (!actions || actions.length === 0) {
+                actions = _generateDynamicActionItems(businessContext);
+            }
+            
             actions.forEach((action, idx) => {
                 const actionText = typeof action === 'string' ? action : action.text;
                 const div = document.createElement('div');
                 div.className = 'p-4 rounded-lg bg-emerald-500/5 border border-emerald-500/10 text-center hover:bg-emerald-500/10 transition-colors cursor-default';
-                div.innerHTML = '<span class="text-[10px] text-emerald-400 font-bold block mb-1 tracking-wider">STEP ' + (idx + 1) + '</span><span class="text-sm text-white font-medium">' + actionText + '</span>';
+                div.innerHTML = '<span class="text-[10px] text-emerald-400 font-bold block mb-1 tracking-wider">STEP ' + (idx + 1) + '</span><span class="text-sm text-white font-medium">' + _escapeHtml(actionText) + '</span>';
                 actionContainer.appendChild(div);
             });
 
-            // Show Modal with Animation
+            // =================================================================
+            // SHOW MODAL WITH ANIMATION
+            // =================================================================
+            
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-
-            // Trigger reflow for animation
             void modal.offsetWidth;
-
             backdrop.classList.remove('opacity-0');
             backdrop.classList.add('opacity-100');
             panel.classList.remove('opacity-0', 'translate-y-4', 'sm:scale-95');
             panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+        }
+
+        // =====================================================================
+        // HELPER: Generate dynamic market insights
+        // =====================================================================
+        function _generateDynamicInsights(ctx) {
+            const insights = [];
+            const industry = ctx.industry || 'your industry';
+            const audience = ctx.targetAudience;
+            const goals = Array.isArray(ctx.goals) ? ctx.goals : (ctx.goals ? [ctx.goals] : []);
+            const pains = Array.isArray(ctx.painPoints) ? ctx.painPoints : (ctx.painPoints ? [ctx.painPoints] : []);
+            
+            if (ctx.industry) {
+                insights.push(ctx.industry + ' businesses using AI-powered video content are seeing higher engagement than traditional marketing approaches.');
+            } else {
+                insights.push('Businesses leveraging AI-generated video content are outperforming competitors relying on static marketing.');
+            }
+            
+            if (audience) {
+                insights.push(audience + ' are increasingly consuming short-form video, with attention captured in the first 3 seconds.');
+            } else {
+                insights.push('Modern audiences expect video-first experiences, with purchasing decisions influenced by authentic video storytelling.');
+            }
+            
+            if (goals.length > 0) {
+                insights.push('To achieve "' + goals[0] + '", video content has proven to deliver faster results than text-based alternatives.');
+            } else {
+                insights.push('Video content drives higher conversion rates across all stages of the customer journey.');
+            }
+            
+            if (pains.length > 0) {
+                insights.push('Addressing "' + pains[0] + '" through compelling video narratives builds trust faster than traditional marketing.');
+            } else {
+                insights.push('AI-generated video production eliminates traditional bottlenecks of cost, time, and creative expertise.');
+            }
+            
+            return insights;
+        }
+
+        // =====================================================================
+        // HELPER: Calculate competitor score from context
+        // =====================================================================
+        function _calculateCompetitorScore(ctx) {
+            let base = 60;
+            if (ctx.name) base += 5;
+            if (ctx.industry) base += 5;
+            if (ctx.targetAudience) base += 5;
+            if (ctx.goals && ctx.goals.length > 0) base += 5;
+            if (ctx.painPoints && ctx.painPoints.length > 0) base += 5;
+            if (ctx.score > 0) base = Math.round(60 + (ctx.score * 25));
+            const variance = Math.floor(Math.random() * 7) - 3;
+            return Math.min(95, Math.max(55, base + variance));
+        }
+
+        // =====================================================================
+        // HELPER: Generate competitor analysis text
+        // =====================================================================
+        function _generateCompetitorAnalysis(ctx, score) {
+            const opportunity = 100 - score;
+            const industry = ctx.industry || 'your market';
+            
+            if (opportunity >= 30) {
+                return 'There is significant untapped potential in ' + industry + '. Most competitors rely on outdated marketing, leaving a ' + opportunity + '% gap you can capture with modern video content.';
+            } else if (opportunity >= 20) {
+                return 'Competitors in ' + industry + ' are adopting video marketing, but few have mastered AI-powered production. This ' + opportunity + '% opportunity window is closing.';
+            } else {
+                return industry + ' is becoming competitive with video content. Quality differentiation still offers a ' + opportunity + '% advantage for early movers.';
+            }
+        }
+
+        // =====================================================================
+        // HELPER: Generate dynamic recommendations
+        // =====================================================================
+        function _generateDynamicRecommendations(ctx) {
+            const recs = [];
+            const name = ctx.name || 'your business';
+            const industry = ctx.industry;
+            const audience = ctx.targetAudience;
+            const goals = Array.isArray(ctx.goals) ? ctx.goals : (ctx.goals ? [ctx.goals] : []);
+            const pains = Array.isArray(ctx.painPoints) ? ctx.painPoints : (ctx.painPoints ? [ctx.painPoints] : []);
+            
+            if (audience) {
+                const lower = audience.toLowerCase();
+                if (lower.includes('b2b') || lower.includes('director') || lower.includes('executive') || lower.includes('cto') || lower.includes('ceo')) {
+                    recs.push('Deploy LinkedIn-optimized video content to reach ' + audience + ', focusing on thought leadership and ROI messaging.');
+                } else if (lower.includes('young') || lower.includes('gen z') || lower.includes('millennial') || lower.includes('consumer')) {
+                    recs.push('Create TikTok and Instagram Reels for ' + audience + ', with hook-first storytelling in the first 1.5 seconds.');
+                } else {
+                    recs.push('Develop multi-platform video content tailored for ' + audience + ', with format variations for each channel.');
+                }
+            } else {
+                recs.push('Start with Instagram Reels and YouTube Shorts to test video content performance before scaling.');
+            }
+            
+            if (goals.length > 0) {
+                recs.push('Align video messaging directly with "' + goals[0] + '" using clear calls-to-action and measurable outcomes.');
+            } else {
+                recs.push('Define clear video campaign objectives with measurable KPIs before production begins.');
+            }
+            
+            if (pains.length > 0) {
+                recs.push('Address "' + pains[0] + '" directly in video content—customers connect with brands that understand their challenges.');
+            } else {
+                recs.push('Lead with problem-solution storytelling to establish immediate relevance with viewers.');
+            }
+            
+            if (industry) {
+                recs.push('Study top-performing ' + industry + ' video campaigns and adapt proven formats for ' + name + ' unique positioning.');
+            } else {
+                recs.push('Implement a weekly video content cadence to build audience familiarity and algorithm momentum.');
+            }
+            
+            return recs;
+        }
+
+        // =====================================================================
+        // HELPER: Generate dynamic action items
+        // =====================================================================
+        function _generateDynamicActionItems(ctx) {
+            const actions = [];
+            const goals = Array.isArray(ctx.goals) ? ctx.goals : (ctx.goals ? [ctx.goals] : []);
+            
+            actions.push(ctx.name ? 'Finalize ' + ctx.name + ' Video Brief' : 'Complete Video Brief Details');
+            actions.push('Choose AI Voice & Style');
+            
+            if (goals.length > 0) {
+                const g = goals[0].toLowerCase();
+                if (g.includes('lead') || g.includes('sales') || g.includes('conversion')) {
+                    actions.push('Set Up Lead Capture Integration');
+                } else if (g.includes('brand') || g.includes('awareness')) {
+                    actions.push('Configure Brand Guidelines');
+                } else {
+                    actions.push('Define Success Metrics');
+                }
+            } else {
+                actions.push('Launch Production Pipeline');
+            }
+            
+            return actions;
+        }
+
+        // =====================================================================
+        // HELPER: XSS protection
+        // =====================================================================
+        function _escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function closeStrategyModal() {
