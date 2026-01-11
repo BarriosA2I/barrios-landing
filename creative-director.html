@@ -2934,10 +2934,10 @@
             addTypingIndicator();
 
             try {
-                // Use pipeline or basic endpoint
+                // Use pipeline or V2 endpoint
                 const endpoint = PIPELINE_ENABLED
                     ? `${API_URL}/api/legendary/message`
-                    : `${API_URL}/api/chat`;
+                    : `${API_URL}/api/chat/v2`;
 
                 const res = await fetch(endpoint, {
                     method: 'POST',
