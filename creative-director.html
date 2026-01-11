@@ -7998,44 +7998,66 @@
                 if (data.trigger_production) {
                     console.log('[CreativeDirector] Production trigger received');
 
-                    // Extract brief data from metadata (backend returns it in metadata.extracted_data)
-                    const extractedData = data.metadata?.extracted_data || data.extracted_data || {};
-                    console.log('[CreativeDirector] Extracted data:', extractedData);
+                    try {
+                        // Extract brief data from metadata (backend returns it in metadata.extracted_data)
+                        console.log('[DEBUG 1] About to extract data from metadata');
+                        const extractedData = data.metadata?.extracted_data || data.extracted_data || {};
+                        console.log('[DEBUG 2] Extracted data:', extractedData);
 
-                    // Build production brief from session data
-                    const productionBrief = {
-                        session_id: currentNISessionId || generateSessionId(),
-                        business_name: extractedData.business_name || 'Your Business',
-                        primary_offering: extractedData.primary_offering || extractedData.product || 'Product/Service',
-                        target_demographic: extractedData.target_demographic || extractedData.audience || 'Target Audience',
-                        tone: extractedData.tone || 'professional',
-                        call_to_action: extractedData.call_to_action || extractedData.cta || 'Learn More',
-                        platform: extractedData.platform || 'instagram',
-                        key_message: extractedData.key_message || '',
-                        duration: extractedData.duration || 30
-                    };
+                        // Build production brief from session data
+                        console.log('[DEBUG 3] About to build production brief');
+                        console.log('[DEBUG 3.1] currentNISessionId:', currentNISessionId);
+                        console.log('[DEBUG 3.2] typeof generateSessionId:', typeof generateSessionId);
 
-                    console.log('[CreativeDirector] Production brief assembled:', productionBrief);
+                        const productionBrief = {
+                            session_id: currentNISessionId || generateSessionId(),
+                            business_name: extractedData.business_name || 'Your Business',
+                            primary_offering: extractedData.primary_offering || extractedData.product || 'Product/Service',
+                            target_demographic: extractedData.target_demographic || extractedData.audience || 'Target Audience',
+                            tone: extractedData.tone || 'professional',
+                            call_to_action: extractedData.call_to_action || extractedData.cta || 'Learn More',
+                            platform: extractedData.platform || 'instagram',
+                            key_message: extractedData.key_message || '',
+                            duration: extractedData.duration || 30
+                        };
 
-                    // Store for voice selector access
-                    window.currentProductionBrief = productionBrief;
-                    window.currentSessionId = productionBrief.session_id;
+                        console.log('[DEBUG 4] Production brief assembled:', productionBrief);
 
-                    // Update progress bar to 100%
-                    updateProgressBar(100, []);
+                        // Store for voice selector access
+                        console.log('[DEBUG 5] About to store global variables');
+                        window.currentProductionBrief = productionBrief;
+                        window.currentSessionId = productionBrief.session_id;
+                        console.log('[DEBUG 6] Global variables stored');
 
-                    // Show voice selector modal
-                    if (typeof showVoiceSelector === 'function') {
-                        console.log('[CreativeDirector] Opening voice selector modal');
+                        // Update progress bar to 100%
+                        console.log('[DEBUG 7] About to update progress bar');
+                        updateProgressBar(100, []);
+                        console.log('[DEBUG 8] Progress bar updated');
 
-                        // Add prompt message
-                        appendNIMessage('ai', '🎙️ <strong>Choose a voice for your commercial!</strong><br>Select from our library of professional AI voices below.');
+                        // Show voice selector modal
+                        console.log('[DEBUG 9] About to check showVoiceSelector function');
+                        console.log('[DEBUG 9.1] typeof showVoiceSelector:', typeof showVoiceSelector);
 
-                        // Open voice selector
-                        showVoiceSelector();
-                    } else {
-                        console.error('[CreativeDirector] showVoiceSelector function not available');
-                        appendNIMessage('ai', 'Voice selector unavailable. Please refresh and try again.');
+                        if (typeof showVoiceSelector === 'function') {
+                            console.log('[DEBUG 10] Opening voice selector modal');
+
+                            // Add prompt message
+                            console.log('[DEBUG 11] About to append NI message');
+                            appendNIMessage('ai', '🎙️ <strong>Choose a voice for your commercial!</strong><br>Select from our library of professional AI voices below.');
+                            console.log('[DEBUG 12] NI message appended');
+
+                            // Open voice selector
+                            console.log('[DEBUG 13] About to call showVoiceSelector');
+                            showVoiceSelector();
+                            console.log('[DEBUG 14] showVoiceSelector called');
+                        } else {
+                            console.error('[CreativeDirector] showVoiceSelector function not available');
+                            appendNIMessage('ai', 'Voice selector unavailable. Please refresh and try again.');
+                        }
+                    } catch (innerError) {
+                        console.error('[CreativeDirector] Inner error during production trigger:', innerError);
+                        console.error('[CreativeDirector] Inner error stack:', innerError.stack);
+                        throw innerError; // Re-throw to outer catch
                     }
                 }
 
