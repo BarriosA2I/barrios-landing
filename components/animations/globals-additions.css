@@ -1,0 +1,446 @@
+/* ==========================================================================
+   BARRIOS A2I ANIMATION SYSTEM - GLOBALS.CSS ADDITIONS
+   Add these to your existing globals.css
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   CSS VARIABLES
+   -------------------------------------------------------------------------- */
+:root {
+  --color-brand-cyan: #00bfff;
+  --color-brand-cyan-dark: #0891b2;
+  --color-brand-navy: #0a0a1e;
+  --color-brand-navy-light: #0f172a;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   BASE STYLES
+   -------------------------------------------------------------------------- */
+html {
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: rgba(0, 191, 255, 0.3);
+  color: white;
+}
+
+/* --------------------------------------------------------------------------
+   GLASSMORPHISM UTILITIES
+   -------------------------------------------------------------------------- */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-panel-strong {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+}
+
+/* --------------------------------------------------------------------------
+   GLOW UTILITIES
+   -------------------------------------------------------------------------- */
+.cyan-glow {
+  box-shadow: 0 0 25px rgba(0, 191, 255, 0.15), 0 0 50px rgba(0, 191, 255, 0.05);
+}
+
+.cyan-glow-strong {
+  box-shadow: 0 0 30px rgba(0, 191, 255, 0.2), 0 0 60px rgba(0, 191, 255, 0.1);
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.15), 0 0 50px rgba(255, 215, 0, 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   GRADIENT TEXT
+   -------------------------------------------------------------------------- */
+.h1-gradient {
+  background: linear-gradient(180deg, #e0f2fe 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+/* Data stream overlay on gradient text */
+.h1-gradient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 191, 255, 0.025) 2px,
+    rgba(0, 191, 255, 0.025) 4px
+  );
+  pointer-events: none;
+  animation: dataStreamScroll 20s linear infinite;
+}
+
+@keyframes dataStreamScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+/* --------------------------------------------------------------------------
+   REVEAL ANIMATIONS
+   -------------------------------------------------------------------------- */
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-item {
+  opacity: 0;
+}
+
+.reveal-item.revealed {
+  animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --------------------------------------------------------------------------
+   PULSE ANIMATIONS
+   -------------------------------------------------------------------------- */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 8px var(--color-brand-cyan);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 4px var(--color-brand-cyan);
+  }
+}
+
+.pulse-status {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes edge-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.edge-pulse {
+  animation: edge-pulse 6s ease-in-out infinite;
+}
+
+/* --------------------------------------------------------------------------
+   ACCENT UNDERLINE
+   -------------------------------------------------------------------------- */
+.accent-underline {
+  height: 2px;
+  background: var(--color-brand-cyan);
+  box-shadow: 0 0 10px var(--color-brand-cyan);
+  width: 0;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.accent-underline.expanded {
+  width: 120px;
+}
+
+/* --------------------------------------------------------------------------
+   SPECULAR HIGHLIGHT (Shine on hover)
+   -------------------------------------------------------------------------- */
+@keyframes specular-slide {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(150%) skewX(-25deg);
+    opacity: 0;
+  }
+}
+
+.specular-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.specular-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  pointer-events: none;
+  opacity: 0;
+  z-index: 20;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .specular-highlight {
+    display: block;
+  }
+  .specular-container:hover .specular-highlight {
+    animation: specular-slide 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@media (hover: none) {
+  .specular-highlight {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   SHIMMER EFFECT
+   -------------------------------------------------------------------------- */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.shimmer-effect {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  pointer-events: none;
+  opacity: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .shimmer-trigger:hover .shimmer-effect,
+  .shimmer-active .shimmer-effect {
+    animation: shimmer 1.2s ease-in-out;
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   HOVER LIFT (Desktop only)
+   -------------------------------------------------------------------------- */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s ease,
+                border-color 0.3s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: rgba(0, 191, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 191, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Touch device alternative */
+@media (hover: none), (pointer: coarse) {
+  .hover-lift {
+    transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                background-color 0.1s ease,
+                border-color 0.1s ease,
+                box-shadow 0.1s ease;
+  }
+  .hover-lift:active {
+    transform: scale(0.96);
+    border-color: rgba(0, 191, 255, 0.4);
+    background: rgba(0, 191, 255, 0.05);
+    box-shadow: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   TOUCH RIPPLE
+   -------------------------------------------------------------------------- */
+.touch-ripple {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at center, rgba(0, 191, 255, 0.15) 0%, transparent 70%);
+  transition: opacity 0.15s ease;
+  border-radius: inherit;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .hover-lift:active .touch-ripple {
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   BUTTON STYLES
+   -------------------------------------------------------------------------- */
+.primary-cta {
+  position: relative;
+  background: var(--color-brand-cyan);
+  border: none;
+  border-radius: 8px;
+  padding: 16px 32px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--color-brand-navy);
+  cursor: pointer;
+  overflow: hidden;
+  min-height: 52px;
+  box-shadow: 0 4px 0 0 #0086b3;
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 0.2s ease;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .primary-cta:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 0 0 #0086b3, 0 0 25px rgba(0, 191, 255, 0.4);
+  }
+}
+
+.primary-cta:active {
+  transform: translateY(3px) scale(0.98);
+  box-shadow: 0 1px 0 0 #0086b3;
+  filter: brightness(0.95);
+}
+
+.secondary-cta {
+  padding: 16px 32px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  background: transparent;
+  cursor: pointer;
+  min-height: 52px;
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              background-color 0.1s ease,
+              border-color 0.1s ease;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .secondary-cta:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+.secondary-cta:active {
+  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 191, 255, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   LABEL STYLE
+   -------------------------------------------------------------------------- */
+.label-style {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--color-brand-cyan);
+}
+
+/* --------------------------------------------------------------------------
+   ACCESSIBILITY - MINIMUM TAP TARGETS
+   -------------------------------------------------------------------------- */
+button, a, .chip-hover {
+  min-height: 44px;
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION SUPPORT
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-item {
+    opacity: 1;
+  }
+  .reveal-item.revealed {
+    animation: none;
+    opacity: 1;
+  }
+  .shimmer-effect {
+    display: none;
+  }
+  .pulse-status {
+    animation: none;
+  }
+  .edge-pulse {
+    animation: none;
+  }
+  .hover-lift:hover,
+  .hover-lift:active {
+    transform: none;
+  }
+  .accent-underline {
+    width: 120px;
+    transition: none;
+  }
+  .specular-container:hover .specular-highlight {
+    animation: none;
+  }
+  .primary-cta:active {
+    transform: none;
+  }
+  .secondary-cta:active {
+    transform: none;
+  }
+  .h1-gradient::after {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   CUSTOM SCROLLBAR
+   -------------------------------------------------------------------------- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 191, 255, 0.5);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 191, 255, 0.7);
+}
+
+/* Hide scrollbar on snap scroll containers */
+.case-study-carousel {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.case-study-carousel::-webkit-scrollbar {
+  display: none;
+}
