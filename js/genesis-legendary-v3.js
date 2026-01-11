@@ -649,7 +649,7 @@ const GenesisIntake = {
 
             // Auto-trigger production if ready
             if (data.trigger_production) {
-                this._startProduction(session.id);
+                this._startProduction(session.id, data.extracted_data);
             }
 
             return data;
@@ -912,44 +912,68 @@ const GenesisIntake = {
     },
 
     /**
-     * Start RAGNAROK production pipeline
+     * Start RAGNAROK production pipeline - shows voice selector
      */
-    async _startProduction(sessionId) {
-        console.log('[GenesisIntake v3] Starting RAGNAROK production for session:', sessionId);
+    async _startProduction(sessionId, extractedData = {}) {
+        console.log('[GenesisIntake v3] Starting production flow for session:', sessionId);
+        console.log('[GenesisIntake v3] Extracted data:', extractedData);
 
         try {
-            this._showTypingIndicator('Initializing RAGNAROK production pipeline...');
+            const session = GenesisSession.get();
 
-            const response = await fetch(`${this.API_BASE}/api/genesis/trigger`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    session_id: sessionId,
-                    trigger_type: 'ragnarok_production'
-                })
-            });
+            // Build production brief from extracted data
+            const productionBrief = {
+                session_id: sessionId,
+                business_name: extractedData.business_name || 'Your Business',
+                primary_offering: extractedData.primary_offering || extractedData.product || 'Product/Service',
+                target_demographic: extractedData.target_demographic || extractedData.audience || 'Target Audience',
+                tone: extractedData.tone || 'professional',
+                call_to_action: extractedData.call_to_action || extractedData.cta || 'Learn More',
+                platform: extractedData.platform || 'instagram',
+                key_message: extractedData.key_message || '',
+                duration: extractedData.duration || 30,
+                ...extractedData  // Include any additional fields
+            };
 
-            if (!response.ok) {
-                throw new Error(`Production trigger failed: ${response.status}`);
+            console.log('[GenesisIntake v3] Production brief assembled:', productionBrief);
+
+            // Store for voice selector access (required by showVoiceSelector in creative-director.html)
+            window.currentProductionBrief = productionBrief;
+            window.currentSessionId = sessionId;
+
+            this._hideTypingIndicator();
+
+            // Check if voice selector function exists (defined in creative-director.html)
+            if (typeof showVoiceSelector === 'function') {
+                console.log('[GenesisIntake v3] Opening voice selector modal...');
+
+                // Add message prompting user to select voice
+                this._appendMessage('assistant',
+                    '🎙️ <strong>Choose a voice for your commercial!</strong><br>Select from our library of professional AI voices below.',
+                    'system'
+                );
+
+                // Show the voice selector UI
+                showVoiceSelector();
+
+            } else {
+                // Fallback: Voice selector not available
+                console.warn('[GenesisIntake v3] Voice selector not available, triggering with default voice');
+                this._appendMessage('assistant',
+                    '🚀 Starting production with default voice...',
+                    'system'
+                );
+
+                // Call the actual production trigger with default voice
+                // This would require implementing _triggerProductionDirect() method
+                // For now, show error to avoid broken state
+                this._showError('Voice selector unavailable. Please refresh and try again.');
             }
 
-            const data = await response.json();
-
-            this._hideTypingIndicator();
-
-            // Show production status
-            const statusMessage = data.job_id
-                ? `Production started! Job ID: ${data.job_id}. You'll receive updates as your video is created.`
-                : 'Production pipeline initiated. Check your dashboard for progress.';
-
-            this._appendMessage('assistant', statusMessage, 'system');
-
-            console.log('[GenesisIntake v3] Production started:', data);
-
         } catch (error) {
-            console.error('[GenesisIntake v3] Production trigger error:', error);
+            console.error('[GenesisIntake v3] Production setup error:', error);
             this._hideTypingIndicator();
-            this._showError('Failed to start production. Please try again or contact support.');
+            this._showError('Failed to prepare production. Please try again.');
         }
     },
 
