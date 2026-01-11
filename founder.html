@@ -240,7 +240,7 @@
       pointer-events: none;
       z-index: 1;
       overflow: hidden;
-      opacity: 0.15;
+      opacity: 0.4;
     }
     .matrix-rain canvas {
       display: block;
@@ -254,32 +254,32 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 400px;
+      width: 600px;
       height: 100%;
       pointer-events: none;
       z-index: 2;
       background: linear-gradient(
         to bottom,
         transparent 0%,
-        rgba(0, 191, 255, 0.03) 10%,
-        rgba(0, 191, 255, 0.08) 30%,
-        rgba(0, 191, 255, 0.15) 50%,
-        rgba(251, 191, 36, 0.1) 70%,
-        rgba(251, 191, 36, 0.05) 90%,
+        rgba(0, 191, 255, 0.08) 10%,
+        rgba(0, 191, 255, 0.2) 30%,
+        rgba(0, 191, 255, 0.35) 50%,
+        rgba(251, 191, 36, 0.25) 70%,
+        rgba(251, 191, 36, 0.1) 90%,
         transparent 100%
       );
       mask-image: linear-gradient(
         to right,
         transparent 0%,
-        black 30%,
-        black 70%,
+        black 20%,
+        black 80%,
         transparent 100%
       );
       -webkit-mask-image: linear-gradient(
         to right,
         transparent 0%,
-        black 30%,
-        black 70%,
+        black 20%,
+        black 80%,
         transparent 100%
       );
     }
@@ -289,17 +289,18 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 4px;
+      width: 6px;
       height: 100%;
       background: linear-gradient(
         to bottom,
         transparent 0%,
-        rgba(0, 191, 255, 0.6) 20%,
-        rgba(255, 255, 255, 0.9) 50%,
-        rgba(251, 191, 36, 0.6) 80%,
+        rgba(0, 191, 255, 0.9) 20%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(251, 191, 36, 0.9) 80%,
         transparent 100%
       );
-      filter: blur(2px);
+      filter: blur(3px);
+      box-shadow: 0 0 30px rgba(0, 191, 255, 0.8), 0 0 60px rgba(0, 191, 255, 0.4);
       animation: beamPulse 3s ease-in-out infinite;
     }
     .plasma-beam::after {
@@ -308,20 +309,20 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px;
+      width: 150px;
       height: 100%;
       background: linear-gradient(
         to bottom,
         transparent 0%,
-        rgba(0, 191, 255, 0.1) 30%,
-        rgba(0, 191, 255, 0.2) 50%,
-        rgba(251, 191, 36, 0.1) 70%,
+        rgba(0, 191, 255, 0.25) 30%,
+        rgba(0, 191, 255, 0.4) 50%,
+        rgba(251, 191, 36, 0.25) 70%,
         transparent 100%
       );
-      filter: blur(30px);
+      filter: blur(40px);
     }
     @keyframes beamPulse {
-      0%, 100% { opacity: 0.7; }
+      0%, 100% { opacity: 0.8; }
       50% { opacity: 1; }
     }
 
@@ -415,11 +416,11 @@
     /* ===== RESPONSIVE FOR NEW EFFECTS ===== */
     @media (max-width: 768px) {
       .plasma-beam {
-        width: 200px;
-        opacity: 0.5;
+        width: 300px;
+        opacity: 0.6;
       }
       .matrix-rain {
-        opacity: 0.08;
+        opacity: 0.25;
       }
       .status-area {
         display: none;
