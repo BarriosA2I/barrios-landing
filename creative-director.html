@@ -7997,19 +7997,22 @@
                 // =================================================================
                 if (data.trigger_production) {
                     console.log('[CreativeDirector] Production trigger received');
-                    console.log('[CreativeDirector] Extracted data:', data.extracted_data);
+
+                    // Extract brief data from metadata (backend returns it in metadata.extracted_data)
+                    const extractedData = data.metadata?.extracted_data || data.extracted_data || {};
+                    console.log('[CreativeDirector] Extracted data:', extractedData);
 
                     // Build production brief from session data
                     const productionBrief = {
                         session_id: currentNISessionId || generateSessionId(),
-                        business_name: data.extracted_data?.business_name || 'Your Business',
-                        primary_offering: data.extracted_data?.primary_offering || data.extracted_data?.product || 'Product/Service',
-                        target_demographic: data.extracted_data?.target_demographic || data.extracted_data?.audience || 'Target Audience',
-                        tone: data.extracted_data?.tone || 'professional',
-                        call_to_action: data.extracted_data?.call_to_action || data.extracted_data?.cta || 'Learn More',
-                        platform: data.extracted_data?.platform || 'instagram',
-                        key_message: data.extracted_data?.key_message || '',
-                        duration: data.extracted_data?.duration || 30
+                        business_name: extractedData.business_name || 'Your Business',
+                        primary_offering: extractedData.primary_offering || extractedData.product || 'Product/Service',
+                        target_demographic: extractedData.target_demographic || extractedData.audience || 'Target Audience',
+                        tone: extractedData.tone || 'professional',
+                        call_to_action: extractedData.call_to_action || extractedData.cta || 'Learn More',
+                        platform: extractedData.platform || 'instagram',
+                        key_message: extractedData.key_message || '',
+                        duration: extractedData.duration || 30
                     };
 
                     console.log('[CreativeDirector] Production brief assembled:', productionBrief);
