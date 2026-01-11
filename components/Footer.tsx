@@ -1,131 +1,179 @@
-"use client";
+// 📁 components/Footer.tsx
+// Purpose: Site footer with navigation and status
+// Visual DNA: Matches Image 319 from screenshots
+// Dependencies: lucide-react
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { Linkedin, Twitter, Instagram } from 'lucide-react';
 
-/**
- * MISSION CONTROL FOOTER
- * Features: Terminal-style data grid, live status pings, glassmorphic links
- */
+const footerLinks = {
+  products: [
+    { label: 'NEXUS Personal', href: '/nexus' },
+    { label: 'A2I Commercial Lab', href: '/commercial-lab' },
+    { label: 'Command Center', href: '/command' },
+  ],
+  company: [
+    { label: 'About', href: '/about' },
+    { label: 'Founder', href: '/founder' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'System Status', href: '/status' },
+  ],
+  legal: [
+    { label: 'Privacy Directive', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Data Sovereignty', href: '/data' },
+  ],
+};
 
-const STATS = [
-  { label: "Global_Uptime", value: "99.999%" },
-  { label: "Active_Agents", value: "59_NODES" },
-  { label: "Neural_Latency", value: "420ms" }
+const socialLinks = [
+  { icon: <Linkedin className="w-5 h-5" />, href: 'https://linkedin.com', label: 'LinkedIn' },
+  { icon: <Twitter className="w-5 h-5" />, href: 'https://x.com', label: 'X (Twitter)' },
+  { icon: <Instagram className="w-5 h-5" />, href: 'https://instagram.com', label: 'Instagram' },
 ];
 
-const PRODUCT_LINKS = [
-  "NEXUS Personal",
-  "A2I Commercial Lab",
-  "Command Center"
-];
-
-const NETWORK_LINKS = [
-  "About Archive",
-  "Founder Node",
-  "System Status"
-];
-
-export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
+export function Footer() {
   return (
-    <footer className="relative w-full bg-[#0a0a1e] pt-24 pb-12 overflow-hidden border-t border-white/5">
-      {/* Background Decorative Grid */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#00bfff 1px, transparent 1px)',
-          backgroundSize: '30px 30px'
-        }}
-      />
+    <footer className="bg-[#080814] border-t border-white/[0.04]">
+      <div className="container mx-auto px-4 sm:px-6">
+        {/* Main Footer Content */}
+        <div className="py-16 grid sm:grid-cols-2 lg:grid-cols-5 gap-12">
+          {/* Brand Column */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Logo */}
+            <Link href="/" className="inline-flex items-center gap-3">
+              {/* Logo Icon - placeholder */}
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00bfff] to-cyan-400 flex items-center justify-center">
+                <span className="font-bold text-[#0a0a1e] text-sm">A2I</span>
+              </div>
+              <div>
+                <span className="font-bold text-white text-lg">BARRIOS </span>
+                <span className="font-bold text-[#00bfff] text-lg">A2I</span>
+              </div>
+            </Link>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
+            {/* Tagline */}
+            <p className="font-mono text-xs text-[#8892b0]/60 tracking-wider uppercase">
+              THE INTELLIGENCE ARCHITECTURE
+            </p>
 
-          {/* Brand & Identity (Span 4) */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            <div className="flex flex-col">
-              <h2 className="text-2xl font-bold text-white tracking-tighter">
-                BARRIOS <span className="text-[#ffd700]">A2I</span>
-              </h2>
-              <p className="text-[#00bfff] font-mono text-[10px] tracking-[0.3em] uppercase mt-1">
-                Operational_Intelligence
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]" />
-              <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">
-                All Systems Operational
+            {/* System Status */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00ff88]/5 border border-[#00ff88]/20">
+              <span className="w-2 h-2 bg-[#00ff88] rounded-full animate-pulse" />
+              <span className="font-mono text-xs text-[#00ff88] tracking-wider">
+                ALL SYSTEMS OPERATIONAL
               </span>
             </div>
-            <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
-              Installing autonomous intelligence that senses, decides, and acts across your entire operation—continuously.
-            </p>
           </div>
 
-          {/* Product Links (Span 2) */}
-          <div className="lg:col-span-2">
-            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">[ Products ]</h4>
-            <ul className="flex flex-col gap-3 text-sm">
-              {PRODUCT_LINKS.map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-gray-500 font-medium hover:text-[#00bfff] transition-colors">
-                    {link}
-                  </a>
+          {/* Products */}
+          <div>
+            <h4 className="font-mono text-xs text-[#00bfff]/70 tracking-[0.15em] uppercase mb-6">
+              [ PRODUCTS ]
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.products.map((link) => (
+                <li key={link.href}>
+                  <Link 
+                    href={link.href}
+                    className="text-[#8892b0] hover:text-white transition-colors text-sm flex items-center gap-2"
+                  >
+                    <span className="w-1 h-1 bg-[#00bfff] rounded-full opacity-60" />
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Network Links (Span 2) */}
-          <div className="lg:col-span-2">
-            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">[ Network ]</h4>
-            <ul className="flex flex-col gap-3 text-sm">
-              {NETWORK_LINKS.map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-gray-500 font-medium hover:text-[#00bfff] transition-colors">
-                    {link}
-                  </a>
+          {/* Company */}
+          <div>
+            <h4 className="font-mono text-xs text-[#00bfff]/70 tracking-[0.15em] uppercase mb-6">
+              [ COMPANY ]
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.company.map((link) => (
+                <li key={link.href}>
+                  <Link 
+                    href={link.href}
+                    className="text-[#8892b0] hover:text-white transition-colors text-sm flex items-center gap-2"
+                  >
+                    <span className="w-1 h-1 bg-[#00bfff] rounded-full opacity-60" />
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Social & Contact (Span 4) */}
-          <div className="lg:col-span-4 flex flex-col items-start lg:items-end">
-            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-6">[ Signal_Input ]</h4>
-            <div className="flex gap-4 mb-8">
-              {['Twitter', 'LinkedIn', 'Github'].map((platform) => (
-                <motion.a
-                  key={platform}
-                  whileHover={{ scale: 1.1, color: '#ffd700' }}
-                  href="#"
-                  className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-gray-400 backdrop-blur-sm bg-white/5"
+          {/* Legal & Social */}
+          <div>
+            <h4 className="font-mono text-xs text-[#00bfff]/70 tracking-[0.15em] uppercase mb-6">
+              [ LEGAL ]
+            </h4>
+            <ul className="space-y-3 mb-8">
+              {footerLinks.legal.map((link) => (
+                <li key={link.href}>
+                  <Link 
+                    href={link.href}
+                    className="text-[#8892b0] hover:text-white transition-colors text-sm flex items-center gap-2"
+                  >
+                    <span className="w-1 h-1 bg-[#00bfff] rounded-full opacity-60" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {/* Social Icons */}
+            <h4 className="font-mono text-xs text-[#00bfff]/70 tracking-[0.15em] uppercase mb-4">
+              [ CONNECT ]
+            </h4>
+            <div className="flex items-center gap-3">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="
+                    w-10 h-10 rounded-lg flex items-center justify-center
+                    bg-white/[0.02] border border-white/[0.06]
+                    text-[#8892b0] hover:text-[#00bfff] hover:border-[#00bfff]/30
+                    transition-all duration-300
+                  "
                 >
-                  <span className="text-[10px] font-bold tracking-tighter">{platform[0]}</span>
-                </motion.a>
+                  {social.icon}
+                </a>
               ))}
             </div>
-            <p className="text-[#00bfff] font-mono text-xs hover:underline cursor-pointer">
+
+            {/* Email */}
+            <a 
+              href="mailto:alienation2innovation@gmail.com"
+              className="block mt-4 text-xs text-[#8892b0]/60 hover:text-[#00bfff] transition-colors truncate"
+            >
               alienation2innovation@gmail.com
-            </p>
+            </a>
           </div>
         </div>
 
-        {/* Bottom Bar: Diagnostics Overlay */}
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-8 order-2 md:order-1">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="flex flex-col">
-                <span className="text-[8px] font-mono text-gray-600 uppercase">{stat.label}</span>
-                <span className="text-[10px] font-mono text-[#ffd700]">{stat.value}</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-[10px] font-mono text-gray-600 order-1 md:order-2">
-            © {currentYear} BARRIOS A2I. AUTHENTICATION_LEVEL: ADMIN_ROOT
+        {/* Bottom Bar */}
+        <div className="py-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[#8892b0]/40 text-xs font-mono">
+            © {new Date().getFullYear()} BARRIOS A2I INC. ALL RIGHTS RESERVED.
           </p>
+          <div className="flex items-center gap-6">
+            <Link href="/privacy" className="text-[#8892b0]/40 hover:text-[#8892b0] text-xs transition-colors">
+              Privacy
+            </Link>
+            <Link href="/terms" className="text-[#8892b0]/40 hover:text-[#8892b0] text-xs transition-colors">
+              Terms
+            </Link>
+            <Link href="/data" className="text-[#8892b0]/40 hover:text-[#8892b0] text-xs transition-colors">
+              Data
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

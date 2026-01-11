@@ -1,184 +1,65 @@
 /**
- * Barrios A2I Components - Barrel Export
- * =======================================
- * Neural RAG Brain v3.0 + RAGNAROK v7.0 APEX
- * 
- * Version: 4.0.0 (Gemini Upgrade)
- * 
- * New in v4.0:
- * - Agent Micro-Visualizations (ScripterVisual, VisualizerVisual, etc.)
- * - ExplainModeStrip for privacy/trust messaging
- * - Cost-Aware Thompson Sampling integration hooks
- * 
- * @author Barrios A2I
+ * Barrios A2I Components - Central Switchboard Edition
+ * =====================================================
+ * Homepage components for the Intelligence Architecture
+ *
+ * Version: 6.0.0 (Central Switchboard)
  */
 
 // ============================================================================
-// MEDIA UPLOAD
+// CENTRAL SWITCHBOARD - HOMEPAGE SECTIONS
 // ============================================================================
 
-export { 
-  default as GlassMediaUploader, 
-  GlassMediaUploader as MediaUploader 
-} from './GlassMediaUploader';
-
-export type { 
-  UploadStatus, 
-  GlassMediaUploaderProps 
-} from './GlassMediaUploader';
-
-// ============================================================================
-// AGENT MICRO-VISUALIZATIONS (v4.0 Gemini Upgrade)
-// ============================================================================
-
-export { 
-  default as AgentVisual,
-  AGENT_VISUALS,
-  StrategistVisual,
-  ScripterVisual,
-  VisualizerVisual,
-  SoundDesignerVisual,
-  AssemblerVisual,
-  QAVisual,
-  DeliveryVisual
-} from './AgentVisuals';
-
-export type { AgentVisualProps } from './AgentVisuals';
+export { HeroSection } from './HeroSection';
+export { AudienceRouter } from './AudienceRouter';
+export { OperationalVelocity } from './OperationalVelocity';
+export { NeuralTopology } from './NeuralTopology';
+export { SystemDiagnostics } from './SystemDiagnostics';
+export { DeploymentTimeline } from './DeploymentTimeline';
+export { ContactForm } from './ContactForm';
+export { Footer } from './Footer';
 
 // ============================================================================
-// EXPLAIN MODE & TRUST COMPONENTS (v4.0 Gemini Upgrade)
+// LEGACY COMPONENTS (preserved for other pages)
 // ============================================================================
 
-export { 
-  default as ExplainModeStrip,
-  PrivacyBadge,
-  ValueProposition,
-  ProcessingIndicator
-} from './ExplainModeStrip';
-
-// ============================================================================
-// SIDEBAR & NAVIGATION
-// ============================================================================
-
-export { 
-  default as NexusSidebar, 
-  NexusSidebar as Sidebar 
-} from './NexusSidebar';
-
-// ============================================================================
-// STATUS & METRICS WIDGETS
-// ============================================================================
-
-export { 
-  StatusWidget, 
-  TimeSavedWidget 
-} from './StatusWidget';
-
-// ============================================================================
-// MODALS & OVERLAYS
-// ============================================================================
-
-export { default as DemoTaskModal } from './DemoTaskModal';
-
-// ============================================================================
-// PRODUCTION DASHBOARD COMPONENTS
-// ============================================================================
-
-// Agent status card with micro-visualization integration
-export { default as AgentStatusCard } from './AgentStatusCard';
-
-// Production timeline view
-export { default as ProductionTimeline } from './ProductionTimeline';
-
-// ============================================================================
-// UTILITY COMPONENTS
-// ============================================================================
-
-// Glass morphism card wrapper
-export { default as GlassCard } from './GlassCard';
-
-// Animated number counter
-export { default as AnimatedCounter } from './AnimatedCounter';
+export { default as AgentVisual, AGENT_VISUALS } from './AgentVisuals';
+export { default as ExplainModeStrip } from './ExplainModeStrip';
+export { default as ThinkingStream } from './ThinkingStream';
+export { default as Header } from './Header';
+export { default as NeuralHive } from './NeuralHive';
+export { default as Pricing } from './Pricing';
 
 // ============================================================================
 // CONSTANTS & CONFIGURATION
 // ============================================================================
 
 export const AGENT_CONFIG = {
-  1: { 
-    name: 'Strategist', 
-    color: '#00CED1', 
-    description: 'Market Intelligence Analysis' 
-  },
-  2: { 
-    name: 'Scripter', 
-    color: '#00CED1', 
-    description: 'Narrative & Script Generation' 
-  },
-  3: { 
-    name: 'Visualizer', 
-    color: '#00CED1', 
-    description: 'Visual Style & Prompt Engineering' 
-  },
-  4: { 
-    name: 'Sound Designer', 
-    color: '#F59E0B', 
-    description: 'Audio & Voiceover Generation' 
-  },
-  5: { 
-    name: 'Assembler', 
-    color: '#8B5CF6', 
-    description: 'Video Assembly & Post-Production' 
-  },
-  6: { 
-    name: 'QA Checker', 
-    color: '#10B981', 
-    description: 'Quality Validation (195+ Checks)' 
-  },
-  7: { 
-    name: 'Delivery', 
-    color: '#10B981', 
-    description: 'Multi-Format Export & CDN Upload' 
-  },
+  1: { name: 'Strategist', color: '#00CED1', description: 'Market Intelligence Analysis' },
+  2: { name: 'Scripter', color: '#00CED1', description: 'Narrative & Script Generation' },
+  3: { name: 'Visualizer', color: '#00CED1', description: 'Visual Style & Prompt Engineering' },
+  4: { name: 'Sound Designer', color: '#F59E0B', description: 'Audio & Voiceover Generation' },
+  5: { name: 'Assembler', color: '#8B5CF6', description: 'Video Assembly & Post-Production' },
+  6: { name: 'QA Checker', color: '#10B981', description: 'Quality Validation (195+ Checks)' },
+  7: { name: 'Delivery', color: '#10B981', description: 'Multi-Format Export & CDN Upload' },
 } as const;
 
 export const THEME = {
-  primary: '#00CED1',      // Crystalline teal
-  secondary: '#8B5CF6',    // Purple accent
-  success: '#10B981',      // Emerald
-  warning: '#F59E0B',      // Amber
-  error: '#EF4444',        // Red
-  background: '#0a0a1e',   // Deep space
+  primary: '#00CED1',
+  secondary: '#8B5CF6',
+  success: '#10B981',
+  warning: '#F59E0B',
+  error: '#EF4444',
+  background: '#0a0a1e',
   surface: 'rgba(255, 255, 255, 0.05)',
   border: 'rgba(255, 255, 255, 0.1)',
 } as const;
-
-// ============================================================================
-// NEURAL RAG BRAIN - THINKING STREAM (v3.0 LEGENDARY)
-// ============================================================================
-
-export {
-  default as ThinkingStream,
-  ThinkingStream as NeuralThinkingStream
-} from './ThinkingStream';
 
 // ============================================================================
 // VERSION INFO
 // ============================================================================
 
 export const VERSION = {
-  components: '5.0.0',
-  neuralRagBrain: '3.0-LEGENDARY',
-  ragnarok: '7.0-APEX',
-  codename: 'Legendary Upgrade',
-  features: [
-    'Agent Micro-Visualizations',
-    'ExplainModeStrip',
-    'Cost-Aware Thompson Sampling',
-    'Resumable Multipart Uploads',
-    'ThinkingStream WebSocket',       // NEW
-    'Reflection Token Badges',        // NEW
-    'Graph-of-Thoughts Visualization', // NEW
-    'Black Box Recorder',             // NEW
-  ]
+  components: '6.0.0',
+  codename: 'Central Switchboard',
 } as const;

@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+:root {
+  /* Barrios A2I Color Tokens */
+  --deep-navy: #0a0a1e;
+  --electric-blue: #00bfff;
+  --gold: #ffd700;
+  --terminal-green: #00ff88;
+  --text-secondary: #8892b0;
+
+  /* Background */
+  --bg-primary: #0a0a1e;
+  --bg-secondary: #0f0f2a;
+  --bg-card: rgba(15, 15, 42, 0.6);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(0, 191, 255, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--deep-navy);
+  color: white;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Monospace font for terminal elements */
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--deep-navy);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--electric-blue);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(0, 191, 255, 0.3);
+  color: white;
+}
+
+/* Gradient text utility */
+.gradient-text-cyan {
+  background: linear-gradient(to right, var(--electric-blue), #67e8f9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-gold {
+  background: linear-gradient(to right, var(--gold), #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow: 0 0 60px -12px rgba(0, 191, 255, 0.4);
+}
+
+.glow-gold {
+  box-shadow: 0 0 60px -12px rgba(255, 215, 0, 0.4);
+}
+
+.glow-green {
+  box-shadow: 0 0 60px -12px rgba(0, 255, 136, 0.4);
+}
+
+/* Backdrop blur fallback */
+@supports not (backdrop-filter: blur(12px)) {
+  .backdrop-blur-xl {
+    background-color: rgba(10, 10, 30, 0.95);
+  }
+}
