@@ -7993,12 +7993,47 @@
                 }
 
                 // =================================================================
-                // PHASE 1: Handle production trigger
+                // PHASE 1: Handle production trigger → Show voice selector
                 // =================================================================
                 if (data.trigger_production) {
-                    console.log('Production triggered with brief:', data.extracted_data);
-                    // TODO: Connect to production status SSE endpoint
+                    console.log('[CreativeDirector] Production trigger received');
+                    console.log('[CreativeDirector] Extracted data:', data.extracted_data);
+
+                    // Build production brief from session data
+                    const productionBrief = {
+                        session_id: currentNISessionId || generateSessionId(),
+                        business_name: data.extracted_data?.business_name || 'Your Business',
+                        primary_offering: data.extracted_data?.primary_offering || data.extracted_data?.product || 'Product/Service',
+                        target_demographic: data.extracted_data?.target_demographic || data.extracted_data?.audience || 'Target Audience',
+                        tone: data.extracted_data?.tone || 'professional',
+                        call_to_action: data.extracted_data?.call_to_action || data.extracted_data?.cta || 'Learn More',
+                        platform: data.extracted_data?.platform || 'instagram',
+                        key_message: data.extracted_data?.key_message || '',
+                        duration: data.extracted_data?.duration || 30
+                    };
+
+                    console.log('[CreativeDirector] Production brief assembled:', productionBrief);
+
+                    // Store for voice selector access
+                    window.currentProductionBrief = productionBrief;
+                    window.currentSessionId = productionBrief.session_id;
+
+                    // Update progress bar to 100%
                     updateProgressBar(100, []);
+
+                    // Show voice selector modal
+                    if (typeof showVoiceSelector === 'function') {
+                        console.log('[CreativeDirector] Opening voice selector modal');
+
+                        // Add prompt message
+                        appendNIMessage('ai', '🎙️ <strong>Choose a voice for your commercial!</strong><br>Select from our library of professional AI voices below.');
+
+                        // Open voice selector
+                        showVoiceSelector();
+                    } else {
+                        console.error('[CreativeDirector] showVoiceSelector function not available');
+                        appendNIMessage('ai', 'Voice selector unavailable. Please refresh and try again.');
+                    }
                 }
 
             } catch (error) {
