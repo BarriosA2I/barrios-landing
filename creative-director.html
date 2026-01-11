@@ -8106,17 +8106,50 @@
         }
 
         function handleSilence(stage) {
-            const messages = [
-                "Take your time—I'm here whenever you're ready.",
-                "Still here? No rush if you need a sec.",
-                "Want to pick this up now, or should I send you a link to continue later?"
-            ];
+            // Get current missing fields from the progress bar
+            const progressText = document.querySelector('.ni-progress-text')?.textContent || '';
+            const missingMatch = progressText.match(/NEED:\s*(.+)/i);
+            const missingFields = missingMatch ? missingMatch[1].split(',').map(f => f.trim()) : [];
 
-            if (stage <= messages.length) {
-                appendNIMessage('ai', messages[stage - 1]);
+            // Generate proactive messages based on what's missing
+            let proactiveMessage;
 
-                if (stage < messages.length) {
-                    const nextDelay = stage === 1 ? 30000 : 60000;  // 30s, then 60s
+            if (missingFields.length === 0 || progressText.includes('100%')) {
+                // All complete - encourage confirmation
+                proactiveMessage = "Ready to create your video? Just say 'yes' to confirm!";
+            } else {
+                // Still missing fields - ask about the first one
+                const nextField = missingFields[0]?.toUpperCase();
+
+                switch(nextField) {
+                    case 'PRODUCT':
+                        proactiveMessage = "What product or service would you like to highlight in this video?";
+                        break;
+                    case 'AUDIENCE':
+                        proactiveMessage = "Who are you trying to reach with this video?";
+                        break;
+                    case 'CTA':
+                        proactiveMessage = "What should viewers do after watching - call you, visit your website?";
+                        break;
+                    case 'TONE':
+                        proactiveMessage = "What vibe should this video have - professional, friendly, energetic?";
+                        break;
+                    default:
+                        // Fallback based on stage
+                        const fallbackMessages = [
+                            "I still need a few details. " + (missingFields.length > 0 ? `Can you tell me about your ${missingFields[0].toLowerCase()}?` : "What else can you share?"),
+                            "Just need " + missingFields.length + " more piece" + (missingFields.length > 1 ? "s" : "") + " of info to get started on your video.",
+                            "Almost there! What's your " + (missingFields[0] || "main offering") + "?"
+                        ];
+                        proactiveMessage = fallbackMessages[Math.min(stage - 1, fallbackMessages.length - 1)];
+                }
+            }
+
+            if (stage <= 3) {
+                appendNIMessage('ai', proactiveMessage);
+
+                if (stage < 3) {
+                    const nextDelay = stage === 1 ? 45000 : 60000;  // 45s, then 60s (longer to avoid spam)
                     silenceTimer = setTimeout(() => handleSilence(stage + 1), nextDelay);
                 }
             }
