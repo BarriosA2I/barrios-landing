@@ -748,9 +748,10 @@
             gridHelper.visible = gridVisible;
         }
 
-        // Time
+        // Time - with null check
         setInterval(() => {
-            document.getElementById('system-time').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const timeEl = document.getElementById('system-time');
+            if (timeEl) timeEl.innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
         }, 1000);
 
         // ========== GUIDED TOUR ==========
