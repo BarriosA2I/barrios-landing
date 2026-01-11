@@ -3722,6 +3722,289 @@
             `;
             container.appendChild(summary);
         }
+
+        // =====================================================================
+        // V2 PRODUCTION SSE STREAMING (Phase 3)
+        // =====================================================================
+
+        let productionEventSource = null;
+
+        /**
+         * Show production progress overlay in chat
+         * @param {string} sessionId - Current session ID
+         */
+        function showProductionProgressOverlay(sessionId) {
+            console.log('[V2-SSE] Showing production overlay for session:', sessionId);
+
+            // Check if overlay already exists
+            let overlay = document.getElementById('production-progress-overlay');
+            if (overlay) {
+                overlay.style.display = 'block';
+                return;
+            }
+
+            // Create production overlay
+            overlay = document.createElement('div');
+            overlay.id = 'production-progress-overlay';
+            overlay.style.cssText = `
+                margin: 16px 0;
+                padding: 20px;
+                background: linear-gradient(135deg, rgba(0, 206, 209, 0.08), rgba(139, 92, 246, 0.05));
+                border: 1px solid rgba(0, 206, 209, 0.4);
+                border-radius: 12px;
+            `;
+            overlay.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <span style="font-size: 24px;">🎬</span>
+                    <div>
+                        <div style="font-size: 14px; font-weight: bold; color: #00CED1;">RAGNAROK v7.0 PRODUCTION</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.6);">Generating your AI commercial...</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); border-radius: 8px; height: 20px; overflow: hidden; margin-bottom: 12px;">
+                    <div id="production-progress-bar" style="
+                        width: 0%;
+                        height: 100%;
+                        background: linear-gradient(90deg, #00CED1, #8B5CF6);
+                        transition: width 0.5s ease;
+                        border-radius: 8px;
+                    "></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="production-phase-text" style="font-size: 12px; color: rgba(255,255,255,0.7);">Initializing...</span>
+                    <span id="production-percent-text" style="font-size: 12px; font-weight: bold; color: #00CED1;">0%</span>
+                </div>
+
+                <div id="production-agent-grid" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+                    gap: 8px;
+                    margin-top: 16px;
+                "></div>
+            `;
+
+            // Insert into chat area
+            const chatMessages = document.getElementById('chat-messages');
+            if (chatMessages) {
+                chatMessages.appendChild(overlay);
+                overlay.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+        }
+
+        /**
+         * Connect to production SSE stream for real-time updates
+         * @param {string} sessionId - Session ID to stream
+         */
+        function connectProductionSSE(sessionId) {
+            const streamUrl = `${API_BASE_URL}/api/production/status/${sessionId}/stream`;
+            console.log('[V2-SSE] Connecting to:', streamUrl);
+
+            // Close existing connection
+            if (productionEventSource) {
+                productionEventSource.close();
+            }
+
+            productionEventSource = new EventSource(streamUrl);
+
+            productionEventSource.onopen = () => {
+                console.log('[V2-SSE] Connection opened');
+            };
+
+            productionEventSource.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log('[V2-SSE] Message:', data);
+                    handleProductionSSEEvent(data);
+                } catch (e) {
+                    console.error('[V2-SSE] Parse error:', e);
+                }
+            };
+
+            // Named event handlers
+            productionEventSource.addEventListener('status', (event) => {
+                const data = JSON.parse(event.data);
+                handleProductionSSEEvent(data);
+            });
+
+            productionEventSource.addEventListener('complete', (event) => {
+                const data = JSON.parse(event.data);
+                console.log('[V2-SSE] Production complete!', data);
+                handleProductionComplete(data);
+                productionEventSource.close();
+            });
+
+            productionEventSource.addEventListener('error', (event) => {
+                let data = {};
+                try { data = JSON.parse(event.data); } catch (e) {}
+                console.error('[V2-SSE] Production error:', data);
+                handleProductionError(data);
+                productionEventSource.close();
+            });
+
+            productionEventSource.onerror = (err) => {
+                console.error('[V2-SSE] Connection error:', err);
+                // Attempt reconnection after 5 seconds
+                setTimeout(() => {
+                    if (productionEventSource.readyState === EventSource.CLOSED) {
+                        console.log('[V2-SSE] Attempting reconnection...');
+                        connectProductionSSE(sessionId);
+                    }
+                }, 5000);
+            };
+        }
+
+        /**
+         * Handle incoming production SSE events
+         */
+        function handleProductionSSEEvent(data) {
+            const progressBar = document.getElementById('production-progress-bar');
+            const phaseText = document.getElementById('production-phase-text');
+            const percentText = document.getElementById('production-percent-text');
+
+            const percent = data.percent || data.progress_percent || data.progress || 0;
+            const message = data.message || data.stage || data.step || '';
+
+            if (progressBar) {
+                progressBar.style.width = `${percent}%`;
+            }
+            if (percentText) {
+                percentText.textContent = `${Math.round(percent)}%`;
+            }
+            if (phaseText && message) {
+                phaseText.textContent = message;
+            }
+
+            // Update agent grid if agent info present
+            if (data.agent || data.stage) {
+                updateProductionAgentGrid(data);
+            }
+        }
+
+        /**
+         * Update production agent progress grid
+         */
+        function updateProductionAgentGrid(data) {
+            const grid = document.getElementById('production-agent-grid');
+            if (!grid) return;
+
+            const agents = {
+                'intake': { name: 'NEXUS', icon: '🧠', color: '#00CED1' },
+                'research': { name: 'Research', icon: '🔍', color: '#A855F7' },
+                'script': { name: 'Script', icon: '📝', color: '#FFD700' },
+                'voice': { name: 'Voice', icon: '🎙️', color: '#FF6B6B' },
+                'video': { name: 'Video', icon: '🎬', color: '#10B981' },
+                'music': { name: 'Music', icon: '🎵', color: '#F97316' },
+                'assembly': { name: 'VORTEX', icon: '⚡', color: '#EC4899' },
+                'delivery': { name: 'Delivery', icon: '📦', color: '#22C55E' }
+            };
+
+            const stage = data.stage || data.agent || 'unknown';
+            const config = agents[stage] || { name: stage, icon: '🤖', color: '#00CED1' };
+            const isComplete = data.status === 'complete' || data.status === 'success';
+            const isRunning = data.status === 'running' || data.status === 'processing' || data.status === 'in_progress';
+
+            let card = document.getElementById(`prod-agent-${stage}`);
+            if (!card) {
+                card = document.createElement('div');
+                card.id = `prod-agent-${stage}`;
+                grid.appendChild(card);
+            }
+
+            card.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 8px;
+                background: ${isComplete ? 'rgba(16, 185, 129, 0.15)' : isRunning ? `${config.color}15` : 'rgba(255,255,255,0.03)'};
+                border: 1px solid ${isComplete ? 'rgba(16, 185, 129, 0.4)' : isRunning ? `${config.color}40` : 'rgba(255,255,255,0.1)'};
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            `;
+            card.innerHTML = `
+                <span style="font-size: 18px; ${isRunning ? 'animation: pulse 1s infinite;' : ''}">${config.icon}</span>
+                <div style="font-size: 9px; font-weight: bold; color: ${isComplete ? '#10B981' : isRunning ? config.color : 'rgba(255,255,255,0.5)'}; margin-top: 4px;">
+                    ${config.name}
+                </div>
+                <span style="font-size: 10px; margin-top: 2px;">${isComplete ? '✅' : isRunning ? '⏳' : '⏸️'}</span>
+            `;
+        }
+
+        /**
+         * Handle production completion
+         */
+        function handleProductionComplete(data) {
+            const progressBar = document.getElementById('production-progress-bar');
+            const phaseText = document.getElementById('production-phase-text');
+            const percentText = document.getElementById('production-percent-text');
+
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.style.background = 'linear-gradient(90deg, #10B981, #22C55E)';
+            }
+            if (percentText) {
+                percentText.textContent = '100%';
+                percentText.style.color = '#10B981';
+            }
+            if (phaseText) {
+                phaseText.textContent = '✅ Your commercial is ready!';
+            }
+
+            // Show video if URL provided
+            if (data.video_url) {
+                showProductionVideo(data.video_url, data.thumbnail_url);
+            }
+
+            // Add completion message to chat
+            addSystemMessage('🎉 Your AI commercial has been generated! Check the video above.');
+        }
+
+        /**
+         * Handle production error
+         */
+        function handleProductionError(data) {
+            const phaseText = document.getElementById('production-phase-text');
+            const progressBar = document.getElementById('production-progress-bar');
+
+            if (phaseText) {
+                phaseText.textContent = `❌ ${data.error || 'Production failed'}`;
+                phaseText.style.color = '#EF4444';
+            }
+            if (progressBar) {
+                progressBar.style.background = 'linear-gradient(90deg, #EF4444, #F87171)';
+            }
+
+            addSystemMessage(`❌ Production error: ${data.error || 'Unknown error'}. Please try again.`);
+        }
+
+        /**
+         * Show completed production video
+         */
+        function showProductionVideo(videoUrl, thumbnailUrl) {
+            const overlay = document.getElementById('production-progress-overlay');
+            if (!overlay) return;
+
+            const videoContainer = document.createElement('div');
+            videoContainer.style.cssText = `
+                margin-top: 16px;
+                border-radius: 12px;
+                overflow: hidden;
+                background: #000;
+            `;
+            videoContainer.innerHTML = `
+                <video
+                    controls
+                    autoplay
+                    style="width: 100%; max-height: 400px;"
+                    ${thumbnailUrl ? `poster="${thumbnailUrl}"` : ''}
+                >
+                    <source src="${videoUrl}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            `;
+            overlay.appendChild(videoContainer);
+        }
     </script>
 
     <!-- NEXUS Agent Visuals Mount Points -->
@@ -8095,6 +8378,21 @@
                 // Update phase if provided
                 if (data.phase) {
                     updateNIPhase(data.phase);
+                }
+
+                // =================================================================
+                // V2: Handle production phase - Connect to SSE for real-time updates
+                // =================================================================
+                if (data.current_phase === 'production' && data.production_id) {
+                    console.log('[V2-SSE] Production started, connecting to SSE stream');
+                    console.log('[V2-SSE] Session ID:', sessionId);
+                    console.log('[V2-SSE] Production ID:', data.production_id);
+
+                    // Show production progress overlay
+                    showProductionProgressOverlay(sessionId);
+
+                    // Connect to SSE stream for real-time progress updates
+                    connectProductionSSE(sessionId);
                 }
 
                 // =================================================================
