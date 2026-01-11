@@ -8006,11 +8006,11 @@
 
                         // Build production brief from session data
                         console.log('[DEBUG 3] About to build production brief');
-                        console.log('[DEBUG 3.1] currentNISessionId:', currentNISessionId);
+                        console.log('[DEBUG 3.1] sessionId:', sessionId);
                         console.log('[DEBUG 3.2] typeof generateSessionId:', typeof generateSessionId);
 
                         const productionBrief = {
-                            session_id: currentNISessionId || generateSessionId(),
+                            session_id: sessionId,
                             business_name: extractedData.business_name || 'Your Business',
                             primary_offering: extractedData.primary_offering || extractedData.product || 'Product/Service',
                             target_demographic: extractedData.target_demographic || extractedData.audience || 'Target Audience',
