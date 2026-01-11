@@ -125,61 +125,117 @@
     </style>
 </head>
 <body class="bg-obsidian min-h-screen text-white">
-    <!-- ========== LEGENDARY REMASTER ========== -->
-    <header id="global-header" class="fixed top-0 left-0 right-0 z-[100] px-4 md:px-6 py-3 md:py-6 transition-all duration-300">
-        <!-- Glassmorphism Background -->
-        <div class="absolute inset-0 bg-transparent backdrop-blur-none transition-all duration-300" id="header-bg"></div>
-        <div class="header-glow-border"></div>
+    <!-- ========== UNIFIED HEADER - Tesla Minimalism + Cyberpunk ========== -->
+    <!-- Design System: frontend-design/SKILL.md -->
+    <header class="fixed top-0 left-0 right-0 z-[100] bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 md:h-20">
 
-        <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
-            <!-- Brand Section with Status Indicator -->
-            <a href="/" class="flex items-center gap-4 md:gap-5 group">
-                <div class="relative">
-                    <!-- Shard Logo with Volumetric Glow -->
-                    <div class="relative w-16 h-16 md:w-24 md:h-24 flex items-center justify-center">
-                        <div class="hidden md:block absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
-                        <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="relative w-14 h-14 md:w-20 md:h-20 object-contain transition-all duration-300" style="-webkit-filter: none !important; filter: none !important;">
-                    </div>
-                    <!-- Active Status Dot -->
-                    <div class="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-2.5 h-2.5 md:w-3 md:h-3 bg-brand-gold rounded-full status-pulse"></div>
-                </div>
-                <div class="hidden md:flex flex-col">
-                    <span class="text-brand-teal font-mono text-xs tracking-[0.2em] leading-none mb-1">SYSTEM_CONNECTED</span>
-                    <span class="text-white font-black tracking-tighter text-2xl leading-none">BARRIOS <span class="text-brand-gold">A2I</span></span>
-                </div>
-            </a>
-
-            <!-- Navigation -->
-            <div class="flex items-center gap-4 md:gap-6">
-                <a href="/" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">RETURN_HOME</span>
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
+          <!-- Logo Section -->
+          <a href="/" class="flex items-center gap-3 group">
+            <!-- Shard Logo -->
+            <div class="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
+              <img
+                src="/brand/barrios-a2i-shard-logo.png"
+                alt="Barrios A2I"
+                class="w-full h-full object-contain transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(0,206,209,0.4)]"
+              >
+              <!-- Status Dot -->
+              <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#FFD700] rounded-full shadow-[0_0_6px_#FFD700]"></span>
             </div>
+
+            <!-- Brand Text -->
+            <div class="flex flex-col">
+              <span class="text-[9px] md:text-[10px] text-[#00CED1] font-mono tracking-[0.2em] uppercase opacity-80">
+                SYSTEM_ACTIVE
+              </span>
+              <span class="text-base md:text-lg font-bold tracking-tight leading-tight">
+                <span class="text-[#fafafa]">BARRIOS</span>
+                <span class="text-[#00CED1] ml-1">A2I</span>
+              </span>
+            </div>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex items-center gap-1">
+            <a href="/pricing" class="nav-item px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              PRICING
+            </a>
+            <a href="/nexus-personal" class="nav-item px-3 py-2 font-mono text-xs tracking-wider group">
+              <span class="text-[#00CED1] group-hover:text-[#00CED1]">NEXUS</span>
+              <span class="inline-block w-1.5 h-1.5 bg-[#00CED1] rounded-full ml-1.5 shadow-[0_0_6px_#00CED1]"></span>
+            </a>
+            <a href="/creative-director" class="nav-item px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              COMMERCIAL_LAB
+            </a>
+            <a href="/founder" class="nav-item px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              FOUNDER
+            </a>
+            <a href="/command-center" class="nav-item px-3 py-2 font-mono text-xs tracking-wider group">
+              <span class="text-[#FFD700] group-hover:text-[#FFD700]">COMMAND</span>
+              <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1.5 shadow-[0_0_6px_#FFD700]"></span>
+            </a>
+          </nav>
+
+          <!-- Mobile Menu Button -->
+          <button
+            id="mobile-menu-btn"
+            class="md:hidden p-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
+              <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div id="mobile-nav" class="hidden md:hidden bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-white/5">
+        <nav class="px-4 py-3 space-y-1">
+          <a href="/pricing" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
+            PRICING
+          </a>
+          <a href="/nexus-personal" class="block py-2.5 px-3 text-[#00CED1] hover:bg-[#00CED1]/10 rounded-md font-mono text-sm transition-colors">
+            NEXUS <span class="inline-block w-1.5 h-1.5 bg-[#00CED1] rounded-full ml-1 shadow-[0_0_6px_#00CED1]"></span>
+          </a>
+          <a href="/creative-director" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
+            COMMERCIAL_LAB
+          </a>
+          <a href="/founder" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
+            FOUNDER
+          </a>
+          <a href="/command-center" class="block py-2.5 px-3 text-[#FFD700] hover:bg-[#FFD700]/10 rounded-md font-mono text-sm transition-colors">
+            COMMAND <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1 shadow-[0_0_6px_#FFD700]"></span>
+          </a>
         </nav>
+      </div>
     </header>
 
-    <!-- Header Scroll Behavior Script -->
+    <!-- Header Spacer -->
+    <div class="h-16 md:h-20"></div>
+
+    <!-- Mobile Menu Script -->
     <script>
     (function() {
-        const header = document.getElementById('global-header');
-        const headerBg = document.getElementById('header-bg');
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.scrollY;
-            const isMobile = window.innerWidth < 768;
-            if (currentScroll > 10) {
-                header.classList.remove('py-3', 'md:py-6');
-                header.classList.add(isMobile ? 'py-2' : 'py-3');
-                headerBg.classList.remove('bg-transparent', 'backdrop-blur-none');
-                headerBg.classList.add('bg-obsidian/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
-            } else {
-                header.classList.remove('py-2', 'py-3');
-                header.classList.add('py-3', 'md:py-6');
-                headerBg.classList.remove('bg-obsidian/90', 'backdrop-blur-xl', 'border-b', 'border-white/10');
-                headerBg.classList.add('bg-transparent', 'backdrop-blur-none');
-            }
+      const btn = document.getElementById('mobile-menu-btn');
+      const nav = document.getElementById('mobile-nav');
+      const iconOpen = document.getElementById('menu-icon-open');
+      const iconClose = document.getElementById('menu-icon-close');
+
+      if (btn && nav) {
+        btn.addEventListener('click', () => {
+          const isOpen = !nav.classList.contains('hidden');
+          nav.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', !isOpen);
+          if (iconOpen && iconClose) {
+            iconOpen.classList.toggle('hidden');
+            iconClose.classList.toggle('hidden');
+          }
         });
+      }
     })();
     </script>
 
