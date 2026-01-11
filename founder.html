@@ -39,6 +39,7 @@
       color: #94a3b8;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      padding-bottom: 60px;
     }
     ::selection { background: rgba(0, 191, 255, 0.3); color: white; }
     
@@ -228,9 +229,234 @@
     @media (prefers-reduced-motion: reduce) {
       .scan-beam, .shimmer-text, .float-anim, .glow-pulse, .border-glow { animation: none; }
     }
+
+    /* ===== MATRIX CODE RAIN ===== */
+    .matrix-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      opacity: 0.15;
+    }
+    .matrix-rain canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ===== PLASMA BEAM ===== */
+    .plasma-beam {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 400px;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 191, 255, 0.03) 10%,
+        rgba(0, 191, 255, 0.08) 30%,
+        rgba(0, 191, 255, 0.15) 50%,
+        rgba(251, 191, 36, 0.1) 70%,
+        rgba(251, 191, 36, 0.05) 90%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 30%,
+        black 70%,
+        transparent 100%
+      );
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 30%,
+        black 70%,
+        transparent 100%
+      );
+    }
+    .plasma-beam::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 191, 255, 0.6) 20%,
+        rgba(255, 255, 255, 0.9) 50%,
+        rgba(251, 191, 36, 0.6) 80%,
+        transparent 100%
+      );
+      filter: blur(2px);
+      animation: beamPulse 3s ease-in-out infinite;
+    }
+    .plasma-beam::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 191, 255, 0.1) 30%,
+        rgba(0, 191, 255, 0.2) 50%,
+        rgba(251, 191, 36, 0.1) 70%,
+        transparent 100%
+      );
+      filter: blur(30px);
+    }
+    @keyframes beamPulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    /* ===== SYSTEM LOG FOOTER ===== */
+    .system-log-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 12px 24px;
+    }
+    .system-log-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .log-message-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      color: #64748b;
+      overflow: hidden;
+    }
+    .log-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #00bfff;
+      flex-shrink: 0;
+      animation: logPulse 2s ease-in-out infinite;
+    }
+    @keyframes logPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px #00bfff; }
+      50% { opacity: 0.5; box-shadow: 0 0 4px #00bfff; }
+    }
+    .log-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .status-area {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-shrink: 0;
+    }
+    .status-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+    .status-dots {
+      display: flex;
+      gap: 4px;
+      margin-left: 8px;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+    .status-dot:nth-child(2) { animation-delay: 0.3s; }
+    .status-dot:nth-child(3) { animation-delay: 0.6s; }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .network-load {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #10b981;
+      margin-left: 8px;
+    }
+
+    /* ===== RESPONSIVE FOR NEW EFFECTS ===== */
+    @media (max-width: 768px) {
+      .plasma-beam {
+        width: 200px;
+        opacity: 0.5;
+      }
+      .matrix-rain {
+        opacity: 0.08;
+      }
+      .status-area {
+        display: none;
+      }
+      .system-log-footer {
+        padding: 8px 16px;
+      }
+      .log-message-area {
+        font-size: 10px;
+      }
+    }
+
+    /* ===== REDUCED MOTION FOR NEW EFFECTS ===== */
+    @media (prefers-reduced-motion: reduce) {
+      .matrix-rain {
+        display: none;
+      }
+      .plasma-beam::before,
+      .log-indicator,
+      .status-dot {
+        animation: none !important;
+      }
+      .plasma-beam::before {
+        opacity: 0.8;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen antialiased">
+
+  <!-- Matrix Code Rain Background -->
+  <div class="matrix-rain" id="matrix-rain" aria-hidden="true">
+    <canvas id="matrix-canvas"></canvas>
+  </div>
+
+  <!-- Plasma Beam Effect -->
+  <div class="plasma-beam" aria-hidden="true"></div>
 
   <!-- Animation Elements -->
   <div class="scan-beam"></div>
@@ -327,7 +553,7 @@
   <!-- ================================================================== -->
   <!-- MAIN CONTENT -->
   <!-- ================================================================== -->
-  <main class="relative pt-24">
+  <main class="relative z-10 pt-24">
     <!-- Background Effects -->
     <div class="fixed inset-0 pointer-events-none z-0">
       <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-transparent"></div>
@@ -683,6 +909,148 @@
         });
       });
     })();
+  </script>
+
+  <!-- System Log Footer -->
+  <footer class="system-log-footer" role="status" aria-live="polite">
+    <div class="system-log-content">
+      <div class="log-message-area">
+        <span class="log-indicator" id="log-indicator"></span>
+        <span class="log-text" id="log-text">[INIT] System boot sequence...</span>
+      </div>
+      <div class="status-area">
+        <div style="display: flex; align-items: center;">
+          <span class="status-label">GLOBAL_STATUS</span>
+          <div class="status-dots">
+            <span class="status-dot"></span>
+            <span class="status-dot"></span>
+            <span class="status-dot"></span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 24px;">
+          <span class="status-label">NETWORK</span>
+          <span class="network-load" id="network-load">0.04%</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Matrix Code Rain + System Log JavaScript -->
+  <script>
+  (function() {
+    'use strict';
+
+    // ===== MATRIX CODE RAIN =====
+    var canvas = document.getElementById('matrix-canvas');
+    if (canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      var ctx = canvas.getContext('2d');
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+      var fontSize = 14;
+      var columns = Math.floor(canvas.width / fontSize);
+      var drops = [];
+
+      function initDrops() {
+        columns = Math.floor(canvas.width / fontSize);
+        drops = [];
+        for (var i = 0; i < columns; i++) {
+          drops[i] = Math.random() * -100;
+        }
+      }
+      initDrops();
+      window.addEventListener('resize', initDrops);
+
+      function drawMatrix() {
+        // Fade effect
+        ctx.fillStyle = 'rgba(10, 10, 30, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = fontSize + 'px "JetBrains Mono", monospace';
+
+        for (var i = 0; i < drops.length; i++) {
+          var char = chars[Math.floor(Math.random() * chars.length)];
+          var x = i * fontSize;
+          var y = drops[i] * fontSize;
+
+          // Vary opacity
+          var alpha = Math.random() * 0.5 + 0.2;
+
+          // Mostly cyan, occasionally gold
+          if (Math.random() > 0.95) {
+            ctx.fillStyle = 'rgba(251, 191, 36, ' + alpha + ')';
+          } else {
+            ctx.fillStyle = 'rgba(0, 191, 255, ' + alpha + ')';
+          }
+
+          ctx.fillText(char, x, y);
+
+          // Reset drop
+          if (y > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      }
+
+      setInterval(drawMatrix, 50);
+    }
+
+    // ===== SYSTEM LOG ROTATION =====
+    var LOG_MESSAGES = [
+      { msg: 'NEXUS_BRIDGE: Monitoring intake ports...', color: '#00bfff' },
+      { msg: 'TRINITY: Market intelligence scan complete (0.84s)', color: '#10b981' },
+      { msg: 'RAGNAROK: Volumetric render engine initialized.', color: '#00bfff' },
+      { msg: 'CORE: Optimization cycle running - 12.4ms latency detected.', color: '#fbbf24' },
+      { msg: 'NEXUS: New lead detected via identity_protocol.', color: '#00bfff' },
+      { msg: 'SYSTEM: All agents report GREEN status.', color: '#10b981' },
+      { msg: 'TRINITY: Cross-referencing competitive logic...', color: '#00bfff' },
+      { msg: 'RAGNAROK: Asset optimization complete (2.1s)', color: '#10b981' },
+      { msg: 'NEXUS: Lead scoring algorithm updated.', color: '#00bfff' },
+      { msg: 'SYSTEM: Cache refresh in 45s.', color: '#fbbf24' }
+    ];
+
+    var logTextEl = document.getElementById('log-text');
+    var logIndicatorEl = document.getElementById('log-indicator');
+    var networkLoadEl = document.getElementById('network-load');
+    var logIndex = 0;
+
+    function updateLog() {
+      if (!logTextEl) return;
+
+      var entry = LOG_MESSAGES[logIndex];
+      var now = new Date();
+      var hours = String(now.getHours()).padStart(2, '0');
+      var minutes = String(now.getMinutes()).padStart(2, '0');
+      var seconds = String(now.getSeconds()).padStart(2, '0');
+      var timestamp = hours + ':' + minutes + ':' + seconds;
+
+      logTextEl.textContent = '[' + timestamp + '] ' + entry.msg;
+
+      if (logIndicatorEl) {
+        logIndicatorEl.style.background = entry.color;
+        logIndicatorEl.style.boxShadow = '0 0 8px ' + entry.color;
+      }
+
+      if (networkLoadEl) {
+        var load = (Math.random() * 0.08 + 0.01).toFixed(2);
+        networkLoadEl.textContent = load + '%';
+      }
+
+      logIndex = (logIndex + 1) % LOG_MESSAGES.length;
+    }
+
+    // Start log rotation
+    setInterval(updateLog, 3000);
+    setTimeout(updateLog, 500); // Initial update
+
+  })();
   </script>
 </body>
 </html>
