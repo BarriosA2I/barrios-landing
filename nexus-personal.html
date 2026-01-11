@@ -198,190 +198,98 @@
     <div class="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent z-50"></div>
 
     <!-- ========== GLOBAL HEADER (LEGENDARY REMASTER + MOBILE NAV) ========== -->
-    <header id="global-header" class="fixed top-0 left-0 right-0 z-[100] px-4 md:px-6 py-3 md:py-6 transition-all duration-300">
-        <!-- Glassmorphism Background -->
-        <div class="absolute inset-0 bg-transparent backdrop-blur-none transition-all duration-300" id="header-bg"></div>
-        <!-- LEGENDARY Animated Border Glow -->
-        <div class="header-glow-border"></div>
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#0a0a1e]/90 backdrop-blur-md border-b border-[#00bfff]/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 md:h-20">
 
-        <nav class="max-w-7xl mx-auto relative flex items-center justify-between">
-            <!-- Brand Section with Status Indicator -->
-            <a href="/" class="flex items-center gap-4 md:gap-5 group">
-                <div class="relative">
-                    <!-- Shard Logo with LEGENDARY Breathing Glow -->
-                    <div class="relative w-16 h-16 md:w-24 md:h-24 flex items-center justify-center">
-                        <div class="hidden md:block absolute inset-0 bg-brand-teal blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
-                        <img
-                            src="brand/barrios-a2i-shard-logo.png"
-                            alt="Barrios A2I"
-                            class="relative w-14 h-14 md:w-20 md:h-20 object-contain transition-all duration-300"
-                            style="-webkit-filter: none !important; filter: none !important;"
-                        >
-                    </div>
-                    <!-- Active Status Dot with Pulse -->
-                    <div class="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-2.5 h-2.5 md:w-3 md:h-3 bg-brand-gold rounded-full status-pulse"></div>
-                </div>
-                <div class="hidden md:flex flex-col">
-                    <a href="/status" class="text-brand-teal font-mono text-xs tracking-[0.2em] leading-none mb-1 hover:text-green-500 transition-colors">SYSTEM_CONNECTED</a>
-                    <span class="text-white font-black tracking-tighter text-2xl leading-none">
-                        BARRIOS <span class="text-brand-gold">A2I</span>
-                    </span>
-                </div>
-            </a>
-
-            <!-- Center Navigation with Gold Trace (Desktop) - LEGENDARY REMASTER -->
-            <div class="hidden lg:flex items-center gap-2">
-                <a href="/#pricing" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">PRICING</span>
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/nexus-personal" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-teal font-mono text-sm">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-white transition-colors flex items-center gap-2">
-                        NEXUS
-                        <span class="w-1.5 h-1.5 bg-brand-teal rounded-full shadow-[0_0_8px_#00CED1] status-pulse"></span>
-                    </span>
-                    <span class="bracket text-brand-teal font-mono text-sm">]</span>
-                </a>
-                <a href="/creative-director" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">COMMERCIAL_LAB</span>
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/founder" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">FOUNDER</span>
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/command-center" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-white transition-colors flex items-center gap-2">
-                        COMMAND
-                        <span class="w-1.5 h-1.5 bg-brand-gold rounded-full shadow-[0_0_8px_#FFD700] status-pulse"></span>
-                    </span>
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-                <a href="/status" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">STATUS</span>
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-3 md:gap-6">
-                <a href="/login" class="hidden sm:block text-[10px] font-mono text-gray-500 hover:text-brand-gold transition-colors tracking-widest">
-                    AUTH_LOGIN
-                </a>
-
-                <!-- Desktop CTA -->
-                <a href="/#pricing" class="hidden md:flex group relative px-5 py-2 bg-white/5 border border-brand-teal/30 backdrop-blur-md overflow-hidden hover:border-brand-gold transition-all duration-300">
-                    <div class="absolute inset-0 bg-brand-teal/5 group-hover:bg-brand-gold/10 transition-colors"></div>
-                    <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-teal to-transparent"></div>
-                    <div class="relative flex items-center gap-3">
-                        <iconify-icon icon="lucide:terminal" width="14" class="text-brand-teal group-hover:text-brand-gold transition-colors"></iconify-icon>
-                        <span class="text-[11px] font-mono font-bold text-white tracking-[0.15em]">INITIALIZE_LOGIC</span>
-                    </div>
-                    <div class="absolute top-0 left-0 w-1 h-1 border-t border-l border-brand-teal/50 group-hover:border-brand-gold transition-colors"></div>
-                    <div class="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-brand-teal/50 group-hover:border-brand-gold transition-colors"></div>
-                </a>
-
-                <!-- Mobile Menu Toggle -->
-                <button id="mobile-menu-toggle" class="lg:hidden relative w-10 h-10 flex items-center justify-center rounded-lg border border-white/10 bg-white/5 backdrop-blur-md transition-all hover:border-brand-teal/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal/50" aria-label="Toggle navigation menu" aria-expanded="false">
-                    <div class="relative w-5 h-4 flex flex-col justify-between">
-                        <span id="menu-line-1" class="block w-full h-0.5 bg-brand-teal transition-all duration-300 origin-center"></span>
-                        <span id="menu-line-2" class="block w-full h-0.5 bg-brand-teal transition-all duration-300"></span>
-                        <span id="menu-line-3" class="block w-full h-0.5 bg-brand-teal transition-all duration-300 origin-center"></span>
-                    </div>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Mobile Navigation Drawer -->
-        <div id="mobile-nav-drawer" class="lg:hidden absolute left-0 right-0 top-full overflow-hidden transition-all duration-300 ease-out" style="max-height: 0; opacity: 0;">
-            <div class="mx-4 mt-2 rounded-2xl border border-white/10 bg-obsidian/95 backdrop-blur-xl shadow-2xl overflow-hidden">
-                <!-- Nav Links - LEGENDARY REMASTER -->
-                <nav class="p-4 space-y-1">
-                    <a href="/#pricing" class="mobile-nav-link group flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5">
-                        <iconify-icon icon="lucide:rocket" width="16" class="text-brand-teal/60 group-hover:text-brand-teal transition-colors"></iconify-icon>
-                        <span class="text-xs font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">PRICING</span>
-                    </a>
-
-                    <!-- Divider -->
-                    <div class="my-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-
-                    <!-- Commercial Lab -->
-                    <a href="/creative-director" class="mobile-nav-link group relative flex items-center gap-3 px-4 py-4 rounded-xl transition-all bg-brand-teal/5 border border-brand-teal/20 hover:bg-brand-teal/10 hover:border-brand-teal/40">
-                        <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-teal/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="relative flex items-center gap-3">
-                            <div class="relative">
-                                <iconify-icon icon="lucide:sparkles" width="18" class="text-brand-teal transition-colors"></iconify-icon>
-                                <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-brand-gold rounded-full animate-pulse"></div>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-xs font-mono tracking-widest text-white font-bold">COMMERCIAL_LAB</span>
-                                <span class="text-[9px] font-mono text-brand-teal/70 tracking-wider">AI-POWERED AD STUDIO</span>
-                            </div>
-                        </div>
-                        <iconify-icon icon="lucide:arrow-right" width="14" class="ml-auto text-brand-teal/50 group-hover:text-brand-teal group-hover:translate-x-1 transition-all"></iconify-icon>
-                    </a>
-                <a href="/founder" class="nav-link group flex items-center px-3 py-1.5 transition-all">
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">[</span>
-                    <span class="mx-2 text-[11px] font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors">FOUNDER</span>
-                    <span class="bracket text-brand-teal/40 font-mono text-sm group-hover:text-brand-gold transition-colors">]</span>
-                </a>
-
-                    <!-- NEXUS - Active Page -->
-                    <a href="/nexus-personal" class="mobile-nav-link group relative flex items-center gap-3 px-4 py-4 rounded-xl transition-all bg-brand-teal/10 border border-brand-teal/30">
-                        <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-teal/10 to-transparent opacity-100"></div>
-                        <div class="relative flex items-center gap-3">
-                            <div class="relative">
-                                <iconify-icon icon="lucide:brain" width="18" class="text-brand-teal transition-colors"></iconify-icon>
-                                <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-brand-teal rounded-full animate-pulse"></div>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-xs font-mono tracking-widest text-white font-bold">NEXUS</span>
-                                <span class="text-[9px] font-mono text-brand-teal/70 tracking-wider">CURRENT PAGE</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <!-- Command Center -->
-                    <a href="/command-center" class="mobile-nav-link group relative flex items-center gap-3 px-4 py-4 rounded-xl transition-all bg-brand-gold/5 border border-brand-gold/20 hover:bg-brand-gold/10 hover:border-brand-gold/40">
-                        <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="relative flex items-center gap-3">
-                            <div class="relative">
-                                <iconify-icon icon="lucide:command" width="18" class="text-brand-gold transition-colors"></iconify-icon>
-                                <div class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-xs font-mono tracking-widest text-white font-bold">COMMAND_CENTER</span>
-                                <span class="text-[9px] font-mono text-brand-gold/70 tracking-wider">ADMIN DASHBOARD</span>
-                            </div>
-                        </div>
-                        <iconify-icon icon="lucide:arrow-right" width="14" class="ml-auto text-brand-gold/50 group-hover:text-brand-gold group-hover:translate-x-1 transition-all"></iconify-icon>
-                    </a>
-
-                    <a href="/status" class="mobile-nav-link group flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5">
-                        <iconify-icon icon="lucide:activity" width="16" class="text-green-500/60 group-hover:text-green-500 transition-colors"></iconify-icon>
-                        <span class="text-xs font-mono tracking-widest text-gray-400 group-hover:text-white transition-colors flex items-center gap-2">
-                            SYSTEM_STATUS
-                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_6px_#22C55E]"></span>
-                        </span>
-                    </a>
-                </nav>
-
-                <!-- Mobile CTA -->
-                <div class="p-4 pt-0">
-                    <a href="/#pricing" class="group flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-teal/10 border border-brand-teal/30 transition-all hover:bg-brand-teal/20 hover:border-brand-teal/50">
-                        <iconify-icon icon="lucide:terminal" width="14" class="text-brand-teal"></iconify-icon>
-                        <span class="text-[11px] font-mono font-bold text-white tracking-[0.15em]">INITIALIZE_LOGIC</span>
-                    </a>
-                </div>
-            </div>
+      <!-- Logo Section -->
+      <a href="/" class="flex items-center gap-3 group">
+        <!-- Butterfly Logo -->
+        <div class="relative h-10 w-10 md:h-12 md:w-12">
+          <img src="/images/barrios-logo.png" alt="Barrios A2I" class="h-full w-full object-contain" />
         </div>
-    </header>
+
+        <!-- Brand Text -->
+        <div class="flex flex-col leading-tight">
+          <span class="text-[10px] md:text-xs text-[#00ff88] font-mono tracking-[0.2em] uppercase">
+            SYSTEM_CONNECTED
+          </span>
+          <span class="text-lg md:text-xl font-bold tracking-tight">
+            <span class="text-white">BARRIOS</span>
+            <span class="text-[#00bfff] ml-1">A2I</span>
+          </span>
+        </div>
+
+        <!-- Status Indicator Dot -->
+        <span class="w-2 h-2 rounded-full bg-[#ffd700] shadow-[0_0_8px_#ffd700] ml-2"></span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center">
+        <a href="/pricing" class="px-3 lg:px-4 py-2 text-[#8892b0] hover:text-white transition-colors font-mono text-sm tracking-wide">
+          [ PRICING ]
+        </a>
+
+        <a href="/nexus-personal" class="px-3 lg:px-4 py-2 transition-colors font-mono text-sm tracking-wide group">
+          <span class="text-[#8892b0] group-hover:text-[#00bfff]">[</span>
+          <span class="text-[#00bfff] mx-1">NEXUS</span>
+          <span class="text-[#00bfff]">●</span>
+          <span class="text-[#8892b0] group-hover:text-[#00bfff]">]</span>
+        </a>
+
+        <a href="/creative-director" class="px-3 lg:px-4 py-2 text-[#8892b0] hover:text-white transition-colors font-mono text-sm tracking-wide">
+          [ COMMERCIAL_LAB ]
+        </a>
+
+        <a href="/founder" class="px-3 lg:px-4 py-2 text-[#8892b0] hover:text-white transition-colors font-mono text-sm tracking-wide">
+          [ FOUNDER ]
+        </a>
+
+        <a href="/command-center" class="px-3 lg:px-4 py-2 transition-colors font-mono text-sm tracking-wide group">
+          <span class="text-[#8892b0] group-hover:text-[#ffd700]">[</span>
+          <span class="text-[#ffd700] mx-1">COMMAND</span>
+          <span class="text-[#ffd700]">●</span>
+          <span class="text-[#8892b0] group-hover:text-[#ffd700]">]</span>
+        </a>
+      </nav>
+
+      <!-- Mobile Menu Button -->
+      <button
+        onclick="document.getElementById('mobile-nav').classList.toggle('hidden')"
+        class="md:hidden p-2 text-[#8892b0] hover:text-white transition-colors"
+        aria-label="Toggle menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <div id="mobile-nav" class="hidden md:hidden bg-[#0a0a1e]/98 border-t border-[#00bfff]/10 backdrop-blur-md">
+    <nav class="px-4 py-4 space-y-1">
+      <a href="/pricing" class="block py-3 px-4 text-[#8892b0] hover:text-white hover:bg-[#00bfff]/10 rounded font-mono text-sm transition-colors">
+        [ PRICING ]
+      </a>
+      <a href="/nexus-personal" class="block py-3 px-4 text-[#00bfff] hover:bg-[#00bfff]/10 rounded font-mono text-sm transition-colors">
+        [ NEXUS ● ]
+      </a>
+      <a href="/creative-director" class="block py-3 px-4 text-[#8892b0] hover:text-white hover:bg-[#00bfff]/10 rounded font-mono text-sm transition-colors">
+        [ COMMERCIAL_LAB ]
+      </a>
+      <a href="/founder" class="block py-3 px-4 text-[#8892b0] hover:text-white hover:bg-[#00bfff]/10 rounded font-mono text-sm transition-colors">
+        [ FOUNDER ]
+      </a>
+      <a href="/command-center" class="block py-3 px-4 text-[#ffd700] hover:bg-[#ffd700]/10 rounded font-mono text-sm transition-colors">
+        [ COMMAND ● ]
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- Spacer to prevent content from going under fixed header -->
+<div class="h-16 md:h-20"></div>
 
     <!-- Header Scroll Behavior + Mobile Menu Script -->
     <script>

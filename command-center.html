@@ -139,66 +139,98 @@
 <body class="h-screen w-full flex flex-col font-sans selection:bg-cyan/20 selection:text-cyan">
 
     <!-- HEADER - Unified Barrios A2I Component -->
-    <header class="h-14 border-b border-border bg-panel/95 backdrop-blur-xl flex items-center justify-between px-4 z-[100] relative shrink-0">
-        <div class="flex items-center gap-4">
-            <!-- Barrios A2I Brand -->
-            <a href="/" class="flex items-center gap-3 group">
-                <div class="relative w-10 h-10 flex items-center justify-center">
-                    <div class="absolute inset-0 bg-cyan blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300 rounded-full"></div>
-                    <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="relative w-8 h-8 object-contain">
-                    <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-gold rounded-full animate-pulse"></div>
-                </div>
-                <div class="hidden sm:flex flex-col">
-                    <span class="text-cyan font-mono text-[9px] tracking-[0.15em] leading-none mb-0.5">SYSTEM_CONNECTED</span>
-                    <span class="text-white font-black tracking-tight text-sm leading-none">BARRIOS <span class="text-gold">A2I</span></span>
-                </div>
-            </a>
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#0a0a1e]/90 backdrop-blur-md border-b border-[#00bfff]/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 md:h-20">
 
-            <div class="h-6 w-px bg-white/10"></div>
-
-            <!-- Command Center Badge -->
-            <div class="flex items-center gap-2">
-                <i data-lucide="cpu" class="w-4 h-4 text-cyan"></i>
-                <span class="text-xs font-bold tracking-widest text-white font-mono">COMMAND_CENTER</span>
-                <span class="text-[9px] text-white/40 font-mono">v5.0</span>
-            </div>
-
-            <div class="h-4 w-px bg-white/10 hidden md:block"></div>
-
-            <!-- Protected Badge -->
-            <div class="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald/10 border border-emerald/30">
-                <div class="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse"></div>
-                <span class="text-[10px] font-bold text-emerald tracking-wide">PROTECTED</span>
-            </div>
+      <!-- Logo Section -->
+      <a href="/" class="flex items-center gap-3 group">
+        <!-- Butterfly Logo -->
+        <div class="relative h-10 w-10 md:h-12 md:w-12">
+          <img src="/images/barrios-logo.png" alt="Barrios A2I" class="h-full w-full object-contain" />
         </div>
 
-        <!-- Right: Status Badge -->
-        <div class="flex items-center gap-3">
-            <div class="hidden sm:flex items-center gap-4 text-[10px]">
-                <div class="flex items-center gap-1.5">
-                    <div class="w-1.5 h-1.5 rounded-full bg-emerald"></div>
-                    <span class="text-white/70">Online</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <i data-lucide="shield-check" class="w-3 h-3 text-emerald/70"></i>
-                    <span class="text-white/70">Private</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <i data-lucide="zap" class="w-3 h-3 text-amber/70"></i>
-                    <span class="text-white/70">Fast</span>
-                </div>
-            </div>
-
-            <div class="h-4 w-px bg-white/10 hidden sm:block"></div>
-
-            <span class="text-[10px] text-white/50 font-mono" id="system-time">--:--:--</span>
-
-            <div class="flex items-center gap-1.5 px-2 py-1 bg-cyan/10 border border-cyan/20 rounded">
-                <div class="w-1.5 h-1.5 rounded-full bg-cyan animate-pulse-slow"></div>
-                <span class="text-[10px] text-cyan font-semibold tracking-wide">LIVE</span>
-            </div>
+        <!-- Brand Text -->
+        <div class="flex flex-col leading-tight">
+          <span class="text-[10px] md:text-xs text-[#00ff88] font-mono tracking-[0.2em] uppercase">
+            SYSTEM_CONNECTED
+          </span>
+          <span class="text-lg md:text-xl font-bold tracking-tight">
+            <span class="text-white">BARRIOS</span>
+            <span class="text-[#00bfff] ml-1">A2I</span>
+          </span>
         </div>
-    </header>
+
+        <!-- Status Indicator Dot -->
+        <span class="w-2 h-2 rounded-full bg-[#ffd700] shadow-[0_0_8px_#ffd700] ml-2"></span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center">
+        <a href="/pricing" class="px-3 lg:px-4 py-2 text-[#8892b0] hover:text-white transition-colors font-mono text-sm tracking-wide">
+          [ PRICING ]
+        </a>
+
+        <a href="/nexus-personal" class="px-3 lg:px-4 py-2 transition-colors font-mono text-sm tracking-wide group">
+          <span class="text-[#8892b0] group-hover:text-[#00bfff]">[</span>
+          <span class="text-[#00bfff] mx-1">NEXUS</span>
+          <span class="text-[#00bfff]">●</span>
+          <span class="text-[#8892b0] group-hover:text-[#00bfff]">]</span>
+        </a>
+
+        <a href="/creative-director" class="px-3 lg:px-4 py-2 text-[#8892b0] hover:text-white transition-colors font-mono text-sm tracking-wide">
+          [ COMMERCIAL_LAB ]
+        </a>
+
+        <a href="/founder" class="px-3 lg:px-4 py-2 text-[#8892b0] hover:text-white transition-colors font-mono text-sm tracking-wide">
+          [ FOUNDER ]
+        </a>
+
+        <a href="/command-center" class="px-3 lg:px-4 py-2 transition-colors font-mono text-sm tracking-wide group">
+          <span class="text-[#8892b0] group-hover:text-[#ffd700]">[</span>
+          <span class="text-[#ffd700] mx-1">COMMAND</span>
+          <span class="text-[#ffd700]">●</span>
+          <span class="text-[#8892b0] group-hover:text-[#ffd700]">]</span>
+        </a>
+      </nav>
+
+      <!-- Mobile Menu Button -->
+      <button
+        onclick="document.getElementById('mobile-nav').classList.toggle('hidden')"
+        class="md:hidden p-2 text-[#8892b0] hover:text-white transition-colors"
+        aria-label="Toggle menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <div id="mobile-nav" class="hidden md:hidden bg-[#0a0a1e]/98 border-t border-[#00bfff]/10 backdrop-blur-md">
+    <nav class="px-4 py-4 space-y-1">
+      <a href="/pricing" class="block py-3 px-4 text-[#8892b0] hover:text-white hover:bg-[#00bfff]/10 rounded font-mono text-sm transition-colors">
+        [ PRICING ]
+      </a>
+      <a href="/nexus-personal" class="block py-3 px-4 text-[#00bfff] hover:bg-[#00bfff]/10 rounded font-mono text-sm transition-colors">
+        [ NEXUS ● ]
+      </a>
+      <a href="/creative-director" class="block py-3 px-4 text-[#8892b0] hover:text-white hover:bg-[#00bfff]/10 rounded font-mono text-sm transition-colors">
+        [ COMMERCIAL_LAB ]
+      </a>
+      <a href="/founder" class="block py-3 px-4 text-[#8892b0] hover:text-white hover:bg-[#00bfff]/10 rounded font-mono text-sm transition-colors">
+        [ FOUNDER ]
+      </a>
+      <a href="/command-center" class="block py-3 px-4 text-[#ffd700] hover:bg-[#ffd700]/10 rounded font-mono text-sm transition-colors">
+        [ COMMAND ● ]
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- Spacer to prevent content from going under fixed header -->
+<div class="h-16 md:h-20"></div>
 
     <main class="flex-1 flex overflow-hidden bg-obsidian relative min-h-0">
 
