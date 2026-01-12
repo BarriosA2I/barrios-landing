@@ -8062,8 +8062,8 @@
                 // Trigger GENESIS 24-agent autonomous pipeline
                 hideNITyping();
 
-                // Show what we extracted + asset upload prompt
-                const companyDisplay = extractedCompany || 'your company';
+                // Show what we extracted + asset upload prompt (use backend-extracted data, not frontend regex)
+                const companyDisplay = collectedLeadData.businessName || extractedCompany || 'your company';
                 appendNIMessage('ai', `🚀 <strong>AUTONOMOUS PRODUCTION INITIATED</strong><br><br>` +
                     `Company: <span style="color: #00CED1;">${companyDisplay}</span><br>` +
                     `${extractedUrl ? `Website: <span style="color: #00CED1;">${extractedUrl}</span><br>` : ''}` +
@@ -8084,9 +8084,9 @@
                 const sessionId = window.creativeDirectorSessionId || generateSessionId();
                 window.creativeDirectorSessionId = sessionId;
 
-                // Extract brief with company info - agents will fill in the rest!
+                // Extract brief with company info - use backend-extracted data (collectedLeadData)
                 const brief = {
-                    company_name: extractedCompany || 'Unknown Company',
+                    company_name: collectedLeadData.businessName || extractedCompany || 'Unknown Company',
                     website_url: extractedUrl || null,
                     raw_request: message,
                     // Agents will determine these autonomously:
@@ -8427,7 +8427,7 @@
 
                         const productionBrief = {
                             session_id: sessionId,
-                            business_name: extractedData.business_name || 'Your Business',
+                            business_name: extractedData.business_name || collectedLeadData.businessName || 'Your Business',
                             primary_offering: extractedData.primary_offering || extractedData.product || 'Product/Service',
                             target_demographic: extractedData.target_demographic || extractedData.audience || 'Target Audience',
                             tone: extractedData.tone || 'professional',
