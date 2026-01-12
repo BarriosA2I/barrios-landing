@@ -7162,7 +7162,7 @@
         </div>
 
         <!-- Messages Container -->
-        <div id="ni-messages" class="ni-messages">
+        <div id="ni-messages" class="ni-messages" data-testid="chat-messages">
             <!-- Initial AI Message -->
             <div class="ni-msg ni-msg-ai">
                 <div class="ni-msg-label">SYS_OVERRIDE</div>
@@ -7173,7 +7173,7 @@
         </div>
 
         <!-- Production Status (hidden until production starts) -->
-        <div id="production-status" class="production-status">
+        <div id="production-status" class="production-status" data-testid="progress-indicator">
             <div class="production-header">
                 <div class="production-header-left">
                     <span class="production-icon">🎬</span>
@@ -7318,7 +7318,7 @@
                     <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
                 </svg>
                 <span class="ni-file-badge" id="niFileBadge">1</span>
-                <input type="file" id="niFileInput" onchange="niHandleFile(event)" accept="image/*,.pdf,.doc,.docx,.txt">
+                <input type="file" id="niFileInput" data-testid="file-upload" onchange="niHandleFile(event)" accept="image/*,.pdf,.doc,.docx,.txt">
             </div>
             <!-- Send Button -->
             <button id="ni-send" class="ni-send-btn" data-testid="send-button" onclick="event.stopPropagation(); sendNIMessage()">
@@ -8043,9 +8043,20 @@
             // DISABLED: Let backend handle conversation flow with validation gate
             // const shouldTriggerProduction = hasProductionTrigger || (extractedCompany && hasCreationIntent && hasContentType);
 
-            // Only trigger autonomous production if backend has confirmed the brief is complete (ragnarok_ready=true)
-            // For now, always go through the conversation flow - backend will set ragnarok_ready when user confirms
-            const shouldTriggerProduction = false; // Disabled - backend handles conversation flow
+            // Detect user confirmation phrases that approve the script/production
+            const confirmationPhrases = ['yes', 'approved', 'looks good', 'approve', 'confirmed', 'go ahead', 'lets do it', "let's do it", 'sounds good', 'perfect', 'great', 'proceed'];
+            const isConfirmation = confirmationPhrases.some(phrase =>
+                lowerMessage.includes(phrase)
+            );
+
+            // If user confirms and we're in review phase, enable production
+            if (isConfirmation && window.currentPhase === 'review') {
+                window.briefComplete = true;
+                console.log('[V2] User confirmed script - enabling production trigger');
+            }
+
+            // Enable production when brief is complete (backend sets ragnarok_ready or user confirms)
+            const shouldTriggerProduction = window.briefComplete === true || hasProductionTrigger;
 
             if (shouldTriggerProduction && window.ProductionManager) {
                 // Trigger GENESIS 24-agent autonomous pipeline
@@ -8378,6 +8389,8 @@
                 // Update phase if provided
                 if (data.phase) {
                     updateNIPhase(data.phase);
+                    window.currentPhase = data.phase; // Track phase for production logic
+                    console.log('[V2] Phase updated to:', data.phase);
                 }
 
                 // =================================================================
@@ -8400,6 +8413,9 @@
                 // =================================================================
                 if (data.trigger_production) {
                     console.log('[CreativeDirector] Production trigger received');
+                    window.briefComplete = true; // Mark brief as complete for production flow
+                    window.currentPhase = 'production';
+                    console.log('[V2] Brief complete - production enabled');
 
                     try {
                         // Extract brief data from metadata (backend returns it in metadata.extracted_data)
