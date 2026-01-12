@@ -8260,7 +8260,7 @@
             silenceTimer = setTimeout(() => {
                 silenceStage++;
                 handleSilence(silenceStage);
-            }, 30000);  // 30 seconds
+            }, 120000);  // 2 minutes - only remind after extended inactivity
         }
 
         function handleSilence(stage) {
@@ -8273,8 +8273,8 @@
             let proactiveMessage;
 
             if (missingFields.length === 0 || progressText.includes('100%')) {
-                // All complete - encourage confirmation
-                proactiveMessage = "Ready to create your video? Just say 'yes' to confirm!";
+                // All complete - gentle reminder only
+                proactiveMessage = "Still there? Let me know when you're ready to continue.";
             } else {
                 // Still missing fields - ask about the first one
                 const nextField = missingFields[0]?.toUpperCase();
@@ -8303,13 +8303,10 @@
                 }
             }
 
-            if (stage <= 3) {
+            // Only send ONE reminder, no spam
+            if (stage === 1) {
                 appendNIMessage('ai', proactiveMessage);
-
-                if (stage < 3) {
-                    const nextDelay = stage === 1 ? 45000 : 60000;  // 45s, then 60s (longer to avoid spam)
-                    silenceTimer = setTimeout(() => handleSilence(stage + 1), nextDelay);
-                }
+                // No recursive setTimeout - single reminder only
             }
         }
 
