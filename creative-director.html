@@ -2671,60 +2671,55 @@
 
         async function initSession() {
             try {
-                // V3: Use Creative Director FSM endpoint
-                const res = await fetch(`${API_URL}/api/creative-director/start`, {
+                // Try pipeline session first
+                const pipelineRes = await fetch(`${API_URL}/api/session`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({})
                 });
 
-                if (res.ok) {
-                    const data = await res.json();
+                if (pipelineRes.ok) {
+                    const data = await pipelineRes.json();
                     sessionId = data.session_id;
                     localStorage.setItem('barrios_creative_director_session', sessionId);
+                    PIPELINE_ENABLED = true;
 
-                    // Show pipeline badge
-                    const badge = document.getElementById('pipeline-badge');
-                    const phases = document.getElementById('pipeline-phases');
-                    const status = document.getElementById('status-text');
-                    if (badge) badge.classList.remove('hidden');
-                    if (phases) phases.classList.remove('hidden');
-                    if (status) status.textContent = 'V3 FSM Active';
+                    // Show pipeline badge and phases
+                    document.getElementById('pipeline-badge').classList.remove('hidden');
+                    document.getElementById('pipeline-phases').classList.remove('hidden');
+                    document.getElementById('status-text').textContent = '6-Agent Pipeline';
+                    updatePhaseIndicator('intake');
 
-                    // V3: Display welcome message from response
-                    if (data.response) {
+                    if (data.greeting) {
                         const container = document.getElementById('chat-messages');
-                        if (container) {
-                            container.innerHTML = '';
-                            addMessage(data.response, false, []);
-                        }
+                        container.innerHTML = '';
+                        addMessage(data.greeting, false, data.quick_actions || []);
                     }
 
-                    // V3: Update progress indicator
-                    if (data.state) {
-                        updatePhaseIndicator(data.state);
-                    }
-
-                    console.log('[V3] Session started:', sessionId, 'State:', data.state);
+                    console.log('🚀 Pipeline session started:', sessionId);
                     return;
                 }
             } catch (e) {
-                console.error('[V3] Session init failed:', e);
+                console.log('Pipeline not available, falling back to basic session');
             }
 
-            // Fallback to local session
+            // Fallback to local session (no backend call needed)
             try {
+                // Generate a local session ID
                 sessionId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 localStorage.setItem('barrios_creative_director_session', sessionId);
-                console.log('[V3] Local session fallback:', sessionId);
+                console.log('Local session created:', sessionId);
 
+                // Show default greeting
                 const container = document.getElementById('chat-messages');
                 if (container) {
                     container.innerHTML = '';
-                    addMessage("Welcome to the Creative Director! I'm here to help you create stunning AI-powered commercials. What's your business name?", false, []);
+                    addMessage("Welcome to the Creative Director! I'm here to help you create stunning AI-powered commercials. What would you like to discuss today?", false, []);
                 }
             } catch (e) {
-                console.error('[V3] Session init error:', e);
+                console.error('Session init error:', e);
+                // Don't show error - session init failure is non-critical
+                console.log('Continuing without session');
             }
         }
 
@@ -2887,8 +2882,12 @@
             addTypingIndicator();
 
             try {
-                // V3: Use Creative Director FSM chat endpoint
-                const res = await fetch(`${API_URL}/api/creative-director/chat`, {
+                // Use pipeline or V2 endpoint
+                const endpoint = PIPELINE_ENABLED
+                    ? `${API_URL}/api/legendary/message`
+                    : `${API_URL}/api/chat/v2`;
+
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ session_id: sessionId, message })
@@ -2899,34 +2898,47 @@
                 const data = await res.json();
                 removeTypingIndicator();
 
-                // V3: Handle production trigger
-                if (data.production_triggered) {
-                    console.log('[V3] Production triggered!');
-                    if (data.production_result?.success) {
-                        console.log('[V3] RAGNAROK production started successfully');
-                        // Show production overlay
-                        if (typeof handleProductionStart === 'function') {
-                            handleProductionStart({ session_id: sessionId, brief: data.brief });
-                        }
-                    } else {
-                        console.error('[V3] Production failed:', data.production_result?.error);
+                // Phase 2: Handle escalation
+                if (data.escalated) {
+                    handleEscalation(data);
+                    return;
+                }
+
+                // Phase 2: Handle mode changes (fast-track)
+                if (data.mode === 'fast_track') {
+                    handleFastTrackMode();
+                }
+
+                // Phase 2: Handle production status trigger
+                if (data.trigger_production && data.production_status) {
+                    handleProductionStart(data.production_status);
+                }
+
+                addMessage(data.response, false, data.quick_actions || []);
+
+                // Track lead data for FLAWLESS GENESIS qualification
+                updateLeadData(data);
+
+                if (PIPELINE_ENABLED) {
+                    // Handle pipeline phase transitions
+                    if (data.phase) {
+                        updatePhaseIndicator(data.phase);
+                        pipelinePhase = data.phase;
+                    }
+
+                    // Trigger research when intake is complete
+                    if (data.is_complete && pipelinePhase === 'intake') {
+                        addSystemMessage('🔬 Brief complete! Starting market research...');
+                        await runResearchPhase();
+                    }
+                } else {
+                    updateProgress(data.completion_percentage || 0, data.phase, data.is_complete);
+
+                    // Phase 2: Check if we should offer fast-track
+                    if (data.metadata?.sentiment?.hurried && !fastTrackDismissed) {
+                        showFastTrackBanner();
                     }
                 }
-
-                // Display AI response
-                addMessage(data.response, false, []);
-
-                // V3: Update progress based on state
-                if (data.progress !== undefined) {
-                    updateProgress(data.progress, data.state, data.progress >= 100);
-                }
-
-                // V3: Update phase indicator
-                if (data.state) {
-                    updatePhaseIndicator(data.state);
-                }
-
-                console.log('[V3] Chat response - State:', data.state, 'Progress:', data.progress);
 
             } catch (e) {
                 console.error('Chat error:', e);
@@ -3502,49 +3514,71 @@
 
         /**
          * Trigger FLAWLESS GENESIS pipeline
-         * V3 UPDATE: This function is now deprecated. V3 FSM triggers RAGNAROK
-         * automatically when the user confirms the brief via /api/creative-director/chat.
-         * The frontend should just show progress UI and poll for status.
          */
         async function triggerGenesisStrategy() {
-            // V3: Production is already triggered by the FSM when production_triggered=true
-            // This legacy function should not be called anymore
-            console.warn('[V3] triggerGenesisStrategy() called but V3 handles production internally');
-
             if (genesisStatus === 'loading' || genesisStatus === 'running') return;
 
             const btn = document.getElementById('genesis-strategy-btn');
             const container = document.getElementById('genesis-container');
 
-            // V3: Just show progress UI - don't call the old endpoint
-            genesisStatus = 'running';
+            genesisStatus = 'loading';
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '⚡ Production in progress...';
+                btn.innerHTML = '⚡ Initializing Genesis...';
             }
 
-            // Hide button container, show progress container
-            const btnContainer = document.getElementById('genesis-btn-container');
-            if (btnContainer) btnContainer.classList.add('hidden');
-            if (container) {
-                container.classList.remove('hidden');
-                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            try {
+                const response = await fetch(`${GENESIS_API_URL}/api/genesis/trigger`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        business_name: collectedLeadData.businessName,
+                        industry: collectedLeadData.industry,
+                        goals: collectedLeadData.goals,
+                        pain_points: collectedLeadData.painPoints,
+                        target_audience: collectedLeadData.targetAudience,
+                        qualification_score: collectedLeadData.score,
+                        generate_video: true
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Genesis trigger failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                genesisPipelineId = data.pipeline_id;
+                genesisStatus = 'running';
+
+                // Hide button container, show progress container
+                const btnContainer = document.getElementById('genesis-btn-container');
+                if (btnContainer) btnContainer.classList.add('hidden');
+                if (container) {
+                    container.classList.remove('hidden');
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                // Connect to SSE stream
+                connectToGenesisStream(genesisPipelineId);
+
+                addSystemMessage('🚀 FLAWLESS GENESIS initiated! Our AI agents are crafting your strategy...');
+
+            } catch (error) {
+                console.error('Genesis trigger error:', error);
+                genesisStatus = 'error';
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '🚀 Generate AI Strategy';
+                }
+                addSystemMessage('❌ Genesis initialization failed. Please try again.');
             }
-
-            addSystemMessage('🚀 V3 RAGNAROK production is running! Check status below.');
-
-            // V3: Poll for production status instead of using old SSE stream
-            startV3ProductionPolling(sessionId);
         }
 
         /**
          * Connect to Genesis SSE stream for real-time updates
-         * @deprecated V3 uses polling via startV3ProductionPolling() instead
-         * This function is kept for backward compatibility but should not be called
          */
         function connectToGenesisStream(pipelineId) {
-            console.warn('[V3] connectToGenesisStream() is deprecated. Use startV3ProductionPolling() instead.');
-
             if (genesisEventSource) {
                 genesisEventSource.close();
             }
@@ -3570,148 +3604,6 @@
                 }
             };
         }
-
-        // ============================================================
-        // V3 PRODUCTION STATUS POLLING
-        // ============================================================
-
-        let v3PollingInterval = null;
-        let v3ProductionSessionId = null;
-
-        /**
-         * V3: Start polling for production status
-         * Uses /api/creative-director/session/{id} to check production progress
-         */
-        function startV3ProductionPolling(sid) {
-            v3ProductionSessionId = sid;
-            console.log('[V3] Starting production status polling for:', sid);
-
-            // Clear any existing polling
-            if (v3PollingInterval) {
-                clearInterval(v3PollingInterval);
-            }
-
-            // Show production status panel
-            const statusPanel = document.getElementById('production-status');
-            if (statusPanel) {
-                statusPanel.classList.add('active');
-            }
-
-            // Poll every 3 seconds
-            v3PollingInterval = setInterval(async () => {
-                try {
-                    const response = await fetch(`${API_URL}/api/creative-director/session/${v3ProductionSessionId}`);
-                    if (!response.ok) {
-                        console.warn('[V3] Poll failed:', response.status);
-                        return;
-                    }
-
-                    const session = await response.json();
-                    console.log('[V3] Session status:', session);
-
-                    // Update progress UI based on session state
-                    updateV3ProductionProgress(session);
-
-                    // Check if production is complete
-                    if (session.state === 'complete' || session.production_triggered === false) {
-                        console.log('[V3] Production complete');
-                        stopV3ProductionPolling();
-                        handleV3ProductionComplete(session);
-                    }
-
-                } catch (error) {
-                    console.error('[V3] Poll error:', error);
-                }
-            }, 3000);
-
-            // Initial poll immediately
-            pollV3Status();
-        }
-
-        /**
-         * V3: Single poll for status
-         */
-        async function pollV3Status() {
-            if (!v3ProductionSessionId) return;
-
-            try {
-                const response = await fetch(`${API_URL}/api/creative-director/session/${v3ProductionSessionId}`);
-                if (response.ok) {
-                    const session = await response.json();
-                    updateV3ProductionProgress(session);
-                }
-            } catch (error) {
-                console.error('[V3] Initial poll error:', error);
-            }
-        }
-
-        /**
-         * V3: Stop polling
-         */
-        function stopV3ProductionPolling() {
-            if (v3PollingInterval) {
-                clearInterval(v3PollingInterval);
-                v3PollingInterval = null;
-            }
-            console.log('[V3] Polling stopped');
-        }
-
-        /**
-         * V3: Update production progress UI
-         */
-        function updateV3ProductionProgress(session) {
-            const progressBar = document.getElementById('genesis-progress-bar');
-            const phaseText = document.getElementById('genesis-phase-text');
-            const statusText = document.getElementById('genesis-status-text');
-
-            // Map state to progress percentage
-            const stateProgress = {
-                'production': 50,
-                'generating': 60,
-                'rendering': 80,
-                'complete': 100
-            };
-
-            const progress = stateProgress[session.state] || session.progress || 50;
-
-            if (progressBar) {
-                progressBar.style.width = `${progress}%`;
-            }
-
-            if (statusText) {
-                statusText.textContent = session.state?.toUpperCase() || 'PROCESSING';
-            }
-
-            if (phaseText) {
-                phaseText.textContent = `Stage: ${session.state?.replace(/_/g, ' ').toUpperCase() || 'PRODUCTION'} — RAGNAROK generating your video...`;
-            }
-        }
-
-        /**
-         * V3: Handle production completion
-         */
-        function handleV3ProductionComplete(session) {
-            genesisStatus = 'complete';
-
-            const progressBar = document.getElementById('genesis-progress-bar');
-            const phaseText = document.getElementById('genesis-phase-text');
-            const statusText = document.getElementById('genesis-status-text');
-
-            if (progressBar) progressBar.style.width = '100%';
-            if (statusText) statusText.textContent = 'COMPLETE';
-            if (phaseText) phaseText.textContent = '🎉 Production complete! Your video is ready.';
-
-            addSystemMessage('🎉 RAGNAROK production complete! Your AI video is ready.');
-
-            // If session has video URL, show it
-            if (session.brief?.video_url) {
-                renderGenesisComplete({ video_url: session.brief.video_url });
-            }
-        }
-
-        // ============================================================
-        // END V3 PRODUCTION POLLING
-        // ============================================================
 
         /**
          * Handle incoming Genesis pipeline events
@@ -7961,8 +7853,6 @@
         }
 
         // Confirm voice selection and start production
-        // V3 UPDATE: Production is ALREADY triggered by V3 FSM when production_triggered=true
-        // This function now just shows progress UI and starts polling - no duplicate trigger
         function confirmVoiceSelection() {
             if (!selectedVoice) {
                 console.error('No voice selected');
@@ -7981,16 +7871,15 @@
 
             const voice = VOICE_OPTIONS.find(v => v.id === selectedVoice);
 
-            // Add voice to brief (for display purposes)
+            // Add voice to brief
             brief.voice_id = selectedVoice;
             brief.voice_name = voice?.name || 'Adam';
 
-            console.log('[V3] Voice selected:', voice?.name);
-            console.log('[V3] Production already triggered by V3 FSM - just showing progress');
+            console.log('Starting production with brief:', brief);
 
             appendNIMessage('ai', `✅ <strong>Voice: ${voice?.name}</strong><br>` +
                 `<span style="color: #71717a; font-size: 12px;">${voice?.category}</span><br><br>` +
-                `<span style="color: #00CED1;">🎬 Production is running...</span>`);
+                `<span style="color: #00CED1;">🎬 Starting production...</span>`);
 
             if (currentAudio) {
                 currentAudio.pause();
@@ -8000,10 +7889,12 @@
             setTimeout(() => {
                 closeNeuralInterface();
 
-                // V3: Don't call ProductionManager.start() - production is already running
-                // Just show progress UI and start polling for status
-                console.log('[V3] Starting production status polling (not re-triggering)');
-                startV3ProductionPolling(sessionId);
+                // Ensure ProductionManager exists and start
+                if (typeof ProductionManager !== 'undefined' && ProductionManager.start) {
+                    ProductionManager.start(sessionId, brief);
+                } else {
+                    console.error('ProductionManager not found');
+                }
 
                 // Clear state
                 selectedVoice = null;
@@ -8426,7 +8317,7 @@
                 .replace(/\n/g, '<br>');
         }
 
-        // Send to Creative Director backend - V3 FSM
+        // Send to Creative Director backend (bridge to existing functionality)
         async function sendToCreativeDirector(message, model = 'claude') {
             // Reset silence timer on user activity
             resetSilenceTimer();
@@ -8436,15 +8327,19 @@
                 const sessionId = window.creativeDirectorSessionId || generateSessionId();
                 window.creativeDirectorSessionId = sessionId;
 
-                // V3: Use Creative Director FSM chat endpoint
-                const response = await fetch('https://barrios-genesis-flawless.onrender.com/api/creative-director/chat', {
+                // Get model info for telemetry
+                const modelInfo = MODELS[model] || MODELS.claude;
+
+                const response = await fetch('https://barrios-genesis-flawless.onrender.com/api/chat/v2', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
+                        message: message,
                         session_id: sessionId,
-                        message: message
+                        model: model,
+                        model_name: modelInfo.name
                     })
                 });
 
@@ -8453,16 +8348,16 @@
                 const data = await response.json();
 
                 // =================================================================
-                // V3: Update progress bar
+                // PHASE 1: Update progress bar
                 // =================================================================
-                if (data.progress !== undefined) {
-                    updateProgressBar(data.progress, []);
+                if (data.progress_percentage !== undefined) {
+                    updateProgressBar(data.progress_percentage, data.missing_fields || []);
                 }
 
                 // =================================================================
-                // V3: Typing delay before showing response
+                // PHASE 1: Typing delay before showing response
                 // =================================================================
-                const responseText = data.response || 'Processing your request...';
+                const responseText = data.response || data.message || 'Processing your request...';
                 const typingDelay = calculateTypingDelay(responseText);
 
                 await new Promise(resolve => setTimeout(resolve, typingDelay));
@@ -8470,7 +8365,7 @@
                 hideNITyping();
 
                 // Check if this is a confirmation card (contains bold items)
-                if (responseText.includes('**Business:**') || responseText.includes('Does this look right?') || data.state === 'confirm') {
+                if (responseText.includes('**Business:**') || responseText.includes('Does this look right?')) {
                     // Format as confirmation card
                     const container = document.getElementById('ni-messages');
                     const msgDiv = document.createElement('div');
@@ -8488,67 +8383,102 @@
                     appendNIMessage('ai', responseText);
                 }
 
-                // V3: Update phase if provided
-                if (data.state) {
-                    updateNIPhase(data.state);
-                    window.currentPhase = data.state;
-                    console.log('[V3] State updated to:', data.state);
+                // Update phase if provided
+                if (data.phase) {
+                    updateNIPhase(data.phase);
+                    window.currentPhase = data.phase; // Track phase for production logic
+                    console.log('[V2] Phase updated to:', data.phase);
                 }
 
                 // =================================================================
-                // V3: Handle production trigger - Brief comes directly in response
+                // V2: Handle production phase - Connect to SSE for real-time updates
                 // =================================================================
-                if (data.production_triggered) {
-                    console.log('[V3] Production triggered!');
-                    window.briefComplete = true;
+                if (data.current_phase === 'production' && data.production_id) {
+                    console.log('[V2-SSE] Production started, connecting to SSE stream');
+                    console.log('[V2-SSE] Session ID:', sessionId);
+                    console.log('[V2-SSE] Production ID:', data.production_id);
+
+                    // Show production progress overlay
+                    showProductionProgressOverlay(sessionId);
+
+                    // Connect to SSE stream for real-time progress updates
+                    connectProductionSSE(sessionId);
+                }
+
+                // =================================================================
+                // PHASE 1: Handle production trigger → Show voice selector
+                // =================================================================
+                if (data.trigger_production) {
+                    console.log('[CreativeDirector] Production trigger received');
+                    window.briefComplete = true; // Mark brief as complete for production flow
                     window.currentPhase = 'production';
+                    console.log('[V2] Brief complete - production enabled');
 
-                    // V3: Brief is returned directly, not in metadata
-                    const brief = data.brief || {};
-                    console.log('[V3] Brief data:', brief);
+                    try {
+                        // Extract brief data from metadata (backend returns it in metadata.extracted_data)
+                        console.log('[DEBUG 1] About to extract data from metadata');
+                        const extractedData = data.metadata?.extracted_data || data.extracted_data || {};
+                        console.log('[DEBUG 2] Extracted data:', extractedData);
 
-                    // Check if production actually started on backend
-                    if (data.production_result?.success) {
-                        console.log('[V3] RAGNAROK production started successfully!');
-                    } else {
-                        console.warn('[V3] Production trigger reported, but result:', data.production_result);
-                    }
+                        // Build production brief from session data
+                        console.log('[DEBUG 3] About to build production brief');
+                        console.log('[DEBUG 3.1] sessionId:', sessionId);
+                        console.log('[DEBUG 3.2] typeof generateSessionId:', typeof generateSessionId);
 
-                    // Build production brief for voice selector
-                    const productionBrief = {
-                        session_id: data.session_id,
-                        business_name: brief.business_name || 'Your Business',
-                        primary_offering: brief.product || 'Product/Service',
-                        target_demographic: brief.audience || 'Target Audience',
-                        tone: brief.tone || 'professional',
-                        call_to_action: brief.cta || 'Learn More',
-                        platform: 'instagram',
-                        key_message: '',
-                        duration: 30
-                    };
+                        const productionBrief = {
+                            session_id: sessionId,
+                            business_name: extractedData.business_name || collectedLeadData.businessName || 'Your Business',
+                            primary_offering: extractedData.primary_offering || extractedData.product || 'Product/Service',
+                            target_demographic: extractedData.target_demographic || extractedData.audience || 'Target Audience',
+                            tone: extractedData.tone || 'professional',
+                            call_to_action: extractedData.call_to_action || extractedData.cta || 'Learn More',
+                            platform: extractedData.platform || 'instagram',
+                            key_message: extractedData.key_message || '',
+                            duration: extractedData.duration || 30
+                        };
 
-                    console.log('[V3] Production brief:', productionBrief);
+                        console.log('[DEBUG 4] Production brief assembled:', productionBrief);
 
-                    // Store for voice selector access
-                    window.currentProductionBrief = productionBrief;
-                    window.currentSessionId = data.session_id;
+                        // Store for voice selector access
+                        console.log('[DEBUG 5] About to store global variables');
+                        window.currentProductionBrief = productionBrief;
+                        window.currentSessionId = productionBrief.session_id;
+                        console.log('[DEBUG 6] Global variables stored');
 
-                    // Update progress bar to 100%
-                    updateProgressBar(100, []);
+                        // Update progress bar to 100%
+                        console.log('[DEBUG 7] About to update progress bar');
+                        updateProgressBar(100, []);
+                        console.log('[DEBUG 8] Progress bar updated');
 
-                    // Show voice selector modal
-                    if (typeof showVoiceSelector === 'function') {
-                        console.log('[V3] Opening voice selector');
-                        appendNIMessage('ai', '🎙️ <strong>Choose a voice for your commercial!</strong><br>Select from our library of professional AI voices below.');
-                        showVoiceSelector();
-                    } else {
-                        console.error('[V3] showVoiceSelector not available');
-                        appendNIMessage('ai', 'Voice selector unavailable. Please refresh and try again.');
+                        // Show voice selector modal
+                        console.log('[DEBUG 9] About to check showVoiceSelector function');
+                        console.log('[DEBUG 9.1] typeof showVoiceSelector:', typeof showVoiceSelector);
+
+                        if (typeof showVoiceSelector === 'function') {
+                            console.log('[DEBUG 10] Opening voice selector modal');
+
+                            // Add prompt message
+                            console.log('[DEBUG 11] About to append NI message');
+                            appendNIMessage('ai', '🎙️ <strong>Choose a voice for your commercial!</strong><br>Select from our library of professional AI voices below.');
+                            console.log('[DEBUG 12] NI message appended');
+
+                            // Open voice selector
+                            console.log('[DEBUG 13] About to call showVoiceSelector');
+                            showVoiceSelector();
+                            console.log('[DEBUG 14] showVoiceSelector called');
+                        } else {
+                            console.error('[CreativeDirector] showVoiceSelector function not available');
+                            appendNIMessage('ai', 'Voice selector unavailable. Please refresh and try again.');
+                        }
+                    } catch (innerError) {
+                        console.error('[CreativeDirector] Inner error during production trigger:', innerError);
+                        console.error('[CreativeDirector] Inner error stack:', innerError.stack);
+                        throw innerError; // Re-throw to outer catch
                     }
                 }
 
             } catch (error) {
-                console.error('[V3] Creative Director Error:', error);
+                console.error('Creative Director Error:', error);
                 hideNITyping();
                 appendNIMessage('ai', 'Something went wrong. Let me try again—what were you saying?');
             }
