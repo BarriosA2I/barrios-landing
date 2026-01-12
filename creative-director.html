@@ -3502,71 +3502,49 @@
 
         /**
          * Trigger FLAWLESS GENESIS pipeline
+         * V3 UPDATE: This function is now deprecated. V3 FSM triggers RAGNAROK
+         * automatically when the user confirms the brief via /api/creative-director/chat.
+         * The frontend should just show progress UI and poll for status.
          */
         async function triggerGenesisStrategy() {
+            // V3: Production is already triggered by the FSM when production_triggered=true
+            // This legacy function should not be called anymore
+            console.warn('[V3] triggerGenesisStrategy() called but V3 handles production internally');
+
             if (genesisStatus === 'loading' || genesisStatus === 'running') return;
 
             const btn = document.getElementById('genesis-strategy-btn');
             const container = document.getElementById('genesis-container');
 
-            genesisStatus = 'loading';
+            // V3: Just show progress UI - don't call the old endpoint
+            genesisStatus = 'running';
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '⚡ Initializing Genesis...';
+                btn.innerHTML = '⚡ Production in progress...';
             }
 
-            try {
-                const response = await fetch(`${GENESIS_API_URL}/api/genesis/trigger`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session_id: sessionId,
-                        business_name: collectedLeadData.businessName,
-                        industry: collectedLeadData.industry,
-                        goals: collectedLeadData.goals,
-                        pain_points: collectedLeadData.painPoints,
-                        target_audience: collectedLeadData.targetAudience,
-                        qualification_score: collectedLeadData.score,
-                        generate_video: true
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Genesis trigger failed: ${response.status}`);
-                }
-
-                const data = await response.json();
-                genesisPipelineId = data.pipeline_id;
-                genesisStatus = 'running';
-
-                // Hide button container, show progress container
-                const btnContainer = document.getElementById('genesis-btn-container');
-                if (btnContainer) btnContainer.classList.add('hidden');
-                if (container) {
-                    container.classList.remove('hidden');
-                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-
-                // Connect to SSE stream
-                connectToGenesisStream(genesisPipelineId);
-
-                addSystemMessage('🚀 FLAWLESS GENESIS initiated! Our AI agents are crafting your strategy...');
-
-            } catch (error) {
-                console.error('Genesis trigger error:', error);
-                genesisStatus = 'error';
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = '🚀 Generate AI Strategy';
-                }
-                addSystemMessage('❌ Genesis initialization failed. Please try again.');
+            // Hide button container, show progress container
+            const btnContainer = document.getElementById('genesis-btn-container');
+            if (btnContainer) btnContainer.classList.add('hidden');
+            if (container) {
+                container.classList.remove('hidden');
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+
+            addSystemMessage('🚀 V3 RAGNAROK production is running! Check status below.');
+
+            // V3: Poll for production status instead of using old SSE stream
+            startV3ProductionPolling(sessionId);
         }
 
         /**
          * Connect to Genesis SSE stream for real-time updates
+         * @deprecated V3 uses polling via startV3ProductionPolling() instead
+         * This function is kept for backward compatibility but should not be called
          */
         function connectToGenesisStream(pipelineId) {
+            console.warn('[V3] connectToGenesisStream() is deprecated. Use startV3ProductionPolling() instead.');
+
             if (genesisEventSource) {
                 genesisEventSource.close();
             }
@@ -3592,6 +3570,148 @@
                 }
             };
         }
+
+        // ============================================================
+        // V3 PRODUCTION STATUS POLLING
+        // ============================================================
+
+        let v3PollingInterval = null;
+        let v3ProductionSessionId = null;
+
+        /**
+         * V3: Start polling for production status
+         * Uses /api/creative-director/session/{id} to check production progress
+         */
+        function startV3ProductionPolling(sid) {
+            v3ProductionSessionId = sid;
+            console.log('[V3] Starting production status polling for:', sid);
+
+            // Clear any existing polling
+            if (v3PollingInterval) {
+                clearInterval(v3PollingInterval);
+            }
+
+            // Show production status panel
+            const statusPanel = document.getElementById('production-status');
+            if (statusPanel) {
+                statusPanel.classList.add('active');
+            }
+
+            // Poll every 3 seconds
+            v3PollingInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_URL}/api/creative-director/session/${v3ProductionSessionId}`);
+                    if (!response.ok) {
+                        console.warn('[V3] Poll failed:', response.status);
+                        return;
+                    }
+
+                    const session = await response.json();
+                    console.log('[V3] Session status:', session);
+
+                    // Update progress UI based on session state
+                    updateV3ProductionProgress(session);
+
+                    // Check if production is complete
+                    if (session.state === 'complete' || session.production_triggered === false) {
+                        console.log('[V3] Production complete');
+                        stopV3ProductionPolling();
+                        handleV3ProductionComplete(session);
+                    }
+
+                } catch (error) {
+                    console.error('[V3] Poll error:', error);
+                }
+            }, 3000);
+
+            // Initial poll immediately
+            pollV3Status();
+        }
+
+        /**
+         * V3: Single poll for status
+         */
+        async function pollV3Status() {
+            if (!v3ProductionSessionId) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/creative-director/session/${v3ProductionSessionId}`);
+                if (response.ok) {
+                    const session = await response.json();
+                    updateV3ProductionProgress(session);
+                }
+            } catch (error) {
+                console.error('[V3] Initial poll error:', error);
+            }
+        }
+
+        /**
+         * V3: Stop polling
+         */
+        function stopV3ProductionPolling() {
+            if (v3PollingInterval) {
+                clearInterval(v3PollingInterval);
+                v3PollingInterval = null;
+            }
+            console.log('[V3] Polling stopped');
+        }
+
+        /**
+         * V3: Update production progress UI
+         */
+        function updateV3ProductionProgress(session) {
+            const progressBar = document.getElementById('genesis-progress-bar');
+            const phaseText = document.getElementById('genesis-phase-text');
+            const statusText = document.getElementById('genesis-status-text');
+
+            // Map state to progress percentage
+            const stateProgress = {
+                'production': 50,
+                'generating': 60,
+                'rendering': 80,
+                'complete': 100
+            };
+
+            const progress = stateProgress[session.state] || session.progress || 50;
+
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+
+            if (statusText) {
+                statusText.textContent = session.state?.toUpperCase() || 'PROCESSING';
+            }
+
+            if (phaseText) {
+                phaseText.textContent = `Stage: ${session.state?.replace(/_/g, ' ').toUpperCase() || 'PRODUCTION'} — RAGNAROK generating your video...`;
+            }
+        }
+
+        /**
+         * V3: Handle production completion
+         */
+        function handleV3ProductionComplete(session) {
+            genesisStatus = 'complete';
+
+            const progressBar = document.getElementById('genesis-progress-bar');
+            const phaseText = document.getElementById('genesis-phase-text');
+            const statusText = document.getElementById('genesis-status-text');
+
+            if (progressBar) progressBar.style.width = '100%';
+            if (statusText) statusText.textContent = 'COMPLETE';
+            if (phaseText) phaseText.textContent = '🎉 Production complete! Your video is ready.';
+
+            addSystemMessage('🎉 RAGNAROK production complete! Your AI video is ready.');
+
+            // If session has video URL, show it
+            if (session.brief?.video_url) {
+                renderGenesisComplete({ video_url: session.brief.video_url });
+            }
+        }
+
+        // ============================================================
+        // END V3 PRODUCTION POLLING
+        // ============================================================
 
         /**
          * Handle incoming Genesis pipeline events
@@ -7841,6 +7961,8 @@
         }
 
         // Confirm voice selection and start production
+        // V3 UPDATE: Production is ALREADY triggered by V3 FSM when production_triggered=true
+        // This function now just shows progress UI and starts polling - no duplicate trigger
         function confirmVoiceSelection() {
             if (!selectedVoice) {
                 console.error('No voice selected');
@@ -7859,15 +7981,16 @@
 
             const voice = VOICE_OPTIONS.find(v => v.id === selectedVoice);
 
-            // Add voice to brief
+            // Add voice to brief (for display purposes)
             brief.voice_id = selectedVoice;
             brief.voice_name = voice?.name || 'Adam';
 
-            console.log('Starting production with brief:', brief);
+            console.log('[V3] Voice selected:', voice?.name);
+            console.log('[V3] Production already triggered by V3 FSM - just showing progress');
 
             appendNIMessage('ai', `✅ <strong>Voice: ${voice?.name}</strong><br>` +
                 `<span style="color: #71717a; font-size: 12px;">${voice?.category}</span><br><br>` +
-                `<span style="color: #00CED1;">🎬 Starting production...</span>`);
+                `<span style="color: #00CED1;">🎬 Production is running...</span>`);
 
             if (currentAudio) {
                 currentAudio.pause();
@@ -7877,12 +8000,10 @@
             setTimeout(() => {
                 closeNeuralInterface();
 
-                // Ensure ProductionManager exists and start
-                if (typeof ProductionManager !== 'undefined' && ProductionManager.start) {
-                    ProductionManager.start(sessionId, brief);
-                } else {
-                    console.error('ProductionManager not found');
-                }
+                // V3: Don't call ProductionManager.start() - production is already running
+                // Just show progress UI and start polling for status
+                console.log('[V3] Starting production status polling (not re-triggering)');
+                startV3ProductionPolling(sessionId);
 
                 // Clear state
                 selectedVoice = null;
