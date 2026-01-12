@@ -7506,6 +7506,23 @@
             `;
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
+
+            // AUTO-SEND: Notify AI that file was uploaded so it can respond
+            // This fixes the deadlock where user waits for AI and AI waits for user
+            const fileType = file.type.startsWith('image/') ? 'logo/image' : 'document';
+            const uploadMessage = `[User uploaded ${fileType}: ${file.name}]`;
+
+            // Show user message in chat
+            appendNIMessage('user', `📎 Uploaded: ${file.name}`);
+
+            // Show typing indicator
+            showNITyping();
+
+            // Send to backend so AI can acknowledge and continue
+            sendToCreativeDirector(uploadMessage, selectedModel);
+
+            // Clear the file reference since we've sent the notification
+            clearUploadedFile();
         }
 
         // Clear uploaded file after sending
