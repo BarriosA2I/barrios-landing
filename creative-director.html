@@ -3785,8 +3785,8 @@
                 "></div>
             `;
 
-            // Insert into chat area
-            const chatMessages = document.getElementById('chat-messages');
+            // Insert into chat area (ni-messages for Creative Director interface)
+            const chatMessages = document.getElementById('ni-messages') || document.getElementById('chat-messages');
             if (chatMessages) {
                 chatMessages.appendChild(overlay);
                 overlay.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -3798,7 +3798,7 @@
          * @param {string} sessionId - Session ID to stream
          */
         function connectProductionSSE(sessionId) {
-            const streamUrl = `${API_BASE_URL}/api/production/status/${sessionId}/stream`;
+            const streamUrl = `${GENESIS_API_URL}/api/production/status/${sessionId}/stream`;
             console.log('[V2-SSE] Connecting to:', streamUrl);
 
             // Close existing connection
