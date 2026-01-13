@@ -7640,6 +7640,13 @@
                 return;
             }
 
+            // Disable chat input during voice selection to prevent accidental message sends
+            const chatInput = document.getElementById('ni-input');
+            if (chatInput) {
+                chatInput.disabled = true;
+                chatInput.placeholder = 'Click a voice card to select...';
+            }
+
             currentVoicePage = 0;
             selectedVoice = null;
 
@@ -7871,54 +7878,102 @@
 
         // Confirm voice selection and start production
         function confirmVoiceSelection() {
-            if (!selectedVoice) {
-                console.error('No voice selected');
-                return;
-            }
-
-            // Re-fetch brief from window in case it changed
-            const brief = window.currentProductionBrief;
-            const sessionId = brief?.session_id;
-
-            if (!brief || !sessionId) {
-                console.error('Brief or session ID missing');
-                appendNIMessage('ai', `<div style="color: #ef4444;">⚠️ Error: Session expired. Please start over.</div>`);
-                return;
-            }
-
-            const voice = VOICE_OPTIONS.find(v => v.id === selectedVoice);
-
-            // Add voice to brief
-            brief.voice_id = selectedVoice;
-            brief.voice_name = voice?.name || 'Adam';
-
-            console.log('Starting production with brief:', brief);
-
-            appendNIMessage('ai', `✅ <strong>Voice: ${voice?.name}</strong><br>` +
-                `<span style="color: #71717a; font-size: 12px;">${voice?.category}</span><br><br>` +
-                `<span style="color: #00CED1;">🎬 Starting production...</span>`);
-
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
-            }
-
-            setTimeout(() => {
-                closeNeuralInterface();
-
-                // Ensure ProductionManager exists and start
-                if (typeof ProductionManager !== 'undefined' && ProductionManager.start) {
-                    ProductionManager.start(sessionId, brief);
-                } else {
-                    console.error('ProductionManager not found');
+            try {
+                if (!selectedVoice) {
+                    console.error('No voice selected');
+                    return;
                 }
 
-                // Clear state
-                selectedVoice = null;
-                pendingBrief = null;
-                pendingSessionId = null;
-                currentVoicePage = 0;
-            }, 1500);
+                // Re-fetch brief from window in case it changed
+                const brief = window.currentProductionBrief;
+                const sessionId = brief?.session_id;
+
+                if (!brief || !sessionId) {
+                    console.error('Brief or session ID missing');
+                    appendNIMessage('ai', `<div style="color: #ef4444;">⚠️ Error: Session expired. Please start over.</div>`);
+                    reEnableChatInput();
+                    return;
+                }
+
+                // Defensive check: Ensure VOICE_OPTIONS exists
+                if (typeof VOICE_OPTIONS === 'undefined' || !Array.isArray(VOICE_OPTIONS)) {
+                    console.error('VOICE_OPTIONS not loaded');
+                    appendNIMessage('ai', `<div style="color: #ef4444;">⚠️ Error: Voice options not loaded. Please refresh the page.</div>`);
+                    reEnableChatInput();
+                    return;
+                }
+
+                const voice = VOICE_OPTIONS.find(v => v.id === selectedVoice);
+                if (!voice) {
+                    console.error('Selected voice not found:', selectedVoice);
+                    appendNIMessage('ai', `<div style="color: #ef4444;">⚠️ Error: Voice not found. Please select again.</div>`);
+                    reEnableChatInput();
+                    return;
+                }
+
+                // Add voice to brief
+                brief.voice_id = selectedVoice;
+                brief.voice_name = voice.name;
+
+                console.log('Starting production with brief:', brief);
+
+                appendNIMessage('ai', `✅ <strong>Voice: ${voice.name}</strong><br>` +
+                    `<span style="color: #71717a; font-size: 12px;">${voice.category || 'Standard'}</span><br><br>` +
+                    `<span style="color: #00CED1;">🎬 Starting production...</span>`);
+
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                }
+
+                setTimeout(() => {
+                    try {
+                        closeNeuralInterface();
+
+                        // Re-enable chat input after voice selection completes
+                        reEnableChatInput();
+
+                        // Ensure ProductionManager exists and start
+                        if (typeof ProductionManager !== 'undefined' && ProductionManager.start) {
+                            ProductionManager.start(sessionId, brief);
+                        } else {
+                            console.error('ProductionManager not found - retrying...');
+                            appendNIMessage('ai', `<div style="color: #f59e0b;">⚠️ Production manager loading... Please wait.</div>`);
+                            // Retry after a delay
+                            setTimeout(() => {
+                                if (typeof ProductionManager !== 'undefined' && ProductionManager.start) {
+                                    ProductionManager.start(sessionId, brief);
+                                } else {
+                                    appendNIMessage('ai', `<div style="color: #ef4444;">❌ Production failed to start. Please refresh and try again.</div>`);
+                                }
+                            }, 2000);
+                        }
+                    } catch (innerError) {
+                        console.error('Error starting production:', innerError);
+                        appendNIMessage('ai', `<div style="color: #ef4444;">❌ Production error: ${innerError.message}</div>`);
+                    }
+
+                    // Clear state
+                    selectedVoice = null;
+                    pendingBrief = null;
+                    pendingSessionId = null;
+                    currentVoicePage = 0;
+                }, 1500);
+
+            } catch (error) {
+                console.error('Voice selection error:', error);
+                appendNIMessage('ai', `<div style="color: #ef4444;">❌ Error: ${error.message}. Please try again.</div>`);
+                reEnableChatInput();
+            }
+        }
+
+        // Helper function to re-enable chat input
+        function reEnableChatInput() {
+            const chatInput = document.getElementById('ni-input');
+            if (chatInput) {
+                chatInput.disabled = false;
+                chatInput.placeholder = 'Enter command...';
+            }
         }
 
         // ============================================
