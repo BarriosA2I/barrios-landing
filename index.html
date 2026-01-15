@@ -295,75 +295,30 @@ html, body {
             </div>
         </div>
 
-        <!-- Right Side: Terminal Visual with Glow -->
+        <!-- Right Side: Neural Nexus Visualization -->
         <div class="w-full lg:w-1/2 relative z-20 flex justify-center lg:justify-end [animation:animationIn_0.8s_ease-out_0.4s_both] animate-on-scroll animate">
             <!-- Ambient Glow -->
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/10 blur-[100px] -z-10 rounded-full pointer-events-none mix-blend-screen"></div>
 
-            <div class="relative w-full max-w-lg group">
-                <!-- Enhanced Glow behind -->
-                <div class="absolute -inset-1 bg-gradient-to-r from-primary via-blue-600 to-purple-600 opacity-20 blur-2xl group-hover:opacity-30 transition duration-1000 animate-pulse-glow"></div>
-                
-                <!-- Terminal Card -->
-                <div class="relative bg-void/90 backdrop-blur-xl border border-white/10 rounded-[18px] p-1 overflow-hidden shadow-2xl">
-                    <!-- Title Bar -->
-                    <div class="bg-white/[0.03] px-4 py-3 flex items-center gap-2 border-b border-white/5">
-                        <div class="flex gap-2">
-                            <div class="w-2.5 h-2.5 rounded-full bg-white/10 border border-white/20"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-white/10 border border-white/20"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-white/10 border border-white/20"></div>
-                        </div>
-                        <div class="ml-auto text-[11px] font-mono text-muted/60 flex items-center gap-2 tracking-wide uppercase">
-                             <iconify-icon icon="lucide:lock" width="10"></iconify-icon>
-                             [ ADMIN@BARRIOSA2I:~ ]
-                        </div>
-                    </div>
-                    
-                    <!-- Content -->
-                    <div class="p-6 font-mono text-sm leading-7 min-h-[300px] relative">
-                         <!-- Scanline overlay on terminal -->
-                         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent bg-[length:100%_4px] pointer-events-none"></div>
+            <!-- Neural Nexus Container -->
+            <div id="neural-container" class="relative w-full max-w-md h-[400px] rounded-2xl overflow-hidden border border-cyan-500/30 bg-[#0B1220] shadow-[0_0_40px_-10px_rgba(0,206,209,0.3)] group">
+                <canvas id="neural-canvas" class="absolute inset-0 w-full h-full block"></canvas>
 
-                        <div class="text-muted mb-4 flex gap-2">
-                            <span class="text-primary font-bold">$</span> 
-                            <span class="text-white">./initialize_brain_os.sh --force</span>
-                        </div>
-                        
-                        <div class="flex flex-col gap-3">
-                            <div class="flex justify-between items-center text-primary bg-primary/5 p-3 rounded border border-primary/20 shadow-[0_0_15px_rgba(0,206,209,0.1)_inset]">
-                                <span class="text-[11px] tracking-wide font-bold">[ AGENTS_ACTIVE ]</span>
-                                <span class="animate-pulse font-bold text-sm">59 NODES</span>
-                            </div>
-                            
-                            <div class="flex justify-between items-center text-accent bg-accent/5 p-3 rounded border border-accent/20 shadow-[0_0_15px_rgba(245,158,11,0.1)_inset]">
-                                <span class="text-[11px] tracking-wide font-bold">[ MEMORY_ALLOC ]</span>
-                                <span class="animate-cursor text-sm">12TB (EXPANDING)</span>
-                            </div>
+                <!-- UI Overlay -->
+                <div class="absolute top-4 left-4 flex items-center gap-2 z-10">
+                    <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                    <span class="text-[10px] font-mono text-cyan-400/80 uppercase tracking-wider">System_Active</span>
+                </div>
 
-                            <div class="flex justify-between items-center text-white bg-white/5 p-3 rounded border border-white/10">
-                                <span class="text-[11px] tracking-wide font-bold">[ SYSTEM_UPTIME ]</span>
-                                <span class="text-sm">99.999%</span>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3 mt-2">
-                                <div class="bg-black/30 p-3 rounded border border-white/5 text-[10px] text-muted">
-                                    PARSING_DATA...
-                                    <div class="h-0.5 bg-white/10 mt-2 rounded overflow-hidden"><div class="h-full bg-primary w-2/3 animate-[typewriter_2s_infinite]"></div></div>
-                                </div>
-                                <div class="bg-black/30 p-3 rounded border border-white/5 text-[10px] text-muted">
-                                    OPTIMIZING_ADS...
-                                    <div class="h-0.5 bg-white/10 mt-2 rounded overflow-hidden"><div class="h-full bg-accent w-full animate-pulse"></div></div>
-                                </div>
-                            </div>
-
-                            <div class="text-muted mt-4 text-[11px] pl-2 border-l border-primary/30">
-                                &gt; Neural pathways optimized.
-                                
-                                <span class="text-void bg-primary px-1 font-bold mt-1 inline-block">[ CONNECTION ESTABLISHED ]</span>
-                            </div>
-                        </div>
+                <div class="absolute bottom-4 right-4 z-10">
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-cyan-400 font-mono">59</div>
+                        <div class="text-[10px] text-gray-500 uppercase tracking-wider">Nodes</div>
                     </div>
                 </div>
+
+                <!-- Scan line effect -->
+                <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-transparent pointer-events-none"></div>
             </div>
         </div>
       </section>
@@ -1799,5 +1754,8 @@ html, body {
       }
     })();
     </script>
+
+    <!-- Neural Nexus Visualization -->
+    <script src="js/neural-nexus.js"></script>
 
 </body></html>
