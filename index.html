@@ -511,6 +511,167 @@ html, body {
   background: linear-gradient(to bottom, transparent 0%, rgba(0, 206, 209, 0.2) 30%, rgba(0, 206, 209, 0.2) 70%, transparent 100%);
   animation: data-stream 6s linear infinite;
 }
+
+/* ========== HONEST TRUTH ANIMATIONS ========== */
+
+/* 1. Defeated Column Effect - Red glitch/fade */
+@keyframes defeated-glitch {
+  0%, 100% { opacity: 0.35; transform: translateX(0); }
+  10% { opacity: 0.3; transform: translateX(-1px); }
+  20% { opacity: 0.4; transform: translateX(1px); }
+  30% { opacity: 0.25; transform: translateX(0); }
+}
+
+.defeated-column {
+  animation: defeated-glitch 5s ease-in-out infinite;
+  filter: grayscale(0.6);
+}
+
+.defeated-column:hover {
+  animation-play-state: paused;
+  opacity: 0.5;
+  filter: grayscale(0.3);
+}
+
+/* 2. Animated Strikethrough */
+@keyframes strikethrough-draw {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+.strike-animate {
+  position: relative;
+  display: inline-block;
+}
+
+.strike-animate::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.7), rgba(239, 68, 68, 0.7), transparent);
+  animation: strikethrough-draw 1.2s ease-out forwards;
+  animation-delay: var(--strike-delay, 0s);
+}
+
+/* 3. Victory Column Glow */
+@keyframes victory-pulse {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(0, 206, 209, 0.15), inset 0 0 20px rgba(0, 206, 209, 0.03);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(0, 206, 209, 0.3), 0 0 80px rgba(0, 206, 209, 0.15), inset 0 0 30px rgba(0, 206, 209, 0.05);
+  }
+}
+
+.victory-column {
+  animation: victory-pulse 3s ease-in-out infinite;
+}
+
+/* 4. Stat Counter Animation */
+@keyframes stat-reveal {
+  0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+  60% { opacity: 1; transform: scale(1.05) translateY(-3px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.stat-animate {
+  animation: stat-reveal 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation-delay: var(--stat-delay, 0s);
+  opacity: 0;
+}
+
+/* 5. SYSTEM ACTIVE Badge Pulse */
+@keyframes system-active-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(0, 206, 209, 0.4);
+    border-color: rgba(0, 206, 209, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 206, 209, 0.7), 0 0 35px rgba(0, 206, 209, 0.3);
+    border-color: rgba(0, 206, 209, 0.7);
+  }
+}
+
+.system-active-badge {
+  animation: system-active-pulse 2s ease-in-out infinite;
+}
+
+/* 6. Red Glow for Defeated Values */
+.defeated-value {
+  color: rgba(239, 68, 68, 0.35) !important;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.15);
+}
+
+/* ========== MISSION TIMELINE ANIMATIONS ========== */
+
+/* 1. Timeline Node Glow */
+@keyframes node-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 206, 209, 0.3), inset 0 0 5px rgba(0, 206, 209, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 206, 209, 0.6), 0 0 35px rgba(0, 206, 209, 0.25), inset 0 0 8px rgba(0, 206, 209, 0.2);
+  }
+}
+
+.timeline-node {
+  animation: node-glow 3s ease-in-out infinite;
+}
+
+/* 2. Connection Line Data Pulse */
+@keyframes line-pulse {
+  0% { stroke-dashoffset: 100; opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0.3; }
+}
+
+.timeline-connector {
+  stroke-dasharray: 8 4;
+  animation: line-pulse 2s linear infinite;
+}
+
+/* 3. Staggered Card Entrance */
+@keyframes timeline-card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(25px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.timeline-card {
+  opacity: 0;
+  animation: timeline-card-enter 0.5s ease-out forwards;
+}
+
+.timeline-card:nth-child(1) { animation-delay: 0.15s; }
+.timeline-card:nth-child(2) { animation-delay: 0.3s; }
+.timeline-card:nth-child(3) { animation-delay: 0.45s; }
+.timeline-card:nth-child(4) { animation-delay: 0.6s; }
+.timeline-card:nth-child(5) { animation-delay: 0.75s; }
+
+/* 4. Day Number Pulse */
+@keyframes day-number-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.day-number {
+  animation: day-number-pulse 2.5s ease-in-out infinite;
+}
+
+/* 5. Node staggered glow delays */
+.timeline-node-1 { animation-delay: 0s; }
+.timeline-node-2 { animation-delay: 0.3s; }
+.timeline-node-3 { animation-delay: 0.6s; }
+.timeline-node-4 { animation-delay: 0.9s; }
+.timeline-node-5 { animation-delay: 1.2s; }
 </style>
 </head>
 
@@ -1639,67 +1800,67 @@ html, body {
               </div>
             </div>
 
-            <!-- LEGACY COLUMNS (The "Old Way") -->
-            <div class="md:col-span-5 relative">
+            <!-- LEGACY COLUMNS (The "Old Way" - DEFEATED) -->
+            <div class="md:col-span-5 relative defeated-column">
               <!-- Vertical divider -->
-              <div class="absolute top-0 bottom-0 right-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent hidden md:block"></div>
+              <div class="absolute top-0 bottom-0 right-0 w-px bg-gradient-to-b from-transparent via-red-500/20 to-transparent hidden md:block"></div>
 
               <!-- Header Labels -->
               <div class="grid grid-cols-2 gap-4 mb-4">
-                <div class="text-center text-white/40 font-mono text-[10px] uppercase tracking-widest">Traditional Agency</div>
-                <div class="text-center text-white/40 font-mono text-[10px] uppercase tracking-widest">Freelancer</div>
+                <div class="text-center text-red-400/40 font-mono text-[10px] uppercase tracking-widest">Traditional Agency</div>
+                <div class="text-center text-red-400/40 font-mono text-[10px] uppercase tracking-widest">Freelancer</div>
               </div>
 
               <!-- Data Rows -->
               <div class="grid grid-cols-2 gap-4">
                 <!-- Row 1: Cost -->
-                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
-                  <span class="text-white/30 font-mono text-sm line-through">$2,000+</span>
-                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Monthly</span>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-red-500/[0.02] border border-red-500/10">
+                  <span class="defeated-value font-mono text-sm strike-animate" style="--strike-delay: 0.3s">$2,000+</span>
+                  <span class="text-[9px] text-red-400/20 uppercase mt-1 md:hidden">Monthly</span>
                 </div>
-                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
-                  <span class="text-white/30 font-mono text-sm line-through">$3,500+</span>
-                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Monthly</span>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-red-500/[0.02] border border-red-500/10">
+                  <span class="defeated-value font-mono text-sm strike-animate" style="--strike-delay: 0.5s">$3,500+</span>
+                  <span class="text-[9px] text-red-400/20 uppercase mt-1 md:hidden">Monthly</span>
                 </div>
 
                 <!-- Row 2: Time -->
-                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
-                  <span class="text-white/30 font-mono text-sm line-through">5-7 Days</span>
-                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Turnaround</span>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-red-500/[0.02] border border-red-500/10">
+                  <span class="defeated-value font-mono text-sm strike-animate" style="--strike-delay: 0.7s">5-7 Days</span>
+                  <span class="text-[9px] text-red-400/20 uppercase mt-1 md:hidden">Turnaround</span>
                 </div>
-                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
-                  <span class="text-white/30 font-mono text-sm line-through">48 Hours</span>
-                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Turnaround</span>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-red-500/[0.02] border border-red-500/10">
+                  <span class="defeated-value font-mono text-sm strike-animate" style="--strike-delay: 0.9s">48 Hours</span>
+                  <span class="text-[9px] text-red-400/20 uppercase mt-1 md:hidden">Turnaround</span>
                 </div>
 
                 <!-- Row 3: Context -->
-                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
-                  <span class="text-white/30 font-mono text-sm line-through">Fragmented</span>
-                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Context</span>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-red-500/[0.02] border border-red-500/10">
+                  <span class="defeated-value font-mono text-sm strike-animate" style="--strike-delay: 1.1s">Fragmented</span>
+                  <span class="text-[9px] text-red-400/20 uppercase mt-1 md:hidden">Context</span>
                 </div>
-                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
-                  <span class="text-white/30 font-mono text-sm line-through">Zero</span>
-                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Context</span>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-red-500/[0.02] border border-red-500/10">
+                  <span class="defeated-value font-mono text-sm strike-animate" style="--strike-delay: 1.3s">Zero</span>
+                  <span class="text-[9px] text-red-400/20 uppercase mt-1 md:hidden">Context</span>
                 </div>
 
                 <!-- Row 4: Availability -->
-                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
-                  <span class="text-white/30 font-mono text-sm line-through">9-5 EST</span>
-                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Hours</span>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-red-500/[0.02] border border-red-500/10">
+                  <span class="defeated-value font-mono text-sm strike-animate" style="--strike-delay: 1.5s">9-5 EST</span>
+                  <span class="text-[9px] text-red-400/20 uppercase mt-1 md:hidden">Hours</span>
                 </div>
-                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-white/[0.02] border border-white/5">
-                  <span class="text-white/30 font-mono text-sm line-through">Irregular</span>
-                  <span class="text-[9px] text-white/20 uppercase mt-1 md:hidden">Hours</span>
+                <div class="h-20 flex flex-col items-center justify-center rounded-lg bg-red-500/[0.02] border border-red-500/10">
+                  <span class="defeated-value font-mono text-sm strike-animate" style="--strike-delay: 1.7s">Irregular</span>
+                  <span class="text-[9px] text-red-400/20 uppercase mt-1 md:hidden">Hours</span>
                 </div>
               </div>
             </div>
 
-            <!-- THE BARRIOS COLUMN (The "Winner") -->
+            <!-- THE BARRIOS COLUMN (The "Winner" - VICTORY) -->
             <div class="md:col-span-4 relative mt-8 md:mt-0 md:pl-6">
               <!-- Glowing Backdrop -->
-              <div class="absolute -inset-4 bg-primary/20 blur-xl rounded-xl opacity-50"></div>
+              <div class="absolute -inset-4 bg-primary/25 blur-2xl rounded-xl opacity-60"></div>
 
-              <div class="relative bg-[#0a0a1e]/90 border border-primary/50 rounded-xl p-6 shadow-[0_0_50px_rgba(0,206,209,0.15)] backdrop-blur-xl overflow-hidden">
+              <div class="victory-column relative bg-[#0a0a1e]/90 border-2 border-primary/60 rounded-xl p-6 shadow-[0_0_60px_rgba(0,206,209,0.2)] backdrop-blur-xl overflow-hidden">
 
                 <!-- Scanline Effect -->
                 <div class="absolute inset-0 pointer-events-none overflow-hidden">
@@ -1707,44 +1868,163 @@ html, body {
                 </div>
 
                 <!-- Header -->
-                <div class="text-center mb-6 border-b border-primary/30 pb-4 relative z-10">
-                  <h3 class="text-xl font-serif italic text-white">Barrios A2I</h3>
-                  <div class="flex items-center justify-center gap-2 mt-2">
-                    <span class="relative flex h-2 w-2">
+                <div class="text-center mb-6 border-b border-primary/40 pb-4 relative z-10">
+                  <h3 class="text-xl font-display font-bold text-white tracking-tight">Barrios A2I</h3>
+                  <div class="system-active-badge inline-flex items-center gap-2 mt-3 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10">
+                    <span class="relative flex h-2.5 w-2.5">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary shadow-[0_0_8px_rgba(0,206,209,0.8)]"></span>
                     </span>
-                    <span class="text-[10px] font-mono text-primary uppercase tracking-widest">System Active</span>
+                    <span class="text-[10px] font-mono text-primary uppercase tracking-[0.15em] font-bold">System Active</span>
                   </div>
                 </div>
 
-                <!-- Values -->
+                <!-- Values with Animated Entry -->
                 <div class="flex flex-col gap-6 relative z-10">
                   <!-- Cost -->
                   <div class="h-20 flex flex-col items-center justify-center">
-                    <span class="text-3xl md:text-4xl font-bold text-primary drop-shadow-[0_0_15px_rgba(0,206,209,0.5)]">$199</span>
-                    <span class="text-[9px] text-primary/50 uppercase tracking-wider mt-1 font-mono">Monthly Cost</span>
+                    <span class="stat-animate text-3xl md:text-4xl font-display font-bold text-primary drop-shadow-[0_0_20px_rgba(0,206,209,0.6)]" style="--stat-delay: 0.4s">$199</span>
+                    <span class="text-[9px] text-primary/60 uppercase tracking-wider mt-1 font-mono font-bold">Monthly Cost</span>
                   </div>
                   <!-- Time -->
                   <div class="h-20 flex flex-col items-center justify-center">
-                    <span class="text-3xl md:text-4xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">&lt; 2s</span>
-                    <span class="text-[9px] text-primary/50 uppercase tracking-wider mt-1 font-mono">Turnaround</span>
+                    <span class="stat-animate text-3xl md:text-4xl font-display font-bold text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" style="--stat-delay: 0.6s">&lt; 2s</span>
+                    <span class="text-[9px] text-primary/60 uppercase tracking-wider mt-1 font-mono font-bold">Turnaround</span>
                   </div>
                   <!-- Context -->
                   <div class="h-20 flex flex-col items-center justify-center">
-                    <span class="text-3xl md:text-4xl font-bold text-accent drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">12TB</span>
-                    <span class="text-[9px] text-primary/50 uppercase tracking-wider mt-1 font-mono">Context Window</span>
+                    <span class="stat-animate text-3xl md:text-4xl font-display font-bold text-accent drop-shadow-[0_0_15px_rgba(245,158,11,0.4)]" style="--stat-delay: 0.8s">12TB</span>
+                    <span class="text-[9px] text-primary/60 uppercase tracking-wider mt-1 font-mono font-bold">Context Window</span>
                   </div>
                   <!-- Availability -->
                   <div class="h-20 flex flex-col items-center justify-center">
-                    <span class="text-3xl md:text-4xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">24/7/365</span>
-                    <span class="text-[9px] text-primary/50 uppercase tracking-wider mt-1 font-mono">Availability</span>
+                    <span class="stat-animate text-3xl md:text-4xl font-display font-bold text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" style="--stat-delay: 1.0s">24/7/365</span>
+                    <span class="text-[9px] text-primary/60 uppercase tracking-wider mt-1 font-mono font-bold">Availability</span>
                   </div>
                 </div>
               </div>
             </div>
 
           </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════════ -->
+      <!-- GO LIVE IN 5 DAYS - MISSION BRIEFING TIMELINE -->
+      <!-- ═══════════════════════════════════════════════════════════════════════ -->
+      <section class="relative py-24 overflow-hidden" id="timeline">
+
+        <!-- Background Grid -->
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(0,206,209,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,206,209,0.02)_1px,transparent_1px)] bg-[size:60px_60px] opacity-30 pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/8 blur-[100px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+
+          <!-- Header -->
+          <div class="text-center mb-16">
+            <p class="text-xs font-mono uppercase tracking-[0.3em] text-primary mb-3">
+              [ Mission_Timeline ]
+            </p>
+            <h2 class="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+              Go <span class="text-primary drop-shadow-[0_0_20px_rgba(0,206,209,0.5)]">Live</span> in 5 Days.
+            </h2>
+            <p class="mt-4 text-white/50 max-w-xl mx-auto font-sans">
+              From first call to full deployment. Your nervous system, operational.
+            </p>
+          </div>
+
+          <!-- Timeline Container -->
+          <div class="relative">
+
+            <!-- SVG Connection Lines (Desktop) -->
+            <svg class="hidden md:block absolute top-8 left-[10%] w-[80%] h-2 z-0" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="timeline-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#00CED1;stop-opacity:0.2" />
+                  <stop offset="50%" style="stop-color:#00CED1;stop-opacity:0.8" />
+                  <stop offset="100%" style="stop-color:#F59E0B;stop-opacity:0.6" />
+                </linearGradient>
+              </defs>
+              <line x1="0%" y1="50%" x2="100%" y2="50%" stroke="url(#timeline-gradient)" stroke-width="2" class="timeline-connector" />
+            </svg>
+
+            <!-- Day Nodes Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-4 relative z-10">
+
+              <!-- DAY 1 -->
+              <div class="timeline-card flex flex-col items-center text-center">
+                <div class="timeline-node timeline-node-1 w-16 h-16 rounded-full bg-[#0b0d1a] border-2 border-primary flex items-center justify-center mb-4">
+                  <span class="day-number text-2xl font-display font-bold text-primary">1</span>
+                </div>
+                <h3 class="text-sm font-mono uppercase tracking-wider text-white mb-2 font-bold">Discovery</h3>
+                <p class="text-xs text-white/40 leading-relaxed max-w-[140px]">
+                  Deep-dive into your ops, pain points, and goals.
+                </p>
+              </div>
+
+              <!-- DAY 2 -->
+              <div class="timeline-card flex flex-col items-center text-center">
+                <div class="timeline-node timeline-node-2 w-16 h-16 rounded-full bg-[#0b0d1a] border-2 border-primary flex items-center justify-center mb-4">
+                  <span class="day-number text-2xl font-display font-bold text-primary">2</span>
+                </div>
+                <h3 class="text-sm font-mono uppercase tracking-wider text-white mb-2 font-bold">Architecture</h3>
+                <p class="text-xs text-white/40 leading-relaxed max-w-[140px]">
+                  Map your automation pathways and agent topology.
+                </p>
+              </div>
+
+              <!-- DAY 3 -->
+              <div class="timeline-card flex flex-col items-center text-center">
+                <div class="timeline-node timeline-node-3 w-16 h-16 rounded-full bg-[#0b0d1a] border-2 border-primary flex items-center justify-center mb-4">
+                  <span class="day-number text-2xl font-display font-bold text-primary">3</span>
+                </div>
+                <h3 class="text-sm font-mono uppercase tracking-wider text-white mb-2 font-bold">Build</h3>
+                <p class="text-xs text-white/40 leading-relaxed max-w-[140px]">
+                  Wire agents, integrations, and decision logic.
+                </p>
+              </div>
+
+              <!-- DAY 4 -->
+              <div class="timeline-card flex flex-col items-center text-center">
+                <div class="timeline-node timeline-node-4 w-16 h-16 rounded-full bg-[#0b0d1a] border-2 border-primary flex items-center justify-center mb-4">
+                  <span class="day-number text-2xl font-display font-bold text-primary">4</span>
+                </div>
+                <h3 class="text-sm font-mono uppercase tracking-wider text-white mb-2 font-bold">Test</h3>
+                <p class="text-xs text-white/40 leading-relaxed max-w-[140px]">
+                  Stress-test every pathway. Calibrate responses.
+                </p>
+              </div>
+
+              <!-- DAY 5 - DEPLOY (Gold/Accent) -->
+              <div class="timeline-card flex flex-col items-center text-center">
+                <div class="timeline-node timeline-node-5 w-16 h-16 rounded-full bg-[#0b0d1a] border-2 border-accent flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                  <span class="day-number text-2xl font-display font-bold text-accent">5</span>
+                </div>
+                <h3 class="text-sm font-mono uppercase tracking-wider text-accent mb-2 font-bold">Deploy</h3>
+                <p class="text-xs text-white/40 leading-relaxed max-w-[140px]">
+                  Go live. Your nervous system is now operational.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Stats Bar -->
+          <div class="mt-16 grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div class="text-center p-4 rounded-xl bg-white/[0.02] border border-white/5 backdrop-blur-sm">
+              <div class="text-2xl font-display font-bold text-primary drop-shadow-[0_0_10px_rgba(0,206,209,0.4)]" data-animate-number data-value="60" data-suffix="%">0</div>
+              <p class="text-[10px] font-mono uppercase tracking-wider text-white/40 mt-1">Faster than DIY</p>
+            </div>
+            <div class="text-center p-4 rounded-xl bg-white/[0.02] border border-white/5 backdrop-blur-sm">
+              <div class="text-2xl font-display font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" data-animate-number data-value="95" data-suffix="%">0</div>
+              <p class="text-[10px] font-mono uppercase tracking-wider text-white/40 mt-1">First-Time Success</p>
+            </div>
+            <div class="text-center p-4 rounded-xl bg-white/[0.02] border border-white/5 backdrop-blur-sm">
+              <div class="text-2xl font-display font-bold text-accent drop-shadow-[0_0_10px_rgba(245,158,11,0.4)]" data-animate-number data-value="40" data-suffix="%+">0</div>
+              <p class="text-[10px] font-mono uppercase tracking-wider text-white/40 mt-1">Cost Reduction</p>
+            </div>
+          </div>
+
         </div>
       </section>
 
