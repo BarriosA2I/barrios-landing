@@ -35,7 +35,7 @@ const BARRIOS_CONFIG = {
   // ========================================
 
   // Formspree endpoint for lead capture
-  FORMSPREE_ENDPOINT: 'https://formspree.io/f/YOUR_FORM_ID',
+  FORMSPREE_ENDPOINT: 'https://formspree.io/f/mdanjawv',
 
   // ========================================
   // PAGE ROUTES

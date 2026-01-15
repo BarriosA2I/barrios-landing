@@ -552,6 +552,7 @@
         'use strict';
 
         const API_URL = 'https://barrios-api-gateway.onrender.com/api/leads';
+        const FORMSPREE_URL = 'https://formspree.io/f/mdanjawv';
 
         // Shadow Queue for offline support
         const ShadowQueue = {
@@ -834,16 +835,28 @@
                     });
                 }
 
-                // Direct API call for redundancy
+                // Send to Formspree for email delivery (primary)
+                const formspreeData = new FormData();
+                formspreeData.append('name', formData.name);
+                formspreeData.append('email', formData.email);
+                formspreeData.append('company', formData.company || 'Not provided');
+                formspreeData.append('phone', formData.phone || 'Not provided');
+                formspreeData.append('interest', formData.interest || 'General');
+                formspreeData.append('message', formData.message);
+                formspreeData.append('_subject', 'New Contact Form Submission - ' + formData.name);
+
+                await fetch(FORMSPREE_URL, {
+                    method: 'POST',
+                    body: formspreeData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                // Direct API call for database storage (secondary)
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(leadData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Server error');
-                }
+                }).catch(() => ({ ok: true })); // Don't fail if API is down
 
                 setLoading(false);
                 showSuccess();
