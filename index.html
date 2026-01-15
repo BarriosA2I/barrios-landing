@@ -301,24 +301,31 @@ html, body {
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/10 blur-[100px] -z-10 rounded-full pointer-events-none mix-blend-screen"></div>
 
             <!-- Neural Nexus Container -->
-            <div id="neural-container" class="relative w-full max-w-md h-[400px] rounded-2xl overflow-hidden border border-cyan-500/30 bg-[#0B1220] shadow-[0_0_40px_-10px_rgba(0,206,209,0.3)] group">
-                <canvas id="neural-canvas" class="absolute inset-0 w-full h-full block"></canvas>
+            <div class="relative w-full max-w-md group">
+                <!-- Enhanced Glow behind -->
+                <div class="absolute -inset-1 bg-gradient-to-r from-primary via-blue-600 to-primary opacity-20 blur-2xl group-hover:opacity-30 transition duration-1000 animate-pulse-glow"></div>
 
-                <!-- UI Overlay -->
-                <div class="absolute top-4 left-4 flex items-center gap-2 z-10">
-                    <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-                    <span class="text-[10px] font-mono text-cyan-400/80 uppercase tracking-wider">System_Active</span>
-                </div>
+                <div id="neural-container" class="relative h-[400px] rounded-lg overflow-hidden border border-white/10 bg-void/90 backdrop-blur-xl shadow-2xl transition-all duration-500 hover:border-primary/30 hover:shadow-[0_0_40px_rgba(0,206,209,0.15)]">
+                    <canvas id="neural-canvas" class="absolute inset-0 w-full h-full block"></canvas>
 
-                <div class="absolute bottom-4 right-4 z-10">
-                    <div class="text-right">
-                        <div class="text-2xl font-bold text-cyan-400 font-mono">59</div>
-                        <div class="text-[10px] text-gray-500 uppercase tracking-wider">Nodes</div>
+                    <!-- UI Overlay - Status Badge -->
+                    <div class="absolute top-4 left-4 flex items-center gap-2 z-10 bg-white/5 backdrop-blur-md px-3 py-1.5 rounded-md border border-white/10">
+                        <div class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(0,206,209,0.6)]"></div>
+                        <span class="text-[10px] font-mono text-primary/90 uppercase tracking-wider">System_Active</span>
                     </div>
-                </div>
 
-                <!-- Scan line effect -->
-                <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-transparent pointer-events-none"></div>
+                    <!-- UI Overlay - Node Count -->
+                    <div class="absolute bottom-4 right-4 z-10 bg-white/5 backdrop-blur-md px-3 py-2 rounded-md border border-white/10">
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-primary font-mono leading-none">59</div>
+                            <div class="text-[10px] text-muted uppercase tracking-wider mt-1">Nodes</div>
+                        </div>
+                    </div>
+
+                    <!-- Scanline overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-transparent pointer-events-none"></div>
+                    <div class="absolute inset-0 bg-[length:100%_4px] bg-gradient-to-b from-transparent via-white/[0.02] to-transparent pointer-events-none"></div>
+                </div>
             </div>
         </div>
       </section>
