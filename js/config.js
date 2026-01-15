@@ -28,7 +28,7 @@ const BARRIOS_CONFIG = {
   CALENDLY_INSTALL_URL: 'https://calendly.com/alienation2innovation/new-meeting',
 
   // Business/Enterprise - Demo booking
-  CALENDLY_DEMO_URL: 'https://calendly.com/alienation2innovation/nexus-demo',
+  CALENDLY_DEMO_URL: 'https://calendly.com/alienation2innovation/ai-commercial-consultations',
 
   // ========================================
   // FORM ENDPOINTS
