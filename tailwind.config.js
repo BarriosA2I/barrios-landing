@@ -10,9 +10,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Exo 2', 'sans-serif'],
         serif: ['Playfair Display', 'serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        display: ['Orbitron', 'sans-serif'],
       },
       letterSpacing: {
         tighter: '-0.04em',
