@@ -458,9 +458,8 @@
 
     if (isPersonalPage) {
       injectInstallChecklist();
-    } else {
-      injectGoLiveTimeline();
     }
+    // Timeline is now in index.html - no longer injected via JS
   }
 
   // Run when DOM is ready
