@@ -466,7 +466,18 @@
           });
 
           if (response.ok) {
-            window.location.href = CONFIG.THANKS_PAGE || '/thanks.html';
+            // Show inline success instead of redirect to payment page
+            form.innerHTML = `
+              <div class="success-message" style="text-align: center; padding: 40px 20px;">
+                <div style="width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: rgba(0, 206, 209, 0.1); border: 2px solid rgba(0, 206, 209, 0.5); display: flex; align-items: center; justify-content: center;">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#00CED1" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                </div>
+                <h3 style="color: white; font-size: 24px; margin-bottom: 10px; font-family: 'Playfair Display', serif;">Signal Received.</h3>
+                <p style="color: rgba(255,255,255,0.6); font-size: 14px;">We'll respond within 24 hours. Check your inbox.</p>
+              </div>
+            `;
           } else {
             throw new Error('Form submission failed');
           }
