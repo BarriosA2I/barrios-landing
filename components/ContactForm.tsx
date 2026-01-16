@@ -11,10 +11,11 @@ import { useState } from 'react';
 
 const interestOptions = [
   { value: '', label: "I'm interested in..." },
-  { value: 'ragnarok', label: 'Enterprise Intelligence (Ragnarok)' },
-  { value: 'commercial-lab', label: 'AI Commercial Studio' },
-  { value: 'nexus', label: 'NEXUS Personal Assistant' },
-  { value: 'custom', label: 'Custom Solution' },
+  { value: 'rag-research', label: 'RAG Research Agents' },
+  { value: 'marketing-overlord', label: 'Marketing Overlord' },
+  { value: 'ai-websites', label: 'AI-Powered Websites' },
+  { value: 'app-dev', label: 'Custom App Development' },
+  { value: 'creative-director', label: 'AI Creative Director' },
   { value: 'other', label: 'Something Else' },
 ];
 
