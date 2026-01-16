@@ -423,10 +423,11 @@
             <input type="tel" name="phone" placeholder="Phone (optional)">
             <select name="interest" required>
               <option value="" disabled selected>I'm interested in...</option>
-              <option value="nexus-personal">Nexus Personal (Home AI)</option>
-              <option value="nexus-brain">Nexus Brain (Business AI)</option>
+              <option value="rag-research">RAG Research Agents</option>
               <option value="marketing-overlord">Marketing Overlord</option>
-              <option value="total-command">Total Command (Enterprise)</option>
+              <option value="ai-websites">AI-Powered Websites</option>
+              <option value="app-dev">Custom App Development</option>
+              <option value="creative-director">AI Creative Director</option>
               <option value="other">Something Else</option>
             </select>
           </div>
