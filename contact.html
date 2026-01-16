@@ -843,7 +843,7 @@
                     });
                 }
 
-                // Send to Formspree for email delivery (primary)
+                // Send to Formspree for email delivery
                 const formspreeData = new FormData();
                 formspreeData.append('name', formData.name);
                 formspreeData.append('email', formData.email);
@@ -859,12 +859,8 @@
                     headers: { 'Accept': 'application/json' }
                 });
 
-                // Direct API call for database storage (secondary)
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(leadData)
-                }).catch(() => ({ ok: true })); // Don't fail if API is down
+                // Note: LeadCapture.capture() above already handles database storage
+                // Removed duplicate direct API call that was causing 2x submissions
 
                 setLoading(false);
                 showSuccess();
