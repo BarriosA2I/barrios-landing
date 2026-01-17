@@ -1,2 +1,10 @@
 node_modules/
 .next/
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Prisma
+prisma/migrations/

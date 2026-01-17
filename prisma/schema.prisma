@@ -1,0 +1,536 @@
+// =============================================================================
+// BARRIOS A2I - STRIPE PAYMENT INTEGRATION SCHEMA
+// Production-grade Prisma schema for Commercial Lab subscriptions,
+// one-time purchases, token allocations, and production job queue
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")  // Required for Supabase with pgBouncer
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum SubscriptionTier {
+  STARTER    // $449/mo - 8 tokens
+  CREATOR    // $899/mo - 18 tokens
+  GROWTH     // $1699/mo - 32 tokens
+  SCALE      // $3199/mo - 64 tokens
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  UNPAID
+  PAUSED
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum ProductCategory {
+  COMMERCIAL_LAB      // Subscription tiers
+  LAB_ONE_TIME        // Single Lab Test
+  IDENTITY_ADDONS     // Voice Clone, Avatar Clone
+  PRIORITY_ADDONS     // Rush Delivery, Priority Queue
+  TOKEN_PACKS         // 8, 16, 32 token packs
+  EXTRAS              // Revision Pack, Variant Pack
+  NEXUS_PERSONAL      // Installation + maintenance
+  CONSULTATION        // Paid strategy calls, architecture reviews
+  ENTERPRISE          // Custom enterprise packages
+}
+
+enum JobStatus {
+  QUEUED
+  PROCESSING
+  RENDERING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum JobPriority {
+  STANDARD    // 5-day queue (Starter)
+  EXPEDITED   // 3-day queue (Creator)
+  PRIORITY    // 48h queue (Growth)
+  RUSH        // 24h queue (Scale) or Rush Delivery add-on
+}
+
+enum CloneType {
+  VOICE
+  AVATAR
+}
+
+enum CloneStatus {
+  PENDING_UPLOAD
+  PROCESSING
+  READY
+  FAILED
+}
+
+// Tier 2 Intelligence: Customer Lifecycle Tracking
+enum CustomerState {
+  PROSPECT      // Created but no purchase
+  TRIAL         // In trial period
+  ACTIVE        // Active subscription
+  CHURNED       // Canceled subscription
+  POWER_USER    // > $5k LTV or multiple addons
+  AT_RISK       // Failed payment or low usage
+  ENTERPRISE    // Custom deal / white glove
+}
+
+// Tier 1 Revenue: Checkout Intent Classification
+enum CheckoutIntent {
+  SUBSCRIPTION  // Standard subscription flow
+  TRIAL         // Low friction trial
+  CONSULTATION  // Calendly bridge (paid strategy call)
+  UPGRADE       // Existing customer tier change
+  TOP_UP        // Token refill / addon purchase
+  ENTERPRISE    // Custom enterprise deal
+}
+
+// =============================================================================
+// CORE TABLES
+// =============================================================================
+
+model Customer {
+  id                String         @id @default(cuid())
+  email             String         @unique
+  name              String?
+  company           String?
+  phone             String?
+
+  // Stripe sync
+  stripeCustomerId  String?        @unique @map("stripe_customer_id")
+
+  // Tier 2: Lifecycle Intelligence
+  lifecycleState    CustomerState  @default(PROSPECT) @map("lifecycle_state")
+  lifetimeValue     Int            @default(0) @map("lifetime_value")    // stored in cents
+  acquisitionSource String?        @map("acquisition_source")            // utm_source, referral, etc
+  riskScore         Int            @default(0) @map("risk_score")        // 0-100, higher = more at risk
+  lastActivityAt    DateTime?      @map("last_activity_at")
+
+  // Calendly Integration for Consultation flows
+  calendlyUrl       String?        @map("calendly_url")
+  lastConsultation  DateTime?      @map("last_consultation")
+
+  // Engagement metrics
+  totalJobsCreated  Int            @default(0) @map("total_jobs_created")
+  avgJobsPerMonth   Float          @default(0) @map("avg_jobs_per_month")
+
+  // Relations
+  subscriptions     Subscription[]
+  tokenAllocations  TokenAllocation[]
+  purchases         Purchase[]
+  productionJobs    ProductionJob[]
+  cloneAssets       CloneAsset[]
+  consultations     Consultation[]
+
+  // Timestamps
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  @@index([stripeCustomerId])
+  @@index([email])
+  @@index([lifecycleState])
+  @@index([lifetimeValue])
+  @@map("customers")
+}
+
+model Subscription {
+  id                    String             @id @default(cuid())
+  customerId            String             @map("customer_id")
+  customer              Customer           @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Stripe sync
+  stripeSubscriptionId  String             @unique @map("stripe_subscription_id")
+  stripePriceId         String             @map("stripe_price_id")
+  stripeProductId       String             @map("stripe_product_id")
+
+  // Subscription details
+  tier                  SubscriptionTier
+  billingInterval       BillingInterval    @map("billing_interval")
+  status                SubscriptionStatus
+
+  // Features from tier
+  monthlyTokens         Int                @map("monthly_tokens")
+  maxFormats            Int                @map("max_formats")
+  maxRevisions          Int                @map("max_revisions")
+  queuePriority         JobPriority        @map("queue_priority")
+  voiceCloneEnabled     Boolean            @default(false) @map("voice_clone_enabled")
+  avatarCloneEnabled    Boolean            @default(false) @map("avatar_clone_enabled")
+
+  // Billing dates
+  currentPeriodStart    DateTime           @map("current_period_start")
+  currentPeriodEnd      DateTime           @map("current_period_end")
+  cancelAtPeriodEnd     Boolean            @default(false) @map("cancel_at_period_end")
+  canceledAt            DateTime?          @map("canceled_at")
+
+  // Trial
+  trialStart            DateTime?          @map("trial_start")
+  trialEnd              DateTime?          @map("trial_end")
+
+  // Timestamps
+  createdAt             DateTime           @default(now()) @map("created_at")
+  updatedAt             DateTime           @updatedAt @map("updated_at")
+
+  @@index([customerId])
+  @@index([stripeSubscriptionId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+model TokenAllocation {
+  id              String    @id @default(cuid())
+  customerId      String    @map("customer_id")
+  customer        Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Token pools (kept separate for tracking)
+  subscriptionTokens  Int   @default(0) @map("subscription_tokens")  // Reset monthly
+  purchasedTokens     Int   @default(0) @map("purchased_tokens")     // Roll over forever
+  bonusTokens         Int   @default(0) @map("bonus_tokens")         // Promotional, may expire
+
+  // Expiration for bonus tokens
+  bonusExpiresAt      DateTime? @map("bonus_expires_at")
+
+  // Last reset (for subscription tokens)
+  lastResetAt         DateTime? @map("last_reset_at")
+
+  // Version for optimistic locking (MVCC)
+  version             Int       @default(0)
+
+  // Timestamps
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  @@unique([customerId])
+  @@index([customerId])
+  @@map("token_allocations")
+}
+
+model Purchase {
+  id                    String          @id @default(cuid())
+  customerId            String          @map("customer_id")
+  customer              Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Stripe sync
+  stripePaymentIntentId String?         @unique @map("stripe_payment_intent_id")
+  stripeInvoiceId       String?         @map("stripe_invoice_id")
+  stripeSessionId       String?         @unique @map("stripe_session_id")
+
+  // Tier 1: Checkout Intent Tracking
+  intent                CheckoutIntent  @default(SUBSCRIPTION)
+
+  // Product details
+  productCategory       ProductCategory @map("product_category")
+  productId             String          @map("product_id")
+  productName           String          @map("product_name")
+
+  // Pricing
+  amountCents           Int             @map("amount_cents")
+  currency              String          @default("usd")
+
+  // Status
+  status                PurchaseStatus
+
+  // Consultation/Scheduling Integration
+  schedulingId          String?         @map("scheduling_id")     // Calendly Event ID
+  scheduledAt           DateTime?       @map("scheduled_at")      // When the call is booked
+  consultationId        String?         @map("consultation_id")   // Link to Consultation record
+
+  // Credit tracking (consultation fee credited to subscription)
+  creditedToSubscription String?        @map("credited_to_subscription")
+  creditApplied         Boolean         @default(false) @map("credit_applied")
+
+  // Fulfillment tracking
+  fulfilledAt           DateTime?       @map("fulfilled_at")
+  fulfillmentData       Json?           @map("fulfillment_data")
+
+  // Metadata from Stripe
+  metadata              Json?
+
+  // Timestamps
+  createdAt             DateTime        @default(now()) @map("created_at")
+  updatedAt             DateTime        @updatedAt @map("updated_at")
+
+  @@index([customerId])
+  @@index([stripeSessionId])
+  @@index([status])
+  @@index([productCategory])
+  @@index([intent])
+  @@map("purchases")
+}
+
+model ProductionJob {
+  id              String      @id @default(cuid())
+  customerId      String      @map("customer_id")
+  customer        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Job configuration
+  title           String
+  script          String      @db.Text
+  targetAudience  String?     @map("target_audience")
+  brandVoice      String?     @map("brand_voice")
+
+  // Format & output
+  format          String      @default("16:9")  // 16:9, 9:16, 1:1, 4:5
+  duration        Int         @default(64)       // seconds (8 scenes x 8s)
+
+  // Token consumption
+  tokensConsumed  Int         @map("tokens_consumed")
+
+  // Status & priority
+  status          JobStatus   @default(QUEUED)
+  priority        JobPriority @default(STANDARD)
+
+  // Queue management
+  queuePosition   Int?        @map("queue_position")
+  estimatedStart  DateTime?   @map("estimated_start")
+
+  // Processing timestamps
+  startedAt       DateTime?   @map("started_at")
+  completedAt     DateTime?   @map("completed_at")
+
+  // Output
+  outputUrls      Json?       @map("output_urls")
+
+  // Error tracking
+  errorMessage    String?     @map("error_message")
+  retryCount      Int         @default(0) @map("retry_count")
+
+  // Clone assets used
+  voiceCloneId    String?     @map("voice_clone_id")
+  avatarCloneId   String?     @map("avatar_clone_id")
+
+  // Version for optimistic locking
+  version         Int         @default(0)
+
+  // Timestamps
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@index([customerId])
+  @@index([status])
+  @@index([priority, createdAt])
+  @@index([queuePosition])
+  @@map("production_jobs")
+}
+
+model CloneAsset {
+  id              String      @id @default(cuid())
+  customerId      String      @map("customer_id")
+  customer        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Clone details
+  type            CloneType
+  name            String
+  status          CloneStatus @default(PENDING_UPLOAD)
+
+  // Storage
+  sourceFileUrl   String?     @map("source_file_url")
+  modelFileUrl    String?     @map("model_file_url")
+  previewUrl      String?     @map("preview_url")
+
+  // Processing
+  processedAt     DateTime?   @map("processed_at")
+  errorMessage    String?     @map("error_message")
+
+  // Metadata (voice characteristics, avatar settings)
+  metadata        Json?
+
+  // Premium tier tracking
+  isPremium       Boolean     @default(false) @map("is_premium")
+
+  // Timestamps
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@index([customerId])
+  @@index([type])
+  @@index([status])
+  @@map("clone_assets")
+}
+
+// =============================================================================
+// AUDIT & EVENT TRACKING
+// =============================================================================
+
+model WebhookEvent {
+  id                String    @id @default(cuid())
+
+  // Stripe event details
+  stripeEventId     String    @unique @map("stripe_event_id")
+  eventType         String    @map("event_type")
+
+  // Processing status
+  processed         Boolean   @default(false)
+  processedAt       DateTime? @map("processed_at")
+
+  // Error tracking
+  errorMessage      String?   @map("error_message")
+  retryCount        Int       @default(0) @map("retry_count")
+
+  // Raw payload (for debugging/replay)
+  payload           Json
+
+  // Timestamps
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  @@index([stripeEventId])
+  @@index([eventType])
+  @@index([processed])
+  @@map("webhook_events")
+}
+
+model TokenTransaction {
+  id              String    @id @default(cuid())
+  customerId      String    @map("customer_id")
+
+  // Transaction type
+  type            String    // 'subscription_reset', 'purchase', 'consumption', 'bonus', 'refund'
+
+  // Token changes (positive = credit, negative = debit)
+  subscriptionDelta   Int   @default(0) @map("subscription_delta")
+  purchasedDelta      Int   @default(0) @map("purchased_delta")
+  bonusDelta          Int   @default(0) @map("bonus_delta")
+
+  // Balances after transaction
+  subscriptionBalance Int   @map("subscription_balance")
+  purchasedBalance    Int   @map("purchased_balance")
+  bonusBalance        Int   @map("bonus_balance")
+
+  // Reference
+  referenceType   String?   @map("reference_type")  // 'job', 'purchase', 'subscription'
+  referenceId     String?   @map("reference_id")
+
+  // Metadata
+  description     String?
+  metadata        Json?
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@index([customerId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("token_transactions")
+}
+
+// =============================================================================
+// CONSULTATION & LIFECYCLE INTELLIGENCE
+// =============================================================================
+
+enum ConsultationStatus {
+  PENDING_PAYMENT   // Checkout started
+  PAID              // Payment received, awaiting scheduling
+  SCHEDULED         // Calendly booking confirmed
+  COMPLETED         // Call happened
+  CANCELLED         // Customer cancelled
+  NO_SHOW           // Customer didn't show
+  CREDITED          // Fee credited to subscription
+}
+
+enum ConsultationType {
+  STRATEGY_45       // 45-min strategy session
+  ARCHITECTURE_90   // 90-min deep architecture review
+  ONBOARDING        // Post-purchase onboarding call
+  SUPPORT           // Technical support escalation
+  ENTERPRISE        // Custom enterprise consultation
+}
+
+model Consultation {
+  id                String              @id @default(cuid())
+  customerId        String              @map("customer_id")
+  customer          Customer            @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Consultation details
+  type              ConsultationType
+  status            ConsultationStatus  @default(PENDING_PAYMENT)
+
+  // Pricing & credit
+  amountCents       Int                 @map("amount_cents")
+  creditableToTiers String[]            @map("creditable_to_tiers") // ['SCALE', 'GROWTH']
+  creditApplied     Boolean             @default(false) @map("credit_applied")
+  creditedToId      String?             @map("credited_to_id")       // subscription_id if credited
+
+  // Scheduling (Calendly integration)
+  calendlyEventId   String?             @unique @map("calendly_event_id")
+  calendlyUrl       String?             @map("calendly_url")
+  scheduledAt       DateTime?           @map("scheduled_at")
+  duration          Int                 @default(45)                  // minutes
+  timezone          String?
+  meetingUrl        String?             @map("meeting_url")           // Google Meet / Zoom link
+
+  // Execution
+  startedAt         DateTime?           @map("started_at")
+  completedAt       DateTime?           @map("completed_at")
+
+  // Outcome tracking
+  notes             String?             @db.Text
+  outcome           String?                                           // 'subscribed', 'considering', 'not_fit'
+  followUpDate      DateTime?           @map("follow_up_date")
+
+  // Payment reference
+  purchaseId        String?             @map("purchase_id")
+  stripeSessionId   String?             @map("stripe_session_id")
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  @@index([customerId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([calendlyEventId])
+  @@map("consultations")
+}
+
+// Customer lifecycle events for analytics and automation
+model CustomerEvent {
+  id              String    @id @default(cuid())
+  customerId      String    @map("customer_id")
+
+  // Event classification
+  eventType       String    @map("event_type")  // 'state_change', 'action', 'milestone'
+  eventName       String    @map("event_name")  // 'upgraded_tier', 'completed_first_job', etc
+
+  // State transition (for state_change events)
+  previousState   String?   @map("previous_state")
+  newState        String?   @map("new_state")
+
+  // Event data
+  metadata        Json?
+
+  // Attribution
+  source          String?                       // 'webhook', 'api', 'system', 'manual'
+  triggeredBy     String?   @map("triggered_by") // user_id or 'system'
+
+  // Timestamps
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@index([customerId])
+  @@index([eventType])
+  @@index([eventName])
+  @@index([createdAt])
+  @@map("customer_events")
+}

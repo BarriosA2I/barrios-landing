@@ -14,6 +14,14 @@
     "api/nexus/health.js": {
       "memory": 128,
       "maxDuration": 5
+    },
+    "api/checkout/session.js": {
+      "memory": 256,
+      "maxDuration": 30
+    },
+    "api/webhooks/stripe.js": {
+      "memory": 256,
+      "maxDuration": 30
     }
   }
 }
