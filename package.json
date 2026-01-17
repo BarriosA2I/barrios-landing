@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Barrios A2I - Intelligence Architecture",
   "scripts": {
+    "build": "prisma generate",
+    "vercel-build": "prisma generate",
+    "postinstall": "prisma generate",
     "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
     "watch:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
     "db:generate": "prisma generate",
