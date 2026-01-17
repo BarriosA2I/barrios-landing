@@ -84,13 +84,22 @@
     }
 
     .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
       text-decoration: none;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.02);
+      filter: drop-shadow(0 0 20px rgba(0, 206, 209, 0.3));
+    }
+
+    .logo img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
     }
 
     .logo-accent {
@@ -621,7 +630,7 @@
   <!-- Header -->
   <header class="header">
     <a href="/" class="logo">
-      BARRIOS<span class="logo-accent">.</span>A2I
+      <img src="/brand/barrios-a2i-logo.png" alt="Barrios A2I" />
     </a>
     <div class="secure-badge">
       <span class="secure-dot"></span>
