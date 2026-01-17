@@ -907,6 +907,66 @@ html, body {
         </div>
       </section>
 
+      <!-- ========== VIDEO SHOWCASE ========== -->
+      <section class="relative py-24 overflow-hidden" id="video-showcase">
+        <div class="max-w-5xl mx-auto px-6 relative z-10">
+          <!-- Header -->
+          <div class="text-center mb-12">
+            <div class="text-xs font-mono text-primary/80 uppercase tracking-[0.3em] mb-4">
+              [ SYSTEM_SHOWCASE ]
+            </div>
+            <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">
+              <span class="text-white">See the Intelligence </span>
+              <span class="bg-gradient-to-r from-primary via-cyan-300 to-teal-400 bg-clip-text text-transparent italic">in Action</span>
+            </h2>
+            <p class="text-white/60 max-w-xl mx-auto">
+              Watch how our AI Sales System transforms your pipeline into an autonomous revenue engine.
+            </p>
+          </div>
+
+          <!-- Video Container with Glassmorphism + Animated Border -->
+          <div class="relative group">
+            <!-- Animated gradient border (outer) -->
+            <div class="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-primary via-purple-500 to-primary bg-[length:200%_200%] animate-[gradient-border-spin_4s_ease-in-out_infinite] opacity-60 group-hover:opacity-100 transition-opacity"></div>
+
+            <!-- Glass container -->
+            <div class="relative bg-[#0a0a1e]/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
+              <!-- Video wrapper -->
+              <div class="relative aspect-video">
+                <video
+                  id="showcase-video"
+                  class="w-full h-full object-cover"
+                  preload="metadata"
+                  playsinline
+                >
+                  <source src="assets/videos/AI_Sales_System_Logo_Animation.mp4" type="video/mp4">
+                </video>
+
+                <!-- Scanline overlay -->
+                <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
+                  <div class="absolute inset-0 bg-[length:100%_4px] bg-gradient-to-b from-transparent via-white/5 to-transparent"></div>
+                </div>
+
+                <!-- Play button overlay -->
+                <div id="play-overlay" class="video-overlay-fade absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer transition-all duration-300 group-hover:bg-black/20">
+                  <button class="w-20 h-20 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center animate-[play-pulse_2s_ease-in-out_infinite] hover:bg-primary/30 transition-colors">
+                    <svg class="w-8 h-8 text-primary ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- HUD corner accents -->
+              <div class="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-primary/50"></div>
+              <div class="absolute top-3 right-3 w-8 h-8 border-r-2 border-t-2 border-primary/50"></div>
+              <div class="absolute bottom-3 left-3 w-8 h-8 border-l-2 border-b-2 border-primary/50"></div>
+              <div class="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-primary/50"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ========== LEGENDARY REASONING ENGINE v3.0 - ENGINE SHOWCASE ========== -->
       <section class="relative py-24 overflow-hidden" id="engine-showcase">
         <!-- Glow path cursor effect -->
@@ -2511,6 +2571,40 @@ html, body {
         document.querySelectorAll('[data-animate-number]').forEach(el => {
           countObserver.observe(el);
         });
+      });
+    })();
+    </script>
+
+    <!-- Video Showcase Controls -->
+    <script>
+    (function() {
+      document.addEventListener('DOMContentLoaded', function() {
+        const video = document.getElementById('showcase-video');
+        const playOverlay = document.getElementById('play-overlay');
+
+        if (video && playOverlay) {
+          playOverlay.addEventListener('click', function() {
+            if (video.paused) {
+              video.play();
+              playOverlay.classList.add('hidden');
+            }
+          });
+
+          video.addEventListener('ended', function() {
+            playOverlay.classList.remove('hidden');
+          });
+
+          video.addEventListener('pause', function() {
+            playOverlay.classList.remove('hidden');
+          });
+
+          // Click video to pause
+          video.addEventListener('click', function() {
+            if (!video.paused) {
+              video.pause();
+            }
+          });
+        }
       });
     })();
     </script>

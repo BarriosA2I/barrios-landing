@@ -444,3 +444,36 @@ button, a, .chip-hover {
 .case-study-carousel::-webkit-scrollbar {
   display: none;
 }
+
+/* --------------------------------------------------------------------------
+   VIDEO SHOWCASE ANIMATIONS
+   -------------------------------------------------------------------------- */
+
+/* Animated gradient border for video container */
+@keyframes gradient-border-spin {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Play button pulse with glow */
+@keyframes play-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 206, 209, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px 10px rgba(0, 206, 209, 0.2);
+  }
+}
+
+/* Video overlay fade */
+.video-overlay-fade {
+  transition: opacity 0.3s ease, pointer-events 0s;
+}
+
+.video-overlay-fade.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
