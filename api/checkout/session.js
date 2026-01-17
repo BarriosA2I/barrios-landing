@@ -195,17 +195,16 @@ module.exports = async function handler(req, res) {
     }
 
     // Build success URL with intent-specific parameters
+    // Note: Must NOT use URLSearchParams for session_id - Stripe requires the literal
+    // {CHECKOUT_SESSION_ID} placeholder unencoded to replace it with the actual ID
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://barriosa2i.com';
     let finalSuccessUrl = successUrl;
     if (!finalSuccessUrl) {
-      const params = new URLSearchParams({
-        session_id: '{CHECKOUT_SESSION_ID}',
-        intent,
-      });
+      let queryString = `session_id={CHECKOUT_SESSION_ID}&intent=${encodeURIComponent(intent)}`;
       if (consultationDetails) {
-        params.set('calendly', consultationDetails.calendlyUrl);
+        queryString += `&calendly=${encodeURIComponent(consultationDetails.calendlyUrl)}`;
       }
-      finalSuccessUrl = `${baseUrl}/checkout-success.html?${params.toString()}`;
+      finalSuccessUrl = `${baseUrl}/checkout-success.html?${queryString}`;
     }
 
     // Build session params
