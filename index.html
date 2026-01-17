@@ -927,44 +927,131 @@ html, body {
           <!-- Engine Cards -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
             <!-- Gemini 3.0 Flash -->
-            <div class="engine-card group relative p-8 bg-void/80 border border-white/10 rounded-2xl cursor-pointer transition-all duration-300 hover:border-primary/50 hover:-translate-y-2" data-engine="gemini_flash_30" onclick="selectHeroEngine('gemini_flash_30')">
+            <div class="engine-card group relative p-6 bg-void/80 border border-white/10 rounded-2xl cursor-pointer transition-all duration-300 hover:border-primary/50 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(0,206,209,0.1)]" data-engine="gemini_flash_30" onclick="selectHeroEngine('gemini_flash_30')">
               <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div class="relative z-10">
-                <span class="text-5xl mb-6 block">💎</span>
-                <h3 class="text-xl font-bold text-white mb-2">Gemini 3.0 Flash</h3>
-                <p class="text-sm text-white/50 mb-4">1M Context • 300ms • PhD Reasoning</p>
-                <div class="flex items-center gap-2 text-xs">
-                  <span class="px-3 py-1 bg-primary/20 text-primary rounded-full font-mono">FASTEST</span>
-                  <span class="text-white/40">$0.005/query</span>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-4xl">💎</span>
+                  <span class="px-3 py-1 bg-primary/20 text-primary rounded-full font-mono text-[10px]">FASTEST</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-1">Gemini 3.0 Flash</h3>
+                <p class="text-xs text-white/50 mb-5">1M Context • 300ms • $0.005/query</p>
+                <!-- Benchmarks -->
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Latency</span>
+                      <span class="text-primary font-mono">300ms</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 95%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Context</span>
+                      <span class="text-primary font-mono">1M tokens</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 100%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Cost Efficiency</span>
+                      <span class="text-primary font-mono">98%</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 98%"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- Claude 4.5 Sonnet -->
-            <div class="engine-card group relative p-8 bg-void/80 border border-amber-500/30 rounded-2xl cursor-pointer transition-all duration-300 hover:border-amber-500/60 hover:-translate-y-2 scale-105 shadow-[0_0_40px_rgba(217,119,6,0.2)]" data-engine="claude_sonnet_45" onclick="selectHeroEngine('claude_sonnet_45')">
+            <div class="engine-card group relative p-6 bg-void/80 border border-amber-500/30 rounded-2xl cursor-pointer transition-all duration-300 hover:border-amber-500/60 hover:-translate-y-2 scale-105 shadow-[0_0_40px_rgba(217,119,6,0.2)]" data-engine="claude_sonnet_45" onclick="selectHeroEngine('claude_sonnet_45')">
               <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full text-[10px] font-bold text-black uppercase tracking-wider">Recommended</div>
               <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent rounded-2xl"></div>
               <div class="relative z-10">
-                <span class="text-5xl mb-6 block">🧠</span>
-                <h3 class="text-xl font-bold text-white mb-2">Claude 4.5 Sonnet</h3>
-                <p class="text-sm text-white/50 mb-4">64K Output • Agentic • Extended Thinking</p>
-                <div class="flex items-center gap-2 text-xs">
-                  <span class="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-full font-mono">SMARTEST</span>
-                  <span class="text-white/40">$0.10/query</span>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-4xl">🧠</span>
+                  <span class="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-full font-mono text-[10px]">SMARTEST</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-1">Claude 4.5 Sonnet</h3>
+                <p class="text-xs text-white/50 mb-5">64K Output • Agentic • $0.10/query</p>
+                <!-- Benchmarks -->
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Reasoning</span>
+                      <span class="text-amber-400 font-mono">A++</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 98%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Output</span>
+                      <span class="text-amber-400 font-mono">64K tokens</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 100%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Agentic</span>
+                      <span class="text-amber-400 font-mono">★★★</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 95%"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- ChatGPT 5.2 -->
-            <div class="engine-card group relative p-8 bg-void/80 border border-white/10 rounded-2xl cursor-pointer transition-all duration-300 hover:border-emerald-500/50 hover:-translate-y-2" data-engine="gpt52" onclick="selectHeroEngine('gpt52')">
+            <div class="engine-card group relative p-6 bg-void/80 border border-white/10 rounded-2xl cursor-pointer transition-all duration-300 hover:border-emerald-500/50 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)]" data-engine="gpt52" onclick="selectHeroEngine('gpt52')">
               <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div class="relative z-10">
-                <span class="text-5xl mb-6 block">⚡</span>
-                <h3 class="text-xl font-bold text-white mb-2">ChatGPT 5.2</h3>
-                <p class="text-sm text-white/50 mb-4">400K Context • SOTA Logic • Tool Master</p>
-                <div class="flex items-center gap-2 text-xs">
-                  <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full font-mono">VERSATILE</span>
-                  <span class="text-white/40">$0.15/query</span>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-4xl">⚡</span>
+                  <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full font-mono text-[10px]">VERSATILE</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-1">ChatGPT 5.2</h3>
+                <p class="text-xs text-white/50 mb-5">400K Context • SOTA Logic • $0.15/query</p>
+                <!-- Benchmarks -->
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Knowledge</span>
+                      <span class="text-emerald-400 font-mono">SOTA</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 100%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Context</span>
+                      <span class="text-emerald-400 font-mono">400K tokens</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 40%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="text-white/50">Tool Calling</span>
+                      <span class="text-emerald-400 font-mono">★★★</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 100%"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1063,135 +1150,6 @@ html, body {
                 <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite" begin="1.2s"/>
               </path>
             </svg>
-          </div>
-        </div>
-      </section>
-
-      <!-- ========== REASONING BENCHMARKS ========== -->
-      <section class="relative py-24 overflow-hidden" id="benchmarks">
-        <div class="max-w-6xl mx-auto px-6">
-          <div class="text-center mb-16">
-            <div class="text-xs font-mono text-primary/80 uppercase tracking-[0.3em] mb-4">[ LIVE_BENCHMARKS ]</div>
-            <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-4">
-              Real-Time Performance Metrics
-            </h2>
-            <p class="text-white/60">Compare frontier models across key dimensions</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Gemini Benchmark -->
-            <div class="relative p-8 bg-void/80 border border-white/10 rounded-2xl">
-              <div class="absolute -top-3 right-6 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-[10px] font-mono text-primary">FASTEST</div>
-              <div class="flex items-center gap-3 mb-6">
-                <span class="text-3xl">💎</span>
-                <h3 class="text-lg font-bold">Gemini 3.0 Flash</h3>
-              </div>
-              <div class="space-y-4">
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Latency</span>
-                    <span class="text-primary font-mono">300ms</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 95%"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Context Window</span>
-                    <span class="text-primary font-mono">1M tokens</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 100%"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Cost Efficiency</span>
-                    <span class="text-primary font-mono">$0.005</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: 98%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Claude Benchmark -->
-            <div class="relative p-8 bg-void/80 border border-amber-500/30 rounded-2xl scale-105 shadow-[0_0_40px_rgba(217,119,6,0.15)]">
-              <div class="absolute -top-3 right-6 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-[10px] font-mono text-amber-400">RECOMMENDED</div>
-              <div class="flex items-center gap-3 mb-6">
-                <span class="text-3xl">🧠</span>
-                <h3 class="text-lg font-bold">Claude 4.5 Sonnet</h3>
-              </div>
-              <div class="space-y-4">
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Reasoning Depth</span>
-                    <span class="text-amber-400 font-mono">A++</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 98%"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Output Length</span>
-                    <span class="text-amber-400 font-mono">64K tokens</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 100%"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Agentic Tasks</span>
-                    <span class="text-amber-400 font-mono">★★★</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 95%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- GPT Benchmark -->
-            <div class="relative p-8 bg-void/80 border border-white/10 rounded-2xl">
-              <div class="absolute -top-3 right-6 px-3 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-[10px] font-mono text-emerald-400">SMARTEST</div>
-              <div class="flex items-center gap-3 mb-6">
-                <span class="text-3xl">⚡</span>
-                <h3 class="text-lg font-bold">ChatGPT 5.2</h3>
-              </div>
-              <div class="space-y-4">
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Knowledge Work</span>
-                    <span class="text-emerald-400 font-mono">SOTA</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 100%"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Context Window</span>
-                    <span class="text-emerald-400 font-mono">400K tokens</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 40%"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-2">
-                    <span class="text-white/50">Tool Calling</span>
-                    <span class="text-emerald-400 font-mono">★★★</span>
-                  </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full" style="width: 100%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
