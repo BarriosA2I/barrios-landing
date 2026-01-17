@@ -2671,6 +2671,17 @@
         // Current billing interval (default monthly)
         let billingInterval = 'monthly';
 
+        // Safe message helper (won't crash if chat panel not visible)
+        function safeSystemMessage(msg) {
+            try {
+                if (typeof addSystemMessage === 'function') {
+                    addSystemMessage(msg);
+                }
+            } catch (e) {
+                console.log('[Checkout]', msg);
+            }
+        }
+
         // Initiate checkout with tier selection
         async function initiateCheckout(tier, intent = 'SUBSCRIPTION') {
             const priceKey = tier === 'lab_test' ? 'lab_test' : `${tier}_${billingInterval}`;
@@ -2678,11 +2689,13 @@
 
             if (!priceId) {
                 console.error('Unknown tier/interval:', tier, billingInterval);
-                addSystemMessage('❌ Invalid product selection. Please try again.');
+                safeSystemMessage('Invalid product selection. Please try again.');
+                alert('Invalid product selection. Please try again.');
                 return;
             }
 
-            addSystemMessage('💳 Creating secure checkout session...');
+            console.log('[Checkout] Creating session for:', tier, priceId, intent);
+            safeSystemMessage('Creating secure checkout session...');
 
             try {
                 const response = await fetch(CHECKOUT_API, {
@@ -2697,19 +2710,21 @@
                 });
 
                 const data = await response.json();
+                console.log('[Checkout] API response:', data);
 
                 if (data.url) {
-                    addSystemMessage('✅ Redirecting to secure checkout...');
-                    setTimeout(() => {
-                        window.location.href = data.url;
-                    }, 500);
+                    safeSystemMessage('Redirecting to secure checkout...');
+                    // Redirect immediately
+                    window.location.href = data.url;
                 } else {
                     console.error('Checkout error:', data.error || data);
-                    addSystemMessage('❌ Checkout failed: ' + (data.error || 'Unknown error'));
+                    safeSystemMessage('Checkout failed: ' + (data.error || 'Unknown error'));
+                    alert('Checkout failed: ' + (data.error || 'Unknown error'));
                 }
             } catch (err) {
                 console.error('Checkout failed:', err);
-                addSystemMessage('❌ Connection error. Please try again.');
+                safeSystemMessage('Connection error. Please try again.');
+                alert('Connection error. Please try again.');
             }
         }
 
