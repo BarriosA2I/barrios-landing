@@ -1674,7 +1674,7 @@
                                     <span>No Voice/Avatar Clone</span>
                                 </li>
                             </ul>
-                            <button onclick="scrollToSection('chat')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
+                            <button onclick="initiateCheckout('starter')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
                                 Get Started
                             </button>
                         </div>
@@ -1726,7 +1726,7 @@
                                     <span><strong>Voice Clone</strong> included</span>
                                 </li>
                             </ul>
-                            <button onclick="scrollToSection('chat')" class="w-full py-3 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all">
+                            <button onclick="initiateCheckout('creator')" class="w-full py-3 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all">
                                 Start Creating
                             </button>
                         </div>
@@ -1774,7 +1774,7 @@
                                     <span><strong>Voice + Avatar Clone</strong></span>
                                 </li>
                             </ul>
-                            <button onclick="scrollToSection('chat')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
+                            <button onclick="initiateCheckout('growth')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
                                 Scale Up
                             </button>
                         </div>
@@ -1822,7 +1822,7 @@
                                     <span><strong>Premium Clone Suite</strong></span>
                                 </li>
                             </ul>
-                            <button onclick="scrollToSection('chat')" class="w-full py-3 bg-brand-gold/20 border border-brand-gold/50 text-brand-gold text-sm font-bold rounded-lg hover:bg-brand-gold hover:text-black transition-all">
+                            <button onclick="initiateCheckout('scale')" class="w-full py-3 bg-brand-gold/20 border border-brand-gold/50 text-brand-gold text-sm font-bold rounded-lg hover:bg-brand-gold hover:text-black transition-all">
                                 Go Enterprise
                             </button>
                         </div>
@@ -2016,7 +2016,7 @@
                                 <span>Standard queue (slower turnaround)</span>
                             </li>
                         </ul>
-                        <button onclick="scrollToSection('chat')" class="px-8 py-4 bg-white/10 border border-neon/50 text-neon text-sm font-bold rounded-lg hover:bg-neon hover:text-black transition-all">
+                        <button onclick="initiateCheckout('lab_test', 'TOP_UP')" class="px-8 py-4 bg-white/10 border border-neon/50 text-neon text-sm font-bold rounded-lg hover:bg-neon hover:text-black transition-all">
                             Run the $500 Test
                         </button>
                     </div>
@@ -2334,10 +2334,10 @@
                         </p>
 
                         <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                            <button onclick="scrollToSection('pricing')" class="px-8 py-4 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all shadow-[0_0_30px_rgba(0,206,209,0.3)]">
+                            <button onclick="initiateCheckout('creator')" class="px-8 py-4 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all shadow-[0_0_30px_rgba(0,206,209,0.3)]">
                                 Start Monthly →
                             </button>
-                            <button onclick="scrollToSection('trial')" class="px-8 py-4 bg-transparent border border-white/30 text-white text-sm font-medium rounded-lg hover:border-neon/50 hover:text-neon transition-all">
+                            <button onclick="initiateCheckout('lab_test', 'TOP_UP')" class="px-8 py-4 bg-transparent border border-white/30 text-white text-sm font-medium rounded-lg hover:border-neon/50 hover:text-neon transition-all">
                                 Run the $500 Test
                             </button>
                         </div>
@@ -2652,8 +2652,66 @@
     <script>
         const API_URL = 'https://barrios-genesis-flawless.onrender.com';
 
-        // Payment link (direct redirect, no API needed)
-        const PAYMENT_LINK = 'https://buy.stripe.com/00w4gA84Ve498yF27HeME05';
+        // Checkout API integration
+        const CHECKOUT_API = '/api/checkout/session';
+
+        // Price ID mapping for checkout
+        const TIER_PRICES = {
+            'starter_monthly': 'price_starter_monthly',
+            'starter_yearly': 'price_starter_yearly',
+            'creator_monthly': 'price_creator_monthly',
+            'creator_yearly': 'price_creator_yearly',
+            'growth_monthly': 'price_growth_monthly',
+            'growth_yearly': 'price_growth_yearly',
+            'scale_monthly': 'price_scale_monthly',
+            'scale_yearly': 'price_scale_yearly',
+            'lab_test': 'price_single_lab_test'
+        };
+
+        // Current billing interval (default monthly)
+        let billingInterval = 'monthly';
+
+        // Initiate checkout with tier selection
+        async function initiateCheckout(tier, intent = 'SUBSCRIPTION') {
+            const priceKey = tier === 'lab_test' ? 'lab_test' : `${tier}_${billingInterval}`;
+            const priceId = TIER_PRICES[priceKey];
+
+            if (!priceId) {
+                console.error('Unknown tier/interval:', tier, billingInterval);
+                addSystemMessage('❌ Invalid product selection. Please try again.');
+                return;
+            }
+
+            addSystemMessage('💳 Creating secure checkout session...');
+
+            try {
+                const response = await fetch(CHECKOUT_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: [{ priceId, quantity: 1 }],
+                        intent: intent,
+                        email: localStorage.getItem('userEmail') || undefined,
+                        clientReferenceId: sessionId || undefined
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.url) {
+                    addSystemMessage('✅ Redirecting to secure checkout...');
+                    setTimeout(() => {
+                        window.location.href = data.url;
+                    }, 500);
+                } else {
+                    console.error('Checkout error:', data.error || data);
+                    addSystemMessage('❌ Checkout failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Checkout failed:', err);
+                addSystemMessage('❌ Connection error. Please try again.');
+            }
+        }
 
         let sessionId = localStorage.getItem('barrios_creative_director_session');
         let isLoading = false;
@@ -3270,18 +3328,9 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        function proceedToCheckout() {
-            addSystemMessage('💳 Redirecting to secure checkout...');
-
-            // Append session_id to payment link for tracking
-            const checkoutUrl = sessionId
-                ? `${PAYMENT_LINK}?client_reference_id=${sessionId}`
-                : PAYMENT_LINK;
-
-            // Small delay so user sees the message
-            setTimeout(() => {
-                window.location.href = checkoutUrl;
-            }, 500);
+        function proceedToCheckout(tier = 'starter') {
+            // Use the new checkout API
+            initiateCheckout(tier, 'SUBSCRIPTION');
         }
 
         // ============= RENDER FUNCTIONS =============
@@ -5264,6 +5313,8 @@
 
         function toggleBilling(yearly) {
             isYearlyBilling = yearly;
+            // Update billing interval for checkout
+            billingInterval = yearly ? 'yearly' : 'monthly';
 
             // Update toggle button styles
             const monthlyBtn = document.getElementById('billing-monthly');
