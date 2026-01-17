@@ -1,5 +1,6 @@
 {
-  "buildCommand": null,
+  "buildCommand": "prisma generate",
+  "installCommand": "npm install",
   "outputDirectory": ".",
   "cleanUrls": true,
   "functions": {
