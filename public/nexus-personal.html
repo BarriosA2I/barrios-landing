@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Personal - Local-First AI Assistant | Barrios A2I</title>
+    <meta name="description" content="A local-first AI assistant that reads only the folders you allow. It drafts, plans, and recalls—offline, for absolute privacy.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind (Stable CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        void: '#0a0a0f',
+                        obsidian: '#0a0a1e',
+                        primary: '#00CED1',
+                        accent: '#F59E0B',
+                        muted: '#94a3b8',
+                        'brand-teal': '#00CED1',
+                        'brand-gold': '#F59E0B',
+                    },
+                    animation: {
+                        'breathe': 'breathe 4s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        breathe: {
+                            '0%, 100%': { boxShadow: '0 0 20px -10px rgba(0, 206, 209, 0.2)' },
+                            '50%': { boxShadow: '0 0 40px -5px rgba(0, 206, 209, 0.4)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        body { background-color: #0a0a0f; color: #94a3b8; }
+        ::selection { background-color: rgba(0, 206, 209, 0.2); color: #ffffff; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        
+        .animate-on-scroll { 
+            opacity: 0; 
+            transform: translateY(30px); 
+            filter: blur(8px); 
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .animate-on-scroll.animate { 
+            opacity: 1; 
+            transform: translateY(0); 
+            filter: blur(0); 
+        }
+        
+        .spotlight-group:hover .spotlight-border { opacity: 1; }
+        
+        .terminal-scroll::-webkit-scrollbar { width: 6px; }
+        .terminal-scroll::-webkit-scrollbar-track { background: transparent; }
+        .terminal-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        
+        .glow-primary { box-shadow: 0 0 60px -20px rgba(0, 206, 209, 0.5); }
+        .glow-border { border-color: rgba(0, 206, 209, 0.3); }
+        
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+
+        /* High-Authority HUD Typography */
+        .text-glow-blue { text-shadow: 0 0 15px rgba(0, 206, 209, 0.4); }
+        .border-bracket {
+            border-image: linear-gradient(to bottom, #00CED1, transparent, #00CED1) 1;
+            border-left: 1px solid;
+            border-right: 1px solid;
+        }
+        /* Scrim to protect text from Matrix Rain noise */
+        .matrix-scrim {
+            background: radial-gradient(circle at center, transparent 0%, #0B1220 90%);
+            backdrop-filter: blur(1px);
+        }
+
+        /* Gold Trace Hover Effect */
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 1px;
+            background: #F59E0B;
+            box-shadow: 0 0 8px #F59E0B;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 75%; }
+        .nav-link:hover .bracket { color: #F59E0B; }
+
+        /* Scanline Effect */
+        .scanline-overlay {
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.15) 50%),
+                        linear-gradient(90deg, rgba(255,0,0,0.02), rgba(0,255,0,0.01), rgba(0,0,255,0.02));
+            background-size: 100% 2px, 3px 100%;
+        }
+
+        /* Volumetric Glow */
+        .volumetric-glow {
+            filter: drop-shadow(0 0 8px rgba(0, 206, 209, 0.5));
+        }
+        .volumetric-glow:hover {
+            filter: drop-shadow(0 0 15px rgba(0, 206, 209, 0.7));
+        }
+
+        /* LEGENDARY Header Animations */
+        @keyframes breathingGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(0, 206, 209, 0.4)); }
+            50% { filter: drop-shadow(0 0 30px rgba(0, 206, 209, 0.7)); }
+        }
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+        @keyframes pulseIndicator {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+        .logo-breathing { animation: breathingGlow 3s ease-in-out infinite; }
+
+        /* Mobile-safe logo - remove complex filters that cause black silhouette */
+        @media (max-width: 768px) {
+            .logo-breathing { animation: none !important; filter: none !important; }
+            .volumetric-glow { filter: none !important; }
+        }
+
+        .header-glow-border {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 206, 209, 0.5), transparent);
+            animation: borderGlow 4s ease-in-out infinite;
+        }
+        .status-pulse { animation: pulseIndicator 2s ease-in-out infinite; }
+
+        /* Pricing card lift on hover */
+        .pricing-card {
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Add-on card slide */
+        .addon-card {
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .addon-card:hover {
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+
+<body class="bg-void text-muted font-sans antialiased min-h-screen w-full overflow-x-hidden flex flex-col" id="main-body">
+    
+    <!-- LAYER 0: Matrix Rain Canvas -->
+    <canvas id="matrix-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-20]"></canvas>
+    
+    <!-- No scrim - full matrix visibility -->
+    
+    <!-- Ambient background effects -->
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-gradient-to-b from-obsidian/40 via-void/20 to-transparent z-[-10] pointer-events-none"></div>
+    <div class="fixed top-[-200px] right-[-100px] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px] z-[-10] pointer-events-none"></div>
+    <div class="fixed bottom-[-200px] left-[-100px] w-[500px] h-[500px] bg-primary/3 rounded-full blur-[120px] z-[-10] pointer-events-none"></div>
+    
+    <!-- Cursor spotlight -->
+    <div class="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300" style="background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 206, 209, 0.03), transparent 40%);"></div>
+    
+    <!-- Top border line -->
+    <div class="fixed top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent z-50"></div>
+
+    <!-- ========== UNIFIED HEADER - Tesla Minimalism + Cyberpunk ========== -->
+    <header class="fixed top-0 left-0 right-0 z-[100] bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 md:h-20">
+
+          <!-- Logo Section -->
+          <a href="/" class="flex items-center gap-3 group">
+            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center">
+              <img src="/brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="w-full h-full object-contain transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(0,206,209,0.4)]">
+              <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#FFD700] rounded-full shadow-[0_0_6px_#FFD700]"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[9px] md:text-[10px] text-[#00CED1] font-mono tracking-[0.2em] uppercase opacity-80">SYSTEM_ACTIVE</span>
+              <span class="text-base md:text-lg font-bold tracking-tight leading-tight">
+                <span class="text-[#fafafa]">BARRIOS</span>
+                <span class="text-[#00CED1] ml-1">A2I</span>
+              </span>
+            </div>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex items-center gap-1">
+            <a href="/pricing" class="px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              PRICING
+            </a>
+            <a href="/nexus-personal" class="px-3 py-2 font-mono text-xs tracking-wider group">
+              <span class="text-[#00CED1]">NEXUS</span>
+              <span class="inline-block w-1.5 h-1.5 bg-[#00CED1] rounded-full ml-1.5 shadow-[0_0_6px_#00CED1]"></span>
+            </a>
+            <a href="/creative-director" class="px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              COMMERCIAL_LAB
+            </a>
+            <a href="/founder" class="px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              FOUNDER
+            </a>
+            <a href="/command-center" class="px-3 py-2 font-mono text-xs tracking-wider group">
+              <span class="text-[#FFD700]">COMMAND</span>
+              <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1.5 shadow-[0_0_6px_#FFD700]"></span>
+            </a>
+          </nav>
+
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-btn" class="md:hidden p-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors" aria-label="Toggle menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div id="mobile-nav" class="hidden md:hidden bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-white/5">
+        <nav class="px-4 py-3 space-y-1">
+          <a href="/pricing" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
+            PRICING
+          </a>
+          <a href="/nexus-personal" class="block py-2.5 px-3 text-[#00CED1] hover:bg-[#00CED1]/10 rounded-md font-mono text-sm transition-colors">
+            NEXUS <span class="inline-block w-1.5 h-1.5 bg-[#00CED1] rounded-full ml-1 shadow-[0_0_6px_#00CED1]"></span>
+          </a>
+          <a href="/creative-director" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
+            COMMERCIAL_LAB
+          </a>
+          <a href="/founder" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
+            FOUNDER
+          </a>
+          <a href="/command-center" class="block py-2.5 px-3 text-[#FFD700] hover:bg-[#FFD700]/10 rounded-md font-mono text-sm transition-colors">
+            COMMAND <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1 shadow-[0_0_6px_#FFD700]"></span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Header Spacer -->
+    <div class="h-16 md:h-20"></div>
+
+    <!-- Mobile Menu Script -->
+    <script>
+    (function() {
+      const btn = document.getElementById('mobile-menu-btn');
+      const nav = document.getElementById('mobile-nav');
+      if (btn && nav) {
+        btn.addEventListener('click', () => {
+          nav.classList.toggle('hidden');
+        });
+      }
+    })();
+    </script>
+
+
+    <main class="relative pt-16">
+        
+        <!-- ========== SECTION 2: HERO ========== -->
+        <section class="flex flex-col w-full max-w-7xl z-10 mt-16 md:mt-24 mx-auto px-6 relative min-h-[70vh] justify-center" id="hero">
+            <div class="w-full flex justify-start mb-8 animate-on-scroll">
+                <div class="flex items-center gap-3 rounded-none border border-primary/20 bg-primary/5 pr-4 pl-2 py-2">
+                    <span class="bg-primary/20 border border-primary/30 px-3 py-1 text-[10px] font-mono text-primary tracking-widest uppercase">PERSONAL EDITION</span>
+                    <span class="text-sm font-mono text-muted/70">Works offline; your data stays home</span>
+                </div>
+            </div>
+
+            <div class="w-full max-w-4xl">
+                <div class="relative z-20 animate-on-scroll" style="transition-delay: 100ms;">
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl leading-[1] tracking-tight font-serif text-white">
+                        A private digital assistant<br>
+                        <span class="italic text-muted/50">for your home life.</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="mt-12 md:mt-16 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-end animate-on-scroll" style="transition-delay: 200ms;">
+                <div class="relative max-w-lg">
+                    <p class="text-lg md:text-xl text-muted font-light leading-relaxed">
+                        Organize your files, find receipts, and write emails—without your data ever leaving your computer.
+                    </p>
+                    <div class="mt-6 flex gap-3 items-center">
+                        <div class="flex items-center gap-2 px-3 py-2 bg-primary/5 border border-primary/20 text-primary/80 text-xs">
+                            <iconify-icon icon="lucide:shield-check" width="14"></iconify-icon>
+                            <span>It drafts, you decide. Nothing sends without your OK.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row md:items-center gap-4 z-10 lg:justify-end pb-4">
+                    <a href="#pricing" class="group relative inline-flex h-12 items-center justify-center bg-white px-8 font-mono text-sm text-void transition-all hover:bg-primary hover:text-white">
+                        <span class="mr-2">Book a Demo</span>
+                        <iconify-icon icon="lucide:calendar" width="16" class="group-hover:translate-x-1 transition-transform"></iconify-icon>
+                    </a>
+                    <a href="#pricing" class="group inline-flex h-12 items-center justify-center border border-white/10 bg-transparent px-8 font-mono text-sm text-muted transition-all hover:text-white hover:border-primary/50 hover:bg-primary/5">
+                        <span>Get Started</span>
+                        <iconify-icon icon="lucide:arrow-right" width="16" class="ml-2 group-hover:translate-x-1 transition-transform"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========== SECTION 2.5: HOW IT WORKS (INVISIBLE SECRETARY) ========== -->
+        <section class="relative z-10 max-w-7xl mx-auto py-32 px-6">
+            <div class="mb-20 space-y-4 animate-on-scroll">
+                <div class="font-mono text-[10px] text-brand-teal tracking-[0.4em] uppercase">How It Works</div>
+                <h2 class="font-serif text-4xl md:text-6xl italic text-white leading-tight">Think of it as an <br/><span class="text-brand-teal">Invisible Secretary.</span></h2>
+                <p class="text-muted text-lg max-w-2xl mt-4">It only looks at the folders you show it—nothing more. Like having a personal assistant who respects your privacy completely.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-teal/30 transition-all animate-on-scroll">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-brand-teal/10 border border-brand-teal/30 flex items-center justify-center text-brand-teal font-serif text-xl">1</div>
+                        <h3 class="font-serif text-xl text-white">You Choose the Folders</h3>
+                    </div>
+                    <p class="text-muted text-sm leading-relaxed">Point it at your Documents, Receipts, or any folder you want. It never looks anywhere else.</p>
+                </div>
+
+                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-teal/30 transition-all animate-on-scroll" style="transition-delay: 100ms;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-brand-teal/10 border border-brand-teal/30 flex items-center justify-center text-brand-teal font-serif text-xl">2</div>
+                        <h3 class="font-serif text-xl text-white">Ask in Plain English</h3>
+                    </div>
+                    <p class="text-muted text-sm leading-relaxed">Type questions like "Where's my fridge warranty?" or "Write an email to my landlord about the leak."</p>
+                </div>
+
+                <div class="bg-white/[0.02] border border-white/10 p-8 group hover:border-brand-teal/30 transition-all animate-on-scroll" style="transition-delay: 200ms;">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-brand-teal/10 border border-brand-teal/30 flex items-center justify-center text-brand-teal font-serif text-xl">3</div>
+                        <h3 class="font-serif text-xl text-white">You Stay in Control</h3>
+                    </div>
+                    <p class="text-muted text-sm leading-relaxed">It drafts, you review. Nothing ever sends or changes without your explicit approval.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SECTION 2.6: COMPARISON TABLE ========== -->
+        <section class="relative z-20 w-full py-24 px-6 max-w-5xl mx-auto border-t border-white/5" id="compare">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="text-[10px] font-mono text-primary tracking-[0.2em] uppercase mb-4 block">[ Comparison ]</span>
+                <h2 class="text-4xl md:text-5xl font-serif text-white">
+                    Nexus vs. <span class="text-muted/50 italic">Cloud AI</span>
+                </h2>
+            </div>
+
+            <div class="overflow-hidden border border-white/10 bg-white/[0.02] backdrop-blur-sm animate-on-scroll">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/10 bg-white/5">
+                            <th class="p-6 text-[11px] font-mono text-muted uppercase tracking-widest">Feature</th>
+                            <th class="p-6 text-[11px] font-mono text-primary uppercase tracking-widest text-center">Nexus Personal</th>
+                            <th class="p-6 text-[11px] font-mono text-muted/40 uppercase tracking-widest text-center">ChatGPT / Gemini</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Your data location</td>
+                            <td class="p-6 text-center text-green-400 font-semibold">Your computer only</td>
+                            <td class="p-6 text-center text-muted/40">Their servers</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Works offline</td>
+                            <td class="p-6 text-center"><iconify-icon icon="lucide:check" class="text-green-400" width="18"></iconify-icon></td>
+                            <td class="p-6 text-center"><iconify-icon icon="lucide:x" class="text-red-400/50" width="18"></iconify-icon></td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Reads your files</td>
+                            <td class="p-6 text-center text-green-400 font-semibold">Only folders you choose</td>
+                            <td class="p-6 text-center text-muted/40">Must upload each time</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Remembers context</td>
+                            <td class="p-6 text-center text-white">Forever (local index)</td>
+                            <td class="p-6 text-center text-muted/40">Limited / forgets</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Used to train AI</td>
+                            <td class="p-6 text-center text-green-400 font-semibold">Never</td>
+                            <td class="p-6 text-center text-muted/40">Unless you opt out</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Monthly cost</td>
+                            <td class="p-6 text-center text-white">$49.99</td>
+                            <td class="p-6 text-center text-muted/40">$20-25</td>
+                        </tr>
+                        <tr class="hover:bg-white/[0.02] transition-colors">
+                            <td class="p-6 text-muted font-medium">Setup</td>
+                            <td class="p-6 text-center text-green-400 font-semibold">Done for you</td>
+                            <td class="p-6 text-center text-muted/40">DIY</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-8 p-4 bg-primary/5 border border-primary/20 text-center animate-on-scroll">
+                <p class="text-sm text-muted">
+                    <span class="text-primary font-mono font-bold uppercase mr-2">Bottom line:</span>
+                    Nexus costs ~$25/month more, but your files never leave your computer.
+                </p>
+            </div>
+        </section>
+
+        <!-- ========== SECTION 3: FEATURES GRID (FIND/WRITE/PRIVATE) ========== -->
+        <section class="flex flex-col w-full z-20 mt-32 relative py-24 border-t border-white/5 bg-obsidian/30" id="features">
+            <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:60px_60px] opacity-30 pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-6 w-full relative">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+
+                    <!-- INSTANT FINDING -->
+                    <div class="group relative bg-void/50 border border-white/5 p-6 spotlight-group overflow-hidden hover:border-primary/30 transition-all duration-300 flex flex-col h-full animate-on-scroll">
+                        <div class="h-40 w-full mb-6 bg-black/40 border border-white/5 relative overflow-hidden flex flex-col justify-center items-center p-4 gap-3">
+                            <div class="relative w-3/4 p-3 bg-obsidian/80 border border-white/10 shadow-xl transform group-hover:scale-105 transition-transform duration-500">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="w-2 h-2 rounded-full bg-muted/50"></div>
+                                    <span class="text-[10px] text-muted font-mono">warranty_fridge.pdf</span>
+                                </div>
+                                <div class="h-1 w-full bg-white/10 mb-1.5"></div>
+                                <div class="h-1 w-2/3 bg-white/10"></div>
+                                <div class="absolute -right-2 -bottom-2 bg-primary/20 border border-primary/30 text-primary px-2 py-0.5 text-[10px] font-mono">FOUND</div>
+                            </div>
+                        </div>
+                        <div class="mt-auto relative z-10">
+                            <div class="flex items-center gap-3 mb-3">
+                                <iconify-icon icon="lucide:search" width="20" class="text-muted/50 group-hover:text-primary transition-colors"></iconify-icon>
+                                <span class="text-xs font-mono text-primary tracking-widest">Instant Finding</span>
+                            </div>
+                            <h3 class="text-lg text-white font-serif mb-2 italic">Stop digging through folders.</h3>
+                            <p class="text-sm text-muted leading-relaxed">Ask "Where is the warranty for the fridge?" and get the answer in seconds.</p>
+                        </div>
+                    </div>
+
+                    <!-- EASY WRITING -->
+                    <div class="group relative bg-void/50 border border-white/5 p-6 spotlight-group overflow-hidden hover:border-primary/30 transition-all duration-300 flex flex-col h-full animate-on-scroll" style="transition-delay: 100ms;">
+                        <div class="h-40 w-full mb-6 bg-black/40 border border-white/5 relative overflow-hidden flex flex-col justify-center items-center p-4">
+                            <div class="flex flex-col gap-2 w-full max-w-[180px]">
+                                <div class="p-2 bg-obsidian/30 border border-white/5 text-[10px] text-muted/50 font-mono">&gt; write email to HOA...</div>
+                                <div class="p-2 bg-obsidian/80 border border-white/10 text-[10px] text-white shadow-lg">Subject: Fence Repair Request...</div>
+                            </div>
+                        </div>
+                        <div class="mt-auto relative z-10">
+                            <div class="flex items-center gap-3 mb-3">
+                                <iconify-icon icon="lucide:pen-tool" width="20" class="text-muted/50 group-hover:text-accent transition-colors"></iconify-icon>
+                                <span class="text-xs font-mono text-accent tracking-widest">Easy Writing</span>
+                            </div>
+                            <h3 class="text-lg text-white font-serif mb-2 italic">From notes to polished emails.</h3>
+                            <p class="text-sm text-muted leading-relaxed">Turn your rough notes into professional emails to your HOA, insurance company, or contractors instantly.</p>
+                        </div>
+                    </div>
+
+                    <!-- 100% PRIVATE -->
+                    <div class="group relative bg-void/50 border border-white/5 p-6 spotlight-group overflow-hidden hover:border-primary/30 transition-all duration-300 flex flex-col h-full animate-on-scroll" style="transition-delay: 200ms;">
+                        <div class="h-40 w-full mb-6 bg-black/40 border border-white/5 relative overflow-hidden flex items-center justify-center p-6">
+                            <div class="relative">
+                                <iconify-icon icon="lucide:shield-check" width="64" class="text-primary/30"></iconify-icon>
+                                <div class="absolute -bottom-1 -right-1 bg-green-500/20 border border-green-500/30 text-green-400 px-2 py-0.5 text-[10px] font-mono rounded">LOCAL</div>
+                            </div>
+                        </div>
+                        <div class="mt-auto relative z-10">
+                            <div class="flex items-center gap-3 mb-3">
+                                <iconify-icon icon="lucide:lock" width="20" class="text-muted/50 group-hover:text-primary transition-colors"></iconify-icon>
+                                <span class="text-xs font-mono text-primary tracking-widest">100% Private</span>
+                            </div>
+                            <h3 class="text-lg text-white font-serif mb-2 italic">Your files never leave home.</h3>
+                            <p class="text-sm text-muted leading-relaxed">Unlike ChatGPT, your personal files never leave your home. It works even if your internet is turned off.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SECTION 4: DEMO PANEL ========== -->
+        <section class="flex flex-col w-full max-w-7xl z-20 mt-32 mx-auto px-6 relative" id="demo">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 w-full">
+                <div class="flex flex-col justify-center animate-on-scroll">
+                    <div class="flex items-center gap-2 mb-6">
+                        <iconify-icon icon="lucide:message-circle" class="text-primary text-xl"></iconify-icon>
+                        <span class="text-xs font-mono tracking-widest uppercase text-primary">Just Ask</span>
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-serif text-white tracking-tight mb-6 leading-none">
+                        <span class="italic block text-muted/50">Ask in plain English.</span>
+                        <span class="font-medium">Get real answers.</span>
+                    </h2>
+                    <p class="text-lg text-muted font-light leading-relaxed mb-10 max-w-lg">No complicated commands. Just type what you need like you're texting a really organized friend who knows where everything is.</p>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-4 text-sm text-muted">
+                            <div class="w-6 h-6 bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                                <iconify-icon icon="lucide:check" width="14" class="text-primary"></iconify-icon>
+                            </div>
+                            Works without internet
+                        </div>
+                        <div class="flex items-center gap-4 text-sm text-muted">
+                            <div class="w-6 h-6 bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                                <iconify-icon icon="lucide:check" width="14" class="text-primary"></iconify-icon>
+                            </div>
+                            Understands your household documents
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col animate-on-scroll" style="transition-delay: 200ms;">
+                    <div class="w-full bg-black border border-white/10 relative shadow-2xl shadow-primary/5 overflow-hidden">
+                        <!-- View Toggle -->
+                        <div class="bg-obsidian/50 border-b border-white/5 px-4 py-3 flex items-center justify-between">
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+                            </div>
+                            <div class="flex bg-white/5 rounded-sm overflow-hidden">
+                                <button id="chatViewBtn" class="px-3 py-1.5 text-[10px] font-mono bg-primary/20 text-primary transition-all">Chat View</button>
+                                <button id="powerViewBtn" class="px-3 py-1.5 text-[10px] font-mono text-muted/50 hover:text-muted transition-all">Power View</button>
+                            </div>
+                        </div>
+
+                        <!-- Chat View (Default) -->
+                        <div id="chatView" class="p-6 h-[400px] overflow-y-auto terminal-scroll relative">
+                            <div class="space-y-6">
+                                <!-- User Message -->
+                                <div class="flex justify-end">
+                                    <div class="bg-primary/20 border border-primary/30 rounded-lg px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm text-white">What does my home insurance cover?</p>
+                                    </div>
+                                </div>
+                                <!-- Assistant Response -->
+                                <div class="flex justify-start">
+                                    <div class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm text-muted mb-2">I found your Allstate policy from 2024:</p>
+                                        <ul class="text-sm text-white space-y-1">
+                                            <li>• Dwelling coverage: $450,000</li>
+                                            <li>• Deductible: $2,500 for wind/hail</li>
+                                            <li>• Personal property: $225,000</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- User Message -->
+                                <div class="flex justify-end">
+                                    <div class="bg-primary/20 border border-primary/30 rounded-lg px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm text-white">Find my Home Depot receipts over $100</p>
+                                    </div>
+                                </div>
+                                <!-- Assistant Response -->
+                                <div class="flex justify-start">
+                                    <div class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm text-muted mb-2">Found 4 receipts:</p>
+                                        <ul class="text-sm text-white space-y-1">
+                                            <li>• March 12: $145.22 (lumber)</li>
+                                            <li>• June 1: $299.00 (power tools)</li>
+                                            <li>• Aug 15: $187.50 (paint supplies)</li>
+                                            <li>• Oct 3: $122.89 (outdoor lighting)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- User Message -->
+                                <div class="flex justify-end">
+                                    <div class="bg-accent/20 border border-accent/30 rounded-lg px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm text-white">Write an email to my landlord about the leaky faucet</p>
+                                    </div>
+                                </div>
+                                <!-- Assistant Response -->
+                                <div class="flex justify-start">
+                                    <div class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm text-accent mb-2">✏️ Draft ready for your review:</p>
+                                        <div class="text-sm text-white bg-obsidian/50 p-3 rounded border border-white/5">
+                                            <p class="text-muted text-xs mb-1">Subject: Maintenance Request - Kitchen Faucet</p>
+                                            <p>Dear [Landlord], I'm writing to report a leaky faucet in the kitchen that needs attention...</p>
+                                        </div>
+                                        <p class="text-xs text-muted mt-2">Click "Send" or edit first—your choice.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Power View (Terminal) -->
+                        <div id="powerView" class="p-6 font-mono text-xs md:text-sm leading-relaxed h-[400px] overflow-y-auto terminal-scroll relative hidden">
+                            <div class="space-y-4">
+                                <div>
+                                    <span class="text-primary">➜</span> <span class="text-white">Summarize my home insurance policy coverage</span>
+                                    <div class="text-muted/70 mt-1 pl-4 border-l border-white/10">Reading 'Allstate_2024.pdf'...<br>Coverage A: $450k (Dwelling)<br>Deductible: $2,500 (Wind/Hail)</div>
+                                </div>
+                                <div>
+                                    <span class="text-primary">➜</span> <span class="text-white">Find Home Depot receipts from 2024 totaling &gt; $100</span>
+                                    <div class="text-muted/70 mt-1 pl-4 border-l border-white/10">Found 4 matches:<br>- 03/12/24: $145.22 (Lumber)<br>- 06/01/24: $299.00 (Tools)</div>
+                                </div>
+                                <div>
+                                    <span class="text-primary">➜</span> <span class="text-white">Draft refund request for the broken coffee maker</span>
+                                    <div class="text-accent/70 mt-1 pl-4 border-l border-accent/30 italic">Drafting email to support@breville.com based on<br>'Order_Confirmation.eml' and photo 'broken_part.jpg'...</div>
+                                </div>
+                                <div class="animate-pulse">
+                                    <span class="text-primary">➜</span> <span class="inline-block w-2 h-4 bg-primary/70 align-middle ml-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SECTION 5: PRIVACY PROMISE ========== -->
+        <section class="flex flex-col w-full z-20 mt-32 relative py-12" id="privacy">
+            <div class="max-w-4xl mx-auto px-6 w-full">
+                <div class="relative bg-obsidian/50 border border-primary/20 p-8 md:p-12 overflow-hidden animate-breathe animate-on-scroll glow-primary">
+                    <div class="absolute inset-0 bg-[radial-gradient(#00CED1_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.03] pointer-events-none"></div>
+                    <div class="absolute -right-10 -top-10 text-primary/5 font-serif text-[120px] italic pointer-events-none select-none">Private</div>
+                    <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                        <div class="shrink-0 bg-obsidian/50 border border-primary/30 p-6">
+                            <iconify-icon icon="lucide:lock" width="48" class="text-primary"></iconify-icon>
+                        </div>
+                        <div class="flex flex-col gap-4 text-center md:text-left">
+                            <h3 class="text-2xl font-serif text-white">Our <span class="italic text-primary">Privacy Promise</span></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                                <div class="flex items-center gap-2 text-sm text-muted">
+                                    <iconify-icon icon="lucide:check-circle-2" class="text-primary" width="16"></iconify-icon>
+                                    Runs entirely on your computer
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-muted">
+                                    <iconify-icon icon="lucide:check-circle-2" class="text-primary" width="16"></iconify-icon>
+                                    Only sees folders you choose
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-muted">
+                                    <iconify-icon icon="lucide:check-circle-2" class="text-primary" width="16"></iconify-icon>
+                                    Works without internet
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-muted">
+                                    <iconify-icon icon="lucide:check-circle-2" class="text-primary" width="16"></iconify-icon>
+                                    Nothing sends without your OK
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SECTION 6: PRICING ========== -->
+        <section class="relative z-20 py-32 px-6 border-t border-white/5 bg-obsidian/20" id="pricing">
+            <!-- Architectural Grid Background -->
+            <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:80px_40px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto relative">
+                <!-- Section Header -->
+                <div class="text-center max-w-2xl mx-auto mb-20 animate-on-scroll">
+                    <span class="text-[10px] font-mono text-primary tracking-[0.2em] uppercase mb-4 block">[ Pricing ]</span>
+                    <h2 class="text-5xl md:text-6xl font-serif text-white tracking-tight leading-none mb-6">
+                        One price. <br/><span class="text-muted/40 italic">Everything included.</span>
+                    </h2>
+                    <p class="text-muted text-base leading-relaxed">
+                        $759 for a fully-installed, personally-trained AI assistant.<br/>
+                        Maintenance keeps it improving every month.
+                    </p>
+                </div>
+
+                <!-- Pricing Cards Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+
+                    <!-- ===== MAINTENANCE CARD (Left) ===== -->
+                    <div class="pricing-card bg-white/[0.03] border border-white/10 p-8 flex flex-col gap-6 hover:border-white/20 transition-all hover:-translate-y-1 order-2 lg:order-1 animate-on-scroll">
+                        <div class="flex items-center gap-2">
+                            <iconify-icon icon="lucide:refresh-cw" class="text-primary" width="14"></iconify-icon>
+                            <span class="text-[11px] font-mono text-muted uppercase tracking-widest">Why Maintenance</span>
+                        </div>
+
+                        <div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-serif text-white">$49.99</span>
+                                <span class="text-xs text-muted font-mono">/ MO</span>
+                            </div>
+                            <p class="text-sm text-muted mt-4 leading-relaxed">
+                                AI models improve monthly. Without updates, your assistant falls behind in 6-12 months.
+                            </p>
+                        </div>
+
+                        <!-- Feature Changelog -->
+                        <div class="bg-white/5 border border-white/5 p-4 space-y-3">
+                            <p class="text-[10px] font-mono text-primary uppercase tracking-widest">Recent Updates</p>
+                            <ul class="text-[11px] space-y-2 text-muted font-mono">
+                                <li><span class="text-primary">Dec:</span> Compare two documents side-by-side</li>
+                                <li><span class="text-primary">Nov:</span> Transcribe voice notes automatically</li>
+                                <li><span class="text-primary">Oct:</span> Search your photos by description</li>
+                                <li><span class="text-primary">Sep:</span> 40% faster responses</li>
+                            </ul>
+                        </div>
+
+                        <ul class="space-y-3">
+                            <li class="text-xs text-muted flex gap-2 items-center">
+                                <iconify-icon icon="lucide:check" class="text-primary" width="14"></iconify-icon>
+                                New features every month
+                            </li>
+                            <li class="text-xs text-muted flex gap-2 items-center">
+                                <iconify-icon icon="lucide:check" class="text-primary" width="14"></iconify-icon>
+                                Priority troubleshooting
+                            </li>
+                            <li class="text-xs text-muted flex gap-2 items-center">
+                                <iconify-icon icon="lucide:check" class="text-primary" width="14"></iconify-icon>
+                                Free migration to new computer
+                            </li>
+                        </ul>
+
+                        <!-- ROI Calculator -->
+                        <div class="mt-auto bg-green-500/10 border border-green-500/20 p-4 text-center">
+                            <p class="text-xs text-green-400 font-medium">
+                                At $50/hr, 5 hours saved = <span class="font-bold">$250 value</span>
+                            </p>
+                            <p class="text-[10px] text-muted mt-1">You pay $49.99. Net gain: +$200/month</p>
+                        </div>
+                    </div>
+
+                    <!-- ===== MAIN PRODUCT CARD (Center) ===== -->
+                    <div class="relative group order-1 lg:order-2 animate-on-scroll">
+                        <!-- Volumetric Glow -->
+                        <div class="absolute -inset-1 bg-gradient-to-b from-primary/30 to-transparent blur-xl opacity-50 transition-opacity group-hover:opacity-80"></div>
+
+                        <div class="relative bg-void border border-primary/40 p-10 flex flex-col gap-6 shadow-2xl h-full">
+                            <!-- Badge -->
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-primary text-void text-[10px] font-mono font-bold tracking-[0.2em] uppercase">
+                                Most Popular
+                            </div>
+
+                            <div class="flex items-center gap-3 mt-4">
+                                <div class="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--color-primary)]"></div>
+                                <span class="text-xs font-mono text-white tracking-widest uppercase">Nexus_Personal</span>
+                            </div>
+
+                            <div>
+                                <!-- Large Price Anchor -->
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-6xl font-serif text-white">$759</span>
+                                    <span class="text-xs text-primary font-mono">ONE-TIME</span>
+                                </div>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <span class="text-sm text-primary/80 font-mono">+ $49.99/mo</span>
+                                    <span class="text-xs text-muted italic">maintenance</span>
+                                </div>
+                                <p class="text-sm text-muted mt-4 leading-relaxed">
+                                    Complete setup via secure remote session. Your AI assistant, installed and trained in under an hour.
+                                </p>
+                            </div>
+
+                            <!-- Feature List -->
+                            <ul class="space-y-4 my-4">
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:check" class="text-primary" width="16"></iconify-icon>
+                                    45-60 min remote installation
+                                </li>
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:check" class="text-primary" width="16"></iconify-icon>
+                                    Personalized training session
+                                </li>
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:check" class="text-primary" width="16"></iconify-icon>
+                                    Optimized for your computer
+                                </li>
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:check" class="text-primary" width="16"></iconify-icon>
+                                    Monthly AI improvements included
+                                </li>
+                                <li class="text-sm text-white flex gap-3 items-center">
+                                    <iconify-icon icon="lucide:shield-check" class="text-green-500" width="16"></iconify-icon>
+                                    30-day money-back guarantee
+                                </li>
+                            </ul>
+
+                            <!-- CTA -->
+                            <button class="w-full mt-auto py-4 bg-primary text-void font-mono text-xs font-bold tracking-[0.15em] uppercase hover:bg-primary/90 transition-all active:scale-[0.98]">
+                                [ Start Deployment ]
+                            </button>
+
+                            <!-- Tagline Stack -->
+                            <p class="text-[10px] text-muted/50 text-center uppercase tracking-widest">
+                                Encrypted. Local. Forever.
+                            </p>
+                            <p class="text-[10px] text-muted/30 text-center">
+                                Cancel maintenance anytime—Nexus keeps working
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ===== ADD-ONS CARD (Right) ===== -->
+                    <div class="pricing-card bg-white/[0.03] border border-white/10 p-8 flex flex-col gap-6 hover:border-accent/30 transition-all hover:-translate-y-1 order-3 animate-on-scroll">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <iconify-icon icon="lucide:plus-circle" class="text-accent" width="14"></iconify-icon>
+                                <span class="text-[11px] font-mono text-accent uppercase tracking-widest">Add-Ons</span>
+                            </div>
+                            <p class="text-sm text-muted">Enhance your installation with optional extras.</p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <!-- House Call -->
+                            <div class="addon-card p-4 bg-white/5 border border-white/10 hover:border-accent/40 transition-all cursor-pointer group">
+                                <div class="flex justify-between items-center mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <iconify-icon icon="lucide:home" class="text-accent" width="16"></iconify-icon>
+                                        <span class="text-sm font-medium text-white group-hover:text-accent transition-colors">House Call</span>
+                                    </div>
+                                    <span class="text-accent font-mono text-xs">+$150</span>
+                                </div>
+                                <p class="text-[11px] text-muted/60">In-person installation at your home. Phoenix metro.</p>
+                            </div>
+
+                            <!-- Family Training -->
+                            <div class="addon-card p-4 bg-white/5 border border-white/10 hover:border-accent/40 transition-all cursor-pointer group">
+                                <div class="flex justify-between items-center mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <iconify-icon icon="lucide:users" class="text-accent" width="16"></iconify-icon>
+                                        <span class="text-sm font-medium text-white group-hover:text-accent transition-colors">Family Training</span>
+                                    </div>
+                                    <span class="text-accent font-mono text-xs">+$99</span>
+                                </div>
+                                <p class="text-[11px] text-muted/60">Extra 30-min session for spouse, kids, or parents.</p>
+                            </div>
+
+                            <!-- Priority Setup -->
+                            <div class="addon-card p-4 bg-white/5 border border-white/10 hover:border-accent/40 transition-all cursor-pointer group">
+                                <div class="flex justify-between items-center mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <iconify-icon icon="lucide:zap" class="text-accent" width="16"></iconify-icon>
+                                        <span class="text-sm font-medium text-white group-hover:text-accent transition-colors">Priority Setup</span>
+                                    </div>
+                                    <span class="text-accent font-mono text-xs">+$75</span>
+                                </div>
+                                <p class="text-[11px] text-muted/60">Skip the queue. Installation within 48 hours.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-6 border-t border-white/5">
+                            <p class="text-[10px] text-muted/40 text-center uppercase tracking-widest">
+                                Configure during checkout
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== TRUST BAR ===== -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 mt-24 pt-12 border-t border-white/10 animate-on-scroll">
+                    <!-- Guarantee -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                            <iconify-icon icon="lucide:shield-check" class="text-green-500" width="20"></iconify-icon>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white font-medium">30-Day Money-Back</p>
+                            <p class="text-xs text-muted">Full refund, no questions asked.</p>
+                        </div>
+                    </div>
+
+                    <div class="hidden md:block w-px h-10 bg-white/10"></div>
+
+                    <!-- Privacy -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+                            <iconify-icon icon="lucide:lock" class="text-primary" width="20"></iconify-icon>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white font-medium">Your Data Stays Yours</p>
+                            <p class="text-xs text-muted">We can't see your files. Ever.</p>
+                        </div>
+                    </div>
+
+                    <div class="hidden md:block w-px h-10 bg-white/10"></div>
+
+                    <!-- Support -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center border border-accent/20">
+                            <iconify-icon icon="lucide:headphones" class="text-accent" width="20"></iconify-icon>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white font-medium">Human Support</p>
+                            <p class="text-xs text-muted">Real person, same-day response.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SECTION 7: FAQ ========== -->
+        <section class="w-full max-w-3xl mx-auto px-6 pb-32 animate-on-scroll" id="faq">
+            <h3 class="text-2xl font-serif text-white mb-8 border-b border-white/10 pb-4">Common <span class="italic text-muted/50">Questions.</span></h3>
+            <div class="flex flex-col gap-6">
+                <details class="group">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer text-white hover:text-primary transition-colors">
+                        <span>Does it work on Mac and PC?</span>
+                        <span class="text-primary transition group-open:rotate-45">+</span>
+                    </summary>
+                    <p class="text-muted text-sm mt-3 leading-relaxed">Yes. It works on both Mac and Windows computers. Newer Macs with Apple chips and Windows PCs with dedicated graphics cards will run faster.</p>
+                </details>
+                <details class="group">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer text-white hover:text-primary transition-colors">
+                        <span>Does it need the internet?</span>
+                        <span class="text-primary transition group-open:rotate-45">+</span>
+                    </summary>
+                    <p class="text-muted text-sm mt-3 leading-relaxed">No. Everything runs on your computer. You only need internet if you want to check for updates or use optional web features.</p>
+                </details>
+                <details class="group">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer text-white hover:text-primary transition-colors">
+                        <span>Can I uninstall it later?</span>
+                        <span class="text-primary transition group-open:rotate-45">+</span>
+                    </summary>
+                    <p class="text-muted text-sm mt-3 leading-relaxed">Yes. It's a regular app—just drag it to the trash (Mac) or uninstall from Settings (Windows). Everything gets removed cleanly.</p>
+                </details>
+                <details class="group">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer text-white hover:text-primary transition-colors">
+                        <span>Will you see my files?</span>
+                        <span class="text-primary transition group-open:rotate-45">+</span>
+                    </summary>
+                    <p class="text-muted text-sm mt-3 leading-relaxed">Never. Your files stay on your computer. We have no way to see them, and your data is never used to train any AI.</p>
+                </details>
+            </div>
+        </section>
+
+        <!-- ========== SECTION 8: FINAL CTA ========== -->
+        <section class="w-full relative py-32 overflow-hidden bg-obsidian border-t border-white/10">
+            <div class="relative max-w-7xl mx-auto px-6 flex flex-col items-center text-center z-10 animate-on-scroll">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 text-primary text-xs font-mono mb-8">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                    Appointments Available This Week
+                </div>
+                <h2 class="text-4xl md:text-6xl font-serif text-white tracking-tight leading-none mb-6">
+                    Ready to organize<br><span class="italic text-muted/50">your digital life?</span>
+                </h2>
+                <p class="text-muted text-lg max-w-xl mb-8">Get your private assistant set up in one session. We'll configure everything and show you how it works.</p>
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <a href="#pricing" class="h-14 px-10 bg-white text-void font-mono font-semibold hover:bg-primary transition-colors shadow-lg shadow-white/10 flex items-center gap-2 w-full sm:w-auto justify-center">
+                        Book a Demo
+                        <iconify-icon icon="lucide:calendar" width="18"></iconify-icon>
+                    </a>
+                    <a href="#pricing" class="h-14 px-10 bg-transparent border border-white/10 text-muted font-mono hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2 w-full sm:w-auto justify-center">
+                        See Pricing
+                        <iconify-icon icon="lucide:arrow-right" width="18"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== GLOBAL FOOTER (INTELLIGENCE ARCHITECTURE) ========== -->
+        <footer class="relative w-full bg-[#050508] pt-16 md:pt-24 pb-8 md:pb-12 px-4 md:px-6 border-t border-white/5 overflow-hidden">
+            <!-- Volumetric Glow Background -->
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[200px] bg-[#00CED1]/5 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <!-- Subtle Grid Pattern -->
+            <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-30 pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto relative z-10">
+
+                <!-- Top Section: Brand + Tagline + Status -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 md:mb-16 pb-8 md:pb-12 border-b border-white/5">
+                    <!-- Brand Block -->
+                    <div class="group">
+                        <a href="/" class="flex items-center gap-3 mb-3">
+                            <img src="/brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="w-14 h-14 md:w-20 md:h-20 object-contain opacity-90 group-hover:opacity-100 transition-opacity">
+                            <h2 class="text-2xl md:text-3xl font-black tracking-tighter text-white transition-colors group-hover:text-[#00CED1]">
+                                BARRIOS <span class="text-[#FFD700]">A2I</span>
+                            </h2>
+                        </a>
+                        <p class="text-[#94a3b8] font-mono text-[10px] md:text-xs tracking-[0.2em] uppercase">
+                            The Intelligence Architecture
+                        </p>
+                    </div>
+
+                    <!-- System Status Indicator -->
+                    <div class="flex items-center gap-3 px-4 py-2 bg-white/[0.03] backdrop-blur-sm border border-white/5 rounded-lg">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </span>
+                        <span class="font-mono text-[10px] md:text-xs text-emerald-400 tracking-wider uppercase">All Systems Operational</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
+
+                    <!-- Products Column -->
+                    <div>
+                        <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
+                            <span class="text-[#00CED1]/40">[</span>
+                            Products
+                            <span class="text-[#00CED1]/40">]</span>
+                        </h4>
+                        <ul class="space-y-3">
+                            <li>
+                                <a href="/nexus-personal" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    NEXUS Personal
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/creative-director" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    A2I Commercial Lab
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/command-center" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    Command Center
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Company Column -->
+                    <div>
+                        <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
+                            <span class="text-[#00CED1]/40">[</span>
+                            Company
+                            <span class="text-[#00CED1]/40">]</span>
+                        </h4>
+                        <ul class="space-y-3">
+                            <li>
+                                <a href="/#about" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    About
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/contact" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    Contact
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/status" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    System Status
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Legal Column -->
+                    <div>
+                        <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
+                            <span class="text-[#00CED1]/40">[</span>
+                            Legal
+                            <span class="text-[#00CED1]/40">]</span>
+                        </h4>
+                        <ul class="space-y-3">
+                            <li>
+                                <a href="/privacy-directive" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    Privacy Directive
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/terms-of-service" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    Terms of Service
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/data-sovereignty" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                                    <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                                    Data Sovereignty
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Connect Column -->
+                    <div>
+                        <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
+                            <span class="text-[#00CED1]/40">[</span>
+                            Connect
+                            <span class="text-[#00CED1]/40">]</span>
+                        </h4>
+                        <!-- Social Icons -->
+                        <div class="flex items-center gap-4 mb-6">
+                            <a href="https://www.linkedin.com/in/gary-barrios-3953b2390/" target="_blank" rel="noopener"
+                               class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                            </a>
+                            <a href="https://x.com/BarriosA2I" target="_blank" rel="noopener"
+                               class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            </a>
+                            <a href="https://www.instagram.com/barrios.ai.gary/" target="_blank" rel="noopener"
+                               class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            </a>
+                        </div>
+                        <!-- Email -->
+                        <a href="mailto:alienation2innovation@gmail.com" class="text-sm text-[#94a3b8] hover:text-[#00CED1] transition-colors duration-200 font-mono">
+                            alienation2innovation@gmail.com
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar: Copyright -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/5">
+                    <p class="font-mono text-[10px] md:text-xs text-[#64748b] tracking-wider">
+                        &copy; <span id="nexus-footer-year">2025</span> BARRIOS A2I INC. ALL RIGHTS RESERVED.
+                    </p>
+                    <div class="flex items-center gap-6">
+                        <a href="/privacy-directive" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Privacy</a>
+                        <a href="/terms-of-service" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Terms</a>
+                        <a href="/data-sovereignty" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Data</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update year dynamically -->
+            <script>
+                document.getElementById('nexus-footer-year').textContent = new Date().getFullYear();
+            </script>
+        </footer>
+    </main>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        // Cursor spotlight effect
+        const body = document.getElementById('main-body');
+        const spotlightGroups = document.querySelectorAll('.spotlight-group');
+
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            body.style.setProperty('--mouse-x', `${x}px`);
+            body.style.setProperty('--mouse-y', `${y}px`);
+            spotlightGroups.forEach(group => {
+                const rect = group.getBoundingClientRect();
+                group.style.setProperty('--mouse-x-rel', `${x - rect.left}px`);
+                group.style.setProperty('--mouse-y-rel', `${y - rect.top}px`);
+            });
+        });
+
+        // Scroll animation observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) entry.target.classList.add("animate");
+            });
+        }, { threshold: 0.05, rootMargin: "0px 0px -10% 0px" });
+        document.querySelectorAll(".animate-on-scroll").forEach((el) => observer.observe(el));
+
+        // Trigger hero animations immediately
+        setTimeout(() => {
+            document.querySelectorAll("#hero .animate-on-scroll").forEach(el => el.classList.add("animate"));
+        }, 100);
+
+        // Chat/Power View Toggle
+        const chatViewBtn = document.getElementById('chatViewBtn');
+        const powerViewBtn = document.getElementById('powerViewBtn');
+        const chatView = document.getElementById('chatView');
+        const powerView = document.getElementById('powerView');
+
+        if (chatViewBtn && powerViewBtn && chatView && powerView) {
+            chatViewBtn.addEventListener('click', () => {
+                chatView.classList.remove('hidden');
+                powerView.classList.add('hidden');
+                chatViewBtn.classList.add('bg-primary/20', 'text-primary');
+                chatViewBtn.classList.remove('text-muted/50');
+                powerViewBtn.classList.remove('bg-primary/20', 'text-primary');
+                powerViewBtn.classList.add('text-muted/50');
+            });
+
+            powerViewBtn.addEventListener('click', () => {
+                powerView.classList.remove('hidden');
+                chatView.classList.add('hidden');
+                powerViewBtn.classList.add('bg-primary/20', 'text-primary');
+                powerViewBtn.classList.remove('text-muted/50');
+                chatViewBtn.classList.remove('bg-primary/20', 'text-primary');
+                chatViewBtn.classList.add('text-muted/50');
+            });
+        }
+
+        // Matrix Rain Animation (Katakana + Latin + Numbers)
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
+        }
+
+        function animateRain() {
+            ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillStyle = Math.random() > 0.98 ? '#ffffff' : 'rgba(0, 206, 209, 0.5)';
+                ctx.globalAlpha = Math.random() * 0.5 + 0.2;
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        setInterval(animateRain, 40);
+    </script>
+    <!-- Revenue Activation Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/proof-sections.js"></script>
+    <script src="js/revenue-activation.js"></script>
+</body>
+</html>

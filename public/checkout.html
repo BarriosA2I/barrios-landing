@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Barrios A2I</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #141414;
+      --bg-tertiary: #1a1a1a;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --accent-cyan: #00CED1;
+      --accent-purple: #8B5CF6;
+      --accent-glow: rgba(0, 206, 209, 0.15);
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.06);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 206, 209, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 206, 209, 0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow-1 { top: -200px; left: -200px; }
+    .bg-glow-2 { bottom: -200px; right: -200px; opacity: 0.5; }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .logo {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.02);
+      filter: drop-shadow(0 0 20px rgba(0, 206, 209, 0.3));
+    }
+
+    .logo img {
+      height: 60px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .logo-accent {
+      color: var(--accent-cyan);
+    }
+
+    .secure-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+    }
+
+    .secure-dot {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Main Content */
+    .main {
+      position: relative;
+      z-index: 10;
+      padding: 6rem 2rem 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .checkout-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 3rem;
+    }
+
+    @media (max-width: 1024px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Product Selection */
+    .products-section {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* Tier Selection */
+    .tier-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      padding: 0.25rem;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+    }
+
+    .tier-tab {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .tier-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .tier-tab.active {
+      background: var(--accent-cyan);
+      color: var(--bg-primary);
+    }
+
+    /* Product Cards */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .product-card:hover {
+      border-color: rgba(0, 206, 209, 0.3);
+      box-shadow: 0 0 30px rgba(0, 206, 209, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .product-card.selected {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 40px rgba(0, 206, 209, 0.2);
+    }
+
+    .product-card.selected::before {
+      content: '';
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 24px;
+      height: 24px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-card.selected::after {
+      content: '';
+      position: absolute;
+      top: calc(1rem + 6px);
+      right: calc(1rem + 8px);
+      width: 8px;
+      height: 4px;
+      border-left: 2px solid var(--bg-primary);
+      border-bottom: 2px solid var(--bg-primary);
+      transform: rotate(-45deg);
+    }
+
+    .product-tier {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+    }
+
+    .product-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-price {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .product-price span {
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+
+    .product-features {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .product-feature {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-check {
+      width: 16px;
+      height: 16px;
+      color: var(--accent-cyan);
+    }
+
+    /* Billing Toggle */
+    .billing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .billing-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .billing-label.active {
+      color: var(--text-primary);
+    }
+
+    .toggle-switch {
+      width: 48px;
+      height: 24px;
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .toggle-switch.yearly {
+      background: var(--accent-cyan);
+    }
+
+    .toggle-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    .toggle-switch.yearly .toggle-knob {
+      transform: translateX(24px);
+    }
+
+    .discount-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      border-radius: 4px;
+    }
+
+    /* Order Summary */
+    .summary-section {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 2rem;
+      height: fit-content;
+      position: sticky;
+      top: 5rem;
+    }
+
+    .summary-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .summary-item:last-of-type {
+      border-bottom: none;
+    }
+
+    .summary-item-name {
+      font-weight: 500;
+    }
+
+    .summary-item-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    .summary-item-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.5rem;
+      margin-top: 1rem;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .total-label {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .total-amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    /* Checkout Button */
+    .checkout-btn {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 1rem 2rem;
+      background: var(--accent-cyan);
+      color: var(--bg-primary);
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .checkout-btn:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 0 30px rgba(0, 206, 209, 0.4);
+    }
+
+    .checkout-btn:active {
+      transform: scale(0.98);
+    }
+
+    .checkout-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .checkout-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Loading State */
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Promo Code */
+    .promo-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .promo-toggle {
+      font-size: 0.875rem;
+      color: var(--accent-cyan);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .promo-input-group {
+      display: none;
+      margin-top: 1rem;
+      gap: 0.5rem;
+    }
+
+    .promo-input-group.visible {
+      display: flex;
+    }
+
+    .promo-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+    }
+
+    .promo-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    .promo-apply {
+      padding: 0.75rem 1rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .promo-apply:hover {
+      border-color: var(--accent-cyan);
+    }
+
+    /* Trust Badges */
+    .trust-section {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .trust-badge svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent-cyan);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Consultation CTA */
+    .consultation-cta {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(0, 206, 209, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .consultation-cta h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .consultation-cta p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .consultation-btn {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: 1px solid var(--accent-purple);
+      border-radius: 6px;
+      color: var(--accent-purple);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .consultation-btn:hover {
+      background: rgba(139, 92, 246, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <a href="/" class="logo">
+      <img src="/brand/barrios-a2i-logo.png" alt="Barrios A2I" />
+    </a>
+    <div class="secure-badge">
+      <span class="secure-dot"></span>
+      SECURE CHECKOUT
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="checkout-container">
+      <!-- Product Selection -->
+      <section class="products-section">
+        <div class="section-header">
+          <h1 class="section-title">Select Your Plan</h1>
+          <p class="section-subtitle">AI-powered video commercials at scale</p>
+        </div>
+
+        <!-- Billing Toggle -->
+        <div class="billing-toggle">
+          <span class="billing-label" id="monthly-label">Monthly</span>
+          <div class="toggle-switch" id="billing-toggle" onclick="toggleBilling()">
+            <div class="toggle-knob"></div>
+          </div>
+          <span class="billing-label" id="yearly-label">Yearly</span>
+          <span class="discount-badge">Save 17%</span>
+        </div>
+
+        <!-- Tier Tabs -->
+        <div class="tier-tabs">
+          <button class="tier-tab active" data-category="subscriptions" onclick="showCategory('subscriptions')">Subscriptions</button>
+          <button class="tier-tab" data-category="tokens" onclick="showCategory('tokens')">Token Packs</button>
+          <button class="tier-tab" data-category="addons" onclick="showCategory('addons')">Add-ons</button>
+          <button class="tier-tab" data-category="consultations" onclick="showCategory('consultations')">Consultations</button>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="product-grid" id="product-grid">
+          <!-- Products will be rendered here -->
+        </div>
+
+        <!-- Consultation CTA -->
+        <div class="consultation-cta">
+          <h4>Not sure which plan is right for you?</h4>
+          <p>Book a free 30-minute discovery call with Gary</p>
+          <button class="consultation-btn" onclick="bookConsultation()">Schedule a Call</button>
+        </div>
+      </section>
+
+      <!-- Order Summary -->
+      <aside class="summary-section">
+        <h2 class="summary-title">Order Summary</h2>
+
+        <div id="summary-items">
+          <!-- Selected items will appear here -->
+          <div class="empty-state" id="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <p>Select a product to get started</p>
+          </div>
+        </div>
+
+        <div class="summary-total" id="summary-total" style="display: none;">
+          <span class="total-label">Total</span>
+          <span class="total-amount" id="total-amount">$0</span>
+        </div>
+
+        <button class="checkout-btn" id="checkout-btn" disabled onclick="initiateCheckout()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span id="checkout-text">Proceed to Payment</span>
+        </button>
+
+        <!-- Promo Code -->
+        <div class="promo-section">
+          <button class="promo-toggle" onclick="togglePromoInput()">Have a promo code?</button>
+          <div class="promo-input-group" id="promo-input-group">
+            <input type="text" class="promo-input" id="promo-input" placeholder="Enter code">
+            <button class="promo-apply" onclick="applyPromo()">Apply</button>
+          </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="trust-section">
+          <div class="trust-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            SSL Encrypted
+          </div>
+          <div class="trust-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Secure Payment
+          </div>
+          <div class="trust-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+            Powered by Stripe
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="js/product-catalog.js"></script>
+  <script>
+    // State
+    let selectedProduct = null;
+    let isYearly = false;
+    let currentCategory = 'subscriptions';
+    let promoCode = null;
+
+    // Initialize Stripe
+    const stripePublishableKey = 'pk_test_51RtszvLyFGkLiU4Cg9uejzsg3xqC1v7b9JddUiXKdoQUFhiJsc24gfualOoBFOBCsneQufzoF4BPJZnkHmNHwHQW005urakSvY';
+    let stripe;
+    try {
+      stripe = Stripe(stripePublishableKey);
+    } catch (e) {
+      console.log('Stripe not initialized - using test mode');
+    }
+
+    // Format currency
+    function formatPrice(cents) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(cents / 100);
+    }
+
+    // Toggle billing period
+    function toggleBilling() {
+      isYearly = !isYearly;
+      const toggle = document.getElementById('billing-toggle');
+      const monthlyLabel = document.getElementById('monthly-label');
+      const yearlyLabel = document.getElementById('yearly-label');
+
+      toggle.classList.toggle('yearly', isYearly);
+      monthlyLabel.classList.toggle('active', !isYearly);
+      yearlyLabel.classList.toggle('active', isYearly);
+
+      renderProducts();
+    }
+
+    // Show category
+    function showCategory(category) {
+      currentCategory = category;
+      document.querySelectorAll('.tier-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.category === category);
+      });
+      selectedProduct = null;
+      updateSummary();
+      renderProducts();
+    }
+
+    // Render products based on category
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      let products = [];
+
+      switch (currentCategory) {
+        case 'subscriptions':
+          products = PRODUCT_CATALOG.filter(p => p.category === 'COMMERCIAL_LAB');
+          break;
+        case 'tokens':
+          products = PRODUCT_CATALOG.filter(p => p.category === 'TOKEN_PACKS');
+          break;
+        case 'addons':
+          products = PRODUCT_CATALOG.filter(p =>
+            ['IDENTITY_ADDONS', 'PRIORITY_ADDONS', 'EXTRAS'].includes(p.category)
+          );
+          break;
+        case 'consultations':
+          products = PRODUCT_CATALOG.filter(p => p.category === 'CONSULTATION');
+          break;
+      }
+
+      grid.innerHTML = products.map(product => {
+        const price = isYearly && product.prices.length > 1
+          ? product.prices.find(p => p.metadata?.interval === 'yearly') || product.prices[0]
+          : product.prices[0];
+
+        const isSelected = selectedProduct?.id === product.id;
+        const interval = price.recurring ? (price.recurring.interval === 'year' ? '/year' : '/month') : '';
+        const tier = product.metadata?.tier || product.category;
+
+        return `
+          <div class="product-card ${isSelected ? 'selected' : ''}" onclick="selectProduct('${product.id}')">
+            <div class="product-tier">${tier}</div>
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">
+              ${formatPrice(price.unitAmount)}
+              <span>${interval}</span>
+            </div>
+            ${product.features ? `
+              <div class="product-features">
+                ${product.features.slice(0, 4).map(f => `
+                  <div class="product-feature">
+                    <svg class="feature-check" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    ${f}
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Select product
+    function selectProduct(productId) {
+      const product = PRODUCT_CATALOG.find(p => p.id === productId);
+      if (product) {
+        selectedProduct = {
+          ...product,
+          selectedPrice: isYearly && product.prices.length > 1
+            ? product.prices.find(p => p.metadata?.interval === 'yearly') || product.prices[0]
+            : product.prices[0]
+        };
+        renderProducts();
+        updateSummary();
+      }
+    }
+
+    // Update order summary
+    function updateSummary() {
+      const summaryItems = document.getElementById('summary-items');
+      const emptyState = document.getElementById('empty-state');
+      const summaryTotal = document.getElementById('summary-total');
+      const totalAmount = document.getElementById('total-amount');
+      const checkoutBtn = document.getElementById('checkout-btn');
+
+      if (!selectedProduct) {
+        emptyState.style.display = 'block';
+        summaryTotal.style.display = 'none';
+        checkoutBtn.disabled = true;
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      summaryTotal.style.display = 'flex';
+      checkoutBtn.disabled = false;
+
+      const price = selectedProduct.selectedPrice;
+      const interval = price.recurring ? (price.recurring.interval === 'year' ? '/year' : '/month') : '';
+
+      summaryItems.innerHTML = `
+        <div class="summary-item">
+          <div>
+            <div class="summary-item-name">${selectedProduct.name}</div>
+            <div class="summary-item-desc">${selectedProduct.description?.substring(0, 50)}...</div>
+          </div>
+          <div class="summary-item-price">${formatPrice(price.unitAmount)}${interval}</div>
+        </div>
+      `;
+
+      totalAmount.textContent = formatPrice(price.unitAmount);
+    }
+
+    // Toggle promo input
+    function togglePromoInput() {
+      document.getElementById('promo-input-group').classList.toggle('visible');
+    }
+
+    // Apply promo code
+    function applyPromo() {
+      promoCode = document.getElementById('promo-input').value.trim();
+      if (promoCode) {
+        alert(`Promo code "${promoCode}" will be applied at checkout`);
+      }
+    }
+
+    // Book consultation
+    function bookConsultation() {
+      window.open('https://calendly.com/barrios-a2i/enterprise-discovery', '_blank');
+    }
+
+    // Initiate checkout
+    async function initiateCheckout() {
+      if (!selectedProduct) return;
+
+      const checkoutBtn = document.getElementById('checkout-btn');
+      const checkoutText = document.getElementById('checkout-text');
+
+      checkoutBtn.disabled = true;
+      checkoutText.innerHTML = '<div class="loading-spinner"></div> Processing...';
+
+      try {
+        const price = selectedProduct.selectedPrice;
+        const intent = selectedProduct.category === 'CONSULTATION' ? 'CONSULTATION'
+          : selectedProduct.category === 'TOKEN_PACKS' ? 'TOP_UP'
+          : 'SUBSCRIPTION';
+
+        const response = await fetch('/api/checkout/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: [{ priceId: price.id, quantity: 1 }],
+            intent,
+            promoCode: promoCode || undefined,
+            metadata: {
+              productId: selectedProduct.id,
+              productName: selectedProduct.name,
+              tier: selectedProduct.metadata?.tier,
+            }
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        // Redirect to Stripe Checkout
+        if (data.url) {
+          window.location.href = data.url;
+        } else if (stripe && data.sessionId) {
+          await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        }
+      } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Checkout failed: ' + error.message);
+        checkoutBtn.disabled = false;
+        checkoutText.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          Proceed to Payment
+        `;
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+    });
+  </script>
+</body>
+</html>

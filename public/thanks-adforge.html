@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neural Ad Forge | Creative Director | Barrios A2I</title>
+  <meta name="description" content="Your AI Creative Director is ready. Let's craft your perfect 96-second commercial together.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       BARRIOS A2I DESIGN SYSTEM - NEURAL AD FORGE EDITION
+       ═══════════════════════════════════════════════════════════════ */
+    
+    :root {
+      /* Core Palette */
+      --void: #0a0a0f;
+      --obsidian: #0a0a1e;
+      --obsidian-light: #12122a;
+      --primary: #00CED1;
+      --primary-dim: #00CED140;
+      --accent: #F59E0B;
+      --accent-dim: #F59E0B40;
+      --success: #22C55E;
+      --warning: #EAB308;
+      --error: #EF4444;
+      --muted: #94a3b8;
+      --white: #ffffff;
+      
+      /* Gradients */
+      --gradient-primary: linear-gradient(135deg, #00CED1 0%, #0066FF 100%);
+      --gradient-accent: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      --gradient-glow: radial-gradient(ellipse at center, rgba(0, 206, 209, 0.15) 0%, transparent 70%);
+      
+      /* Spacing */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-2xl: 48px;
+      
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --font-display: 'Playfair Display', Georgia, serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-sans);
+      background: var(--void);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       BACKGROUND EFFECTS
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 206, 209, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 206, 209, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .bg-glow {
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150%;
+      height: 60%;
+      background: var(--gradient-glow);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .bg-vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 0%, var(--void) 85%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       MAIN LAYOUT
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+      padding-top: var(--spacing-xl);
+    }
+    
+    .header__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-xs) var(--spacing-md);
+      background: var(--success);
+      color: var(--void);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 2px;
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .header__badge::before {
+      content: '✓';
+      font-weight: 700;
+    }
+    
+    .header__title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: var(--spacing-sm);
+      line-height: 1.2;
+    }
+    
+    .header__title span {
+      color: var(--primary);
+    }
+    
+    .header__subtitle {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       CHAT WIDGET
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--obsidian);
+      border: 1px solid var(--primary-dim);
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 500px;
+      max-height: 70vh;
+    }
+    
+    /* Chat Header */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: var(--obsidian-light);
+      border-bottom: 1px solid var(--primary-dim);
+    }
+    
+    .chat-header__info {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    
+    .chat-header__avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .chat-header__text h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+    
+    .chat-header__status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .chat-header__status::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Progress Bar */
+    .progress-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    
+    .progress-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--primary);
+    }
+    
+    .progress-bar {
+      width: 120px;
+      height: 4px;
+      background: var(--primary-dim);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress-bar__fill {
+      height: 100%;
+      background: var(--gradient-primary);
+      transition: width 0.5s ease;
+    }
+    
+    /* Phase Badge */
+    .phase-badge {
+      padding: 4px 10px;
+      background: var(--primary-dim);
+      color: var(--primary);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 2px;
+      margin-top: 6px;
+    }
+    
+    /* Messages Area */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+    
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .chat-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: var(--primary-dim);
+      border-radius: 3px;
+    }
+    
+    /* Message Bubbles */
+    .message {
+      max-width: 85%;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message--assistant {
+      align-self: flex-start;
+    }
+    
+    .message--user {
+      align-self: flex-end;
+    }
+    
+    .message__bubble {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: 16px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    
+    .message--assistant .message__bubble {
+      background: var(--obsidian-light);
+      border: 1px solid var(--primary-dim);
+      color: var(--white);
+      border-bottom-left-radius: 4px;
+    }
+    
+    .message--user .message__bubble {
+      background: var(--gradient-primary);
+      color: var(--void);
+      border-bottom-right-radius: 4px;
+    }
+    
+    .message__time {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-family: var(--font-mono);
+    }
+    
+    .message--user .message__time {
+      text-align: right;
+    }
+    
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: var(--spacing-md);
+    }
+    
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: typing 1.4s ease-in-out infinite;
+    }
+    
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typing {
+      0%, 100% { transform: translateY(0); opacity: 0.5; }
+      50% { transform: translateY(-6px); opacity: 1; }
+    }
+    
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      background: var(--obsidian-light);
+      border-top: 1px solid var(--primary-dim);
+    }
+    
+    .quick-action {
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: transparent;
+      border: 1px solid var(--primary-dim);
+      color: var(--primary);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 4px;
+    }
+    
+    .quick-action:hover {
+      background: var(--primary-dim);
+      border-color: var(--primary);
+    }
+    
+    /* Input Area */
+    .chat-input {
+      display: flex;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: var(--obsidian-light);
+      border-top: 1px solid var(--primary-dim);
+    }
+    
+    .chat-input__field {
+      flex: 1;
+      padding: var(--spacing-md);
+      background: var(--void);
+      border: 1px solid var(--primary-dim);
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .chat-input__field:focus {
+      border-color: var(--primary);
+    }
+    
+    .chat-input__field::placeholder {
+      color: var(--muted);
+    }
+    
+    .chat-input__send {
+      padding: var(--spacing-md) var(--spacing-xl);
+      background: var(--gradient-primary);
+      border: none;
+      color: var(--void);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+    
+    .chat-input__send:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px var(--primary-dim);
+    }
+    
+    .chat-input__send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       COMPLETION STATE
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .completion-card {
+      padding: var(--spacing-xl);
+      background: linear-gradient(135deg, var(--obsidian-light) 0%, var(--obsidian) 100%);
+      border: 2px solid var(--success);
+      border-radius: 8px;
+      text-align: center;
+      animation: glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px var(--success); }
+      50% { box-shadow: 0 0 40px var(--success); }
+    }
+    
+    .completion-card__icon {
+      font-size: 48px;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .completion-card__title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--success);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .completion-card__text {
+      color: var(--muted);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .completion-card__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      background: var(--accent);
+      color: var(--void);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 4px;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       ERROR STATE
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .error-banner {
+      padding: var(--spacing-md);
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--error);
+      border-radius: 6px;
+      color: var(--error);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin: var(--spacing-md);
+    }
+    
+    .error-banner__retry {
+      margin-left: auto;
+      padding: var(--spacing-xs) var(--spacing-md);
+      background: transparent;
+      border: 1px solid var(--error);
+      color: var(--error);
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    
+    .error-banner__retry:hover {
+      background: var(--error);
+      color: var(--white);
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════════ */
+    
+    .footer {
+      text-align: center;
+      padding: var(--spacing-lg);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    /* ═══════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════════════ */
+    
+    @media (max-width: 640px) {
+      .container {
+        padding: var(--spacing-md);
+      }
+      
+      .header {
+        padding-top: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+      }
+      
+      .chat-container {
+        max-height: 60vh;
+      }
+      
+      .chat-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+      
+      .progress-container {
+        align-items: center;
+        width: 100%;
+      }
+      
+      .progress-bar {
+        width: 100%;
+      }
+      
+      .chat-input {
+        flex-direction: column;
+      }
+      
+      .chat-input__send {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== GLOBAL NAV HEADER (Unified Component) ========== -->
+  <nav id="global-header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 12px 24px; transition: all 0.3s;">
+    <div id="header-bg" style="position: absolute; inset: 0; background: transparent; backdrop-filter: none; transition: all 0.3s;"></div>
+    <div style="max-width: 1280px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: space-between;">
+      <!-- Brand Section with Status Indicator -->
+      <a href="/" style="display: flex; align-items: center; gap: 16px; text-decoration: none;">
+        <div style="position: relative; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; inset: 0; background: var(--primary); filter: blur(20px); opacity: 0.2; border-radius: 9999px;"></div>
+          <img src="brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" style="position: relative; width: 48px; height: 48px; object-fit: contain;">
+          <div style="position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; background: var(--accent); border-radius: 9999px; animation: pulse 2s infinite;"></div>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <span style="font-family: var(--font-mono); font-size: 10px; color: var(--primary); letter-spacing: 0.2em;">SYSTEM_CONNECTED</span>
+          <span style="color: white; font-weight: 900; font-size: 20px; letter-spacing: -0.02em;">BARRIOS <span style="color: var(--accent);">A2I</span></span>
+        </div>
+      </a>
+      <!-- Navigation -->
+      <a href="/" style="display: flex; align-items: center; padding: 6px 12px; text-decoration: none;">
+        <span style="font-family: var(--font-mono); font-size: 12px; color: rgba(0,206,209,0.4);">[</span>
+        <span style="margin: 0 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; color: #9ca3af;">RETURN_HOME</span>
+        <span style="font-family: var(--font-mono); font-size: 12px; color: rgba(0,206,209,0.4);">]</span>
+      </a>
+    </div>
+  </nav>
+  <script>
+  (function() {
+    const header = document.getElementById('global-header');
+    const headerBg = document.getElementById('header-bg');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 10) {
+        headerBg.style.background = 'rgba(10,10,15,0.9)';
+        headerBg.style.backdropFilter = 'blur(20px)';
+        headerBg.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+      } else {
+        headerBg.style.background = 'transparent';
+        headerBg.style.backdropFilter = 'none';
+        headerBg.style.borderBottom = 'none';
+      }
+    });
+  })();
+  </script>
+
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-vignette"></div>
+
+  <!-- Main Container (with top padding for fixed header) -->
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header__badge">Payment Confirmed</div>
+      <h1 class="header__title">Meet Your <span>AI Creative Director</span></h1>
+      <p class="header__subtitle">
+        I'll guide you through crafting the perfect brief for your 96-second commercial. 
+        Just answer a few questions, and let's create something legendary together.
+      </p>
+    </header>
+    
+    <!-- Chat Widget -->
+    <div class="chat-container" id="chat-container">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="chat-header__info">
+          <div class="chat-header__avatar">🎬</div>
+          <div class="chat-header__text">
+            <h3>Creative Director AI</h3>
+            <div class="chat-header__status">Online</div>
+            <div class="phase-badge" id="phase-badge">GREETING</div>
+          </div>
+        </div>
+        <div class="progress-container">
+          <span class="progress-label" id="progress-label">0% Complete</span>
+          <div class="progress-bar">
+            <div class="progress-bar__fill" id="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Messages -->
+      <div class="chat-messages" id="chat-messages">
+        <!-- Messages will be injected here -->
+      </div>
+      
+      <!-- Quick Actions (shown contextually) -->
+      <div class="quick-actions" id="quick-actions" style="display: none;">
+        <!-- Quick action buttons injected here -->
+      </div>
+      
+      <!-- Error Banner (hidden by default) -->
+      <div class="error-banner" id="error-banner" style="display: none;">
+        <span>⚠️</span>
+        <span id="error-message">Connection error</span>
+        <button class="error-banner__retry" onclick="startSession()">Retry</button>
+      </div>
+      
+      <!-- Input Area -->
+      <div class="chat-input">
+        <input 
+          type="text" 
+          class="chat-input__field" 
+          id="message-input"
+          placeholder="Type your response..."
+          autocomplete="off"
+        >
+        <button class="chat-input__send" id="send-button">
+          Send
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- ========== UNIFIED FOOTER ========== -->
+    <footer class="relative w-full bg-[#050508] pt-16 md:pt-24 pb-8 md:pb-12 px-4 md:px-6 border-t border-white/5 overflow-hidden">
+    <!-- Volumetric Glow Background -->
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[200px] bg-[#00CED1]/5 blur-[100px] rounded-full pointer-events-none"></div>
+
+    <!-- Subtle Grid Pattern -->
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-30 pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+
+        <!-- Top Section: Brand + Tagline + Status -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 md:mb-16 pb-8 md:pb-12 border-b border-white/5">
+            <!-- Brand Block -->
+            <div class="group">
+                <a href="/" class="flex items-center gap-3 mb-3">
+                    <img src="/brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="w-10 h-10 md:w-12 md:h-12 object-contain opacity-90 group-hover:opacity-100 transition-opacity">
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tighter text-white transition-colors group-hover:text-[#00CED1]">
+                        BARRIOS <span class="text-[#FFD700]">A2I</span>
+                    </h2>
+                </a>
+                <p class="text-[#94a3b8] font-mono text-[10px] md:text-xs tracking-[0.2em] uppercase">
+                    The Intelligence Architecture
+                </p>
+            </div>
+
+            <!-- System Status Indicator -->
+            <div class="flex items-center gap-3 px-4 py-2 bg-white/[0.03] backdrop-blur-sm border border-white/5 rounded-lg">
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span class="font-mono text-[10px] md:text-xs text-emerald-400 tracking-wider uppercase">All Systems Operational</span>
+            </div>
+        </div>
+
+        <!-- Navigation Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
+
+            <!-- Products Column -->
+            <div>
+                <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
+                    <span class="text-[#00CED1]/40">[</span>
+                    Products
+                    <span class="text-[#00CED1]/40">]</span>
+                </h4>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="/nexus-personal" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            NEXUS Personal
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/creative-director" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            Neural Ad Forge
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/command-center" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            Command Center
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Company Column -->
+            <div>
+                <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
+                    <span class="text-[#00CED1]/40">[</span>
+                    Company
+                    <span class="text-[#00CED1]/40">]</span>
+                </h4>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="/#about" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            About
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/contact" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            Contact
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/status" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            System Status
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Legal Column -->
+            <div>
+                <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
+                    <span class="text-[#00CED1]/40">[</span>
+                    Legal
+                    <span class="text-[#00CED1]/40">]</span>
+                </h4>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="/privacy-directive" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            Privacy Directive
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/terms-of-service" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            Terms of Service
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/data-sovereignty" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                            <span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>
+                            Data Sovereignty
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Connect Column -->
+            <div>
+                <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2">
+                    <span class="text-[#00CED1]/40">[</span>
+                    Connect
+                    <span class="text-[#00CED1]/40">]</span>
+                </h4>
+                <!-- Social Icons -->
+                <div class="flex items-center gap-4 mb-6">
+                    <a href="https://www.linkedin.com/in/gary-barrios-3953b2390/" target="_blank" rel="noopener"
+                       class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                    <a href="https://x.com/BarriosA2I" target="_blank" rel="noopener"
+                       class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/barrios.ai.gary/" target="_blank" rel="noopener"
+                       class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
+                </div>
+                <!-- Email -->
+                <a href="mailto:alienation2innovation@gmail.com" class="text-sm text-[#94a3b8] hover:text-[#00CED1] transition-colors duration-200 font-mono">
+                    alienation2innovation@gmail.com
+                </a>
+            </div>
+        </div>
+
+        <!-- Bottom Bar: Copyright -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/5">
+            <p class="font-mono text-[10px] md:text-xs text-[#64748b] tracking-wider">
+                &copy; <span id="footer-year-ta">2025</span> BARRIOS A2I INC. ALL RIGHTS RESERVED.
+            </p>
+            <div class="flex items-center gap-6">
+                <a href="/privacy-directive" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Privacy</a>
+                <a href="/terms-of-service" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Terms</a>
+                <a href="/data-sovereignty" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Data</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Update year dynamically -->
+<script>
+    (function() {
+        const yearEl = document.getElementById('footer-year-ta');
+        if (yearEl) yearEl.textContent = new Date().getFullYear();
+    })();
+</script>
+  </div>
+  
+  <!-- ═══════════════════════════════════════════════════════════════
+       CREATIVE DIRECTOR CHAT - VANILLA JS ENGINE
+       ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // ========== CONFIGURATION ==========
+      const CONFIG = {
+        // API endpoint - Render production
+        apiUrl: 'https://barrios-genesis-flawless.onrender.com',
+        
+        // Session management
+        sessionStorageKey: 'creative_director_session',
+        
+        // Timeouts
+        requestTimeout: 30000,
+        
+        // Quick actions by phase
+        quickActions: {
+          video_goal: ['Brand Awareness', 'Lead Generation', 'Direct Sales', 'Build Trust', 'Product Launch'],
+          tone_style: ['Professional', 'Bold & Energetic', 'Friendly', 'Luxury', 'Urgent'],
+        },
+        
+        // Phase labels
+        phaseLabels: {
+          greeting: 'GREETING',
+          business_core: 'BUSINESS DETAILS',
+          offering: 'YOUR OFFERING',
+          audience: 'TARGET AUDIENCE',
+          pain_points: 'PAIN POINTS',
+          video_goal: 'VIDEO GOAL',
+          tone_style: 'TONE & STYLE',
+          call_to_action: 'CALL TO ACTION',
+          special_requests: 'SPECIAL REQUESTS',
+          confirm: 'CONFIRMATION',
+          complete: 'COMPLETE',
+        },
+      };
+      
+      // ========== STATE ==========
+      let state = {
+        sessionId: null,
+        phase: 'greeting',
+        completionPercentage: 0,
+        isComplete: false,
+        isLoading: false,
+        error: null,
+        messages: [],
+      };
+      
+      // ========== DOM ELEMENTS ==========
+      const elements = {
+        messagesContainer: document.getElementById('chat-messages'),
+        messageInput: document.getElementById('message-input'),
+        sendButton: document.getElementById('send-button'),
+        progressFill: document.getElementById('progress-fill'),
+        progressLabel: document.getElementById('progress-label'),
+        phaseBadge: document.getElementById('phase-badge'),
+        quickActions: document.getElementById('quick-actions'),
+        errorBanner: document.getElementById('error-banner'),
+        errorMessage: document.getElementById('error-message'),
+      };
+      
+      // ========== UTILITY FUNCTIONS ==========
+      
+      function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          minute: '2-digit',
+          hour12: true 
+        });
+      }
+      
+      function scrollToBottom() {
+        elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
+      }
+      
+      function setLoading(loading) {
+        state.isLoading = loading;
+        elements.sendButton.disabled = loading;
+        elements.messageInput.disabled = loading;
+        
+        if (loading) {
+          showTypingIndicator();
+        } else {
+          hideTypingIndicator();
+        }
+      }
+      
+      function showError(message) {
+        state.error = message;
+        elements.errorMessage.textContent = message;
+        elements.errorBanner.style.display = 'flex';
+      }
+      
+      function hideError() {
+        state.error = null;
+        elements.errorBanner.style.display = 'none';
+      }
+      
+      // ========== MESSAGE RENDERING ==========
+      
+      function createMessageElement(message) {
+        const div = document.createElement('div');
+        div.className = `message message--${message.role}`;
+        
+        div.innerHTML = `
+          <div class="message__bubble">${escapeHtml(message.content)}</div>
+          <div class="message__time">${formatTime(message.timestamp)}</div>
+        `;
+        
+        return div;
+      }
+      
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML.replace(/\n/g, '<br>');
+      }
+      
+      function addMessage(role, content) {
+        const message = {
+          role,
+          content,
+          timestamp: Date.now(),
+        };
+        
+        state.messages.push(message);
+        elements.messagesContainer.appendChild(createMessageElement(message));
+        scrollToBottom();
+      }
+      
+      function showTypingIndicator() {
+        // Remove existing indicator if present
+        hideTypingIndicator();
+        
+        const indicator = document.createElement('div');
+        indicator.id = 'typing-indicator';
+        indicator.className = 'message message--assistant';
+        indicator.innerHTML = `
+          <div class="typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        `;
+        
+        elements.messagesContainer.appendChild(indicator);
+        scrollToBottom();
+      }
+      
+      function hideTypingIndicator() {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) {
+          indicator.remove();
+        }
+      }
+      
+      function showCompletionCard() {
+        const card = document.createElement('div');
+        card.className = 'completion-card';
+        card.innerHTML = `
+          <div class="completion-card__icon">🎬</div>
+          <h2 class="completion-card__title">Brief Complete!</h2>
+          <p class="completion-card__text">
+            Your creative brief has been submitted to our production team. 
+            Your legendary 96-second commercial is now in the pipeline!
+          </p>
+          <div class="completion-card__badge">
+            ⚡ RAGNAROK PROCESSING
+          </div>
+        `;
+        
+        elements.messagesContainer.appendChild(card);
+        scrollToBottom();
+      }
+      
+      // ========== UI UPDATES ==========
+      
+      function updateProgress(percentage) {
+        state.completionPercentage = percentage;
+        elements.progressFill.style.width = `${percentage}%`;
+        elements.progressLabel.textContent = `${Math.round(percentage)}% Complete`;
+      }
+      
+      function updatePhase(phase) {
+        state.phase = phase;
+        const label = CONFIG.phaseLabels[phase] || phase.toUpperCase();
+        elements.phaseBadge.textContent = label;
+        
+        // Show/hide quick actions based on phase
+        updateQuickActions(phase);
+      }
+      
+      function updateQuickActions(phase) {
+        const actions = CONFIG.quickActions[phase];
+        
+        if (actions && actions.length > 0) {
+          elements.quickActions.innerHTML = actions.map(action => 
+            `<button class="quick-action" onclick="handleQuickAction('${action}')">${action}</button>`
+          ).join('');
+          elements.quickActions.style.display = 'flex';
+        } else {
+          elements.quickActions.style.display = 'none';
+        }
+      }
+      
+      // ========== API CALLS ==========
+      
+      async function startSession() {
+        setLoading(true);
+        hideError();
+        
+        try {
+          // Check for stored session
+          const storedSession = sessionStorage.getItem(CONFIG.sessionStorageKey);
+          if (storedSession) {
+            const parsed = JSON.parse(storedSession);
+            // Verify session is still valid (could add server check here)
+            state.sessionId = parsed.sessionId;
+          }
+          
+          const response = await fetchWithTimeout(`${CONFIG.apiUrl}/api/session/start`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              email: getEmailFromUrl(),
+              existing_session_id: state.sessionId,
+            }),
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          state.sessionId = data.session_id;
+          state.phase = data.phase || 'greeting';
+          
+          // Store session
+          sessionStorage.setItem(CONFIG.sessionStorageKey, JSON.stringify({
+            sessionId: state.sessionId,
+            startedAt: Date.now(),
+          }));
+          
+          // Add greeting message
+          addMessage('assistant', data.greeting);
+          updatePhase(state.phase);
+          
+        } catch (error) {
+          console.error('Session start error:', error);
+          showError('Unable to connect to Creative Director. Please try again.');
+          
+          // Show fallback message
+          addMessage('assistant', 
+            "Welcome to Neural Ad Forge! I'm your AI Creative Director, and I'm excited to help craft your perfect video brief. " +
+            "It looks like we're having some connection issues right now. Please click 'Retry' to reconnect, or refresh the page."
+          );
+        } finally {
+          setLoading(false);
+          elements.messageInput.focus();
+        }
+      }
+      
+      async function sendMessage(content) {
+        if (!content.trim() || state.isLoading) return;
+        
+        // Don't send if no session (will show error)
+        if (!state.sessionId) {
+          showError('Session not started. Please refresh the page.');
+          return;
+        }
+        
+        // Add user message
+        addMessage('user', content);
+        elements.messageInput.value = '';
+        setLoading(true);
+        hideError();
+        
+        try {
+          const response = await fetchWithTimeout(`${CONFIG.apiUrl}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session_id: state.sessionId,
+              message: content,
+            }),
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Update state
+          state.phase = data.phase;
+          state.completionPercentage = data.completion_percentage;
+          state.isComplete = data.is_complete;
+          
+          // Update UI
+          updateProgress(data.completion_percentage);
+          updatePhase(data.phase);
+          
+          // Add assistant response
+          addMessage('assistant', data.response);
+          
+          // Handle completion
+          if (data.is_complete && data.ragnarok_ready) {
+            elements.quickActions.style.display = 'none';
+            setTimeout(showCompletionCard, 500);
+            
+            // Track completion (if analytics present)
+            if (typeof gtag === 'function') {
+              gtag('event', 'brief_completed', {
+                event_category: 'Neural Ad Forge',
+                event_label: state.sessionId,
+              });
+            }
+          }
+          
+        } catch (error) {
+          console.error('Send message error:', error);
+          showError('Message failed to send. Please try again.');
+        } finally {
+          setLoading(false);
+          elements.messageInput.focus();
+        }
+      }
+      
+      async function fetchWithTimeout(url, options) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), CONFIG.requestTimeout);
+        
+        try {
+          const response = await fetch(url, {
+            ...options,
+            signal: controller.signal,
+          });
+          return response;
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+      
+      // ========== HELPERS ==========
+      
+      function getEmailFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('email') || params.get('customer_email') || null;
+      }
+      
+      // ========== EVENT HANDLERS ==========
+      
+      function handleSend() {
+        const content = elements.messageInput.value.trim();
+        if (content) {
+          sendMessage(content);
+        }
+      }
+      
+      function handleKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          handleSend();
+        }
+      }
+      
+      // Global function for quick action buttons
+      window.handleQuickAction = function(action) {
+        elements.messageInput.value = action;
+        handleSend();
+      };
+      
+      // Global function for retry button
+      window.startSession = startSession;
+      
+      // ========== INITIALIZATION ==========
+      
+      function init() {
+        // Event listeners
+        elements.sendButton.addEventListener('click', handleSend);
+        elements.messageInput.addEventListener('keypress', handleKeyPress);
+        
+        // Start session
+        startSession();
+        
+        // Console branding
+        console.log('%c🎬 Neural Ad Forge | Creative Director AI', 
+          'font-size: 16px; font-weight: bold; color: #00CED1;');
+        console.log('%cPowered by Barrios A2I • RAGNAROK v7.0', 
+          'font-size: 12px; color: #94a3b8;');
+      }
+      
+      // Start when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+      
+    })();
+  </script>
+</body>
+</html>
