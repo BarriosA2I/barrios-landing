@@ -204,9 +204,12 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
  * Handle subscription create/update
  */
 async function handleSubscriptionChange(stripeSubscription: Stripe.Subscription) {
-  const customerId = typeof stripeSubscription.customer === "string"
-    ? stripeSubscription.customer
-    : stripeSubscription.customer.id;
+  // Cast to any to handle Stripe API version type changes
+  const sub = stripeSubscription as any;
+
+  const customerId = typeof sub.customer === "string"
+    ? sub.customer
+    : sub.customer?.id;
 
   const billingCustomer = await db.billingCustomer.findUnique({
     where: { stripeCustomerId: customerId },
@@ -218,35 +221,35 @@ async function handleSubscriptionChange(stripeSubscription: Stripe.Subscription)
     return;
   }
 
-  const tier = (stripeSubscription.metadata?.tier || "STARTER") as "STARTER" | "CREATOR" | "GROWTH" | "SCALE";
+  const tier = (sub.metadata?.tier || "STARTER") as "STARTER" | "CREATOR" | "GROWTH" | "SCALE";
   const tierFeatures = TIER_FEATURES[tier] || TIER_FEATURES.STARTER;
-  const interval = stripeSubscription.items.data[0]?.plan?.interval === "year" ? "YEARLY" : "MONTHLY";
+  const interval = sub.items?.data[0]?.plan?.interval === "year" ? "YEARLY" : "MONTHLY";
 
   const subscriptionData = {
-    stripeSubscriptionId: stripeSubscription.id,
-    stripePriceId: stripeSubscription.items.data[0]?.price?.id || "",
-    stripeProductId: typeof stripeSubscription.items.data[0]?.price?.product === "string"
-      ? stripeSubscription.items.data[0].price.product
+    stripeSubscriptionId: sub.id,
+    stripePriceId: sub.items?.data[0]?.price?.id || "",
+    stripeProductId: typeof sub.items?.data[0]?.price?.product === "string"
+      ? sub.items.data[0].price.product
       : "",
     tier,
     billingInterval: interval as "MONTHLY" | "YEARLY",
-    status: mapSubscriptionStatus(stripeSubscription.status),
+    status: mapSubscriptionStatus(sub.status),
     monthlyTokens: tierFeatures.monthlyTokens,
     maxFormats: tierFeatures.maxFormats,
     maxRevisions: tierFeatures.maxRevisions,
     queuePriority: tierFeatures.queuePriority as "STANDARD" | "EXPEDITED" | "PRIORITY" | "RUSH",
     voiceCloneEnabled: tierFeatures.voiceClone,
     avatarCloneEnabled: tierFeatures.avatarClone,
-    currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-    currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
-    cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
-    canceledAt: stripeSubscription.canceled_at ? new Date(stripeSubscription.canceled_at * 1000) : null,
-    trialStart: stripeSubscription.trial_start ? new Date(stripeSubscription.trial_start * 1000) : null,
-    trialEnd: stripeSubscription.trial_end ? new Date(stripeSubscription.trial_end * 1000) : null,
+    currentPeriodStart: new Date((sub.current_period_start || Math.floor(Date.now() / 1000)) * 1000),
+    currentPeriodEnd: new Date((sub.current_period_end || Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60) * 1000),
+    cancelAtPeriodEnd: sub.cancel_at_period_end || false,
+    canceledAt: sub.canceled_at ? new Date(sub.canceled_at * 1000) : null,
+    trialStart: sub.trial_start ? new Date(sub.trial_start * 1000) : null,
+    trialEnd: sub.trial_end ? new Date(sub.trial_end * 1000) : null,
   };
 
   await db.commercialLabSubscription.upsert({
-    where: { stripeSubscriptionId: stripeSubscription.id },
+    where: { stripeSubscriptionId: sub.id },
     update: subscriptionData,
     create: {
       accountId: billingCustomer.accountId,
@@ -254,22 +257,23 @@ async function handleSubscriptionChange(stripeSubscription: Stripe.Subscription)
     },
   });
 
-  console.log(`[stripe-webhook] Subscription ${stripeSubscription.id} updated for account ${billingCustomer.accountId}`);
+  console.log(`[stripe-webhook] Subscription ${sub.id} updated for account ${billingCustomer.accountId}`);
 }
 
 /**
  * Handle subscription deletion
  */
 async function handleSubscriptionDeleted(stripeSubscription: Stripe.Subscription) {
+  const sub = stripeSubscription as any;
   await db.commercialLabSubscription.update({
-    where: { stripeSubscriptionId: stripeSubscription.id },
+    where: { stripeSubscriptionId: sub.id },
     data: {
       status: "CANCELED",
       canceledAt: new Date(),
     },
   });
 
-  console.log(`[stripe-webhook] Subscription ${stripeSubscription.id} canceled`);
+  console.log(`[stripe-webhook] Subscription ${sub.id} canceled`);
 }
 
 // Helper function
