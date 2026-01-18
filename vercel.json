@@ -3,6 +3,9 @@
   "buildCommand": "prisma generate && next build",
   "installCommand": "npm install",
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" }
+  ],
   "functions": {
     "app/api/**/*.ts": {
       "memory": 256,
