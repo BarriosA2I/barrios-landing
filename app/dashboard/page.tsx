@@ -1,15 +1,22 @@
-import { getOrCreateDbUser, getUserAccounts } from '@/lib/auth';
+'use client';
+
+import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
+export default function DashboardPage() {
+  const { user, isLoaded } = useUser();
 
-export default async function DashboardPage() {
-  const user = await getOrCreateDbUser();
-  const accounts = await getUserAccounts();
-  const defaultAccount = accounts[0];
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin h-8 w-8 border-2 border-[#00CED1] border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
+      {/* Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">
           Welcome back, {user?.firstName || 'there'}
@@ -19,7 +26,9 @@ export default async function DashboardPage() {
         </p>
       </div>
 
+      {/* Metric Cards - placeholder values */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Token Balance */}
         <div className="p-6 rounded-xl border border-[#27272a] bg-[#141414]">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-zinc-400">Token Balance</span>
@@ -31,6 +40,7 @@ export default async function DashboardPage() {
           <p className="text-sm text-zinc-500 mt-2">tokens remaining this cycle</p>
         </div>
 
+        {/* Active Productions */}
         <div className="p-6 rounded-xl border border-[#27272a] bg-[#141414]">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-zinc-400">Active Productions</span>
@@ -42,6 +52,7 @@ export default async function DashboardPage() {
           <p className="text-sm text-zinc-500 mt-2">videos being processed</p>
         </div>
 
+        {/* Nexus Installation */}
         <div className="p-6 rounded-xl border border-[#27272a] bg-[#141414]">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-zinc-400">Nexus Installation</span>
@@ -54,6 +65,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* Quick Actions */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
