@@ -1,6 +1,8 @@
 import { getAccountById, getUserAccounts } from "@/lib/auth";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 export default async function BillingPage() {
   const accounts = await getUserAccounts();
   const account = accounts[0] ? await getAccountById(accounts[0].id) : null;

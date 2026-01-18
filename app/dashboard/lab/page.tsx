@@ -1,6 +1,8 @@
 import { getAccountById, getUserAccounts } from '@/lib/auth';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function LabPage() {
   const accounts = await getUserAccounts();
   const account = accounts[0] ? await getAccountById(accounts[0].id) : null;

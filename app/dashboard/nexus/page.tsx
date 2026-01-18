@@ -1,5 +1,7 @@
 import { getAccountById, getUserAccounts } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export default async function NexusPage() {
   const accounts = await getUserAccounts();
   const account = accounts[0] ? await getAccountById(accounts[0].id) : null;

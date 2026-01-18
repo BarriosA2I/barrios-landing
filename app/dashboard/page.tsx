@@ -1,6 +1,8 @@
 import { getOrCreateDbUser, getUserAccounts } from '@/lib/auth';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   const user = await getOrCreateDbUser();
   const accounts = await getUserAccounts();

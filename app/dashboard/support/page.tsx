@@ -1,6 +1,8 @@
 import { MessageSquare, Mail, FileText, ExternalLink, Clock, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 const supportOptions = [
   {
     title: 'Live Chat',
