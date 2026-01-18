@@ -57,7 +57,7 @@ export default async function LabPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className={}>
+                  <span className="px-3 py-1 text-sm rounded-full bg-[#00CED1]/10 text-[#00CED1]">
                     {production.status}
                   </span>
                 </div>
@@ -82,7 +82,7 @@ export default async function LabPage() {
             account.cloneProfiles.map((clone) => (
               <div key={clone.id} className="p-6 rounded-xl border border-[#27272a] bg-[#141414]">
                 <div className="flex items-center gap-4">
-                  <div className={}>
+                  <div className="w-10 h-10 rounded-full bg-[#00CED1]/20 flex items-center justify-center text-[#00CED1] font-semibold">
                     {clone.type === 'VOICE' ? 'V' : 'A'}
                   </div>
                   <div>
