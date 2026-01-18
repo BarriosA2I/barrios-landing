@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
+import { SiteHeader } from '@/components/SiteHeader';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -32,7 +33,10 @@ export default function RootLayout({
     >
       <html lang="en" className="dark">
         <body className="min-h-screen bg-[#0a0a0a] text-white antialiased">
-          {children}
+          <SiteHeader />
+          <div className="pt-16">
+            {children}
+          </div>
         </body>
       </html>
     </ClerkProvider>
