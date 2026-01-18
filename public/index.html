@@ -741,33 +741,15 @@ html, body {
             </div>
           </a>
 
-          <!-- Desktop Navigation -->
-          <nav class="hidden md:flex items-center gap-1">
-            <a href="#pricing" class="px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
-              PRICING
-            </a>
-            <a href="/nexus-personal" class="px-3 py-2 font-mono text-xs tracking-wider group">
-              <span class="text-[#00CED1]">NEXUS</span>
-              <span class="inline-block w-1.5 h-1.5 bg-[#00CED1] rounded-full ml-1.5 shadow-[0_0_6px_#00CED1]"></span>
-            </a>
-            <a href="/creative-director" class="px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
-              COMMERCIAL_LAB
-            </a>
-            <a href="/founder" class="px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
-              FOUNDER
-            </a>
-            <a href="/command-center" class="px-3 py-2 font-mono text-xs tracking-wider group">
-              <span class="text-[#FFD700]">COMMAND</span>
-              <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1.5 shadow-[0_0_6px_#FFD700]"></span>
-            </a>
-
-            <!-- Auth Button -->
-            <div class="flex items-center ml-4 pl-4 border-l border-white/10">
-              <a href="/sign-up" class="px-4 py-2 bg-gradient-to-r from-[#00CED1] to-[#00CED1]/80 text-[#0a0a0a] font-semibold text-xs tracking-wider rounded-lg hover:shadow-[0_0_20px_rgba(0,206,209,0.4)] transition-all duration-300">
-                GET_STARTED
-              </a>
-            </div>
-          </nav>
+          <!-- Auth Button -->
+          <a href="/sign-in" class="hidden md:flex items-center gap-2 px-5 py-2.5 font-mono text-sm text-white rounded-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,191,255,0.4)]" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(0, 191, 255, 0.3);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" x2="3" y1="12" y2="12"></line>
+            </svg>
+            Sign In / Sign Up
+          </a>
 
           <!-- Mobile Menu Button -->
           <button id="mobile-menu-btn" class="md:hidden p-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors" aria-label="Toggle menu">
@@ -780,30 +762,16 @@ html, body {
 
       <!-- Mobile Navigation -->
       <div id="mobile-nav" class="hidden md:hidden bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-white/5">
-        <nav class="px-4 py-3 space-y-1">
-          <a href="#pricing" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
-            PRICING
+        <div class="px-4 py-4">
+          <a href="/sign-in" class="flex items-center justify-center gap-2 w-full py-3 px-5 font-mono text-sm text-white rounded-xl transition-all duration-300" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(0, 191, 255, 0.3);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" x2="3" y1="12" y2="12"></line>
+            </svg>
+            Sign In / Sign Up
           </a>
-          <a href="/nexus-personal" class="block py-2.5 px-3 text-[#00CED1] hover:bg-[#00CED1]/10 rounded-md font-mono text-sm transition-colors">
-            NEXUS <span class="inline-block w-1.5 h-1.5 bg-[#00CED1] rounded-full ml-1 shadow-[0_0_6px_#00CED1]"></span>
-          </a>
-          <a href="/creative-director" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
-            COMMERCIAL_LAB
-          </a>
-          <a href="/founder" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
-            FOUNDER
-          </a>
-          <a href="/command-center" class="block py-2.5 px-3 text-[#FFD700] hover:bg-[#FFD700]/10 rounded-md font-mono text-sm transition-colors">
-            COMMAND <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1 shadow-[0_0_6px_#FFD700]"></span>
-          </a>
-
-          <!-- Mobile Auth Button -->
-          <div class="mt-4 pt-4 border-t border-white/10">
-            <a href="/sign-up" class="block py-2.5 px-3 bg-gradient-to-r from-[#00CED1] to-[#00CED1]/80 text-[#0a0a0a] font-semibold text-sm rounded-md text-center hover:shadow-[0_0_20px_rgba(0,206,209,0.4)] transition-all duration-300">
-              GET_STARTED
-            </a>
-          </div>
-        </nav>
+        </div>
       </div>
     </header>
 
