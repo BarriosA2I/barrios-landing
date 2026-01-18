@@ -117,11 +117,13 @@ export async function POST(request: NextRequest) {
  * - Uses invoice_${id}_cycle_credit as idempotency key
  */
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
-  if (!invoice.subscription) return;
+  // Access subscription via parent field (Stripe API structure change)
+  const invoiceSubscription = (invoice as any).subscription;
+  if (!invoiceSubscription) return;
 
-  const subscriptionId = typeof invoice.subscription === "string"
-    ? invoice.subscription
-    : invoice.subscription.id;
+  const subscriptionId = typeof invoiceSubscription === "string"
+    ? invoiceSubscription
+    : invoiceSubscription.id;
 
   const subscription = await db.commercialLabSubscription.findUnique({
     where: { stripeSubscriptionId: subscriptionId },
