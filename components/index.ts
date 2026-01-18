@@ -26,7 +26,6 @@ export { Footer } from './Footer';
 export { default as AgentVisual, AGENT_VISUALS } from './AgentVisuals';
 export { default as ExplainModeStrip } from './ExplainModeStrip';
 export { default as ThinkingStream } from './ThinkingStream';
-export { default as Header } from './Header';
 export { default as NeuralHive } from './NeuralHive';
 export { default as Pricing } from './Pricing';
 
