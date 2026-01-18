@@ -53,23 +53,6 @@ export function SiteHeader() {
           {/* Auth Buttons */}
           <div className="flex items-center gap-3">
             <SignedOut>
-              {/* Sign In Button - Ghost style with glow hover */}
-              <Link
-                href="/sign-in"
-                className="
-                  relative px-5 py-2 text-sm font-medium text-zinc-400
-                  hover:text-[#00CED1] transition-all duration-300
-                  rounded-lg
-                  hover:bg-[#00CED1]/5
-                  border border-transparent hover:border-[#00CED1]/20
-                  group
-                "
-              >
-                {/* Subtle glow on hover */}
-                <span className="absolute inset-0 rounded-lg bg-[#00CED1]/0 group-hover:bg-[#00CED1]/5 blur-md transition-all duration-300" />
-                <span className="relative">Sign In</span>
-              </Link>
-
               {/* Get Started Button - Primary CTA with gradient glow */}
               <Link
                 href="/sign-up"
