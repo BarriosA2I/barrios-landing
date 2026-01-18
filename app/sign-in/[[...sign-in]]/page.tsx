@@ -243,17 +243,19 @@ export default function SignInPage() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-[#00CED1] to-[#8B5CF6] flex items-center justify-center"
+              className="mx-auto mb-6"
             >
-              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-              </svg>
+              <img
+                src="/brand/barrios-a2i-shard-logo.png"
+                alt="Barrios A2I"
+                className="w-20 h-20 mx-auto object-contain drop-shadow-[0_0_15px_rgba(0,206,209,0.4)]"
+              />
             </motion.div>
             <h1 className="text-2xl font-bold text-[#fafafa] tracking-tight">
               Welcome back
             </h1>
             <p className="text-[#a1a1aa] mt-2">
-              Sign in to your Barrios A2I account
+              Sign in to your <span className="text-[#00CED1]">Barrios A2I</span> account
             </p>
           </div>
 
