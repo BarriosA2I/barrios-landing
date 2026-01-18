@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useSignIn } from '@clerk/nextjs';
+import { useState, useEffect } from 'react';
+import { useSignIn, useAuth } from '@clerk/nextjs';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -175,12 +175,20 @@ function GitHubIcon() {
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
+  const { isSignedIn } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Redirect signed-in users to dashboard
+  useEffect(() => {
+    if (isSignedIn) {
+      router.replace('/dashboard');
+    }
+  }, [isSignedIn, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

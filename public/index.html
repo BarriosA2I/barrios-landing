@@ -22,6 +22,14 @@
 <!-- Iconify -->
 <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<!-- Clerk JS SDK for auth state -->
+<script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_live_Y2xlcmsuYmFycmlvc2EyaS5jb20k"
+  src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+  type="text/javascript"
+></script>
 <!-- Intersection Observer -->
 <script>
 (function () {
@@ -761,11 +769,19 @@ html, body {
               <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1.5 shadow-[0_0_6px_#FFD700]"></span>
             </a>
 
-            <!-- Auth Button -->
-            <div class="flex items-center ml-4 pl-4 border-l border-white/10">
-              <a href="/sign-up" class="px-4 py-2 bg-gradient-to-r from-[#00CED1] to-[#00CED1]/80 text-[#0a0a0a] font-semibold text-xs tracking-wider rounded-lg hover:shadow-[0_0_20px_rgba(0,206,209,0.4)] transition-all duration-300">
-                GET_STARTED
+            <!-- Auth Button (Clerk-aware) -->
+            <div id="desktop-auth" class="flex items-center ml-4 pl-4 border-l border-white/10">
+              <!-- Signed Out State (default) -->
+              <a id="desktop-auth-signedout" href="/sign-in" class="px-4 py-2 bg-gradient-to-r from-[#00CED1] to-[#00CED1]/80 text-[#0a0a0a] font-semibold text-xs tracking-wider rounded-lg hover:shadow-[0_0_20px_rgba(0,206,209,0.4)] transition-all duration-300">
+                Sign In / Sign Up
               </a>
+              <!-- Signed In State (hidden by default, shown by Clerk) -->
+              <div id="desktop-auth-signedin" class="hidden flex items-center gap-3">
+                <a href="/dashboard" class="px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+                  DASHBOARD
+                </a>
+                <div id="clerk-user-button" class="w-9 h-9 rounded-full bg-[#00CED1]/20 border border-[#00CED1]/30 overflow-hidden cursor-pointer hover:shadow-[0_0_15px_rgba(0,206,209,0.4)] transition-all"></div>
+              </div>
             </div>
           </nav>
 
@@ -797,11 +813,21 @@ html, body {
             COMMAND <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1 shadow-[0_0_6px_#FFD700]"></span>
           </a>
 
-          <!-- Mobile Auth Button -->
-          <div class="mt-4 pt-4 border-t border-white/10">
-            <a href="/sign-up" class="block py-2.5 px-3 bg-gradient-to-r from-[#00CED1] to-[#00CED1]/80 text-[#0a0a0a] font-semibold text-sm rounded-md text-center hover:shadow-[0_0_20px_rgba(0,206,209,0.4)] transition-all duration-300">
-              GET_STARTED
+          <!-- Mobile Auth Button (Clerk-aware) -->
+          <div id="mobile-auth" class="mt-4 pt-4 border-t border-white/10">
+            <!-- Signed Out State -->
+            <a id="mobile-auth-signedout" href="/sign-in" class="block py-2.5 px-3 bg-gradient-to-r from-[#00CED1] to-[#00CED1]/80 text-[#0a0a0a] font-semibold text-sm rounded-md text-center hover:shadow-[0_0_20px_rgba(0,206,209,0.4)] transition-all duration-300">
+              Sign In / Sign Up
             </a>
+            <!-- Signed In State -->
+            <div id="mobile-auth-signedin" class="hidden space-y-2">
+              <a href="/dashboard" class="block py-2.5 px-3 text-[#00CED1] hover:bg-[#00CED1]/10 rounded-md font-mono text-sm transition-colors text-center">
+                DASHBOARD
+              </a>
+              <button id="mobile-signout-btn" class="w-full py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">
+                Sign Out
+              </button>
+            </div>
           </div>
         </nav>
       </div>
@@ -820,6 +846,69 @@ html, body {
           nav.classList.toggle('hidden');
         });
       }
+    })();
+    </script>
+
+    <!-- Clerk Auth State Script -->
+    <script>
+    (function() {
+      // Wait for Clerk to load
+      window.addEventListener('load', async function() {
+        // Wait a bit for Clerk SDK to initialize
+        let attempts = 0;
+        const maxAttempts = 20;
+
+        const initClerk = async () => {
+          if (typeof window.Clerk === 'undefined') {
+            attempts++;
+            if (attempts < maxAttempts) {
+              setTimeout(initClerk, 250);
+            }
+            return;
+          }
+
+          try {
+            await window.Clerk.load();
+
+            const user = window.Clerk.user;
+
+            if (user) {
+              // User is signed in - show signed in state
+              const desktopSignedOut = document.getElementById('desktop-auth-signedout');
+              const desktopSignedIn = document.getElementById('desktop-auth-signedin');
+              const mobileSignedOut = document.getElementById('mobile-auth-signedout');
+              const mobileSignedIn = document.getElementById('mobile-auth-signedin');
+              const userBtn = document.getElementById('clerk-user-button');
+
+              if (desktopSignedOut) desktopSignedOut.classList.add('hidden');
+              if (desktopSignedIn) desktopSignedIn.classList.remove('hidden');
+              if (mobileSignedOut) mobileSignedOut.classList.add('hidden');
+              if (mobileSignedIn) mobileSignedIn.classList.remove('hidden');
+
+              // Set user avatar
+              if (userBtn && user.imageUrl) {
+                userBtn.innerHTML = '<img src="' + user.imageUrl + '" alt="Profile" class="w-full h-full object-cover" />';
+                userBtn.addEventListener('click', () => {
+                  window.location.href = '/dashboard';
+                });
+              }
+
+              // Handle sign out
+              const signOutBtn = document.getElementById('mobile-signout-btn');
+              if (signOutBtn) {
+                signOutBtn.addEventListener('click', async () => {
+                  await window.Clerk.signOut();
+                  window.location.reload();
+                });
+              }
+            }
+          } catch (err) {
+            console.log('Clerk init:', err);
+          }
+        };
+
+        initClerk();
+      });
     })();
     </script>
 
