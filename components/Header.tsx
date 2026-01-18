@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 /**
  * COMMAND DOCK HEADER
@@ -71,21 +72,26 @@ export default function Header() {
           ))}
         </ul>
 
-        {/* Right: Command Actions */}
+        {/* Right: Auth Actions */}
         <div className="flex items-center gap-4">
-          <button className="hidden lg:block text-xs font-mono text-gray-500 hover:text-[#ffd700] transition-colors">
-            [ ADMIN_COMMAND ]
-          </button>
-          <motion.button
-            whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(0, 191, 255, 0.4)" }}
-            whileTap={{ scale: 0.98 }}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-[#00bfff] to-[#0080ff] text-white text-sm font-bold shadow-lg flex items-center gap-2"
+          <Link
+            href="/sign-in"
+            className="hidden lg:block text-sm font-medium text-gray-400 hover:text-[#00CED1] transition-colors"
           >
-            Initialize Command
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 6H10M10 6L7 9M10 6L7 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </motion.button>
+            Sign In
+          </Link>
+          <Link href="/sign-up">
+            <motion.button
+              whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(0, 206, 209, 0.4)" }}
+              whileTap={{ scale: 0.98 }}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-[#00CED1] to-[#8B5CF6] text-white text-sm font-bold shadow-lg flex items-center gap-2"
+            >
+              Get Started
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 6H10M10 6L7 9M10 6L7 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </motion.button>
+          </Link>
         </div>
       </motion.nav>
     </header>
