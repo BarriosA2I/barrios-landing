@@ -74,12 +74,6 @@ export default function Header() {
 
         {/* Right: Auth Actions */}
         <div className="flex items-center gap-4">
-          <Link
-            href="/sign-in"
-            className="hidden lg:block text-sm font-medium text-gray-400 hover:text-[#00CED1] transition-colors"
-          >
-            Sign In
-          </Link>
           <Link href="/sign-up">
             <motion.button
               whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(0, 206, 209, 0.4)" }}
