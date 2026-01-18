@@ -1,7 +1,10 @@
 // =============================================================================
-// BARRIOS A2I - STRIPE PAYMENT INTEGRATION SCHEMA
-// Production-grade Prisma schema for Commercial Lab subscriptions,
-// one-time purchases, token allocations, and production job queue
+// BARRIOS A2I - ENTERPRISE USER PROFILE SYSTEM
+// Production-grade Prisma schema for:
+// - Clerk passwordless auth with JWT validation
+// - Commercial Lab (token ledger + production queue + library + clone mgmt)
+// - Nexus Personal (installation lifecycle + maintenance + support)
+// - Stripe webhook-driven ledgering with idempotency
 // =============================================================================
 
 generator client {
@@ -11,18 +14,57 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")  // Required for Supabase with pgBouncer
+  directUrl = env("DIRECT_URL")
 }
 
 // =============================================================================
 // ENUMS
 // =============================================================================
 
-enum SubscriptionTier {
+// User & Account Enums
+enum AccountType {
+  PERSONAL
+  BUSINESS
+  ENTERPRISE
+}
+
+enum AccountRole {
+  OWNER
+  ADMIN
+  MEMBER
+  BILLING
+}
+
+// Billing Enums
+enum PaymentMethodType {
+  CARD
+  BANK_ACCOUNT
+  LINK
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  VOID
+  UNCOLLECTIBLE
+}
+
+// Commercial Lab Enums
+enum LabTier {
   STARTER    // $449/mo - 8 tokens
   CREATOR    // $899/mo - 18 tokens
   GROWTH     // $1699/mo - 32 tokens
   SCALE      // $3199/mo - 64 tokens
+}
+
+enum LabSubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  TRIALING
+  PAUSED
 }
 
 enum BillingInterval {
@@ -30,37 +72,19 @@ enum BillingInterval {
   YEARLY
 }
 
-enum SubscriptionStatus {
-  ACTIVE
-  PAST_DUE
-  CANCELED
-  INCOMPLETE
-  INCOMPLETE_EXPIRED
-  TRIALING
-  UNPAID
-  PAUSED
+enum TokenLedgerType {
+  CREDIT_SUBSCRIPTION     // Monthly subscription credit
+  CREDIT_TOPUP           // One-time token pack purchase
+  CREDIT_PRORATION       // Proration credit on upgrade
+  CREDIT_BONUS           // Promotional/referral credit
+  CREDIT_REFUND          // Refund credit
+  DEBIT_PRODUCTION       // Production job consumption
+  DEBIT_EXPIRATION       // Expired unused tokens
+  DEBIT_ADJUSTMENT       // Manual adjustment
 }
 
-enum PurchaseStatus {
-  PENDING
-  COMPLETED
-  FAILED
-  REFUNDED
-}
-
-enum ProductCategory {
-  COMMERCIAL_LAB      // Subscription tiers
-  LAB_ONE_TIME        // Single Lab Test
-  IDENTITY_ADDONS     // Voice Clone, Avatar Clone
-  PRIORITY_ADDONS     // Rush Delivery, Priority Queue
-  TOKEN_PACKS         // 8, 16, 32 token packs
-  EXTRAS              // Revision Pack, Variant Pack
-  NEXUS_PERSONAL      // Installation + maintenance
-  CONSULTATION        // Paid strategy calls, architecture reviews
-  ENTERPRISE          // Custom enterprise packages
-}
-
-enum JobStatus {
+enum ProductionStatus {
+  DRAFT
   QUEUED
   PROCESSING
   RENDERING
@@ -69,11 +93,21 @@ enum JobStatus {
   CANCELLED
 }
 
-enum JobPriority {
+enum ProductionPriority {
   STANDARD    // 5-day queue (Starter)
   EXPEDITED   // 3-day queue (Creator)
   PRIORITY    // 48h queue (Growth)
-  RUSH        // 24h queue (Scale) or Rush Delivery add-on
+  RUSH        // 24h queue (Scale)
+}
+
+enum AssetType {
+  VIDEO_FINAL
+  VIDEO_PREVIEW
+  THUMBNAIL
+  CAPTION_SRT
+  CAPTION_VTT
+  AUDIO_TRACK
+  SCENE_IMAGE
 }
 
 enum CloneType {
@@ -86,451 +120,930 @@ enum CloneStatus {
   PROCESSING
   READY
   FAILED
+  ARCHIVED
 }
 
-// Tier 2 Intelligence: Customer Lifecycle Tracking
-enum CustomerState {
-  PROSPECT      // Created but no purchase
-  TRIAL         // In trial period
-  ACTIVE        // Active subscription
-  CHURNED       // Canceled subscription
-  POWER_USER    // > $5k LTV or multiple addons
-  AT_RISK       // Failed payment or low usage
-  ENTERPRISE    // Custom deal / white glove
+// Nexus Personal Enums
+enum NexusPhase {
+  INTAKE
+  SCHEDULED
+  IN_PROGRESS
+  TESTING
+  HANDOFF
+  COMPLETED
+  CANCELLED
 }
 
-// Tier 1 Revenue: Checkout Intent Classification
-enum CheckoutIntent {
-  SUBSCRIPTION  // Standard subscription flow
-  TRIAL         // Low friction trial
-  CONSULTATION  // Calendly bridge (paid strategy call)
-  UPGRADE       // Existing customer tier change
-  TOP_UP        // Token refill / addon purchase
-  ENTERPRISE    // Custom enterprise deal
+enum IntakeField {
+  BUSINESS_NAME
+  INDUSTRY
+  TARGET_AUDIENCE
+  BRAND_VOICE
+  GOALS
+  EXISTING_SYSTEMS
+  INTEGRATIONS
+  TIMELINE
+  BUDGET
+  SPECIAL_REQUIREMENTS
+}
+
+enum MaintenanceInterval {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum MaintenanceStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  PAUSED
+}
+
+enum AddOnType {
+  VOICE_CLONE
+  AVATAR_CLONE
+  PRIORITY_SUPPORT
+  CUSTOM_INTEGRATION
+  TRAINING_SESSION
+  DATA_MIGRATION
+}
+
+enum SessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum ChecklistCategory {
+  PRE_INSTALL
+  INSTALLATION
+  CONFIGURATION
+  TESTING
+  HANDOFF
+  POST_INSTALL
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_CUSTOMER
+  WAITING_INTERNAL
+  RESOLVED
+  CLOSED
+}
+
+enum TicketCategory {
+  TECHNICAL
+  BILLING
+  FEATURE_REQUEST
+  BUG_REPORT
+  GENERAL
+}
+
+// Stripe Event Processing
+enum StripeEventStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+  SKIPPED
 }
 
 // =============================================================================
-// CORE TABLES
+// USER & ACCOUNT MODELS
 // =============================================================================
 
-model Customer {
-  id                String         @id @default(cuid())
-  email             String         @unique
-  name              String?
-  company           String?
+model User {
+  id                String    @id @default(cuid())
+  clerkId           String    @unique @map("clerk_id")
+  email             String    @unique
+  emailVerified     Boolean   @default(false) @map("email_verified")
+  firstName         String?   @map("first_name")
+  lastName          String?   @map("last_name")
+  avatarUrl         String?   @map("avatar_url")
   phone             String?
+  phoneVerified     Boolean   @default(false) @map("phone_verified")
 
-  // Stripe sync
-  stripeCustomerId  String?        @unique @map("stripe_customer_id")
-
-  // Tier 2: Lifecycle Intelligence
-  lifecycleState    CustomerState  @default(PROSPECT) @map("lifecycle_state")
-  lifetimeValue     Int            @default(0) @map("lifetime_value")    // stored in cents
-  acquisitionSource String?        @map("acquisition_source")            // utm_source, referral, etc
-  riskScore         Int            @default(0) @map("risk_score")        // 0-100, higher = more at risk
-  lastActivityAt    DateTime?      @map("last_activity_at")
-
-  // Calendly Integration for Consultation flows
-  calendlyUrl       String?        @map("calendly_url")
-  lastConsultation  DateTime?      @map("last_consultation")
-
-  // Engagement metrics
-  totalJobsCreated  Int            @default(0) @map("total_jobs_created")
-  avgJobsPerMonth   Float          @default(0) @map("avg_jobs_per_month")
+  // Preferences
+  timezone          String    @default("America/New_York")
+  locale            String    @default("en-US")
 
   // Relations
-  subscriptions     Subscription[]
-  tokenAllocations  TokenAllocation[]
-  purchases         Purchase[]
-  productionJobs    ProductionJob[]
-  cloneAssets       CloneAsset[]
-  consultations     Consultation[]
-
-  // Timestamps
-  createdAt         DateTime       @default(now()) @map("created_at")
-  updatedAt         DateTime       @updatedAt @map("updated_at")
-
-  @@index([stripeCustomerId])
-  @@index([email])
-  @@index([lifecycleState])
-  @@index([lifetimeValue])
-  @@map("customers")
-}
-
-model Subscription {
-  id                    String             @id @default(cuid())
-  customerId            String             @map("customer_id")
-  customer              Customer           @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  // Stripe sync
-  stripeSubscriptionId  String             @unique @map("stripe_subscription_id")
-  stripePriceId         String             @map("stripe_price_id")
-  stripeProductId       String             @map("stripe_product_id")
-
-  // Subscription details
-  tier                  SubscriptionTier
-  billingInterval       BillingInterval    @map("billing_interval")
-  status                SubscriptionStatus
-
-  // Features from tier
-  monthlyTokens         Int                @map("monthly_tokens")
-  maxFormats            Int                @map("max_formats")
-  maxRevisions          Int                @map("max_revisions")
-  queuePriority         JobPriority        @map("queue_priority")
-  voiceCloneEnabled     Boolean            @default(false) @map("voice_clone_enabled")
-  avatarCloneEnabled    Boolean            @default(false) @map("avatar_clone_enabled")
-
-  // Billing dates
-  currentPeriodStart    DateTime           @map("current_period_start")
-  currentPeriodEnd      DateTime           @map("current_period_end")
-  cancelAtPeriodEnd     Boolean            @default(false) @map("cancel_at_period_end")
-  canceledAt            DateTime?          @map("canceled_at")
-
-  // Trial
-  trialStart            DateTime?          @map("trial_start")
-  trialEnd              DateTime?          @map("trial_end")
-
-  // Timestamps
-  createdAt             DateTime           @default(now()) @map("created_at")
-  updatedAt             DateTime           @updatedAt @map("updated_at")
-
-  @@index([customerId])
-  @@index([stripeSubscriptionId])
-  @@index([status])
-  @@map("subscriptions")
-}
-
-model TokenAllocation {
-  id              String    @id @default(cuid())
-  customerId      String    @map("customer_id")
-  customer        Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  // Token pools (kept separate for tracking)
-  subscriptionTokens  Int   @default(0) @map("subscription_tokens")  // Reset monthly
-  purchasedTokens     Int   @default(0) @map("purchased_tokens")     // Roll over forever
-  bonusTokens         Int   @default(0) @map("bonus_tokens")         // Promotional, may expire
-
-  // Expiration for bonus tokens
-  bonusExpiresAt      DateTime? @map("bonus_expires_at")
-
-  // Last reset (for subscription tokens)
-  lastResetAt         DateTime? @map("last_reset_at")
-
-  // Version for optimistic locking (MVCC)
-  version             Int       @default(0)
-
-  // Timestamps
-  createdAt           DateTime  @default(now()) @map("created_at")
-  updatedAt           DateTime  @updatedAt @map("updated_at")
-
-  @@unique([customerId])
-  @@index([customerId])
-  @@map("token_allocations")
-}
-
-model Purchase {
-  id                    String          @id @default(cuid())
-  customerId            String          @map("customer_id")
-  customer              Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  // Stripe sync
-  stripePaymentIntentId String?         @unique @map("stripe_payment_intent_id")
-  stripeInvoiceId       String?         @map("stripe_invoice_id")
-  stripeSessionId       String?         @unique @map("stripe_session_id")
-
-  // Tier 1: Checkout Intent Tracking
-  intent                CheckoutIntent  @default(SUBSCRIPTION)
-
-  // Product details
-  productCategory       ProductCategory @map("product_category")
-  productId             String          @map("product_id")
-  productName           String          @map("product_name")
-
-  // Pricing
-  amountCents           Int             @map("amount_cents")
-  currency              String          @default("usd")
-
-  // Status
-  status                PurchaseStatus
-
-  // Consultation/Scheduling Integration
-  schedulingId          String?         @map("scheduling_id")     // Calendly Event ID
-  scheduledAt           DateTime?       @map("scheduled_at")      // When the call is booked
-  consultationId        String?         @map("consultation_id")   // Link to Consultation record
-
-  // Credit tracking (consultation fee credited to subscription)
-  creditedToSubscription String?        @map("credited_to_subscription")
-  creditApplied         Boolean         @default(false) @map("credit_applied")
-
-  // Fulfillment tracking
-  fulfilledAt           DateTime?       @map("fulfilled_at")
-  fulfillmentData       Json?           @map("fulfillment_data")
-
-  // Metadata from Stripe
-  metadata              Json?
-
-  // Timestamps
-  createdAt             DateTime        @default(now()) @map("created_at")
-  updatedAt             DateTime        @updatedAt @map("updated_at")
-
-  @@index([customerId])
-  @@index([stripeSessionId])
-  @@index([status])
-  @@index([productCategory])
-  @@index([intent])
-  @@map("purchases")
-}
-
-model ProductionJob {
-  id              String      @id @default(cuid())
-  customerId      String      @map("customer_id")
-  customer        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  // Job configuration
-  title           String
-  script          String      @db.Text
-  targetAudience  String?     @map("target_audience")
-  brandVoice      String?     @map("brand_voice")
-
-  // Format & output
-  format          String      @default("16:9")  // 16:9, 9:16, 1:1, 4:5
-  duration        Int         @default(64)       // seconds (8 scenes x 8s)
-
-  // Token consumption
-  tokensConsumed  Int         @map("tokens_consumed")
-
-  // Status & priority
-  status          JobStatus   @default(QUEUED)
-  priority        JobPriority @default(STANDARD)
-
-  // Queue management
-  queuePosition   Int?        @map("queue_position")
-  estimatedStart  DateTime?   @map("estimated_start")
-
-  // Processing timestamps
-  startedAt       DateTime?   @map("started_at")
-  completedAt     DateTime?   @map("completed_at")
-
-  // Output
-  outputUrls      Json?       @map("output_urls")
-
-  // Error tracking
-  errorMessage    String?     @map("error_message")
-  retryCount      Int         @default(0) @map("retry_count")
-
-  // Clone assets used
-  voiceCloneId    String?     @map("voice_clone_id")
-  avatarCloneId   String?     @map("avatar_clone_id")
-
-  // Version for optimistic locking
-  version         Int         @default(0)
-
-  // Timestamps
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
-
-  @@index([customerId])
-  @@index([status])
-  @@index([priority, createdAt])
-  @@index([queuePosition])
-  @@map("production_jobs")
-}
-
-model CloneAsset {
-  id              String      @id @default(cuid())
-  customerId      String      @map("customer_id")
-  customer        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  // Clone details
-  type            CloneType
-  name            String
-  status          CloneStatus @default(PENDING_UPLOAD)
-
-  // Storage
-  sourceFileUrl   String?     @map("source_file_url")
-  modelFileUrl    String?     @map("model_file_url")
-  previewUrl      String?     @map("preview_url")
-
-  // Processing
-  processedAt     DateTime?   @map("processed_at")
-  errorMessage    String?     @map("error_message")
-
-  // Metadata (voice characteristics, avatar settings)
-  metadata        Json?
-
-  // Premium tier tracking
-  isPremium       Boolean     @default(false) @map("is_premium")
-
-  // Timestamps
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
-
-  @@index([customerId])
-  @@index([type])
-  @@index([status])
-  @@map("clone_assets")
-}
-
-// =============================================================================
-// AUDIT & EVENT TRACKING
-// =============================================================================
-
-model WebhookEvent {
-  id                String    @id @default(cuid())
-
-  // Stripe event details
-  stripeEventId     String    @unique @map("stripe_event_id")
-  eventType         String    @map("event_type")
-
-  // Processing status
-  processed         Boolean   @default(false)
-  processedAt       DateTime? @map("processed_at")
-
-  // Error tracking
-  errorMessage      String?   @map("error_message")
-  retryCount        Int       @default(0) @map("retry_count")
-
-  // Raw payload (for debugging/replay)
-  payload           Json
+  accounts          AccountMember[]
+  ownedAccounts     Account[] @relation("AccountOwner")
+  ticketMessages    TicketMessage[]
 
   // Timestamps
   createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  lastLoginAt       DateTime? @map("last_login_at")
 
-  @@index([stripeEventId])
-  @@index([eventType])
-  @@index([processed])
-  @@map("webhook_events")
+  @@index([clerkId])
+  @@index([email])
+  @@map("users")
 }
 
-model TokenTransaction {
-  id              String    @id @default(cuid())
-  customerId      String    @map("customer_id")
+model Account {
+  id                String          @id @default(cuid())
+  name              String
+  slug              String          @unique
+  type              AccountType     @default(PERSONAL)
 
-  // Transaction type
-  type            String    // 'subscription_reset', 'purchase', 'consumption', 'bonus', 'refund'
+  // Owner
+  ownerId           String          @map("owner_id")
+  owner             User            @relation("AccountOwner", fields: [ownerId], references: [id], onDelete: Cascade)
 
-  // Token changes (positive = credit, negative = debit)
-  subscriptionDelta   Int   @default(0) @map("subscription_delta")
-  purchasedDelta      Int   @default(0) @map("purchased_delta")
-  bonusDelta          Int   @default(0) @map("bonus_delta")
-
-  // Balances after transaction
-  subscriptionBalance Int   @map("subscription_balance")
-  purchasedBalance    Int   @map("purchased_balance")
-  bonusBalance        Int   @map("bonus_balance")
-
-  // Reference
-  referenceType   String?   @map("reference_type")  // 'job', 'purchase', 'subscription'
-  referenceId     String?   @map("reference_id")
-
-  // Metadata
-  description     String?
-  metadata        Json?
+  // Relations
+  members           AccountMember[]
+  billingCustomer   BillingCustomer?
+  labSubscription   CommercialLabSubscription?
+  productions       Production[]
+  cloneProfiles     CloneProfile[]
+  nexusInstallation NexusInstallation?
+  supportTickets    SupportTicket[]
+  referralsGiven    Referral[]      @relation("ReferrerAccount")
+  referralsReceived Referral[]      @relation("ReferredAccount")
 
   // Timestamps
-  createdAt       DateTime  @default(now()) @map("created_at")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
 
-  @@index([customerId])
+  @@index([ownerId])
+  @@index([slug])
+  @@map("accounts")
+}
+
+model AccountMember {
+  id          String      @id @default(cuid())
+
+  accountId   String      @map("account_id")
+  account     Account     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  userId      String      @map("user_id")
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  role        AccountRole @default(MEMBER)
+
+  // Timestamps
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@unique([accountId, userId])
+  @@index([accountId])
+  @@index([userId])
+  @@map("account_members")
+}
+
+// =============================================================================
+// BILLING MODELS
+// =============================================================================
+
+model BillingCustomer {
+  id                  String          @id @default(cuid())
+
+  accountId           String          @unique @map("account_id")
+  account             Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Stripe sync
+  stripeCustomerId    String          @unique @map("stripe_customer_id")
+
+  // Billing info
+  billingEmail        String?         @map("billing_email")
+  billingName         String?         @map("billing_name")
+  billingPhone        String?         @map("billing_phone")
+  taxId               String?         @map("tax_id")
+
+  // Address
+  addressLine1        String?         @map("address_line1")
+  addressLine2        String?         @map("address_line2")
+  city                String?
+  state               String?
+  postalCode          String?         @map("postal_code")
+  country             String          @default("US")
+
+  // Metrics
+  lifetimeValue       Int             @default(0) @map("lifetime_value")
+
+  // Relations
+  paymentMethods      PaymentMethod[]
+  invoices            Invoice[]
+
+  // Timestamps
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+
+  @@index([stripeCustomerId])
+  @@map("billing_customers")
+}
+
+model PaymentMethod {
+  id                      String              @id @default(cuid())
+
+  billingCustomerId       String              @map("billing_customer_id")
+  billingCustomer         BillingCustomer     @relation(fields: [billingCustomerId], references: [id], onDelete: Cascade)
+
+  // Stripe sync
+  stripePaymentMethodId   String              @unique @map("stripe_payment_method_id")
+
+  type                    PaymentMethodType
+  isDefault               Boolean             @default(false) @map("is_default")
+
+  // Card details (if type = CARD)
+  cardBrand               String?             @map("card_brand")
+  cardLast4               String?             @map("card_last4")
+  cardExpMonth            Int?                @map("card_exp_month")
+  cardExpYear             Int?                @map("card_exp_year")
+
+  // Timestamps
+  createdAt               DateTime            @default(now()) @map("created_at")
+  updatedAt               DateTime            @updatedAt @map("updated_at")
+
+  @@index([billingCustomerId])
+  @@map("payment_methods")
+}
+
+model Invoice {
+  id                  String          @id @default(cuid())
+
+  billingCustomerId   String          @map("billing_customer_id")
+  billingCustomer     BillingCustomer @relation(fields: [billingCustomerId], references: [id], onDelete: Cascade)
+
+  // Stripe sync
+  stripeInvoiceId     String          @unique @map("stripe_invoice_id")
+
+  // Invoice details
+  number              String?
+  status              InvoiceStatus   @default(DRAFT)
+  amountDue           Int             @map("amount_due")
+  amountPaid          Int             @default(0) @map("amount_paid")
+  currency            String          @default("usd")
+
+  // Description
+  description         String?
+
+  // URLs
+  hostedInvoiceUrl    String?         @map("hosted_invoice_url")
+  invoicePdf          String?         @map("invoice_pdf")
+
+  // Dates
+  periodStart         DateTime?       @map("period_start")
+  periodEnd           DateTime?       @map("period_end")
+  dueDate             DateTime?       @map("due_date")
+  paidAt              DateTime?       @map("paid_at")
+
+  // Timestamps
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+
+  @@index([billingCustomerId])
+  @@index([stripeInvoiceId])
+  @@map("invoices")
+}
+
+// =============================================================================
+// COMMERCIAL LAB MODELS
+// =============================================================================
+
+model CommercialLabSubscription {
+  id                    String                  @id @default(cuid())
+
+  accountId             String                  @unique @map("account_id")
+  account               Account                 @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Stripe sync
+  stripeSubscriptionId  String                  @unique @map("stripe_subscription_id")
+  stripePriceId         String                  @map("stripe_price_id")
+  stripeProductId       String                  @map("stripe_product_id")
+
+  // Subscription details
+  tier                  LabTier
+  billingInterval       BillingInterval         @map("billing_interval")
+  status                LabSubscriptionStatus   @default(ACTIVE)
+
+  // Tier features
+  monthlyTokens         Int                     @map("monthly_tokens")
+  maxFormats            Int                     @map("max_formats")
+  maxRevisions          Int                     @map("max_revisions")
+  queuePriority         ProductionPriority      @map("queue_priority")
+  voiceCloneEnabled     Boolean                 @default(false) @map("voice_clone_enabled")
+  avatarCloneEnabled    Boolean                 @default(false) @map("avatar_clone_enabled")
+
+  // Billing dates
+  currentPeriodStart    DateTime                @map("current_period_start")
+  currentPeriodEnd      DateTime                @map("current_period_end")
+  cancelAtPeriodEnd     Boolean                 @default(false) @map("cancel_at_period_end")
+  canceledAt            DateTime?               @map("canceled_at")
+
+  // Trial
+  trialStart            DateTime?               @map("trial_start")
+  trialEnd              DateTime?               @map("trial_end")
+
+  // Relations
+  cycles                LabSubscriptionCycle[]
+
+  // Timestamps
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+
+  @@index([stripeSubscriptionId])
+  @@index([status])
+  @@map("commercial_lab_subscriptions")
+}
+
+model LabSubscriptionCycle {
+  id                String                      @id @default(cuid())
+
+  subscriptionId    String                      @map("subscription_id")
+  subscription      CommercialLabSubscription   @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  // Cycle details
+  cycleNumber       Int                         @map("cycle_number")
+  periodStart       DateTime                    @map("period_start")
+  periodEnd         DateTime                    @map("period_end")
+
+  // Token allocation for this cycle
+  tokensAllocated   Int                         @map("tokens_allocated")
+  tokensUsed        Int                         @default(0) @map("tokens_used")
+  tokensExpired     Int                         @default(0) @map("tokens_expired")
+
+  // Stripe invoice reference
+  stripeInvoiceId   String?                     @unique @map("stripe_invoice_id")
+
+  // Relations
+  ledgerEntries     TokenLedgerEntry[]
+
+  // Timestamps
+  createdAt         DateTime                    @default(now()) @map("created_at")
+  updatedAt         DateTime                    @updatedAt @map("updated_at")
+
+  @@unique([subscriptionId, cycleNumber])
+  @@index([subscriptionId])
+  @@index([periodStart, periodEnd])
+  @@map("lab_subscription_cycles")
+}
+
+model TokenLedgerEntry {
+  id                String                  @id @default(cuid())
+
+  cycleId           String                  @map("cycle_id")
+  cycle             LabSubscriptionCycle    @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  // Entry details
+  type              TokenLedgerType
+  amount            Int                     // positive for credits, negative for debits
+  balance           Int                     // running balance after this entry
+
+  // Reference
+  referenceType     String?                 @map("reference_type")
+  referenceId       String?                 @map("reference_id")
+
+  // Idempotency
+  idempotencyKey    String                  @unique @map("idempotency_key")
+
+  // Description
+  description       String?
+  metadata          Json?
+
+  // Timestamps
+  createdAt         DateTime                @default(now()) @map("created_at")
+
+  @@index([cycleId])
+  @@index([idempotencyKey])
   @@index([type])
-  @@index([createdAt])
-  @@map("token_transactions")
+  @@map("token_ledger_entries")
 }
 
-// =============================================================================
-// CONSULTATION & LIFECYCLE INTELLIGENCE
-// =============================================================================
-
-enum ConsultationStatus {
-  PENDING_PAYMENT   // Checkout started
-  PAID              // Payment received, awaiting scheduling
-  SCHEDULED         // Calendly booking confirmed
-  COMPLETED         // Call happened
-  CANCELLED         // Customer cancelled
-  NO_SHOW           // Customer didn't show
-  CREDITED          // Fee credited to subscription
-}
-
-enum ConsultationType {
-  STRATEGY_45       // 45-min strategy session
-  ARCHITECTURE_90   // 90-min deep architecture review
-  ONBOARDING        // Post-purchase onboarding call
-  SUPPORT           // Technical support escalation
-  ENTERPRISE        // Custom enterprise consultation
-}
-
-model Consultation {
+model Production {
   id                String              @id @default(cuid())
-  customerId        String              @map("customer_id")
-  customer          Customer            @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  // Consultation details
-  type              ConsultationType
-  status            ConsultationStatus  @default(PENDING_PAYMENT)
+  accountId         String              @map("account_id")
+  account           Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  // Pricing & credit
-  amountCents       Int                 @map("amount_cents")
-  creditableToTiers String[]            @map("creditable_to_tiers") // ['SCALE', 'GROWTH']
-  creditApplied     Boolean             @default(false) @map("credit_applied")
-  creditedToId      String?             @map("credited_to_id")       // subscription_id if credited
+  // Production details
+  title             String
+  script            String              @db.Text
+  targetAudience    String?             @map("target_audience")
+  brandVoice        String?             @map("brand_voice")
 
-  // Scheduling (Calendly integration)
-  calendlyEventId   String?             @unique @map("calendly_event_id")
-  calendlyUrl       String?             @map("calendly_url")
-  scheduledAt       DateTime?           @map("scheduled_at")
-  duration          Int                 @default(45)                  // minutes
-  timezone          String?
-  meetingUrl        String?             @map("meeting_url")           // Google Meet / Zoom link
+  // Format & output
+  format            String              @default("16:9")
+  duration          Int                 @default(64)
 
-  // Execution
+  // Token consumption
+  tokensRequired    Int                 @map("tokens_required")
+  tokensConsumed    Int                 @default(0) @map("tokens_consumed")
+
+  // Status & priority
+  status            ProductionStatus    @default(DRAFT)
+  priority          ProductionPriority  @default(STANDARD)
+
+  // Queue management
+  queuePosition     Int?                @map("queue_position")
+  estimatedStart    DateTime?           @map("estimated_start")
+  estimatedComplete DateTime?           @map("estimated_complete")
+
+  // Processing timestamps
+  queuedAt          DateTime?           @map("queued_at")
   startedAt         DateTime?           @map("started_at")
   completedAt       DateTime?           @map("completed_at")
 
-  // Outcome tracking
-  notes             String?             @db.Text
-  outcome           String?                                           // 'subscribed', 'considering', 'not_fit'
-  followUpDate      DateTime?           @map("follow_up_date")
+  // Clone references
+  voiceCloneId      String?             @map("voice_clone_id")
+  voiceClone        CloneProfile?       @relation("VoiceClone", fields: [voiceCloneId], references: [id])
+  avatarCloneId     String?             @map("avatar_clone_id")
+  avatarClone       CloneProfile?       @relation("AvatarClone", fields: [avatarCloneId], references: [id])
 
-  // Payment reference
-  purchaseId        String?             @map("purchase_id")
-  stripeSessionId   String?             @map("stripe_session_id")
+  // Error tracking
+  errorMessage      String?             @map("error_message")
+  retryCount        Int                 @default(0) @map("retry_count")
+
+  // Relations
+  assets            ProductionAsset[]
+
+  // Version for optimistic locking
+  version           Int                 @default(0)
 
   // Timestamps
   createdAt         DateTime            @default(now()) @map("created_at")
   updatedAt         DateTime            @updatedAt @map("updated_at")
 
-  @@index([customerId])
+  @@index([accountId])
   @@index([status])
-  @@index([scheduledAt])
-  @@index([calendlyEventId])
-  @@map("consultations")
+  @@index([priority, queuedAt])
+  @@map("productions")
 }
 
-// Customer lifecycle events for analytics and automation
-model CustomerEvent {
-  id              String    @id @default(cuid())
-  customerId      String    @map("customer_id")
+model ProductionAsset {
+  id              String          @id @default(cuid())
 
-  // Event classification
-  eventType       String    @map("event_type")  // 'state_change', 'action', 'milestone'
-  eventName       String    @map("event_name")  // 'upgraded_tier', 'completed_first_job', etc
+  productionId    String          @map("production_id")
+  production      Production      @relation(fields: [productionId], references: [id], onDelete: Cascade)
 
-  // State transition (for state_change events)
-  previousState   String?   @map("previous_state")
-  newState        String?   @map("new_state")
+  // Asset details
+  type            AssetType
+  filename        String
+  mimeType        String          @map("mime_type")
+  sizeBytes       Int             @map("size_bytes")
 
-  // Event data
+  // Storage
+  storageUrl      String          @map("storage_url")
+  cdnUrl          String?         @map("cdn_url")
+
+  // Metadata
   metadata        Json?
 
-  // Attribution
-  source          String?                       // 'webhook', 'api', 'system', 'manual'
-  triggeredBy     String?   @map("triggered_by") // user_id or 'system'
+  // Timestamps
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  @@index([productionId])
+  @@index([type])
+  @@map("production_assets")
+}
+
+model CloneProfile {
+  id              String          @id @default(cuid())
+
+  accountId       String          @map("account_id")
+  account         Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Clone details
+  type            CloneType
+  name            String
+  status          CloneStatus     @default(PENDING_UPLOAD)
+
+  // Storage
+  sourceFileUrl   String?         @map("source_file_url")
+  modelFileUrl    String?         @map("model_file_url")
+  previewUrl      String?         @map("preview_url")
+
+  // Processing
+  processedAt     DateTime?       @map("processed_at")
+  errorMessage    String?         @map("error_message")
+
+  // Metadata (voice characteristics, avatar settings)
+  metadata        Json?
+
+  // Usage tracking
+  usageCount      Int             @default(0) @map("usage_count")
+
+  // Relations
+  voiceProductions Production[]   @relation("VoiceClone")
+  avatarProductions Production[]  @relation("AvatarClone")
 
   // Timestamps
-  createdAt       DateTime  @default(now()) @map("created_at")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
 
-  @@index([customerId])
+  @@index([accountId])
+  @@index([type])
+  @@index([status])
+  @@map("clone_profiles")
+}
+
+// =============================================================================
+// NEXUS PERSONAL MODELS
+// =============================================================================
+
+model NexusInstallation {
+  id                    String                      @id @default(cuid())
+
+  accountId             String                      @unique @map("account_id")
+  account               Account                     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Installation details
+  phase                 NexusPhase                  @default(INTAKE)
+  installationCode      String                      @unique @map("installation_code")
+
+  // Pricing
+  basePrice             Int                         @map("base_price")
+  totalPrice            Int                         @map("total_price")
+  currency              String                      @default("usd")
+
+  // Stripe reference
+  stripePaymentIntentId String?                     @unique @map("stripe_payment_intent_id")
+  paidAt                DateTime?                   @map("paid_at")
+
+  // Schedule
+  scheduledDate         DateTime?                   @map("scheduled_date")
+  estimatedDuration     Int?                        @map("estimated_duration") // in hours
+
+  // Completion
+  completedAt           DateTime?                   @map("completed_at")
+
+  // Security (TOFU - Trust On First Use)
+  hardwareFingerprint   String?                     @map("hardware_fingerprint")
+  healthToken           String?                     @map("health_token")
+  lastHealthPing        DateTime?                   @map("last_health_ping")
+  driftDetected         Boolean                     @default(false) @map("drift_detected")
+
+  // Assigned technician
+  technicianId          String?                     @map("technician_id")
+  technician            Technician?                 @relation(fields: [technicianId], references: [id])
+
+  // Relations
+  intake                NexusIntake?
+  maintenanceSub        MaintenanceSubscription?
+  addOnPurchases        NexusAddOnPurchase[]
+  remoteSessions        RemoteSession[]
+  checklist             NexusChecklistItem[]
+
+  // Timestamps
+  createdAt             DateTime                    @default(now()) @map("created_at")
+  updatedAt             DateTime                    @updatedAt @map("updated_at")
+
+  @@index([installationCode])
+  @@index([phase])
+  @@map("nexus_installations")
+}
+
+model NexusIntake {
+  id                String              @id @default(cuid())
+
+  installationId    String              @unique @map("installation_id")
+  installation      NexusInstallation   @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  // Intake responses (stored as JSON for flexibility)
+  responses         Json                @default("{}")
+
+  // Completion tracking
+  completedFields   IntakeField[]       @map("completed_fields")
+  isComplete        Boolean             @default(false) @map("is_complete")
+  completedAt       DateTime?           @map("completed_at")
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  @@map("nexus_intakes")
+}
+
+model MaintenanceSubscription {
+  id                    String              @id @default(cuid())
+
+  installationId        String              @unique @map("installation_id")
+  installation          NexusInstallation   @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  // Stripe sync
+  stripeSubscriptionId  String              @unique @map("stripe_subscription_id")
+
+  // Subscription details
+  interval              MaintenanceInterval
+  status                MaintenanceStatus   @default(ACTIVE)
+  pricePerInterval      Int                 @map("price_per_interval")
+
+  // Features
+  healthMonitoring      Boolean             @default(true) @map("health_monitoring")
+  prioritySupport       Boolean             @default(false) @map("priority_support")
+  monthlyCheckIns       Int                 @default(1) @map("monthly_check_ins")
+
+  // Billing dates
+  currentPeriodStart    DateTime            @map("current_period_start")
+  currentPeriodEnd      DateTime            @map("current_period_end")
+  cancelAtPeriodEnd     Boolean             @default(false) @map("cancel_at_period_end")
+
+  // Timestamps
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
+  @@index([stripeSubscriptionId])
+  @@map("maintenance_subscriptions")
+}
+
+model NexusAddOnPurchase {
+  id                    String              @id @default(cuid())
+
+  installationId        String              @map("installation_id")
+  installation          NexusInstallation   @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  // Add-on details
+  type                  AddOnType
+  name                  String
+  price                 Int
+
+  // Stripe reference
+  stripePaymentIntentId String?             @unique @map("stripe_payment_intent_id")
+  paidAt                DateTime?           @map("paid_at")
+
+  // Fulfillment
+  fulfilledAt           DateTime?           @map("fulfilled_at")
+  fulfillmentNotes      String?             @map("fulfillment_notes")
+
+  // Timestamps
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
+  @@index([installationId])
+  @@index([type])
+  @@map("nexus_addon_purchases")
+}
+
+model RemoteSession {
+  id                String              @id @default(cuid())
+
+  installationId    String              @map("installation_id")
+  installation      NexusInstallation   @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  // Session details
+  purpose           String
+  status            SessionStatus       @default(SCHEDULED)
+
+  // Schedule
+  scheduledAt       DateTime            @map("scheduled_at")
+  duration          Int                 @default(60) // minutes
+
+  // Execution
+  startedAt         DateTime?           @map("started_at")
+  endedAt           DateTime?           @map("ended_at")
+
+  // Meeting
+  meetingUrl        String?             @map("meeting_url")
+  recordingUrl      String?             @map("recording_url")
+
+  // Notes
+  notes             String?             @db.Text
+
+  // Technician
+  technicianId      String?             @map("technician_id")
+  technician        Technician?         @relation(fields: [technicianId], references: [id])
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  @@index([installationId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@map("remote_sessions")
+}
+
+model NexusChecklistItem {
+  id                String              @id @default(cuid())
+
+  installationId    String              @map("installation_id")
+  installation      NexusInstallation   @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  // Checklist item details
+  category          ChecklistCategory
+  title             String
+  description       String?
+  order             Int
+
+  // Completion
+  isRequired        Boolean             @default(true) @map("is_required")
+  isCompleted       Boolean             @default(false) @map("is_completed")
+  completedAt       DateTime?           @map("completed_at")
+  completedBy       String?             @map("completed_by")
+
+  // Notes
+  notes             String?
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  @@index([installationId])
+  @@index([category])
+  @@map("nexus_checklist_items")
+}
+
+// =============================================================================
+// SUPPORT MODELS
+// =============================================================================
+
+model SupportTicket {
+  id              String          @id @default(cuid())
+
+  accountId       String          @map("account_id")
+  account         Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Ticket details
+  ticketNumber    String          @unique @map("ticket_number")
+  subject         String
+  category        TicketCategory  @default(GENERAL)
+  priority        TicketPriority  @default(MEDIUM)
+  status          TicketStatus    @default(OPEN)
+
+  // Assignment
+  assignedToId    String?         @map("assigned_to_id")
+  assignedTo      Technician?     @relation(fields: [assignedToId], references: [id])
+
+  // Relations
+  messages        TicketMessage[]
+
+  // Resolution
+  resolvedAt      DateTime?       @map("resolved_at")
+  closedAt        DateTime?       @map("closed_at")
+
+  // Timestamps
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  @@index([accountId])
+  @@index([ticketNumber])
+  @@index([status])
+  @@index([priority])
+  @@map("support_tickets")
+}
+
+model TicketMessage {
+  id              String          @id @default(cuid())
+
+  ticketId        String          @map("ticket_id")
+  ticket          SupportTicket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  // Author (either user or technician)
+  authorUserId    String?         @map("author_user_id")
+  authorUser      User?           @relation(fields: [authorUserId], references: [id])
+  authorTechId    String?         @map("author_tech_id")
+  authorTech      Technician?     @relation(fields: [authorTechId], references: [id])
+  isInternal      Boolean         @default(false) @map("is_internal")
+
+  // Message content
+  content         String          @db.Text
+
+  // Attachments
+  attachments     Json?
+
+  // Timestamps
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  @@index([ticketId])
+  @@map("ticket_messages")
+}
+
+// =============================================================================
+// ADMIN MODELS
+// =============================================================================
+
+model Technician {
+  id                String              @id @default(cuid())
+
+  // Identity
+  email             String              @unique
+  name              String
+  avatarUrl         String?             @map("avatar_url")
+
+  // Status
+  isActive          Boolean             @default(true) @map("is_active")
+
+  // Specializations
+  specializations   String[]
+
+  // Relations
+  installations     NexusInstallation[]
+  sessions          RemoteSession[]
+  tickets           SupportTicket[]
+  ticketMessages    TicketMessage[]
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
+  @@map("technicians")
+}
+
+model AdminUser {
+  id                String              @id @default(cuid())
+
+  // Clerk integration
+  clerkId           String              @unique @map("clerk_id")
+  email             String              @unique
+  name              String
+
+  // Permissions
+  isSuperAdmin      Boolean             @default(false) @map("is_super_admin")
+  permissions       String[]
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+  lastLoginAt       DateTime?           @map("last_login_at")
+
+  @@index([clerkId])
+  @@map("admin_users")
+}
+
+// =============================================================================
+// STRIPE EVENT TRACKING
+// =============================================================================
+
+model StripeEvent {
+  id                String              @id @default(cuid())
+
+  // Stripe event details
+  stripeEventId     String              @unique @map("stripe_event_id")
+  eventType         String              @map("event_type")
+  apiVersion        String?             @map("api_version")
+
+  // Processing status
+  status            StripeEventStatus   @default(PENDING)
+  processedAt       DateTime?           @map("processed_at")
+
+  // Idempotency
+  idempotencyKey    String?             @unique @map("idempotency_key")
+
+  // Error tracking
+  errorMessage      String?             @map("error_message")
+  retryCount        Int                 @default(0) @map("retry_count")
+  lastRetryAt       DateTime?           @map("last_retry_at")
+
+  // Raw payload (for debugging/replay)
+  payload           Json
+
+  // Timestamps
+  createdAt         DateTime            @default(now()) @map("created_at")
+
+  @@index([stripeEventId])
   @@index([eventType])
-  @@index([eventName])
-  @@index([createdAt])
-  @@map("customer_events")
+  @@index([status])
+  @@map("stripe_events")
+}
+
+// =============================================================================
+// REFERRAL SYSTEM
+// =============================================================================
+
+model Referral {
+  id                String      @id @default(cuid())
+
+  // Referrer
+  referrerAccountId String      @map("referrer_account_id")
+  referrerAccount   Account     @relation("ReferrerAccount", fields: [referrerAccountId], references: [id], onDelete: Cascade)
+
+  // Referred
+  referredAccountId String?     @map("referred_account_id")
+  referredAccount   Account?    @relation("ReferredAccount", fields: [referredAccountId], references: [id])
+  referredEmail     String      @map("referred_email")
+
+  // Referral code
+  code              String      @unique
+
+  // Status
+  isConverted       Boolean     @default(false) @map("is_converted")
+  convertedAt       DateTime?   @map("converted_at")
+
+  // Rewards
+  referrerReward    Int?        @map("referrer_reward") // in cents or tokens
+  referredReward    Int?        @map("referred_reward")
+  rewardsIssued     Boolean     @default(false) @map("rewards_issued")
+
+  // Timestamps
+  createdAt         DateTime    @default(now()) @map("created_at")
+  expiresAt         DateTime?   @map("expires_at")
+
+  @@index([referrerAccountId])
+  @@index([code])
+  @@index([referredEmail])
+  @@map("referrals")
 }

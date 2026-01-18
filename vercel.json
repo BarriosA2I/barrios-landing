@@ -1,28 +1,23 @@
 {
-  "buildCommand": "prisma generate",
+  "framework": "nextjs",
+  "buildCommand": "prisma generate && next build",
   "installCommand": "npm install",
-  "outputDirectory": ".",
   "cleanUrls": true,
   "functions": {
-    "api/terminal-intake.js": {
-      "memory": 128,
-      "maxDuration": 10
-    },
-    "api/nexus/chat.js": {
-      "memory": 256,
-      "maxDuration": 30
-    },
-    "api/nexus/health.js": {
-      "memory": 128,
-      "maxDuration": 5
-    },
-    "api/checkout/session.js": {
-      "memory": 256,
-      "maxDuration": 30
-    },
-    "api/webhooks/stripe.js": {
+    "app/api/**/*.ts": {
       "memory": 256,
       "maxDuration": 30
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,DELETE,PATCH,POST,PUT" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-Account-Id, Authorization" }
+      ]
+    }
+  ]
 }
