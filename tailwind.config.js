@@ -20,21 +20,24 @@ module.exports = {
         tight: '-0.02em',
       },
       colors: {
-        // Brand colors from SKILL.md
-        void: '#0a0a0f',
+        // New Barrios A2I Design System
+        void: '#0B1220',
         obsidian: '#0a0a1e',
-        primary: '#00CED1',
-        accent: '#F59E0B',
+        navy: '#0B1220',
+        primary: '#00bfff',
+        accent: '#ffd700',
         muted: '#94a3b8',
-        'brand-teal': '#00CED1',
+        'brand-cyan': '#00bfff',
         'brand-gold': '#ffd700',
-        // Additional design system colors
-        'bg-primary': '#0a0a0a',
-        'bg-secondary': '#141414',
-        'bg-tertiary': '#1a1a1a',
+        'electric-blue': '#00C2FF',
+        'cyber-gold': '#F59E0B',
+        // Background colors
+        'bg-primary': '#0B1220',
+        'bg-secondary': '#0a0a1e',
+        'bg-tertiary': '#141428',
         'text-primary': '#fafafa',
-        'text-secondary': '#a1a1aa',
-        'accent-cyan': '#00CED1',
+        'text-secondary': '#94a3b8',
+        'accent-cyan': '#00bfff',
         'accent-purple': '#8B5CF6',
       },
       backgroundImage: {

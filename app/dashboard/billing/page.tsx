@@ -1,125 +1,189 @@
-import { getAccountById, getUserAccounts } from "@/lib/auth";
-import { formatCurrency, formatDate } from "@/lib/utils";
+'use client';
 
-export const dynamic = 'force-dynamic';
+import { motion } from 'framer-motion';
+import { CreditCard, ArrowUpRight, Check, History } from 'lucide-react';
 
-export default async function BillingPage() {
-  const accounts = await getUserAccounts();
-  const account = accounts[0] ? await getAccountById(accounts[0].id) : null;
-  
-  const billingCustomer = account?.billingCustomer;
-  const labSubscription = account?.labSubscription;
+// Glass Card Component
+const GlassCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+  <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 hover:border-white/20 ${className}`}>
+    {children}
+  </div>
+);
+
+// Plan Card Component
+const PlanCard = ({
+  tier,
+  price,
+  features,
+  active = false
+}: {
+  tier: string;
+  price: string;
+  features: string[];
+  active?: boolean;
+}) => (
+  <div className={`relative rounded-2xl border p-6 transition-all ${
+    active ? "border-[#ffd700] bg-[#ffd700]/5 ring-1 ring-[#ffd700]" : "border-white/10 bg-white/5 hover:border-white/20"
+  }`}>
+    {active && (
+      <span className="absolute -top-3 left-6 rounded-full bg-[#ffd700] px-3 py-1 text-[10px] font-black uppercase text-[#0B1220]">
+        Current Plan
+      </span>
+    )}
+    <h3 className="text-xl font-black text-white uppercase tracking-tighter">{tier}</h3>
+    <div className="mt-2 flex items-baseline gap-1">
+      <span className="text-3xl font-bold text-white">{price}</span>
+      <span className="text-sm text-slate-500">/month</span>
+    </div>
+    <ul className="mt-6 space-y-3">
+      {features.map((f, i) => (
+        <li key={i} className="flex items-center gap-2 text-xs text-slate-300">
+          <Check size={14} className="text-[#00bfff]" /> {f}
+        </li>
+      ))}
+    </ul>
+    <button className={`mt-8 w-full rounded-xl py-3 text-sm font-bold transition-all ${
+      active ? "bg-white/10 text-white cursor-default" : "bg-[#00bfff] text-[#0B1220] hover:brightness-110"
+    }`}>
+      {active ? "Manage Subscription" : "Upgrade Now"}
+    </button>
+  </div>
+);
+
+export default function BillingPage() {
+  // Mock invoice data
+  const invoices = [
+    { id: "INV-0012", date: "Jan 01, 2026", amount: "$199.00", status: "Paid" },
+    { id: "INV-0011", date: "Dec 01, 2025", amount: "$199.00", status: "Paid" }
+  ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Billing</h1>
-        <p className="text-zinc-400">Manage your subscriptions and payment methods</p>
+    <div className="space-y-10">
+      {/* Header */}
+      <header>
+        <h2 className="text-3xl font-black text-white uppercase tracking-tighter">
+          Billing <span className="text-[#00bfff]">&</span> Usage
+        </h2>
+        <p className="text-slate-400">Monitor your compute credits and subscription tier.</p>
+      </header>
+
+      {/* Plan Selection */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <PlanCard
+          tier="Standard"
+          price="$49"
+          features={["50 AI Minutes", "720p Export", "Community Support"]}
+        />
+        <PlanCard
+          tier="Studio"
+          price="$199"
+          features={["500 AI Minutes", "4K Export", "Priority Rendering"]}
+          active
+        />
+        <PlanCard
+          tier="Enterprise"
+          price="Custom"
+          features={["Unlimited compute", "API Access", "Dedicated Account Manager"]}
+        />
       </div>
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Active Subscriptions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 rounded-xl border border-[#27272a] bg-[#141414]">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-lg">Commercial Lab</h3>
-              {labSubscription ? (
-                <span className="px-2 py-1 rounded-full text-xs bg-green-500/10 text-green-400">
-                  {labSubscription.status}
-                </span>
-              ) : (
-                <span className="px-2 py-1 rounded-full text-xs bg-zinc-500/10 text-zinc-400">
-                  Not Subscribed
-                </span>
-              )}
+      {/* Usage Stats */}
+      <section>
+        <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-4">Current Usage</h3>
+        <GlassCard className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">AI Minutes Used</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold text-white">0</span>
+                <span className="text-sm text-slate-500">/ 500</span>
+              </div>
+              <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: '5%' }}
+                  className="h-full bg-gradient-to-r from-[#00bfff] to-[#ffd700]"
+                />
+              </div>
             </div>
-            {labSubscription ? (
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">Plan</span>
-                  <span className="font-medium">{labSubscription.tier}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">Billing</span>
-                  <span>{labSubscription.billingInterval}</span>
-                </div>
-                <button className="w-full mt-4 px-4 py-2 border border-[#27272a] rounded-lg text-sm hover:border-[#00CED1]">
-                  Manage Plan
-                </button>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Storage Used</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold text-white">0</span>
+                <span className="text-sm text-slate-500">/ 50 GB</span>
               </div>
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-zinc-500 mb-4">Start producing AI videos</p>
-                <button className="px-6 py-2 bg-[#00CED1] text-black font-medium rounded-lg">
-                  Subscribe
-                </button>
+              <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: '0%' }}
+                  className="h-full bg-[#00bfff]"
+                />
               </div>
-            )}
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Billing Cycle</p>
+              <p className="text-lg font-bold text-white">Resets Jan 31, 2026</p>
+              <p className="text-xs text-slate-500 mt-1">12 days remaining</p>
+            </div>
           </div>
+        </GlassCard>
+      </section>
+
+      {/* Invoice History */}
+      <section className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+        <div className="border-b border-white/10 bg-white/5 px-6 py-4 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white">
+            <History size={16} className="text-[#ffd700]" /> Recent Invoices
+          </h3>
+          <button className="text-[10px] font-bold text-[#00bfff] uppercase hover:underline">View All</button>
         </div>
-      </div>
-
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Payment Methods</h2>
-        {billingCustomer?.paymentMethods && billingCustomer.paymentMethods.length > 0 ? (
-          <div className="space-y-3">
-            {billingCustomer.paymentMethods.map((method) => (
-              <div key={method.id} className="p-4 rounded-lg border border-[#27272a] bg-[#141414] flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded bg-[#27272a] flex items-center justify-center">
-                    <span className="text-xs font-mono">{method.cardBrand?.toUpperCase() || "CARD"}</span>
-                  </div>
-                  <div>
-                    <p className="font-medium">**** {method.cardLast4}</p>
-                    <p className="text-sm text-zinc-500">Expires {method.cardExpMonth}/{method.cardExpYear}</p>
-                  </div>
-                </div>
-                {method.isDefault && <span className="text-xs text-[#00CED1]">Default</span>}
-              </div>
+        <table className="w-full text-left text-xs text-slate-400">
+          <thead>
+            <tr className="border-b border-white/5 bg-white/[0.02]">
+              <th className="px-6 py-4 font-semibold uppercase tracking-wider">Invoice ID</th>
+              <th className="px-6 py-4 font-semibold uppercase tracking-wider">Date</th>
+              <th className="px-6 py-4 font-semibold uppercase tracking-wider">Amount</th>
+              <th className="px-6 py-4 font-semibold uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {invoices.map((inv, i) => (
+              <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                <td className="px-6 py-4 font-mono text-[#00bfff]">{inv.id}</td>
+                <td className="px-6 py-4">{inv.date}</td>
+                <td className="px-6 py-4 text-white font-bold">{inv.amount}</td>
+                <td className="px-6 py-4">
+                  <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] text-emerald-400">
+                    {inv.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <button className="text-slate-500 hover:text-white transition-colors">
+                    <ArrowUpRight size={16} />
+                  </button>
+                </td>
+              </tr>
             ))}
-          </div>
-        ) : (
-          <div className="p-8 rounded-lg border border-dashed border-[#27272a] text-center">
-            <p className="text-zinc-500">No payment methods on file</p>
-          </div>
-        )}
-      </div>
+          </tbody>
+        </table>
+      </section>
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Recent Invoices</h2>
-        {billingCustomer?.invoices && billingCustomer.invoices.length > 0 ? (
-          <div className="overflow-hidden rounded-lg border border-[#27272a]">
-            <table className="w-full">
-              <thead className="bg-[#141414]">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Invoice</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Date</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Amount</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-zinc-400">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#27272a]">
-                {billingCustomer.invoices.map((invoice) => (
-                  <tr key={invoice.id} className="bg-[#0a0a0a]">
-                    <td className="px-4 py-3 font-mono text-sm">{invoice.number || invoice.id}</td>
-                    <td className="px-4 py-3 text-sm">{formatDate(invoice.createdAt)}</td>
-                    <td className="px-4 py-3 text-sm">{formatCurrency(invoice.amountDue, invoice.currency)}</td>
-                    <td className="px-4 py-3">
-                      <span className="px-2 py-1 rounded-full text-xs bg-green-500/10 text-green-400">
-                        {invoice.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Payment Methods */}
+      <section>
+        <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-4">Payment Methods</h3>
+        <GlassCard className="p-6 border-dashed">
+          <div className="flex flex-col items-center justify-center py-6 text-center">
+            <div className="mb-4 h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <CreditCard size={24} className="text-slate-600" />
+            </div>
+            <p className="text-sm text-slate-500 mb-4">No payment methods on file</p>
+            <button className="px-6 py-2 rounded-lg bg-[#00bfff] text-[#0B1220] font-bold text-sm hover:brightness-110 transition-all">
+              Add Payment Method
+            </button>
           </div>
-        ) : (
-          <div className="p-8 rounded-lg border border-dashed border-[#27272a] text-center">
-            <p className="text-zinc-500">No invoices yet</p>
-          </div>
-        )}
-      </div>
+        </GlassCard>
+      </section>
     </div>
   );
 }

@@ -1,106 +1,189 @@
-import { getAccountById, getUserAccounts } from '@/lib/auth';
-import Link from 'next/link';
+'use client';
 
-export const dynamic = 'force-dynamic';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Play,
+  Clock,
+  CheckCircle2,
+  Sliders,
+  Film,
+  Mic,
+  Upload,
+  Sparkles
+} from 'lucide-react';
 
-export default async function LabPage() {
-  const accounts = await getUserAccounts();
-  const account = accounts[0] ? await getAccountById(accounts[0].id) : null;
-  
-  const subscription = account?.labSubscription;
-  const currentCycle = subscription?.cycles?.[0];
-  const tokenBalance = currentCycle 
-    ? currentCycle.tokensAllocated - currentCycle.tokensUsed 
-    : 0;
+// Glass Card Component
+const GlassCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+  <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 hover:border-white/20 ${className}`}>
+    {children}
+  </div>
+);
+
+// Video Project Card
+const VideoProjectCard = ({
+  title,
+  status,
+  date,
+}: {
+  title: string;
+  status: 'rendering' | 'ready' | 'queued';
+  date: string;
+}) => (
+  <GlassCard className="p-4 group">
+    <div className="aspect-video w-full overflow-hidden rounded-lg bg-[#0B1220] mb-4 border border-white/5 relative">
+      {status === 'rendering' && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+            className="mb-2 h-8 w-8 border-2 border-[#00bfff] border-t-transparent rounded-full"
+          />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#00bfff]">Processing AI</span>
+        </div>
+      )}
+      {status === 'queued' && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40">
+          <Clock size={24} className="text-[#ffd700] mb-2" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#ffd700]">Queued</span>
+        </div>
+      )}
+      <div className="h-full w-full bg-gradient-to-br from-slate-800 to-slate-900" />
+    </div>
+    <div className="flex items-center justify-between">
+      <div>
+        <h3 className="font-bold text-white leading-tight">{title}</h3>
+        <p className="text-xs text-slate-500">{date}</p>
+      </div>
+      {status === 'ready' ? (
+        <CheckCircle2 size={18} className="text-[#00bfff]" />
+      ) : status === 'rendering' ? (
+        <Clock size={18} className="text-[#ffd700]" />
+      ) : (
+        <Clock size={18} className="text-slate-500" />
+      )}
+    </div>
+  </GlassCard>
+);
+
+export default function CommercialLabPage() {
+  const [prompt, setPrompt] = useState('');
+  const [aspectRatio, setAspectRatio] = useState('16:9');
+
+  // Mock data for projects
+  const projects = [
+    { title: "Cyberpunk Street Scene", status: 'ready' as const, date: "Jan 19, 2026" },
+    { title: "Abstract Logo Reveal", status: 'rendering' as const, date: "Jan 19, 2026" },
+    { title: "Product Cinematic v1", status: 'ready' as const, date: "Jan 15, 2026" },
+  ];
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-10">
+      {/* Header */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Commercial Lab</h1>
-          <p className="text-zinc-400">AI-powered video production pipeline</p>
+          <h2 className="text-3xl font-black text-white uppercase tracking-tighter">
+            Commercial <span className="text-[#00bfff]">Lab</span>
+          </h2>
+          <p className="text-slate-400">High-fidelity AI video orchestration.</p>
         </div>
-        <button className="px-6 py-3 bg-[#00CED1] text-black font-semibold rounded-lg hover:bg-[#00b5b8] transition-colors">
-          New Production
-        </button>
-      </div>
-
-      {/* Token Balance Hero */}
-      <div className="relative overflow-hidden p-8 rounded-2xl border border-[#27272a] bg-gradient-to-br from-[#141414] to-[#1a1a1a]">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#00CED1]/5 rounded-full blur-3xl" />
-        <div className="relative">
-          <p className="text-sm text-zinc-400 mb-2">Available Tokens</p>
-          <div className="flex items-end gap-4">
-            <span className="text-6xl font-bold gradient-text">{tokenBalance}</span>
-            <span className="text-zinc-500 mb-2">/ {currentCycle?.tokensAllocated || 0} this cycle</span>
-          </div>
-          {subscription && (
-            <p className="text-sm text-zinc-500 mt-4">
-              {subscription.tier} Plan - Resets {currentCycle ? new Date(currentCycle.periodEnd).toLocaleDateString() : 'N/A'}
-            </p>
-          )}
+        <div className="flex gap-3">
+          <button className="flex items-center gap-2 rounded-lg bg-white/5 border border-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 transition-colors">
+            <Sliders size={16} /> Filters
+          </button>
+          <button className="flex items-center gap-2 rounded-lg bg-[#00bfff] px-6 py-2 text-sm font-bold text-[#0B1220] hover:brightness-110 transition-all">
+            <Film size={16} /> New Project
+          </button>
         </div>
-      </div>
+      </header>
 
-      {/* Production Queue */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Production Queue</h2>
-        {account?.productions && account.productions.length > 0 ? (
-          <div className="grid gap-4">
-            {account.productions.map((production) => (
-              <div
-                key={production.id}
-                className="p-6 rounded-xl border border-[#27272a] bg-[#141414] flex items-center justify-between"
+      {/* Master Prompt Engine */}
+      <section className="rounded-2xl border border-[#00bfff]/20 bg-[#00bfff]/5 p-8 backdrop-blur-md">
+        <h3 className="text-lg font-bold text-white mb-4">Master Prompt Engine</h3>
+        <textarea
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder="Describe your commercial vision (e.g., 'Cinematic shot of a cybernetic wolf in a neon forest, 8k, volumetric lighting')..."
+          className="w-full h-32 rounded-xl bg-[#0B1220]/50 border border-white/10 p-4 text-white placeholder:text-slate-600 focus:border-[#00bfff] outline-none transition-all resize-none"
+        />
+        <div className="mt-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-wrap gap-4">
+            <span className="text-xs text-slate-500 uppercase tracking-widest font-bold">
+              Model: <span className="text-white">A2I-Vision-V2</span>
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500 uppercase tracking-widest font-bold">Aspect:</span>
+              <select
+                value={aspectRatio}
+                onChange={(e) => setAspectRatio(e.target.value)}
+                className="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-xs text-white focus:border-[#00bfff] outline-none cursor-pointer"
               >
-                <div className="space-y-1">
-                  <h3 className="font-medium text-lg">{production.title}</h3>
-                  <p className="text-sm text-zinc-500">
-                    {production.format} | {production.duration}s | {production.tokensRequired} tokens
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="px-3 py-1 text-sm rounded-full bg-[#00CED1]/10 text-[#00CED1]">
-                    {production.status}
-                  </span>
-                </div>
+                <option value="16:9">16:9 (Cinematic)</option>
+                <option value="9:16">9:16 (Social)</option>
+                <option value="1:1">1:1 (Square)</option>
+              </select>
+            </div>
+          </div>
+          <button className="px-8 py-3 bg-gradient-to-r from-[#00bfff] to-[#ffd700] rounded-xl text-[#0B1220] font-black text-sm uppercase tracking-tighter hover:scale-105 transition-transform shadow-[0_0_20px_rgba(0,191,255,0.3)]">
+            <span className="flex items-center gap-2">
+              <Sparkles size={16} />
+              Generate Assets
+            </span>
+          </button>
+        </div>
+      </section>
+
+      {/* Asset Upload */}
+      <section>
+        <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-4">Reference Assets</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <GlassCard className="p-6 border-dashed">
+            <button className="flex w-full flex-col items-center justify-center gap-3 py-4">
+              <div className="rounded-full bg-[#00bfff]/10 p-3 text-[#00bfff]">
+                <Upload size={24} />
               </div>
+              <p className="text-sm font-bold text-white uppercase tracking-tighter">Upload Reference</p>
+              <p className="text-[10px] text-slate-500 uppercase">Image or Video (Max 100MB)</p>
+            </button>
+          </GlassCard>
+          <GlassCard className="p-6 border-dashed">
+            <button className="flex w-full flex-col items-center justify-center gap-3 py-4">
+              <div className="rounded-full bg-[#ffd700]/10 p-3 text-[#ffd700]">
+                <Mic size={24} />
+              </div>
+              <p className="text-sm font-bold text-white uppercase tracking-tighter">Voice Sample</p>
+              <p className="text-[10px] text-slate-500 uppercase">Record or Upload Audio</p>
+            </button>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* Project Gallery */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500">Recent Productions</h3>
+          <button className="text-xs font-bold text-[#00bfff] uppercase hover:underline">View All</button>
+        </div>
+        {projects.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project, i) => (
+              <VideoProjectCard
+                key={i}
+                title={project.title}
+                status={project.status}
+                date={project.date}
+              />
             ))}
           </div>
         ) : (
-          <div className="p-12 rounded-xl border border-dashed border-[#27272a] bg-[#141414]/50 text-center">
-            <p className="text-zinc-500 mb-4">No productions in queue</p>
-            <button className="px-6 py-2 bg-[#00CED1] text-black font-medium rounded-lg hover:bg-[#00b5b8] transition-colors">
+          <GlassCard className="p-12 text-center border-dashed">
+            <p className="text-slate-500 mb-4">No productions yet</p>
+            <button className="px-6 py-3 bg-[#00bfff] text-[#0B1220] font-bold rounded-xl hover:brightness-110 transition-all">
               Create Your First Video
             </button>
-          </div>
+          </GlassCard>
         )}
-      </div>
-
-      {/* Clone Library */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Clone Library</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {account?.cloneProfiles && account.cloneProfiles.length > 0 ? (
-            account.cloneProfiles.map((clone) => (
-              <div key={clone.id} className="p-6 rounded-xl border border-[#27272a] bg-[#141414]">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-[#00CED1]/20 flex items-center justify-center text-[#00CED1] font-semibold">
-                    {clone.type === 'VOICE' ? 'V' : 'A'}
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{clone.name}</h3>
-                    <p className="text-sm text-zinc-500">{clone.type} Clone - {clone.status}</p>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-2 p-8 rounded-xl border border-dashed border-[#27272a] bg-[#141414]/50 text-center">
-              <p className="text-zinc-500">No clones created yet</p>
-            </div>
-          )}
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

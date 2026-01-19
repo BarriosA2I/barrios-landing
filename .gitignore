@@ -8,3 +8,6 @@ node_modules/
 
 # Prisma
 prisma/migrations/
+
+# Design references (local only)
+design-references/

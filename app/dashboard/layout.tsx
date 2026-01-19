@@ -1,29 +1,30 @@
-import Link from 'next/link';
-import { HelpCircle } from 'lucide-react';
-import DashboardSidebar from './components/DashboardSidebar';
-
 export const dynamic = 'force-dynamic';
+
+import DashboardSidebar from './components/DashboardSidebar';
+import DashboardHeader from './components/DashboardHeader';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-[#0a0a0a]">
+    <div className="flex min-h-screen bg-[#0B1220] text-slate-200 selection:bg-[#00bfff]/30">
+      {/* Volumetric Glows */}
+      <div className="pointer-events-none fixed -left-[10%] -top-[10%] h-[60%] w-[60%] rounded-full bg-[#00bfff]/10 blur-[120px]" />
+      <div className="pointer-events-none fixed -right-[5%] -bottom-[5%] h-[50%] w-[50%] rounded-full bg-[#ffd700]/5 blur-[120px]" />
+
       {/* Sidebar */}
       <DashboardSidebar />
 
-      {/* Main */}
-      <main className="flex-1 pl-64">
-        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[#27272a] bg-[#0a0a0a]/80 px-8 backdrop-blur-lg">
-          <h1 className="text-lg font-semibold text-white">Dashboard</h1>
-          <Link
-            href="/dashboard/support"
-            className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-zinc-400 transition-colors hover:bg-[#1a1a1a] hover:text-white"
-          >
-            <HelpCircle className="h-4 w-4" />
-            Support
-          </Link>
-        </header>
-        <div className="p-8">{children}</div>
-      </main>
+      {/* Main Viewport */}
+      <div className="relative flex flex-1 flex-col overflow-hidden lg:pl-72">
+        {/* Top Action Bar */}
+        <DashboardHeader />
+
+        {/* Content Canvas */}
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8 scrollbar-hide">
+          <div className="mx-auto max-w-7xl">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
