@@ -14,7 +14,10 @@ import {
   Settings,
   User,
   Menu,
-  X
+  X,
+  CheckSquare,
+  MessageSquare,
+  BarChart3
 } from 'lucide-react';
 
 const navigation = [
@@ -22,6 +25,9 @@ const navigation = [
   { name: 'Commercial Lab', href: '/dashboard/lab', icon: Video },
   { name: 'NEXUS Personal', href: '/dashboard/nexus', icon: Cpu },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
+  { name: 'Success Portal', href: '/dashboard/success', icon: CheckSquare },
+  { name: 'Architect', href: '/dashboard/architect', icon: MessageSquare },
+  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
 ];
 
 const bottomNavigation = [

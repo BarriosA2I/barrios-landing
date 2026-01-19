@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { redirectToCheckout, redirectToEnterprise } from '@/lib/checkout';
 
 /**
  * PRICING & DEPLOYMENT PATHS
@@ -169,6 +170,11 @@ export default function Pricing() {
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 disabled={path.isComingSoon}
+                onClick={() => {
+                  if (path.isComingSoon) return;
+                  if (path.id === 'commercial-lab') redirectToCheckout('starter');
+                  else if (path.id === 'total-command') redirectToEnterprise();
+                }}
                 className={`
                   w-full py-4 rounded-xl font-bold text-xs tracking-[0.2em] uppercase transition-all
                   ${path.isPrimary
