@@ -25,18 +25,18 @@ if (!html.includes('intake-terminal.js')) {
   console.log('Added intake-terminal.js script');
 }
 
-// 3. Wire up the Neural Ad Forge button
+// 3. Wire up the A2I Commercial Lab button
 const oldAdForgeBtn = `<button class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
                     [ Initialize Ad Forge ]
                   </button>`;
 
-const newAdForgeBtn = `<button onclick="openIntakeTerminal('Neural Ad Forge')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
+const newAdForgeBtn = `<button onclick="openIntakeTerminal('A2I Commercial Lab')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
                     [ Initialize Ad Forge ]
                   </button>`;
 
 if (html.includes(oldAdForgeBtn)) {
   html = html.replace(oldAdForgeBtn, newAdForgeBtn);
-  console.log('Wired up Neural Ad Forge button');
+  console.log('Wired up A2I Commercial Lab button');
 }
 
 // 4. Wire up the Marketing Overlord button

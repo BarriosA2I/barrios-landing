@@ -19,7 +19,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
             <span class="font-mono text-xs uppercase tracking-widest text-white/40">
-              Protocol_Link: <span id="protocol-name" class="text-primary">Neural Ad Forge</span>
+              Protocol_Link: <span id="protocol-name" class="text-primary">A2I Commercial Lab</span>
             </span>
           </div>
           <button id="terminal-close" class="rounded-full p-1 text-white/50 hover:bg-white/10 hover:text-white transition-colors">

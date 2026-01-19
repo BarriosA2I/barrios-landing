@@ -18,6 +18,13 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
+      allowedRedirectOrigins={[
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'https://www.barriosa2i.com',
+        'https://barriosa2i.com',
+      ]}
       appearance={{
         baseTheme: dark,
         variables: {

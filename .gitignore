@@ -11,3 +11,6 @@ prisma/migrations/
 
 # Design references (local only)
 design-references/
+
+# clerk configuration (can include secrets)
+/.clerk/

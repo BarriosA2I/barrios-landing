@@ -3,10 +3,10 @@ const fs = require('fs');
 const indexPath = 'C:/Users/gary/barrios-landing/index.html';
 let html = fs.readFileSync(indexPath, 'utf8');
 
-// Wire up Neural Ad Forge button
+// Wire up A2I Commercial Lab button
 html = html.replace(
   /<button class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white\/\[0\.03\] border border-white\/10 text-white hover:bg-primary hover:text-\[#0a0a1e\] hover:border-primary transition-all duration-300">\s*\[ Initialize Ad Forge \]/,
-  `<button onclick="openIntakeTerminal('Neural Ad Forge')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
+  `<button onclick="openIntakeTerminal('A2I Commercial Lab')" class="w-full py-4 rounded-lg font-mono text-xs uppercase tracking-widest bg-white/[0.03] border border-white/10 text-white hover:bg-primary hover:text-[#0a0a1e] hover:border-primary transition-all duration-300">
                     [ Initialize Ad Forge ]`
 );
 console.log('Wired Ad Forge button');

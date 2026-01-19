@@ -14,7 +14,14 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "stripe:seed": "node scripts/seed-stripe-products.js",
-    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
+    "css:build": "npx @tailwindcss/cli -i ./src/input.css -o ./dist/output.css --minify",
+    "css:watch": "npx @tailwindcss/cli -i ./src/input.css -o ./dist/output.css --watch",
+    "css:sync": "cp dist/output.css public/dist/output.css",
+    "dev:full": "npm run css:build && npm run css:sync && concurrently \"npm run css:watch\" \"npm run dev\" --names \"CSS,NEXT\" --prefix-colors \"cyan,magenta\"",
+    "preview": "npm run css:build && npm run css:sync && npm run dev",
+    "preview:static": "npm run css:build && npm run css:sync && npx serve . -p 5000",
+    "prebuild": "npm run css:build && npm run css:sync"
   },
   "repository": {
     "type": "git",
@@ -55,9 +62,11 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
     "cssnano": "^7.1.2",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.14",
+    "serve": "^14.2.5",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5.6.3"
   }
 }

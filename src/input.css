@@ -32,8 +32,9 @@
   --shadow-cyan-glow: 0 0 20px rgba(0, 191, 255, 0.68);
   --shadow-gold-glow: 0 0 20px rgba(255, 215, 0, 0.3);
 
-  /* Font Families */
-  --font-sans: 'Inter', sans-serif;
+  /* Font Families - Brand: Space Grotesk (body), Orbitron (headers), JetBrains Mono (code) */
+  --font-sans: 'Space Grotesk', 'Inter', sans-serif;
+  --font-display: 'Orbitron', 'Space Grotesk', sans-serif;
   --font-serif: 'Playfair Display', serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -500,7 +501,7 @@
 }
 
 .nexus-subtitle {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 10px;
   color: rgba(255, 255, 255, 0.4);
 }
@@ -673,7 +674,7 @@
   background: rgba(0, 206, 209, 0.1);
   border: 1px solid rgba(0, 206, 209, 0.2);
   border-radius: 20px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
   font-weight: 500;
   color: #00CED1;
@@ -941,7 +942,7 @@
   background: transparent;
   border: none;
   outline: none;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 14px;
   color: #fff;
 }
@@ -985,7 +986,7 @@
 
 .nexus-input-hint {
   margin-top: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.3);
   text-align: center;
