@@ -15,7 +15,7 @@ import { useRouter } from 'next/navigation';
 
 // Reusable Glass Card Component
 const GlassCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 hover:border-white/20 ${className}`}>
+  <div className={`relative overflow-hidden rounded-2xl border border-cyan-500/20 bg-zinc-900/50 backdrop-blur-xl transition-all duration-300 hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(0,206,209,0.15)] ${className}`}>
     {children}
   </div>
 );
@@ -36,7 +36,7 @@ const MetricCard = ({
   tagColor: string;
   progress?: number;
 }) => (
-  <GlassCard className="p-6">
+  <GlassCard className="p-4 md:p-6">
     <div className="flex items-center justify-between mb-4">
       <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{title}</span>
       <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-tight ${tagColor}`}>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
         <h2 className="mb-6 text-sm font-semibold uppercase tracking-widest text-slate-500">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { label: "New Production", icon: Plus, desc: "Start a video project", href: "/dashboard/lab" },
             { label: "Voice Clone", icon: Mic, desc: "Create a voice profile", href: "/dashboard/lab" },

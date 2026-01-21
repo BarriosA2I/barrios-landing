@@ -4,7 +4,7 @@ import { Search, Bell } from 'lucide-react';
 
 export default function DashboardHeader() {
   return (
-    <header className="flex h-20 items-center justify-between border-b border-white/5 px-4 lg:px-8 bg-[#0B1220]/40 backdrop-blur-md">
+    <header className="flex h-20 items-center justify-between border-b border-white/5 px-4 md:px-6 lg:px-8 bg-[#0B1220]/40 backdrop-blur-md">
       <div className="flex items-center gap-4 flex-1 pl-12 lg:pl-0">
         {/* Search Bar */}
         <div className="hidden md:flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-xl w-96 group focus-within:border-[#00bfff]/50 transition-all">
