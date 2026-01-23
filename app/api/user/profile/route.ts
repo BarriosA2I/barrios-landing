@@ -2,6 +2,9 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import db from '@/lib/db';
 
+// Force dynamic - this route cannot be statically rendered
+export const dynamic = 'force-dynamic';
+
 // Generate a unique slug from name
 function generateSlug(name: string): string {
   const base = name
