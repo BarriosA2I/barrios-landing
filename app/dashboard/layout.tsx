@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <DashboardSidebar />
 
       {/* Main Viewport */}
-      <div className="relative flex flex-1 flex-col overflow-hidden lg:pl-72">
+      <div className="relative flex flex-1 flex-col overflow-hidden lg:pl-[288px]">
         {/* Top Action Bar */}
         <DashboardHeader />
 
