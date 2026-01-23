@@ -5,6 +5,7 @@ import { useUser, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Settings, LogOut, Crown, Zap, Shield } from 'lucide-react';
+import ProfileImageUpload from './ProfileImageUpload';
 
 interface ProfileHeaderProps {
   subscription?: {
@@ -71,33 +72,8 @@ export default function ProfileHeader({ subscription }: ProfileHeaderProps) {
 
       <div className="relative p-8">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-          {/* Avatar with animated ring */}
-          <div className="relative">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#00CED1] via-purple-500 to-[#FFD700] opacity-50 blur-sm"
-            />
-            <div className="relative">
-              <img
-                src={user?.imageUrl || '/default-avatar.png'}
-                alt={user?.fullName || 'User avatar'}
-                className="w-32 h-32 rounded-full border-4 border-[#0B1220] object-cover relative z-10"
-              />
-              {/* Online status */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring" }}
-                className="absolute -bottom-1 -right-1 z-20"
-              >
-                <div className="relative">
-                  <div className="w-6 h-6 bg-green-500 rounded-full border-4 border-[#0B1220]" />
-                  <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-50" />
-                </div>
-              </motion.div>
-            </div>
-          </div>
+          {/* Avatar with upload capability */}
+          <ProfileImageUpload size="lg" showEditButton={true} />
 
           {/* User Info */}
           <div className="flex-1 text-center md:text-left space-y-3">
