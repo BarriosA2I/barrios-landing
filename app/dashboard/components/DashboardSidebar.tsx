@@ -3,7 +3,7 @@
 import { UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -58,10 +58,36 @@ const NavItem = ({
   </Link>
 );
 
+const tierLabels: Record<string, string> = {
+  FREE: 'Free Tier',
+  STARTER: 'Starter',
+  CREATOR: 'Creator',
+  GROWTH: 'Growth',
+  SCALE: 'Scale',
+};
+
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userTier, setUserTier] = useState<string>('FREE');
+
+  useEffect(() => {
+    async function fetchUserTier() {
+      try {
+        const response = await fetch('/api/user/profile');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.subscription?.tier) {
+            setUserTier(data.subscription.tier);
+          }
+        }
+      } catch (err) {
+        // Silently fail, keep default tier
+      }
+    }
+    fetchUserTier();
+  }, []);
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === href;
@@ -123,7 +149,7 @@ export default function DashboardSidebar() {
               {user?.firstName || 'User'}
             </p>
             <p className="text-[10px] text-slate-500 uppercase tracking-widest truncate">
-              Premium Tier
+              {tierLabels[userTier] || 'Free Tier'}
             </p>
           </div>
         </Link>
