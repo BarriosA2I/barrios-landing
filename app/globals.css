@@ -141,3 +141,10 @@ a {
     transform: scale(1.02);
   }
 }
+
+/* Dashboard layout - sidebar offset for desktop */
+@media (min-width: 1024px) {
+  .dashboard-content {
+    padding-left: 288px;
+  }
+}
