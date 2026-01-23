@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Tailwind v4 source paths */
+@source "../app/**/*.{js,ts,jsx,tsx}";
+@source "../components/**/*.{js,ts,jsx,tsx}";
+
 :root {
   /* New Barrios A2I Design System */
   --bg-primary: #0B1220;
