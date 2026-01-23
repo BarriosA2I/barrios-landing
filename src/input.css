@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Tailwind v4 source paths - scan all component files */
+@source "../app/**/*.{js,ts,jsx,tsx}";
+@source "../components/**/*.{js,ts,jsx,tsx}";
+
 /* ==========================================
    BARRIOS A2I - Theme Configuration (Tailwind v4)
    ========================================== */
