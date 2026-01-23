@@ -1,0 +1,3 @@
+# Ignore legacy Vercel Serverless Functions directory
+# These conflict with Next.js App Router API routes
+api/
