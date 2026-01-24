@@ -96,10 +96,14 @@ export default function DashboardSidebar() {
 
   const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => (
     <>
-      {/* Brand Wordmark */}
-      <div className="p-8">
+      {/* Brand Logo */}
+      <div className="p-6">
         <Link href="/" className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded bg-gradient-to-br from-[#00bfff] to-[#ffd700] shadow-[0_0_15px_rgba(0,191,255,0.4)]" />
+          <img
+            src="/brand/barrios-a2i-shard-logo.png"
+            alt="Barrios A2I"
+            className="h-12 w-12 object-contain drop-shadow-[0_0_10px_rgba(0,206,209,0.4)]"
+          />
           <span className="text-xl font-black tracking-tighter text-white uppercase">
             Barrios <span className="text-[#00bfff]">A2I</span>
           </span>
