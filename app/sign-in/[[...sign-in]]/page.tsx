@@ -234,6 +234,29 @@ export default function SignInPage() {
     <main className="min-h-screen flex items-center justify-center p-4 bg-[#0A0A0F] relative">
       <VolumetricBackground />
 
+      {/* Auth Header */}
+      <header className="absolute top-0 left-0 right-0 p-6 z-20 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <img
+            src="/brand/barrios-a2i-shard-logo.png"
+            alt="Barrios A2I"
+            className="h-10 w-10 object-contain drop-shadow-[0_0_10px_rgba(0,206,209,0.4)]"
+          />
+          <span className="text-lg font-bold tracking-tight text-white">
+            BARRIOS <span className="text-[#00CED1]">A2I</span>
+          </span>
+        </Link>
+        <Link
+          href="/sign-up"
+          className="text-sm text-[#a1a1aa] hover:text-[#00CED1] transition-colors flex items-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+          Sign Up
+        </Link>
+      </header>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

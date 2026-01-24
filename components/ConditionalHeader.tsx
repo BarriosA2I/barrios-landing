@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { SiteHeader } from '@/components/SiteHeader';
 
 // Routes that have their own layouts and don't need the site header
-const EXCLUDED_ROUTES = ['/sign-in', '/sign-up', '/dashboard'];
+const EXCLUDED_ROUTES = ['/sign-in', '/sign-up', '/forgot-password', '/dashboard'];
 
 export function ConditionalHeader() {
   const pathname = usePathname();

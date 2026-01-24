@@ -251,6 +251,29 @@ export default function ForgotPasswordPage() {
     <main className="min-h-screen flex items-center justify-center p-4 bg-[#0A0A0F] relative">
       <VolumetricBackground />
 
+      {/* Auth Header */}
+      <header className="absolute top-0 left-0 right-0 p-6 z-20 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <img
+            src="/brand/barrios-a2i-shard-logo.png"
+            alt="Barrios A2I"
+            className="h-10 w-10 object-contain drop-shadow-[0_0_10px_rgba(0,206,209,0.4)]"
+          />
+          <span className="text-lg font-bold tracking-tight text-white">
+            BARRIOS <span className="text-[#00CED1]">A2I</span>
+          </span>
+        </Link>
+        <Link
+          href="/sign-in"
+          className="text-sm text-[#a1a1aa] hover:text-[#00CED1] transition-colors flex items-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
+          Sign In
+        </Link>
+      </header>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
