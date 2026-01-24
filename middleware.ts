@@ -7,6 +7,7 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',
   '/api/webhooks/(.*)',
   '/api/nexus/(.*)',
+  '/api/checkout/(.*)',
   '/nexus-personal(.*)',
   '/contact(.*)',
   '/founder(.*)',
