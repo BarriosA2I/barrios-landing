@@ -1,0 +1,361 @@
+/**
+ * Email Service - Resend Integration for Barrios A2I
+ *
+ * Handles transactional emails:
+ * - Production complete notifications
+ * - Welcome emails
+ * - Payment failure alerts
+ */
+
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const FROM_EMAIL = process.env.FROM_EMAIL || "Barrios A2I <notifications@barriosa2i.com>";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.barriosa2i.com";
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export interface ProductionCompleteEmailData {
+  to: string;
+  customerName: string;
+  productionId: string;
+  productionTitle: string;
+  thumbnailUrl?: string;
+  videoUrl: string;
+  downloadUrls: {
+    mp4Hd?: string;
+    mp4Sd?: string;
+    gif?: string;
+  };
+  mulliganToken: string;
+  processingTime?: number; // seconds
+}
+
+export interface WelcomeEmailData {
+  to: string;
+  customerName: string;
+  tier: string;
+  monthlyTokens: number;
+}
+
+export interface PaymentFailedEmailData {
+  to: string;
+  customerName: string;
+  invoiceAmount: number;
+  retryDate: Date;
+  updatePaymentUrl: string;
+}
+
+// ============================================================================
+// Email Functions
+// ============================================================================
+
+/**
+ * Send production complete email with download links and mulligan button
+ */
+export async function sendProductionCompleteEmail(
+  data: ProductionCompleteEmailData
+): Promise<{ success: boolean; id?: string; error?: string }> {
+  const mulliganUrl = `${BASE_URL}/api/mulligan?token=${data.mulliganToken}`;
+  const dashboardUrl = `${BASE_URL}/dashboard/lab?production=${data.productionId}`;
+
+  try {
+    const { data: result, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.to,
+      subject: `Your Commercial is Ready: ${data.productionTitle}`,
+      html: generateProductionCompleteHtml({
+        ...data,
+        mulliganUrl,
+        dashboardUrl,
+      }),
+    });
+
+    if (error) {
+      console.error("[EmailService] sendProductionCompleteEmail error:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log(`[EmailService] Production complete email sent: ${result?.id}`);
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error("[EmailService] sendProductionCompleteEmail exception:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Send welcome email after subscription activation
+ */
+export async function sendWelcomeEmail(
+  data: WelcomeEmailData
+): Promise<{ success: boolean; id?: string; error?: string }> {
+  try {
+    const { data: result, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.to,
+      subject: `Welcome to Commercial Lab - ${data.tier} Tier`,
+      html: generateWelcomeHtml(data),
+    });
+
+    if (error) {
+      console.error("[EmailService] sendWelcomeEmail error:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error("[EmailService] sendWelcomeEmail exception:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Send payment failed notification
+ */
+export async function sendPaymentFailedEmail(
+  data: PaymentFailedEmailData
+): Promise<{ success: boolean; id?: string; error?: string }> {
+  try {
+    const { data: result, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.to,
+      subject: "Action Required: Payment Failed",
+      html: generatePaymentFailedHtml(data),
+    });
+
+    if (error) {
+      console.error("[EmailService] sendPaymentFailedEmail error:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error("[EmailService] sendPaymentFailedEmail exception:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// ============================================================================
+// HTML Templates (Inline for simplicity - could use React Email)
+// ============================================================================
+
+function generateProductionCompleteHtml(data: {
+  customerName: string;
+  productionTitle: string;
+  thumbnailUrl?: string;
+  videoUrl: string;
+  downloadUrls: { mp4Hd?: string; mp4Sd?: string; gif?: string };
+  mulliganUrl: string;
+  dashboardUrl: string;
+  processingTime?: number;
+}): string {
+  const processingMinutes = data.processingTime
+    ? Math.round(data.processingTime / 60)
+    : null;
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Commercial is Ready</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0A0A0F; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0A0A0F; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #0B1220 0%, #0A0A0F 100%); border: 1px solid rgba(0, 206, 209, 0.2); border-radius: 16px; overflow: hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px 40px; border-bottom: 1px solid rgba(0, 206, 209, 0.1);">
+              <h1 style="margin: 0; color: #00CED1; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
+                BARRIOS A2I
+              </h1>
+              <p style="margin: 8px 0 0; color: #6B7280; font-size: 14px;">
+                Commercial Lab
+              </p>
+            </td>
+          </tr>
+
+          <!-- Main Content -->
+          <tr>
+            <td style="padding: 40px;">
+              <h2 style="margin: 0 0 16px; color: #FFFFFF; font-size: 24px; font-weight: 600;">
+                Your commercial is ready, ${data.customerName}!
+              </h2>
+
+              <p style="margin: 0 0 24px; color: #9CA3AF; font-size: 16px; line-height: 1.6;">
+                <strong style="color: #00CED1;">${data.productionTitle}</strong> has been crafted by our AI production pipeline.
+                ${processingMinutes ? `Completed in ${processingMinutes} minutes.` : ""}
+              </p>
+
+              <!-- Video Thumbnail -->
+              ${data.thumbnailUrl ? `
+              <div style="margin: 0 0 24px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(0, 206, 209, 0.2);">
+                <a href="${data.videoUrl}" target="_blank">
+                  <img src="${data.thumbnailUrl}" alt="Video Preview" style="display: block; width: 100%; height: auto;">
+                </a>
+              </div>
+              ` : ""}
+
+              <!-- Download Buttons -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 32px;">
+                <tr>
+                  ${data.downloadUrls.mp4Hd ? `
+                  <td style="padding-right: 8px;">
+                    <a href="${data.downloadUrls.mp4Hd}" style="display: block; padding: 14px 24px; background: #00CED1; color: #000000; text-decoration: none; font-weight: 600; font-size: 14px; text-align: center; border-radius: 8px;">
+                      Download HD
+                    </a>
+                  </td>
+                  ` : ""}
+                  ${data.downloadUrls.mp4Sd ? `
+                  <td style="padding-left: 8px;">
+                    <a href="${data.downloadUrls.mp4Sd}" style="display: block; padding: 14px 24px; background: rgba(0, 206, 209, 0.1); color: #00CED1; text-decoration: none; font-weight: 600; font-size: 14px; text-align: center; border-radius: 8px; border: 1px solid rgba(0, 206, 209, 0.3);">
+                      Download SD
+                    </a>
+                  </td>
+                  ` : ""}
+                </tr>
+              </table>
+
+              <!-- Mulligan Section -->
+              <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; padding: 24px; margin: 0 0 24px;">
+                <h3 style="margin: 0 0 12px; color: #D4AF37; font-size: 18px; font-weight: 600;">
+                  Not quite right?
+                </h3>
+                <p style="margin: 0 0 16px; color: #9CA3AF; font-size: 14px; line-height: 1.5;">
+                  Every production includes <strong style="color: #D4AF37;">one free mulligan</strong>. Click below to recreate your commercial with fresh creative direction.
+                </p>
+                <a href="${data.mulliganUrl}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #D4AF37 0%, #B8941F 100%); color: #000000; text-decoration: none; font-weight: 700; font-size: 14px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                  Use Your Mulligan
+                </a>
+              </div>
+
+              <!-- Dashboard Link -->
+              <p style="margin: 0; color: #6B7280; font-size: 14px;">
+                <a href="${data.dashboardUrl}" style="color: #00CED1; text-decoration: none;">
+                  View in Dashboard &rarr;
+                </a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 40px; border-top: 1px solid rgba(0, 206, 209, 0.1); background: rgba(0, 0, 0, 0.3);">
+              <p style="margin: 0; color: #6B7280; font-size: 12px; text-align: center;">
+                Barrios A2I | Commercial Lab<br>
+                <a href="${BASE_URL}" style="color: #00CED1; text-decoration: none;">www.barriosa2i.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+function generateWelcomeHtml(data: WelcomeEmailData): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #0A0A0F; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0A0A0F; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #0B1220 0%, #0A0A0F 100%); border: 1px solid rgba(0, 206, 209, 0.2); border-radius: 16px; overflow: hidden;">
+          <tr>
+            <td style="padding: 40px;">
+              <h1 style="margin: 0 0 24px; color: #00CED1; font-size: 28px;">Welcome to Commercial Lab!</h1>
+              <p style="margin: 0 0 16px; color: #FFFFFF; font-size: 18px;">Hey ${data.customerName},</p>
+              <p style="margin: 0 0 24px; color: #9CA3AF; font-size: 16px; line-height: 1.6;">
+                You're now on the <strong style="color: #00CED1;">${data.tier}</strong> tier with <strong style="color: #D4AF37;">${data.monthlyTokens} tokens</strong> per month.
+              </p>
+              <a href="${BASE_URL}/dashboard/lab" style="display: inline-block; padding: 14px 32px; background: #00CED1; color: #000; text-decoration: none; font-weight: 600; border-radius: 8px;">
+                Start Creating
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+function generatePaymentFailedHtml(data: PaymentFailedEmailData): string {
+  const formattedAmount = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(data.invoiceAmount / 100);
+
+  const retryDateStr = data.retryDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #0A0A0F; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0A0A0F; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #0B1220 0%, #0A0A0F 100%); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; overflow: hidden;">
+          <tr>
+            <td style="padding: 40px;">
+              <h1 style="margin: 0 0 24px; color: #EF4444; font-size: 24px;">Payment Failed</h1>
+              <p style="margin: 0 0 16px; color: #FFFFFF; font-size: 16px;">Hey ${data.customerName},</p>
+              <p style="margin: 0 0 24px; color: #9CA3AF; font-size: 16px; line-height: 1.6;">
+                We couldn't process your payment of <strong style="color: #FFFFFF;">${formattedAmount}</strong>.
+                We'll retry on ${retryDateStr}.
+              </p>
+              <a href="${data.updatePaymentUrl}" style="display: inline-block; padding: 14px 32px; background: #EF4444; color: #FFFFFF; text-decoration: none; font-weight: 600; border-radius: 8px;">
+                Update Payment Method
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+export default {
+  sendProductionCompleteEmail,
+  sendWelcomeEmail,
+  sendPaymentFailedEmail,
+};

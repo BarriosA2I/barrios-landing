@@ -570,6 +570,13 @@ model Production {
   // Relations
   assets            ProductionAsset[]
 
+  // Mulligan System
+  mulliganUsed      Boolean             @default(false) @map("mulligan_used")
+  mulliganToken     String?             @unique @map("mulligan_token")
+  originalId        String?             @map("original_id")
+  original          Production?         @relation("MulliganChain", fields: [originalId], references: [id])
+  mulligans         Production[]        @relation("MulliganChain")
+
   // Version for optimistic locking
   version           Int                 @default(0)
 
@@ -580,6 +587,7 @@ model Production {
   @@index([accountId])
   @@index([status])
   @@index([priority, queuedAt])
+  @@index([mulliganToken])
   @@map("productions")
 }
 

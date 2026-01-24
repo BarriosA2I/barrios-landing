@@ -42,6 +42,7 @@
     "@clerk/nextjs": "^6.36.8",
     "@clerk/themes": "^2.4.48",
     "@prisma/client": "^5.22.0",
+    "@react-email/components": "^1.0.6",
     "@stripe/stripe-js": "^8.6.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -52,6 +53,7 @@
     "prisma": "^5.22.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "resend": "^6.8.0",
     "stripe": "^20.2.0",
     "tailwind-merge": "^2.5.4"
   },
@@ -64,6 +66,7 @@
     "autoprefixer": "^10.4.23",
     "concurrently": "^9.2.1",
     "cssnano": "^7.1.2",
+    "dotenv-cli": "^11.0.0",
     "postcss": "^8.5.6",
     "serve": "^14.2.5",
     "tailwindcss": "^4.1.18",
