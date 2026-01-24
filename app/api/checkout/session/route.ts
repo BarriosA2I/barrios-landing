@@ -74,6 +74,25 @@ const PRODUCT_CATALOG = [
     metadata: { type: 'lab_test' },
     prices: [{ id: 'price_single_lab_test' }],
   },
+  // TOKEN PACKS (one-time top-ups)
+  {
+    id: 'prod_token_pack_8',
+    category: 'TOKEN_PACK',
+    metadata: { tokens: '8', commercials: '1' },
+    prices: [{ id: 'price_token_pack_8' }],
+  },
+  {
+    id: 'prod_token_pack_16',
+    category: 'TOKEN_PACK',
+    metadata: { tokens: '16', commercials: '2' },
+    prices: [{ id: 'price_token_pack_16' }],
+  },
+  {
+    id: 'prod_token_pack_32',
+    category: 'TOKEN_PACK',
+    metadata: { tokens: '32', commercials: '4' },
+    prices: [{ id: 'price_token_pack_32' }],
+  },
   // CONSULTATION
   {
     id: 'prod_consultation_strategy',

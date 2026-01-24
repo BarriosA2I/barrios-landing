@@ -2075,21 +2075,30 @@
                                 <span class="text-white font-medium">8 Tokens Pack</span>
                                 <span class="text-neon font-mono">$449</span>
                             </div>
-                            <p class="text-xs text-white/40">1 additional commercial</p>
+                            <p class="text-xs text-white/40 mb-3">1 additional commercial</p>
+                            <button onclick="initiateCheckout('token_pack_8', 'TOP_UP')" class="w-full py-2 bg-neon/10 border border-neon/50 text-neon text-xs font-medium rounded-lg hover:bg-neon hover:text-black transition-all">
+                                Buy Tokens
+                            </button>
                         </div>
                         <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
                             <div class="flex justify-between items-start mb-2">
                                 <span class="text-white font-medium">16 Tokens Pack</span>
                                 <span class="text-neon font-mono">$799</span>
                             </div>
-                            <p class="text-xs text-white/40">2 additional commercials</p>
+                            <p class="text-xs text-white/40 mb-3">2 additional commercials</p>
+                            <button onclick="initiateCheckout('token_pack_16', 'TOP_UP')" class="w-full py-2 bg-neon/10 border border-neon/50 text-neon text-xs font-medium rounded-lg hover:bg-neon hover:text-black transition-all">
+                                Buy Tokens
+                            </button>
                         </div>
                         <div class="p-4 rounded-xl bg-white/5 border border-neon/30 hover:border-neon/60 transition-all">
                             <div class="flex justify-between items-start mb-2">
                                 <span class="text-white font-medium">32 Tokens Pack</span>
                                 <span class="text-neon font-mono">$1,499</span>
                             </div>
-                            <p class="text-xs text-white/40">4 additional commercials</p>
+                            <p class="text-xs text-white/40 mb-3">4 additional commercials</p>
+                            <button onclick="initiateCheckout('token_pack_32', 'TOP_UP')" class="w-full py-2 bg-neon/10 border border-neon/50 text-neon text-xs font-medium rounded-lg hover:bg-neon hover:text-black transition-all">
+                                Buy Tokens
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2641,7 +2650,11 @@
             'growth_yearly': 'price_growth_yearly',
             'scale_monthly': 'price_scale_monthly',
             'scale_yearly': 'price_scale_yearly',
-            'lab_test': 'price_single_lab_test'
+            'lab_test': 'price_single_lab_test',
+            // Token Packs (one-time purchases)
+            'token_pack_8': 'price_token_pack_8',
+            'token_pack_16': 'price_token_pack_16',
+            'token_pack_32': 'price_token_pack_32'
         };
 
         // Current billing interval (default monthly)
@@ -2660,7 +2673,9 @@
 
         // Initiate checkout with tier selection
         async function initiateCheckout(tier, intent = 'SUBSCRIPTION') {
-            const priceKey = tier === 'lab_test' ? 'lab_test' : `${tier}_${billingInterval}`;
+            // Token packs and lab_test use direct tier name, subscriptions need billing interval
+            const isOneTime = tier === 'lab_test' || tier.startsWith('token_pack_');
+            const priceKey = isOneTime ? tier : `${tier}_${billingInterval}`;
             const priceId = TIER_PRICES[priceKey];
 
             if (!priceId) {
