@@ -1,8 +1,9 @@
 /**
- * Production Complete Email Template
+ * Production Complete Email Template (v2)
  *
  * Cyberpunk-themed React Email template for Commercial Lab.
- * Includes video preview, download buttons, and mulligan CTA.
+ * Mulligan button now links to feedback page where customers
+ * can specify exactly what they want changed.
  */
 
 import {
@@ -27,7 +28,7 @@ interface ProductionCompleteEmailProps {
   videoUrl: string;
   downloadHdUrl?: string;
   downloadSdUrl?: string;
-  mulliganUrl: string;
+  mulliganToken: string;
   dashboardUrl: string;
   processingMinutes?: number;
 }
@@ -39,15 +40,21 @@ export default function ProductionCompleteEmail({
   videoUrl = "#",
   downloadHdUrl,
   downloadSdUrl,
-  mulliganUrl = "#",
+  mulliganToken = "ABC123-XYZ789",
   dashboardUrl = "#",
   processingMinutes,
 }: ProductionCompleteEmailProps) {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL || "https://www.barriosa2i.com";
+
+  // Link to FEEDBACK PAGE (not direct API)
+  const mulliganUrl = `${baseUrl}/mulligan/${mulliganToken}`;
+
   return (
     <Html>
       <Head />
       <Preview>
-        Your commercial "{productionTitle}" is ready for download
+        Your commercial &quot;{productionTitle}&quot; is ready for download
       </Preview>
       <Body style={bodyStyle}>
         <Container style={containerStyle}>
@@ -98,7 +105,7 @@ export default function ProductionCompleteEmail({
 
             <Hr style={dividerStyle} />
 
-            {/* Mulligan Section */}
+            {/* Mulligan Section - Now links to feedback page */}
             <Section style={mulliganSectionStyle}>
               <Heading as="h3" style={mulliganHeadingStyle}>
                 Not quite right?
@@ -106,12 +113,16 @@ export default function ProductionCompleteEmail({
               <Text style={mulliganTextStyle}>
                 Every production includes{" "}
                 <strong style={{ color: "#D4AF37" }}>one free mulligan</strong>.
-                Click below to recreate your commercial with fresh creative
-                direction.
+                Tell us what you&apos;d like changed and we&apos;ll recreate
+                your commercial.
               </Text>
               <Button href={mulliganUrl} style={mulliganButtonStyle}>
                 USE YOUR MULLIGAN
               </Button>
+              <Text style={mulliganHintStyle}>
+                You&apos;ll be able to specify exactly what you want different —
+                pacing, colors, voice, messaging, and more.
+              </Text>
             </Section>
 
             <Hr style={dividerStyle} />
@@ -272,6 +283,13 @@ const mulliganButtonStyle = {
   display: "inline-block" as const,
   textTransform: "uppercase" as const,
   letterSpacing: "0.5px",
+};
+
+const mulliganHintStyle = {
+  color: "#78716c",
+  fontSize: "12px",
+  margin: "16px 0 0 0",
+  lineHeight: 1.5,
 };
 
 const linkTextStyle = {

@@ -1,11 +1,11 @@
 /**
- * Mulligan API - One-Time Free Video Recreation
+ * Mulligan API - Free Video Recreation WITH Customer Feedback
  *
- * Allows customers to recreate their commercial once for free
- * via a secure token sent in their completion email.
+ * Accepts customer feedback about what they want changed
+ * and passes it to RAGNAROK for intelligent recreation.
  *
- * @route GET /api/mulligan?token=xxx (email link)
- * @route POST /api/mulligan (authenticated dashboard request)
+ * @route GET /api/mulligan?token=xxx (redirects to feedback page)
+ * @route POST /api/mulligan (process with feedback)
  * @route HEAD /api/mulligan?token=xxx (availability check)
  */
 
@@ -15,78 +15,205 @@ import { db } from "@/lib/db";
 import { TokenGuard } from "@/lib/token-guard";
 
 // ============================================================================
+// Types
+// ============================================================================
+
+interface MulliganFeedback {
+  categories: string[];
+  details: string;
+  priorityLevel: "subtle" | "moderate" | "significant";
+  submittedAt: string;
+}
+
+// ============================================================================
+// Feedback Category Labels (for prompt engineering)
+// ============================================================================
+
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  pacing: "Pacing & Energy - adjust the tempo, cuts, and overall energy level",
+  visuals:
+    "Visual Style - modify colors, transitions, graphics, and aesthetic",
+  voice: "Voice & Audio - change voiceover style, tone, music, or sound effects",
+  message: "Message & Script - emphasize different points, adjust the narrative",
+  format: "Format & Length - modify duration, aspect ratio, or structure",
+  other: "Other specific changes requested by the customer",
+};
+
+const PRIORITY_INSTRUCTIONS: Record<string, string> = {
+  subtle:
+    "Make SUBTLE refinements while keeping the overall feel similar. Polish and improve without dramatically changing the approach.",
+  moderate:
+    "Create a FRESH TAKE with noticeable changes while maintaining the core message. Feel free to try new creative directions.",
+  significant:
+    "SIGNIFICANTLY OVERHAUL the commercial. Take a completely different creative approach while still promoting the same business/product.",
+};
+
+// ============================================================================
 // GET /api/mulligan?token=xxx
-// Process mulligan from email link (no auth required - token is the auth)
+// Redirect to feedback page instead of processing directly
 // ============================================================================
 
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token");
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.barriosa2i.com";
 
-  // Validate token exists
-  if (!token || token.length < 20) {
-    return NextResponse.redirect(`${baseUrl}/dashboard?error=invalid_mulligan_token`);
+  if (!token) {
+    return NextResponse.redirect(`${baseUrl}/dashboard?error=invalid_mulligan`);
   }
 
+  // Redirect to feedback page
+  return NextResponse.redirect(`${baseUrl}/mulligan/${token}`);
+}
+
+// ============================================================================
+// POST /api/mulligan
+// Process mulligan with customer feedback
+// ============================================================================
+
+export async function POST(req: NextRequest) {
   try {
-    // Find production with this mulligan token
-    const production = await db.production.findUnique({
-      where: { mulliganToken: token },
-      include: {
-        account: {
-          include: {
-            labSubscription: {
-              include: {
-                cycles: {
-                  where: {
-                    periodStart: { lte: new Date() },
-                    periodEnd: { gte: new Date() },
+    const body = await req.json();
+    const { token, productionId, feedback } = body as {
+      token?: string;
+      productionId?: string;
+      feedback?: MulliganFeedback;
+    };
+
+    // Validate - need token (from email) or productionId (from dashboard)
+    if (!token && !productionId) {
+      return NextResponse.json(
+        { error: "Missing mulligan token or production ID" },
+        { status: 400 }
+      );
+    }
+
+    // Find production
+    let production;
+
+    if (token) {
+      // Email link flow (token-based auth)
+      production = await db.production.findUnique({
+        where: { mulliganToken: token },
+        include: {
+          account: {
+            include: {
+              labSubscription: {
+                include: {
+                  cycles: {
+                    where: {
+                      periodStart: { lte: new Date() },
+                      periodEnd: { gte: new Date() },
+                    },
+                    orderBy: { cycleNumber: "desc" },
+                    take: 1,
                   },
-                  orderBy: { cycleNumber: "desc" },
-                  take: 1,
                 },
               },
             },
           },
         },
-      },
-    });
+      });
+    } else {
+      // Dashboard flow - verify ownership
+      const { userId } = await auth();
+      if (!userId) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      // Get account ID from user
+      const accountId = await TokenGuard.getAccountIdFromClerkId(userId);
+      if (!accountId) {
+        return NextResponse.json(
+          { error: "Account not found" },
+          { status: 404 }
+        );
+      }
+
+      production = await db.production.findFirst({
+        where: {
+          id: productionId,
+          accountId,
+        },
+        include: {
+          account: {
+            include: {
+              labSubscription: {
+                include: {
+                  cycles: {
+                    where: {
+                      periodStart: { lte: new Date() },
+                      periodEnd: { gte: new Date() },
+                    },
+                    orderBy: { cycleNumber: "desc" },
+                    take: 1,
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    }
 
     // ===== Validation =====
 
     if (!production) {
-      console.log("[Mulligan] Invalid token:", token.substring(0, 8) + "...");
-      return NextResponse.redirect(`${baseUrl}/dashboard?error=mulligan_not_found`);
+      return NextResponse.json(
+        { error: "Production not found or link expired" },
+        { status: 404 }
+      );
     }
 
     if (production.mulliganUsed) {
-      console.log("[Mulligan] Already used:", production.id);
-      return NextResponse.redirect(
-        `${baseUrl}/dashboard/lab?error=mulligan_already_used&production=${production.id}`
+      // Check balance for paid redo
+      const balanceCheck = await TokenGuard.checkBalance(
+        production.accountId,
+        1
+      );
+      return NextResponse.json(
+        {
+          error: "Mulligan already used",
+          message:
+            "You've already used your free recreation for this commercial. Additional recreations cost 1 token.",
+          canPurchase: balanceCheck.success,
+          currentBalance: balanceCheck.balance,
+        },
+        { status: 400 }
       );
     }
 
     if (production.status !== "COMPLETED") {
-      console.log("[Mulligan] Not complete:", production.status);
-      return NextResponse.redirect(
-        `${baseUrl}/dashboard/lab?error=production_not_complete&production=${production.id}`
+      return NextResponse.json(
+        {
+          error: "Production not complete",
+          message:
+            "Please wait for your video to complete before using your mulligan.",
+          status: production.status,
+        },
+        { status: 400 }
       );
     }
 
-    // ===== Process Mulligan =====
+    // ===== Build Recreation Instructions =====
+
+    const recreationInstructions = buildRecreationInstructions(
+      feedback,
+      production.title
+    );
+
+    // ===== Process Mulligan (Atomic Transaction) =====
 
     const newMulliganToken = generateSecureToken();
     const cycle = production.account.labSubscription?.cycles[0];
 
-    // Transaction: mark used + create new production
     const { newProduction } = await db.$transaction(async (tx) => {
-      // 1. Mark original mulligan as used
+      // 1. Mark original as mulligan used
       await tx.production.update({
         where: { id: production.id },
         data: { mulliganUsed: true },
       });
 
-      // 2. Create new production (FREE - no token deduction)
+      // 2. Create new production with feedback embedded
       const newProd = await tx.production.create({
         data: {
           accountId: production.accountId,
@@ -96,7 +223,7 @@ export async function GET(req: NextRequest) {
           brandVoice: production.brandVoice,
           format: production.format,
           duration: production.duration,
-          tokensRequired: 0, // FREE!
+          tokensRequired: 0, // FREE mulligan
           tokensConsumed: 0,
           status: "QUEUED",
           priority: production.priority,
@@ -114,11 +241,12 @@ export async function GET(req: NextRequest) {
             cycleId: cycle.id,
             type: "DEBIT_PRODUCTION",
             amount: 0,
-            balance: cycle.tokensAllocated - cycle.tokensUsed - cycle.tokensExpired,
+            balance:
+              cycle.tokensAllocated - cycle.tokensUsed - cycle.tokensExpired,
             referenceType: "mulligan",
             referenceId: newProd.id,
             idempotencyKey: `mulligan_${newProd.id}`,
-            description: `Free mulligan: ${production.title}`,
+            description: `Free mulligan (${feedback?.priorityLevel || "moderate"} changes): ${production.title}`,
           },
         });
       }
@@ -126,172 +254,38 @@ export async function GET(req: NextRequest) {
       return { newProduction: newProd };
     });
 
-    // 4. Trigger RAGNAROK pipeline for recreation
-    await triggerRecreation(newProduction.id, production);
+    // ===== Trigger RAGNAROK with Feedback =====
 
+    await triggerRAGNAROKWithFeedback(
+      newProduction.id,
+      production,
+      feedback,
+      recreationInstructions
+    );
+
+    console.log(`[Mulligan] ✅ Recreation started: ${newProduction.id}`);
     console.log(
-      `[Mulligan] Created recreation: ${newProduction.id} from ${production.id}`
+      `[Mulligan] Feedback: ${feedback?.categories?.join(", ") || "none"}`
     );
-
-    // Redirect to dashboard with success
-    return NextResponse.redirect(
-      `${baseUrl}/dashboard/lab?mulligan=success&production=${newProduction.id}`
-    );
-  } catch (error) {
-    console.error("[Mulligan] Error:", error);
-    return NextResponse.redirect(`${baseUrl}/dashboard?error=mulligan_failed`);
-  }
-}
-
-// ============================================================================
-// POST /api/mulligan
-// Process mulligan from authenticated dashboard
-// ============================================================================
-
-export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const { productionId } = await req.json();
-
-    if (!productionId) {
-      return NextResponse.json(
-        { error: "Production ID required" },
-        { status: 400 }
-      );
-    }
-
-    // Get account ID from user
-    const accountId = await TokenGuard.getAccountIdFromClerkId(userId);
-    if (!accountId) {
-      return NextResponse.json({ error: "Account not found" }, { status: 404 });
-    }
-
-    // Find production and verify ownership
-    const production = await db.production.findFirst({
-      where: {
-        id: productionId,
-        accountId,
-      },
-      include: {
-        account: {
-          include: {
-            labSubscription: {
-              include: {
-                cycles: {
-                  where: {
-                    periodStart: { lte: new Date() },
-                    periodEnd: { gte: new Date() },
-                  },
-                  orderBy: { cycleNumber: "desc" },
-                  take: 1,
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!production) {
-      return NextResponse.json(
-        { error: "Production not found" },
-        { status: 404 }
-      );
-    }
-
-    if (production.mulliganUsed) {
-      // Check balance for paid redo
-      const balanceCheck = await TokenGuard.checkBalance(accountId, 1);
-      return NextResponse.json(
-        {
-          error: "Mulligan already used",
-          message:
-            "Your free recreation has already been used. Additional recreations cost 1 token.",
-          canPurchase: balanceCheck.success,
-          currentBalance: balanceCheck.balance,
-        },
-        { status: 400 }
-      );
-    }
-
-    if (production.status !== "COMPLETED") {
-      return NextResponse.json(
-        {
-          error: "Production not complete",
-          message: "Wait for your video to complete before using your mulligan.",
-          status: production.status,
-        },
-        { status: 400 }
-      );
-    }
-
-    // Process mulligan
-    const newMulliganToken = generateSecureToken();
-    const cycle = production.account.labSubscription?.cycles[0];
-
-    const { newProduction } = await db.$transaction(async (tx) => {
-      await tx.production.update({
-        where: { id: production.id },
-        data: { mulliganUsed: true },
-      });
-
-      const newProd = await tx.production.create({
-        data: {
-          accountId: production.accountId,
-          title: `${production.title} (Mulligan)`,
-          script: production.script,
-          targetAudience: production.targetAudience,
-          brandVoice: production.brandVoice,
-          format: production.format,
-          duration: production.duration,
-          tokensRequired: 0,
-          tokensConsumed: 0,
-          status: "QUEUED",
-          priority: production.priority,
-          queuedAt: new Date(),
-          mulliganUsed: false,
-          mulliganToken: newMulliganToken,
-          originalId: production.id,
-        },
-      });
-
-      if (cycle) {
-        await tx.tokenLedgerEntry.create({
-          data: {
-            cycleId: cycle.id,
-            type: "DEBIT_PRODUCTION",
-            amount: 0,
-            balance: cycle.tokensAllocated - cycle.tokensUsed - cycle.tokensExpired,
-            referenceType: "mulligan",
-            referenceId: newProd.id,
-            idempotencyKey: `mulligan_${newProd.id}`,
-            description: `Free mulligan: ${production.title}`,
-          },
-        });
-      }
-
-      return { newProduction: newProd };
-    });
-
-    await triggerRecreation(newProduction.id, production);
+    console.log(`[Mulligan] Priority: ${feedback?.priorityLevel || "moderate"}`);
 
     return NextResponse.json({
       success: true,
       message:
-        "Mulligan activated! Your commercial is being recreated with fresh creative direction.",
+        "Mulligan activated! Your feedback has been sent to our AI director.",
       newProductionId: newProduction.id,
       originalProductionId: production.id,
+      feedbackReceived: {
+        categories: feedback?.categories || [],
+        priorityLevel: feedback?.priorityLevel || "moderate",
+        hasDetails: !!feedback?.details,
+      },
       estimatedMinutes: 4,
     });
   } catch (error) {
-    console.error("[Mulligan POST] Error:", error);
+    console.error("[Mulligan] Error:", error);
     return NextResponse.json(
-      { error: "Failed to process mulligan" },
+      { error: "Failed to process mulligan. Please try again." },
       { status: 500 }
     );
   }
@@ -335,20 +329,74 @@ export async function HEAD(req: NextRequest) {
 }
 
 // ============================================================================
-// Helpers
+// Build Recreation Instructions for RAGNAROK
 // ============================================================================
 
-function generateSecureToken(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-  const segments = [8, 4, 4, 12].map((len) =>
-    Array.from({ length: len }, () =>
-      chars[Math.floor(Math.random() * chars.length)]
-    ).join("")
+function buildRecreationInstructions(
+  feedback: MulliganFeedback | undefined,
+  title: string | null
+): string {
+  if (!feedback) {
+    return "Create a fresh variation with different creative direction while maintaining the core message.";
+  }
+
+  const parts: string[] = [];
+
+  // Header
+  parts.push("=== MULLIGAN RECREATION REQUEST ===");
+  parts.push(`Production: ${title || "Commercial"}`);
+  parts.push("");
+
+  // Priority level instruction
+  parts.push("## CHANGE INTENSITY");
+  parts.push(
+    PRIORITY_INSTRUCTIONS[feedback.priorityLevel] ||
+      PRIORITY_INSTRUCTIONS.moderate
   );
-  return segments.join("-");
+  parts.push("");
+
+  // Categories to change
+  if (feedback.categories && feedback.categories.length > 0) {
+    parts.push("## AREAS TO FOCUS ON");
+    for (const category of feedback.categories) {
+      const description = CATEGORY_DESCRIPTIONS[category] || category;
+      parts.push(`• ${description}`);
+    }
+    parts.push("");
+  }
+
+  // Detailed feedback
+  if (feedback.details && feedback.details.trim()) {
+    parts.push("## SPECIFIC CUSTOMER FEEDBACK");
+    parts.push(
+      "The customer has provided the following specific instructions:"
+    );
+    parts.push("");
+    parts.push("---");
+    parts.push(feedback.details.trim());
+    parts.push("---");
+    parts.push("");
+    parts.push("Please carefully address each point in their feedback.");
+  }
+
+  // Closing instruction
+  parts.push("");
+  parts.push("## IMPORTANT");
+  parts.push(
+    "This is a mulligan recreation - the customer was not fully satisfied with the original."
+  );
+  parts.push(
+    "Focus on the areas they identified while maintaining brand consistency."
+  );
+
+  return parts.join("\n");
 }
 
-async function triggerRecreation(
+// ============================================================================
+// Trigger RAGNAROK Pipeline with Feedback
+// ============================================================================
+
+async function triggerRAGNAROKWithFeedback(
   newProductionId: string,
   original: {
     id: string;
@@ -358,7 +406,9 @@ async function triggerRecreation(
     brandVoice: string | null;
     format: string;
     duration: number;
-  }
+  },
+  feedback: MulliganFeedback | undefined,
+  instructions: string
 ) {
   const genesisUrl =
     process.env.GENESIS_API_URL ||
@@ -381,18 +431,40 @@ async function triggerRecreation(
         brandVoice: original.brandVoice,
         format: original.format,
         duration: original.duration,
-        instructions:
-          "Create a fresh variation with different visuals, pacing, and creative direction while maintaining the core message and brand identity.",
+
+        // ===== CUSTOMER FEEDBACK =====
+        mulliganFeedback: feedback,
+        mulliganInstructions: instructions,
+
+        // Formatted for Creative Director agent
+        creativeDirection: instructions,
       }),
     });
 
     if (!response.ok) {
-      console.error("[Mulligan] GENESIS error:", await response.text());
+      const errorText = await response.text();
+      console.error("[Mulligan] RAGNAROK error:", errorText);
     } else {
-      console.log("[Mulligan] RAGNAROK pipeline started:", newProductionId);
+      const data = await response.json();
+      console.log("[Mulligan] RAGNAROK started:", data);
     }
   } catch (error) {
-    console.error("[Mulligan] GENESIS connection error:", error);
-    // Production record exists - can retry manually
+    console.error("[Mulligan] RAGNAROK connection error:", error);
+    // Don't throw - production record exists, can be retried
   }
+}
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+function generateSecureToken(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  return [8, 4, 4, 12]
+    .map((len) =>
+      Array.from({ length: len }, () =>
+        chars[Math.floor(Math.random() * chars.length)]
+      ).join("")
+    )
+    .join("-");
 }

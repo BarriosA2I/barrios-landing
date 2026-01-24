@@ -9,6 +9,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/nexus/(.*)',
   '/api/checkout/(.*)',
   '/api/mulligan(.*)',
+  '/mulligan(.*)',  // Feedback page for email links
   '/nexus-personal(.*)',
   '/contact(.*)',
   '/founder(.*)',
