@@ -178,6 +178,28 @@ function getConsultationDetails(items: CartItem[]) {
 }
 
 /**
+ * Get token count for a given price ID (for token packs)
+ */
+function getTokensForPriceId(priceId: string | undefined): number {
+  if (!priceId) return 0;
+
+  const product = getProductByPriceId(priceId);
+  if (product?.category === 'TOKEN_PACK') {
+    const tokens = product.metadata?.tokens;
+    if (tokens) return parseInt(tokens, 10);
+  }
+
+  // Fallback mapping
+  const tokenMap: Record<string, number> = {
+    price_token_pack_8: 8,
+    price_token_pack_16: 16,
+    price_token_pack_32: 32,
+  };
+
+  return tokenMap[priceId] || 0;
+}
+
+/**
  * Build Stripe line items from cart
  */
 async function buildLineItems(items: CartItem[]): Promise<Stripe.Checkout.SessionCreateParams.LineItem[]> {
@@ -301,6 +323,10 @@ export async function POST(request: NextRequest) {
         ...metadata,
         source: 'barrios-a2i',
         intent,
+        priceId: items[0]?.priceId,
+        ...(intent === 'TOP_UP' && {
+          tokens: String(getTokensForPriceId(items[0]?.priceId)),
+        }),
         ...(consultationDetails && {
           consultationType: consultationDetails.consultationType,
           creditableTiers: consultationDetails.creditableTiers.join(','),

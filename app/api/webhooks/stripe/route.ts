@@ -78,6 +78,10 @@ export async function POST(request: NextRequest) {
         await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
 
+      case "checkout.session.completed":
+        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
+        break;
+
       default:
         console.log("[stripe-webhook] Unhandled event:", event.type);
     }
@@ -287,4 +291,142 @@ function mapSubscriptionStatus(status: string): "ACTIVE" | "PAST_DUE" | "CANCELE
     paused: "PAUSED",
   };
   return mapping[status] || "ACTIVE";
+}
+
+/**
+ * Handle checkout.session.completed - Credit tokens for one-time purchases
+ *
+ * This handles token pack purchases (TOP_UP intent):
+ * - Finds customer's active subscription cycle
+ * - Creates TokenLedgerEntry with type CREDIT_TOPUP
+ * - Updates cycle's tokensAllocated
+ */
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  const sessionData = session as any;
+  const intent = sessionData.metadata?.intent;
+
+  // Only handle TOP_UP intent (token pack purchases)
+  if (intent !== "TOP_UP") {
+    console.log("[stripe-webhook] Checkout completed with intent:", intent || "none");
+    return;
+  }
+
+  const customerId = typeof sessionData.customer === "string"
+    ? sessionData.customer
+    : sessionData.customer?.id;
+
+  if (!customerId) {
+    console.log("[stripe-webhook] No customer ID in checkout session");
+    return;
+  }
+
+  // Find billing customer and their subscription
+  const billingCustomer = await db.billingCustomer.findUnique({
+    where: { stripeCustomerId: customerId },
+    include: {
+      account: {
+        include: { labSubscription: true },
+      },
+    },
+  });
+
+  if (!billingCustomer?.account?.labSubscription) {
+    console.log("[stripe-webhook] No active subscription for token top-up, customer:", customerId);
+    return;
+  }
+
+  const subscription = billingCustomer.account.labSubscription;
+
+  // Get current cycle (active, not expired)
+  const currentCycle = await db.labSubscriptionCycle.findFirst({
+    where: {
+      subscriptionId: subscription.id,
+      periodEnd: { gte: new Date() },
+    },
+    orderBy: { periodEnd: "desc" },
+  });
+
+  if (!currentCycle) {
+    console.log("[stripe-webhook] No active cycle for token top-up, subscription:", subscription.id);
+    return;
+  }
+
+  // Determine token amount from session metadata
+  const tokenAmount = getTokenAmountFromSession(sessionData);
+
+  // Idempotency key for this checkout session
+  const idempotencyKey = `checkout_${session.id}_topup`;
+
+  // Check if already processed
+  const existingEntry = await db.tokenLedgerEntry.findUnique({
+    where: { idempotencyKey },
+  });
+
+  if (existingEntry) {
+    console.log("[stripe-webhook] Token top-up already processed:", idempotencyKey);
+    return;
+  }
+
+  // Get current balance from last ledger entry
+  const lastEntry = await db.tokenLedgerEntry.findFirst({
+    where: { cycleId: currentCycle.id },
+    orderBy: { createdAt: "desc" },
+  });
+  const currentBalance = lastEntry?.balance || currentCycle.tokensAllocated - currentCycle.tokensUsed;
+
+  // Create ledger entry for token top-up
+  await db.tokenLedgerEntry.create({
+    data: {
+      cycleId: currentCycle.id,
+      type: "CREDIT_TOPUP",
+      amount: tokenAmount,
+      balance: currentBalance + tokenAmount,
+      referenceType: "checkout_session",
+      referenceId: session.id,
+      idempotencyKey,
+      description: `Token pack purchase (${tokenAmount} tokens)`,
+      metadata: {
+        stripeSessionId: session.id,
+        intent: intent,
+      },
+    },
+  });
+
+  // Update cycle's tokens allocated
+  await db.labSubscriptionCycle.update({
+    where: { id: currentCycle.id },
+    data: {
+      tokensAllocated: { increment: tokenAmount },
+    },
+  });
+
+  console.log(`[stripe-webhook] Credited ${tokenAmount} tokens (top-up) for account ${billingCustomer.accountId}`);
+}
+
+/**
+ * Get token amount from checkout session
+ */
+function getTokenAmountFromSession(session: any): number {
+  // Check metadata first (most reliable)
+  const tokensFromMetadata = session.metadata?.tokens;
+  if (tokensFromMetadata) {
+    return parseInt(tokensFromMetadata, 10);
+  }
+
+  // Fallback: determine from price ID in metadata
+  const priceId = session.metadata?.priceId;
+  if (priceId) {
+    const tokenMap: Record<string, number> = {
+      price_token_pack_8: 8,
+      price_token_pack_16: 16,
+      price_token_pack_32: 32,
+    };
+    if (tokenMap[priceId]) {
+      return tokenMap[priceId];
+    }
+  }
+
+  // Default to 8 if unknown
+  console.log("[stripe-webhook] Could not determine token amount, defaulting to 8");
+  return 8;
 }
