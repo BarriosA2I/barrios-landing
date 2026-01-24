@@ -1,8 +1,15 @@
 /**
  * Production Start API
  *
- * Validates tokens, deducts atomically, and queues production for manual fulfillment.
- * Sends order notification email to Gary instead of auto-triggering RAGNAROK.
+ * Validates tokens, deducts atomically, and starts production.
+ *
+ * MODES:
+ * - Manual Fulfillment (default): Emails Gary, waits for manual RAGNAROK trigger
+ * - Automatic (MANUAL_FULFILLMENT_MODE=false): Auto-triggers RAGNAROK pipeline
+ *
+ * To switch modes, set environment variable:
+ *   MANUAL_FULFILLMENT_MODE=false  -> Enable automatic RAGNAROK
+ *   MANUAL_FULFILLMENT_MODE=true   -> Manual fulfillment (default)
  *
  * @route POST /api/production/start - Start new production
  * @route GET /api/production/start - Check token availability
@@ -13,6 +20,12 @@ import { auth } from "@clerk/nextjs/server";
 import { TokenGuard, TOKEN_COSTS } from "@/lib/token-guard";
 import { db } from "@/lib/db";
 import { sendNewOrderNotificationEmail } from "@/lib/email-service";
+
+// ============================================================================
+// FULFILLMENT MODE TOGGLE
+// Set MANUAL_FULFILLMENT_MODE=false in .env to enable automatic RAGNAROK
+// ============================================================================
+const MANUAL_FULFILLMENT_MODE = process.env.MANUAL_FULFILLMENT_MODE !== "false";
 
 // ============================================================================
 // POST /api/production/start
@@ -118,46 +131,124 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ===== 5. Send Order Notification to Gary (Manual Fulfillment) =====
-    const customerName = `${account?.owner?.firstName || ""} ${account?.owner?.lastName || ""}`.trim() || "Customer";
-    const customerEmail = account?.owner?.email || "unknown";
+    // ===== 5. Start Production (Manual or Automatic) =====
 
-    const emailResult = await sendNewOrderNotificationEmail({
-      productionId: deductResult.productionId,
-      customerName,
-      customerEmail,
-      accountId,
-      title,
-      script,
-      targetAudience,
-      brandVoice,
-      format,
-      duration,
-      priority,
-      tokensUsed: tokenCost,
-      timestamp: new Date(),
-    });
+    if (MANUAL_FULFILLMENT_MODE) {
+      // ========================================================================
+      // MANUAL FULFILLMENT MODE (TEMPORARY)
+      // ========================================================================
+      // Send order notification to Gary for manual RAGNAROK trigger.
+      // To disable this and enable automatic RAGNAROK, set:
+      //   MANUAL_FULFILLMENT_MODE=false
+      // in your environment variables.
+      // ========================================================================
 
-    console.log(`[Production] Order notification sent: ${emailResult.success}`);
-    if (!emailResult.success) {
-      console.error(`[Production] Email error: ${emailResult.error}`);
+      const customerName = `${account?.owner?.firstName || ""} ${account?.owner?.lastName || ""}`.trim() || "Customer";
+      const customerEmail = account?.owner?.email || "unknown";
+
+      const emailResult = await sendNewOrderNotificationEmail({
+        productionId: deductResult.productionId,
+        customerName,
+        customerEmail,
+        accountId,
+        title,
+        script,
+        targetAudience,
+        brandVoice,
+        format,
+        duration,
+        priority,
+        tokensUsed: tokenCost,
+        timestamp: new Date(),
+      });
+
+      console.log(`[Production] Manual mode - Order notification sent: ${emailResult.success}`);
+      if (!emailResult.success) {
+        console.error(`[Production] Email error: ${emailResult.error}`);
+      }
+
+      // ===== 6. Return Success Response (Manual Mode) =====
+      return NextResponse.json({
+        success: true,
+        production: {
+          id: deductResult.productionId,
+          status: "QUEUED",
+        },
+        tokens: {
+          used: tokenCost,
+          remaining: deductResult.newBalance,
+          ledgerEntryId: deductResult.ledgerEntryId,
+        },
+        message: "Order received! Our team will start production shortly and you'll receive an email when your commercial is ready.",
+        dashboardUrl: `/dashboard/lab?production=${deductResult.productionId}`,
+      });
+
+    } else {
+      // ========================================================================
+      // AUTOMATIC RAGNAROK MODE
+      // ========================================================================
+      // Auto-trigger RAGNAROK pipeline for immediate processing.
+      // This is the production mode when manual fulfillment is disabled.
+      // ========================================================================
+
+      const genesisUrl = process.env.GENESIS_API_URL || "https://barrios-genesis-flawless.onrender.com";
+      let pipelineStarted = false;
+      let pipelineResponse: Record<string, unknown> | null = null;
+
+      try {
+        const response = await fetch(`${genesisUrl}/api/ragnarok/start`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GENESIS_API_KEY}`,
+          },
+          body: JSON.stringify({
+            productionId: deductResult.productionId,
+            accountId,
+            title,
+            script,
+            targetAudience,
+            brandVoice,
+            format,
+            duration,
+            priority: rushDelivery ? "rush" : "standard",
+          }),
+        });
+
+        if (response.ok) {
+          pipelineStarted = true;
+          pipelineResponse = await response.json();
+          console.log(`[Production] RAGNAROK started: ${deductResult.productionId}`);
+        } else {
+          console.error("[Production] RAGNAROK failed:", await response.text());
+        }
+      } catch (err) {
+        console.error("[Production] GENESIS connection error:", err);
+      }
+
+      // ===== 6. Return Success Response (Automatic Mode) =====
+      return NextResponse.json({
+        success: true,
+        production: {
+          id: deductResult.productionId,
+          status: "QUEUED",
+          estimatedMinutes: rushDelivery ? 2 : 4,
+        },
+        tokens: {
+          used: tokenCost,
+          remaining: deductResult.newBalance,
+          ledgerEntryId: deductResult.ledgerEntryId,
+        },
+        pipeline: {
+          started: pipelineStarted,
+          genesisResponse: pipelineResponse,
+        },
+        message: pipelineStarted
+          ? "Production started! Your commercial is being created by RAGNAROK."
+          : "Production queued. We'll start processing shortly.",
+        dashboardUrl: `/dashboard/lab?production=${deductResult.productionId}`,
+      });
     }
-
-    // ===== 6. Return Success Response =====
-    return NextResponse.json({
-      success: true,
-      production: {
-        id: deductResult.productionId,
-        status: "QUEUED",
-      },
-      tokens: {
-        used: tokenCost,
-        remaining: deductResult.newBalance,
-        ledgerEntryId: deductResult.ledgerEntryId,
-      },
-      message: "Order received! Our team will start production shortly and you'll receive an email when your commercial is ready.",
-      dashboardUrl: `/dashboard/lab?production=${deductResult.productionId}`,
-    });
   } catch (error) {
     console.error("[Production] Start error:", error);
     return NextResponse.json(
