@@ -27,7 +27,7 @@ function VolumetricBackground() {
         }}
       />
       <motion.div
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#8B5CF6]/15 rounded-full blur-[100px]"
+        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#D4AF37]/15 rounded-full blur-[100px]"
         animate={{
           scale: [1.2, 1, 1.2],
           opacity: [0.2, 0.3, 0.2],
@@ -82,7 +82,7 @@ function InputField({
       <label className="text-sm text-[#a1a1aa] font-medium">{label}</label>
       <div className="relative">
         <motion.div
-          className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-[#00CED1]/50 to-[#8B5CF6]/50 opacity-0 blur-sm"
+          className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-[#00CED1]/50 to-[#D4AF37]/50 opacity-0 blur-sm"
           animate={{ opacity: focused ? 0.6 : 0 }}
           transition={{ duration: 0.2 }}
         />
@@ -241,7 +241,7 @@ export default function SignInPage() {
         className="relative z-10 w-full max-w-md"
       >
         {/* Glow ring behind card */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-[#00CED1]/20 via-[#8B5CF6]/20 to-[#00CED1]/20 rounded-2xl blur-xl opacity-60" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#00CED1]/20 via-[#D4AF37]/20 to-[#00CED1]/20 rounded-2xl blur-xl opacity-60" />
 
         {/* Glass card */}
         <div className="relative bg-[#141414]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-[0_0_60px_rgba(0,206,209,0.15)]">

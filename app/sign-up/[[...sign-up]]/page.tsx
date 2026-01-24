@@ -15,7 +15,7 @@ function VolumetricBackground() {
 
       {/* Animated orbs */}
       <motion.div
-        className="absolute top-1/4 right-1/4 w-96 h-96 bg-[#8B5CF6]/15 rounded-full blur-[120px]"
+        className="absolute top-1/4 right-1/4 w-96 h-96 bg-[#D4AF37]/15 rounded-full blur-[120px]"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.15, 0.25, 0.15],
@@ -52,7 +52,7 @@ function VolumetricBackground() {
       />
 
       {/* Bottom accent line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#8B5CF6]/50 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent" />
     </div>
   );
 }
@@ -82,7 +82,7 @@ function InputField({
       <label className="text-sm text-[#a1a1aa] font-medium">{label}</label>
       <div className="relative">
         <motion.div
-          className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-[#00CED1]/50 to-[#8B5CF6]/50 opacity-0 blur-sm"
+          className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-[#00CED1]/50 to-[#D4AF37]/50 opacity-0 blur-sm"
           animate={{ opacity: focused ? 0.6 : 0 }}
           transition={{ duration: 0.2 }}
         />
@@ -307,7 +307,7 @@ export default function SignUpPage() {
         className="relative z-10 w-full max-w-md"
       >
         {/* Glow ring behind card */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-[#8B5CF6]/20 via-[#00CED1]/20 to-[#8B5CF6]/20 rounded-2xl blur-xl opacity-60" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#D4AF37]/20 via-[#00CED1]/20 to-[#D4AF37]/20 rounded-2xl blur-xl opacity-60" />
 
         {/* Glass card */}
         <div className="relative bg-[#141414]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-[0_0_60px_rgba(139,92,246,0.15)]">
