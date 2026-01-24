@@ -1,7 +1,8 @@
 /**
  * Production Start API
  *
- * Validates tokens, deducts atomically, and triggers RAGNAROK pipeline.
+ * Validates tokens, deducts atomically, and queues production for manual fulfillment.
+ * Sends order notification email to Gary instead of auto-triggering RAGNAROK.
  *
  * @route POST /api/production/start - Start new production
  * @route GET /api/production/start - Check token availability
@@ -10,6 +11,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { TokenGuard, TOKEN_COSTS } from "@/lib/token-guard";
+import { db } from "@/lib/db";
+import { sendNewOrderNotificationEmail } from "@/lib/email-service";
 
 // ============================================================================
 // POST /api/production/start
@@ -32,6 +35,12 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
+
+    // Get customer info for order notification
+    const account = await db.account.findUnique({
+      where: { id: accountId },
+      include: { owner: { select: { email: true, firstName: true, lastName: true } } },
+    });
 
     const body = await req.json();
 
@@ -109,45 +118,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ===== 5. Trigger RAGNAROK Pipeline =====
-    const genesisUrl =
-      process.env.GENESIS_API_URL ||
-      "https://barrios-genesis-flawless.onrender.com";
+    // ===== 5. Send Order Notification to Gary (Manual Fulfillment) =====
+    const customerName = `${account?.owner?.firstName || ""} ${account?.owner?.lastName || ""}`.trim() || "Customer";
+    const customerEmail = account?.owner?.email || "unknown";
 
-    let pipelineStarted = false;
-    let pipelineResponse: Record<string, unknown> | null = null;
+    const emailResult = await sendNewOrderNotificationEmail({
+      productionId: deductResult.productionId,
+      customerName,
+      customerEmail,
+      accountId,
+      title,
+      script,
+      targetAudience,
+      brandVoice,
+      format,
+      duration,
+      priority,
+      tokensUsed: tokenCost,
+      timestamp: new Date(),
+    });
 
-    try {
-      const response = await fetch(`${genesisUrl}/api/ragnarok/start`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.GENESIS_API_KEY}`,
-        },
-        body: JSON.stringify({
-          productionId: deductResult.productionId,
-          accountId,
-          title,
-          script,
-          targetAudience,
-          brandVoice,
-          format,
-          duration,
-          priority: rushDelivery ? "rush" : "standard",
-        }),
-      });
-
-      if (response.ok) {
-        pipelineStarted = true;
-        pipelineResponse = await response.json();
-        console.log(
-          `[Production] RAGNAROK started: ${deductResult.productionId}`
-        );
-      } else {
-        console.error("[Production] RAGNAROK failed:", await response.text());
-      }
-    } catch (err) {
-      console.error("[Production] GENESIS connection error:", err);
+    console.log(`[Production] Order notification sent: ${emailResult.success}`);
+    if (!emailResult.success) {
+      console.error(`[Production] Email error: ${emailResult.error}`);
     }
 
     // ===== 6. Return Success Response =====
@@ -156,20 +149,13 @@ export async function POST(req: NextRequest) {
       production: {
         id: deductResult.productionId,
         status: "QUEUED",
-        estimatedMinutes: rushDelivery ? 2 : 4,
       },
       tokens: {
         used: tokenCost,
         remaining: deductResult.newBalance,
         ledgerEntryId: deductResult.ledgerEntryId,
       },
-      pipeline: {
-        started: pipelineStarted,
-        genesisResponse: pipelineResponse,
-      },
-      message: pipelineStarted
-        ? "Production started! Your commercial is being created by RAGNAROK."
-        : "Production queued. We'll start processing shortly.",
+      message: "Order received! Our team will start production shortly and you'll receive an email when your commercial is ready.",
       dashboardUrl: `/dashboard/lab?production=${deductResult.productionId}`,
     });
   } catch (error) {
