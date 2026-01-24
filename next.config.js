@@ -3,6 +3,14 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
   },
+  async rewrites() {
+    return [
+      { source: '/nexus-personal', destination: '/nexus-personal.html' },
+      { source: '/creative-director', destination: '/creative-director.html' },
+      { source: '/founder', destination: '/founder.html' },
+      { source: '/command-center', destination: '/command-center.html' },
+    ];
+  },
   images: {
     remotePatterns: [
       {
