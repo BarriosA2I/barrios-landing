@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUILD_WORKFORCE | Barrios A2I</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/dist/output.css">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <style>
+        @keyframes checkmark-draw {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 206, 209, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 206, 209, 0.5); }
+        }
+        .checkmark-path {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: checkmark-draw 0.6s ease-out forwards;
+        }
+        .success-fade-in {
+            animation: fade-in-up 0.5s ease-out forwards;
+        }
+        .success-icon-pulse {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        .form-fade-out {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+        /* Focus styles */
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: rgba(0, 206, 209, 0.5) !important;
+            box-shadow: 0 0 0 2px rgba(0, 206, 209, 0.2);
+        }
+        /* Error styles */
+        .field-error {
+            border-color: #ef4444 !important;
+        }
+        .field-error:focus {
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+        }
+        /* Custom select arrow */
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+        }
+        /* Custom color picker wrapper */
+        .color-picker-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .color-picker-wrapper input[type="color"] {
+            -webkit-appearance: none;
+            width: 48px;
+            height: 48px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            background: transparent;
+        }
+        .color-picker-wrapper input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+        }
+        .color-picker-wrapper input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+        /* Spinner */
+        .spinner {
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        /* Section card styling */
+        .intake-section {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .intake-section:hover {
+            border-color: rgba(0,206,209,0.2);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .section-number {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,206,209,0.15);
+            border: 1px solid rgba(0,206,209,0.3);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #00CED1;
+        }
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+        }
+        /* Checkbox group */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .checkbox-item:hover {
+            border-color: rgba(0,206,209,0.3);
+            background: rgba(0,206,209,0.05);
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #00CED1;
+        }
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .checkbox-item:has(input:checked) {
+            border-color: rgba(0,206,209,0.5);
+            background: rgba(0,206,209,0.1);
+        }
+        .checkbox-item:has(input:checked) label {
+            color: white;
+        }
+        /* Progress indicator */
+        .progress-bar {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255,255,255,0.05);
+            z-index: 50;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00CED1, #FFD700);
+            transition: width 0.3s ease;
+        }
+        @media (min-width: 768px) {
+            .progress-bar { top: 80px; }
+        }
+        /* LEGENDARY Header Animations */
+        @keyframes breathingGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(0, 206, 209, 0.4)); }
+            50% { filter: drop-shadow(0 0 30px rgba(0, 206, 209, 0.7)); }
+        }
+        .logo-breathing { animation: breathingGlow 3s ease-in-out infinite; }
+        @media (max-width: 768px) {
+            .logo-breathing { animation: none !important; filter: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-obsidian min-h-screen text-white">
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+    </div>
+
+    <!-- ========== UNIFIED HEADER ========== -->
+    <header class="fixed top-0 left-0 right-0 z-[100] bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 md:h-20">
+          <!-- Logo Section -->
+          <a href="/" class="flex items-center gap-3 group">
+            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center">
+              <img
+                src="/brand/barrios-a2i-shard-logo.png"
+                alt="Barrios A2I"
+                class="w-full h-full object-contain transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(0,206,209,0.4)]"
+              >
+              <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#FFD700] rounded-full shadow-[0_0_6px_#FFD700]"></span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[9px] md:text-[10px] text-[#00CED1] font-mono tracking-[0.2em] uppercase opacity-80">
+                SYSTEM_ACTIVE
+              </span>
+              <span class="text-base md:text-lg font-bold tracking-tight leading-tight">
+                <span class="text-[#fafafa]">BARRIOS</span>
+                <span class="text-[#00CED1] ml-1">A2I</span>
+              </span>
+            </div>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex items-center gap-1">
+            <a href="/pricing" class="nav-item px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              PRICING
+            </a>
+            <a href="/nexus-personal" class="nav-item px-3 py-2 font-mono text-xs tracking-wider group">
+              <span class="text-[#00CED1] group-hover:text-[#00CED1]">NEXUS</span>
+              <span class="inline-block w-1.5 h-1.5 bg-[#00CED1] rounded-full ml-1.5 shadow-[0_0_6px_#00CED1]"></span>
+            </a>
+            <a href="/creative-director" class="nav-item px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              COMMERCIAL_LAB
+            </a>
+            <a href="/founder" class="nav-item px-3 py-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors font-mono text-xs tracking-wider">
+              FOUNDER
+            </a>
+            <a href="/command-center" class="nav-item px-3 py-2 font-mono text-xs tracking-wider group">
+              <span class="text-[#FFD700] group-hover:text-[#FFD700]">COMMAND</span>
+              <span class="inline-block w-1.5 h-1.5 bg-[#FFD700] rounded-full ml-1.5 shadow-[0_0_6px_#FFD700]"></span>
+            </a>
+          </nav>
+
+          <!-- Mobile Menu Button -->
+          <button
+            id="mobile-menu-btn"
+            class="md:hidden p-2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
+            aria-label="Toggle menu"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
+              <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div id="mobile-nav" class="hidden md:hidden bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-white/5">
+        <nav class="px-4 py-3 space-y-1">
+          <a href="/pricing" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">PRICING</a>
+          <a href="/nexus-personal" class="block py-2.5 px-3 text-[#00CED1] hover:bg-[#00CED1]/10 rounded-md font-mono text-sm transition-colors">NEXUS</a>
+          <a href="/creative-director" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">COMMERCIAL_LAB</a>
+          <a href="/founder" class="block py-2.5 px-3 text-[#a1a1aa] hover:text-[#fafafa] hover:bg-white/5 rounded-md font-mono text-sm transition-colors">FOUNDER</a>
+          <a href="/command-center" class="block py-2.5 px-3 text-[#FFD700] hover:bg-[#FFD700]/10 rounded-md font-mono text-sm transition-colors">COMMAND</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Header Spacer -->
+    <div class="h-16 md:h-20"></div>
+
+    <!-- Mobile Menu Script -->
+    <script>
+    (function() {
+      const btn = document.getElementById('mobile-menu-btn');
+      const nav = document.getElementById('mobile-nav');
+      const iconOpen = document.getElementById('menu-icon-open');
+      const iconClose = document.getElementById('menu-icon-close');
+      if (btn && nav) {
+        btn.addEventListener('click', () => {
+          nav.classList.toggle('hidden');
+          if (iconOpen && iconClose) {
+            iconOpen.classList.toggle('hidden');
+            iconClose.classList.toggle('hidden');
+          }
+        });
+      }
+    })();
+    </script>
+
+    <!-- Content -->
+    <main class="pt-12 pb-20 px-4 md:px-6">
+        <div class="max-w-3xl mx-auto">
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <span class="text-[#00CED1] font-mono text-[10px] tracking-widest">[ BUILD_WORKFORCE_INTAKE ]</span>
+                <h1 class="text-3xl md:text-4xl font-serif text-white mt-3 leading-tight">Let's build your AI workforce.</h1>
+                <p class="text-gray-400 mt-4 max-w-xl mx-auto">Tell us about your business, challenges, and goals. We'll design a custom AI system that fits your operation.</p>
+            </div>
+
+            <!-- Form Container -->
+            <div id="form-container" class="relative">
+                <!-- Intake Form -->
+                <form id="intake-form" class="space-y-6 transition-all duration-300" novalidate>
+                    <!-- Honeypot -->
+                    <div class="absolute -left-[9999px]" aria-hidden="true">
+                        <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
+                    </div>
+
+                    <!-- Section 1: Company Info -->
+                    <div class="intake-section" data-section="1">
+                        <div class="section-header">
+                            <span class="section-number">01</span>
+                            <span class="section-title">Company Information</span>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- Company Name -->
+                            <div>
+                                <label for="company_name" class="block text-sm font-medium text-gray-300 mb-1.5">Company Name <span class="text-red-400">*</span></label>
+                                <input
+                                    type="text"
+                                    id="company_name"
+                                    name="company_name"
+                                    required
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                    placeholder="Acme Corporation"
+                                >
+                                <p id="company_name-error" class="mt-1.5 text-sm text-red-400 hidden"></p>
+                            </div>
+
+                            <!-- Tagline -->
+                            <div>
+                                <label for="tagline" class="block text-sm font-medium text-gray-300 mb-1.5">Company Tagline / One-Liner <span class="text-gray-500">(optional)</span></label>
+                                <input
+                                    type="text"
+                                    id="tagline"
+                                    name="tagline"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                    placeholder="We help businesses scale with AI"
+                                >
+                            </div>
+
+                            <!-- Brand Colors -->
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="primary_color" class="block text-sm font-medium text-gray-300 mb-1.5">Primary Brand Color</label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="primary_color" name="primary_color" value="#00CED1">
+                                        <input
+                                            type="text"
+                                            id="primary_color_hex"
+                                            name="primary_color_hex"
+                                            class="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 font-mono text-sm"
+                                            placeholder="#00CED1"
+                                            value="#00CED1"
+                                        >
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="secondary_color" class="block text-sm font-medium text-gray-300 mb-1.5">Secondary Brand Color</label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="secondary_color" name="secondary_color" value="#FFD700">
+                                        <input
+                                            type="text"
+                                            id="secondary_color_hex"
+                                            name="secondary_color_hex"
+                                            class="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 font-mono text-sm"
+                                            placeholder="#FFD700"
+                                            value="#FFD700"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Website -->
+                            <div>
+                                <label for="website" class="block text-sm font-medium text-gray-300 mb-1.5">Website URL <span class="text-gray-500">(optional)</span></label>
+                                <input
+                                    type="url"
+                                    id="website"
+                                    name="website"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                    placeholder="https://yourcompany.com"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Product/Service -->
+                    <div class="intake-section" data-section="2">
+                        <div class="section-header">
+                            <span class="section-number">02</span>
+                            <span class="section-title">Product & Service</span>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- What do you sell -->
+                            <div>
+                                <label for="product_description" class="block text-sm font-medium text-gray-300 mb-1.5">What does your company sell or provide? <span class="text-red-400">*</span></label>
+                                <textarea
+                                    id="product_description"
+                                    name="product_description"
+                                    required
+                                    rows="3"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30 resize-none"
+                                    placeholder="Describe your main products or services..."
+                                ></textarea>
+                                <p id="product_description-error" class="mt-1.5 text-sm text-red-400 hidden"></p>
+                            </div>
+
+                            <!-- Target customer -->
+                            <div>
+                                <label for="target_customer" class="block text-sm font-medium text-gray-300 mb-1.5">Who is your ideal customer?</label>
+                                <textarea
+                                    id="target_customer"
+                                    name="target_customer"
+                                    rows="2"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30 resize-none"
+                                    placeholder="E.g., Small business owners in healthcare, Marketing directors at mid-size tech companies..."
+                                ></textarea>
+                            </div>
+
+                            <!-- Differentiator -->
+                            <div>
+                                <label for="differentiator" class="block text-sm font-medium text-gray-300 mb-1.5">What makes you different from competitors?</label>
+                                <textarea
+                                    id="differentiator"
+                                    name="differentiator"
+                                    rows="2"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30 resize-none"
+                                    placeholder="Your unique value proposition..."
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Pain Points -->
+                    <div class="intake-section" data-section="3">
+                        <div class="section-header">
+                            <span class="section-number">03</span>
+                            <span class="section-title">Pain Points & Challenges</span>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- Main problems -->
+                            <div>
+                                <label for="problems" class="block text-sm font-medium text-gray-300 mb-1.5">What problems are you trying to solve? <span class="text-red-400">*</span></label>
+                                <textarea
+                                    id="problems"
+                                    name="problems"
+                                    required
+                                    rows="3"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30 resize-none"
+                                    placeholder="What's broken, slow, or frustrating in your current operations?"
+                                ></textarea>
+                                <p id="problems-error" class="mt-1.5 text-sm text-red-400 hidden"></p>
+                            </div>
+
+                            <!-- Bottleneck -->
+                            <div>
+                                <label for="bottleneck" class="block text-sm font-medium text-gray-300 mb-1.5">What's your biggest operational bottleneck?</label>
+                                <input
+                                    type="text"
+                                    id="bottleneck"
+                                    name="bottleneck"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                    placeholder="E.g., Lead qualification, Customer support response time..."
+                                >
+                            </div>
+
+                            <!-- Manual processes -->
+                            <div>
+                                <label for="manual_processes" class="block text-sm font-medium text-gray-300 mb-1.5">What manual processes drain the most time?</label>
+                                <textarea
+                                    id="manual_processes"
+                                    name="manual_processes"
+                                    rows="2"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30 resize-none"
+                                    placeholder="List repetitive tasks that could potentially be automated..."
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Budget & Timeline -->
+                    <div class="intake-section" data-section="4">
+                        <div class="section-header">
+                            <span class="section-number">04</span>
+                            <span class="section-title">Budget & Timeline</span>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- Budget & Timeline Row -->
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <!-- Budget -->
+                                <div>
+                                    <label for="budget" class="block text-sm font-medium text-gray-300 mb-1.5">Budget Range</label>
+                                    <select
+                                        id="budget"
+                                        name="budget"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white transition-all duration-200 hover:border-[#00CED1]/30 appearance-none cursor-pointer"
+                                    >
+                                        <option value="" class="bg-obsidian">Select budget range...</option>
+                                        <option value="$5K - $15K" class="bg-obsidian">$5K - $15K</option>
+                                        <option value="$15K - $50K" class="bg-obsidian">$15K - $50K</option>
+                                        <option value="$50K - $100K" class="bg-obsidian">$50K - $100K</option>
+                                        <option value="$100K+" class="bg-obsidian">$100K+</option>
+                                        <option value="Not sure yet" class="bg-obsidian">Not sure yet</option>
+                                    </select>
+                                </div>
+
+                                <!-- Timeline -->
+                                <div>
+                                    <label for="timeline" class="block text-sm font-medium text-gray-300 mb-1.5">Desired Timeline</label>
+                                    <select
+                                        id="timeline"
+                                        name="timeline"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white transition-all duration-200 hover:border-[#00CED1]/30 appearance-none cursor-pointer"
+                                    >
+                                        <option value="" class="bg-obsidian">Select timeline...</option>
+                                        <option value="ASAP" class="bg-obsidian">ASAP - Need it yesterday</option>
+                                        <option value="1-3 months" class="bg-obsidian">1-3 months</option>
+                                        <option value="3-6 months" class="bg-obsidian">3-6 months</option>
+                                        <option value="6+ months" class="bg-obsidian">6+ months - Planning ahead</option>
+                                        <option value="Flexible" class="bg-obsidian">Flexible</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Project Types -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-3">What type of project interests you? <span class="text-gray-500">(select all that apply)</span></label>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="type_assistant" name="project_types" value="AI Assistant">
+                                        <label for="type_assistant">AI Assistant</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="type_marketing" name="project_types" value="Marketing Automation">
+                                        <label for="type_marketing">Marketing Automation</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="type_app" name="project_types" value="Custom App">
+                                        <label for="type_app">Custom App</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="type_video" name="project_types" value="Video Content">
+                                        <label for="type_video">Video Content</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="type_rag" name="project_types" value="RAG Research Agents">
+                                        <label for="type_rag">RAG Research Agents</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="type_other" name="project_types" value="Other">
+                                        <label for="type_other">Other</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 5: Contact Info -->
+                    <div class="intake-section" data-section="5">
+                        <div class="section-header">
+                            <span class="section-number">05</span>
+                            <span class="section-title">Contact Information</span>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- Name & Email Row -->
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <!-- Full Name -->
+                                <div>
+                                    <label for="full_name" class="block text-sm font-medium text-gray-300 mb-1.5">Full Name <span class="text-red-400">*</span></label>
+                                    <input
+                                        type="text"
+                                        id="full_name"
+                                        name="full_name"
+                                        required
+                                        autocomplete="name"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                        placeholder="John Smith"
+                                    >
+                                    <p id="full_name-error" class="mt-1.5 text-sm text-red-400 hidden"></p>
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1.5">Email <span class="text-red-400">*</span></label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        required
+                                        autocomplete="email"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                        placeholder="john@company.com"
+                                    >
+                                    <p id="email-error" class="mt-1.5 text-sm text-red-400 hidden"></p>
+                                </div>
+                            </div>
+
+                            <!-- Phone & Best Time Row -->
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <!-- Phone -->
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-300 mb-1.5">Phone <span class="text-gray-500">(optional)</span></label>
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        name="phone"
+                                        autocomplete="tel"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30"
+                                        placeholder="+1 (555) 000-0000"
+                                    >
+                                </div>
+
+                                <!-- Best Time -->
+                                <div>
+                                    <label for="best_time" class="block text-sm font-medium text-gray-300 mb-1.5">Best Time to Contact</label>
+                                    <select
+                                        id="best_time"
+                                        name="best_time"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white transition-all duration-200 hover:border-[#00CED1]/30 appearance-none cursor-pointer"
+                                    >
+                                        <option value="" class="bg-obsidian">Select time...</option>
+                                        <option value="Morning (9am-12pm)" class="bg-obsidian">Morning (9am-12pm)</option>
+                                        <option value="Afternoon (12pm-5pm)" class="bg-obsidian">Afternoon (12pm-5pm)</option>
+                                        <option value="Evening (5pm-8pm)" class="bg-obsidian">Evening (5pm-8pm)</option>
+                                        <option value="Anytime" class="bg-obsidian">Anytime</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Additional Notes -->
+                            <div>
+                                <label for="notes" class="block text-sm font-medium text-gray-300 mb-1.5">Anything else we should know? <span class="text-gray-500">(optional)</span></label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    rows="3"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 transition-all duration-200 hover:border-[#00CED1]/30 resize-none"
+                                    placeholder="Any additional context, questions, or specific requirements..."
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Error -->
+                    <div id="submit-error" class="hidden px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg" role="alert">
+                        <div class="flex items-center gap-2 text-red-400 text-sm">
+                            <iconify-icon icon="mdi:alert-circle" class="text-lg"></iconify-icon>
+                            <span id="submit-error-text">Something went wrong. Please try again.</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        id="submit-btn"
+                        class="w-full px-6 py-4 bg-[#00CED1]/20 border border-[#00CED1]/50 text-[#00CED1] font-mono text-sm rounded-lg hover:bg-[#00CED1]/30 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span id="btn-text">[ SUBMIT_INTAKE ]</span>
+                        <div id="btn-spinner" class="hidden w-4 h-4 spinner"></div>
+                    </button>
+
+                    <p class="text-center text-gray-500 text-xs mt-4">
+                        We'll review your submission and respond within 1 business day with a custom proposal.
+                    </p>
+                </form>
+
+                <!-- Success State -->
+                <div id="success-state" class="hidden flex flex-col items-center justify-center text-center py-16">
+                    <!-- Animated Checkmark -->
+                    <div class="w-24 h-24 rounded-full bg-[#00CED1]/10 border-2 border-[#00CED1]/50 flex items-center justify-center mb-8 success-icon-pulse">
+                        <svg class="w-12 h-12 text-[#00CED1]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path class="checkmark-path" d="M5 12l5 5L20 7"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-serif text-white mb-4 success-fade-in" style="animation-delay: 0.2s">Intake received.</h2>
+                    <p class="text-gray-400 max-w-md mb-8 success-fade-in" style="animation-delay: 0.4s">
+                        We're reviewing your submission now. Expect a personalized response within 1 business day with scope, timeline, and next steps.
+                    </p>
+                    <div class="flex gap-4 success-fade-in" style="animation-delay: 0.6s">
+                        <a href="/" class="px-6 py-3 bg-white/5 border border-white/10 rounded-lg text-white font-mono text-sm hover:bg-white/10 transition-colors">
+                            [ BACK_TO_HOME ]
+                        </a>
+                        <button
+                            id="reset-btn"
+                            class="px-6 py-3 bg-[#00CED1]/10 border border-[#00CED1]/30 rounded-lg text-[#00CED1] font-mono text-sm hover:bg-[#00CED1]/20 transition-colors"
+                        >
+                            [ SUBMIT_ANOTHER ]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== UNIFIED FOOTER ========== -->
+    <footer class="relative w-full bg-[#050508] pt-16 md:pt-24 pb-8 md:pb-12 px-4 md:px-6 border-t border-white/5 overflow-hidden">
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[200px] bg-[#00CED1]/5 blur-[100px] rounded-full pointer-events-none"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-30 pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 md:mb-16 pb-8 md:pb-12 border-b border-white/5">
+                <div class="group">
+                    <a href="/" class="flex items-center gap-3 mb-3">
+                        <img src="/brand/barrios-a2i-shard-logo.png" alt="Barrios A2I" class="w-14 h-14 md:w-20 md:h-20 object-contain opacity-90 group-hover:opacity-100 transition-opacity">
+                        <h2 class="text-2xl md:text-3xl font-black tracking-tighter text-white transition-colors group-hover:text-[#00CED1]">BARRIOS <span class="text-[#FFD700]">A2I</span></h2>
+                    </a>
+                    <p class="text-[#94a3b8] font-mono text-[10px] md:text-xs tracking-[0.2em] uppercase">The Intelligence Architecture</p>
+                </div>
+                <div class="flex items-center gap-3 px-4 py-2 bg-white/[0.03] backdrop-blur-sm border border-white/5 rounded-lg">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span class="font-mono text-[10px] md:text-xs text-emerald-400 tracking-wider uppercase">All Systems Operational</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
+                <div>
+                    <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2"><span class="text-[#00CED1]/40">[</span>Products<span class="text-[#00CED1]/40">]</span></h4>
+                    <ul class="space-y-3">
+                        <li><a href="/nexus-personal" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>NEXUS Personal</a></li>
+                        <li><a href="/creative-director" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>A2I Commercial Lab</a></li>
+                        <li><a href="/command-center" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>Command Center</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2"><span class="text-[#00CED1]/40">[</span>Company<span class="text-[#00CED1]/40">]</span></h4>
+                    <ul class="space-y-3">
+                        <li><a href="/#about" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>About</a></li>
+                        <li><a href="/contact.html" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>Contact</a></li>
+                        <li><a href="/status" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>System Status</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2"><span class="text-[#00CED1]/40">[</span>Legal<span class="text-[#00CED1]/40">]</span></h4>
+                    <ul class="space-y-3">
+                        <li><a href="/privacy-directive" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>Privacy Directive</a></li>
+                        <li><a href="/terms-of-service" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>Terms of Service</a></li>
+                        <li><a href="/data-sovereignty" class="text-sm text-[#94a3b8] hover:text-white transition-colors duration-200 flex items-center gap-2 group"><span class="w-1 h-1 bg-[#00CED1]/50 rounded-full group-hover:bg-[#00CED1] transition-colors"></span>Data Sovereignty</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-mono text-[10px] md:text-xs text-[#00CED1] tracking-[0.15em] uppercase mb-4 md:mb-6 flex items-center gap-2"><span class="text-[#00CED1]/40">[</span>Connect<span class="text-[#00CED1]/40">]</span></h4>
+                    <div class="flex items-center gap-4 mb-6">
+                        <a href="https://www.linkedin.com/in/gary-barrios-3953b2390/" target="_blank" rel="noopener" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+                        <a href="https://x.com/BarriosA2I" target="_blank" rel="noopener" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                        <a href="https://www.instagram.com/barrios.ai.gary/" target="_blank" rel="noopener" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/5 text-[#94a3b8] hover:text-[#00CED1] hover:border-[#00CED1]/30 hover:bg-[#00CED1]/5 transition-all duration-200"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+                    </div>
+                    <a href="mailto:alienation2innovation@gmail.com" class="text-sm text-[#94a3b8] hover:text-[#00CED1] transition-colors duration-200 font-mono">alienation2innovation@gmail.com</a>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/5">
+                <p class="font-mono text-[10px] md:text-xs text-[#64748b] tracking-wider">&copy; <span id="footer-year">2025</span> BARRIOS A2I INC. ALL RIGHTS RESERVED.</p>
+                <div class="flex items-center gap-6">
+                    <a href="/privacy-directive" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Privacy</a>
+                    <a href="/terms-of-service" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Terms</a>
+                    <a href="/data-sovereignty" class="font-mono text-[10px] md:text-xs text-[#64748b] hover:text-white transition-colors">Data</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>(function(){const yearEl=document.getElementById('footer-year');if(yearEl)yearEl.textContent=new Date().getFullYear();})();</script>
+
+    <!-- Lead Capture Utility -->
+    <script src="js/lead-capture.js"></script>
+
+    <!-- Form Handling Script -->
+    <script>
+    (function() {
+        'use strict';
+
+        const FORMSPREE_URL = 'https://formspree.io/f/mdanjawv';
+
+        // DOM Elements
+        const form = document.getElementById('intake-form');
+        const successState = document.getElementById('success-state');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const submitError = document.getElementById('submit-error');
+        const submitErrorText = document.getElementById('submit-error-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const progressFill = document.getElementById('progress-fill');
+
+        // Required fields
+        const requiredFields = ['company_name', 'product_description', 'problems', 'full_name', 'email'];
+
+        // Color picker sync
+        const primaryColor = document.getElementById('primary_color');
+        const primaryColorHex = document.getElementById('primary_color_hex');
+        const secondaryColor = document.getElementById('secondary_color');
+        const secondaryColorHex = document.getElementById('secondary_color_hex');
+
+        primaryColor.addEventListener('input', () => {
+            primaryColorHex.value = primaryColor.value.toUpperCase();
+        });
+        primaryColorHex.addEventListener('input', () => {
+            if (/^#[0-9A-Fa-f]{6}$/.test(primaryColorHex.value)) {
+                primaryColor.value = primaryColorHex.value;
+            }
+        });
+        secondaryColor.addEventListener('input', () => {
+            secondaryColorHex.value = secondaryColor.value.toUpperCase();
+        });
+        secondaryColorHex.addEventListener('input', () => {
+            if (/^#[0-9A-Fa-f]{6}$/.test(secondaryColorHex.value)) {
+                secondaryColor.value = secondaryColorHex.value;
+            }
+        });
+
+        // Progress tracking
+        function updateProgress() {
+            let filledCount = 0;
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && field.value.trim()) filledCount++;
+            });
+            const progress = (filledCount / requiredFields.length) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        // Add progress tracking to required fields
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', updateProgress);
+                field.addEventListener('change', updateProgress);
+            }
+        });
+
+        // Validation
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorEl = document.getElementById(fieldId + '-error');
+            if (field) field.classList.add('field-error');
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function clearFieldError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorEl = document.getElementById(fieldId + '-error');
+            if (field) field.classList.remove('field-error');
+            if (errorEl) {
+                errorEl.textContent = '';
+                errorEl.classList.add('hidden');
+            }
+        }
+
+        function validateForm() {
+            let isValid = true;
+            let firstInvalidField = null;
+
+            // Clear previous errors
+            requiredFields.forEach(clearFieldError);
+
+            // Validate required fields
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field) return;
+
+                const value = field.value.trim();
+                let error = '';
+
+                if (!value) {
+                    error = 'This field is required';
+                } else if (fieldId === 'email' && !validateEmail(value)) {
+                    error = 'Please enter a valid email address';
+                }
+
+                if (error) {
+                    showFieldError(fieldId, error);
+                    isValid = false;
+                    if (!firstInvalidField) firstInvalidField = field;
+                }
+            });
+
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+                firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            return isValid;
+        }
+
+        // Real-time validation on blur
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (!field) return;
+
+            field.addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (!value) {
+                    showFieldError(fieldId, 'This field is required');
+                } else if (fieldId === 'email' && !validateEmail(value)) {
+                    showFieldError(fieldId, 'Please enter a valid email address');
+                } else {
+                    clearFieldError(fieldId);
+                }
+            });
+
+            field.addEventListener('input', function() {
+                if (this.classList.contains('field-error')) {
+                    const value = this.value.trim();
+                    if (value && (fieldId !== 'email' || validateEmail(value))) {
+                        clearFieldError(fieldId);
+                    }
+                }
+            });
+        });
+
+        // Loading state
+        function setLoading(loading) {
+            submitBtn.disabled = loading;
+            btnText.textContent = loading ? '[ TRANSMITTING... ]' : '[ SUBMIT_INTAKE ]';
+            btnSpinner.classList.toggle('hidden', !loading);
+        }
+
+        // Show/hide error
+        function showError(message) {
+            submitErrorText.textContent = message;
+            submitError.classList.remove('hidden');
+        }
+
+        function hideError() {
+            submitError.classList.add('hidden');
+        }
+
+        // Show success
+        function showSuccess() {
+            form.classList.add('form-fade-out');
+            setTimeout(() => {
+                form.classList.add('hidden');
+                successState.classList.remove('hidden');
+                progressFill.style.width = '100%';
+            }, 300);
+        }
+
+        // Reset form
+        function resetForm() {
+            form.reset();
+            form.classList.remove('form-fade-out', 'hidden');
+            successState.classList.add('hidden');
+            hideError();
+            requiredFields.forEach(clearFieldError);
+            progressFill.style.width = '0%';
+            // Reset color pickers
+            primaryColor.value = '#00CED1';
+            primaryColorHex.value = '#00CED1';
+            secondaryColor.value = '#FFD700';
+            secondaryColorHex.value = '#FFD700';
+            document.getElementById('company_name').focus();
+        }
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideError();
+
+            // Honeypot check
+            if (document.getElementById('website_url').value) {
+                showSuccess();
+                return;
+            }
+
+            // Validate
+            if (!validateForm()) {
+                return;
+            }
+
+            setLoading(true);
+
+            // Gather all form data
+            const formData = new FormData();
+
+            // Company Info
+            formData.append('company_name', document.getElementById('company_name').value.trim());
+            formData.append('tagline', document.getElementById('tagline').value.trim());
+            formData.append('primary_color', primaryColorHex.value);
+            formData.append('secondary_color', secondaryColorHex.value);
+            formData.append('website', document.getElementById('website').value.trim());
+
+            // Product/Service
+            formData.append('product_description', document.getElementById('product_description').value.trim());
+            formData.append('target_customer', document.getElementById('target_customer').value.trim());
+            formData.append('differentiator', document.getElementById('differentiator').value.trim());
+
+            // Pain Points
+            formData.append('problems', document.getElementById('problems').value.trim());
+            formData.append('bottleneck', document.getElementById('bottleneck').value.trim());
+            formData.append('manual_processes', document.getElementById('manual_processes').value.trim());
+
+            // Budget & Timeline
+            formData.append('budget', document.getElementById('budget').value);
+            formData.append('timeline', document.getElementById('timeline').value);
+
+            // Project types (checkboxes)
+            const projectTypes = [];
+            document.querySelectorAll('input[name="project_types"]:checked').forEach(cb => {
+                projectTypes.push(cb.value);
+            });
+            formData.append('project_types', projectTypes.join(', ') || 'None selected');
+
+            // Contact Info
+            formData.append('full_name', document.getElementById('full_name').value.trim());
+            formData.append('email', document.getElementById('email').value.trim());
+            formData.append('phone', document.getElementById('phone').value.trim());
+            formData.append('best_time', document.getElementById('best_time').value);
+            formData.append('notes', document.getElementById('notes').value.trim());
+
+            // Email subject
+            formData.append('_subject', 'New BUILD_WORKFORCE Intake - ' + document.getElementById('company_name').value.trim());
+
+            try {
+                // Send to LeadCapture utility
+                if (window.LeadCapture) {
+                    window.LeadCapture.capture({
+                        name: document.getElementById('full_name').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        company: document.getElementById('company_name').value.trim(),
+                        phone: document.getElementById('phone').value.trim(),
+                        message: 'BUILD_WORKFORCE Intake: ' + document.getElementById('product_description').value.trim().substring(0, 200),
+                        source: 'build_workforce_intake'
+                    });
+                }
+
+                // Send to Formspree
+                const response = await fetch(FORMSPREE_URL, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Submission failed');
+                }
+
+                setLoading(false);
+                showSuccess();
+
+            } catch (error) {
+                setLoading(false);
+                showError('Something went wrong. Please try again or email us directly.');
+            }
+        });
+
+        // Reset button
+        resetBtn.addEventListener('click', resetForm);
+
+        // Initialize
+        updateProgress();
+
+    })();
+    </script>
+</body>
+</html>
