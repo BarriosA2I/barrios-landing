@@ -212,14 +212,14 @@ async function buildLineItems(items: CartItem[]): Promise<Stripe.Checkout.Sessio
     const product = getProductByPriceId(item.priceId);
     if (product) {
       try {
-        const prices = await stripeClient.prices.search({
-          query: `metadata['localId']:'${item.priceId}'`,
+        const prices = await stripeClient.prices.list({
+          lookup_keys: [item.priceId],
         });
         if (prices.data.length > 0) {
           stripePriceId = prices.data[0].id;
         }
       } catch (error) {
-        console.error('Error searching for price:', error);
+        console.error('Error fetching price by lookup_key:', error);
       }
     }
 
