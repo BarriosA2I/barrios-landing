@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { db } from "@/lib/db";
+import { sendPurchaseNotificationEmail } from "@/lib/email-service";
+import { logCustomerToNotion } from "@/lib/notion";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia" as Stripe.LatestApiVersion,
@@ -18,7 +20,7 @@ const TIER_FEATURES: Record<string, {
   avatarClone: boolean;
 }> = {
   STARTER: { monthlyTokens: 8, maxFormats: 1, maxRevisions: 1, queuePriority: "STANDARD", voiceClone: false, avatarClone: false },
-  CREATOR: { monthlyTokens: 18, maxFormats: 4, maxRevisions: 2, queuePriority: "EXPEDITED", voiceClone: true, avatarClone: false },
+  CREATOR: { monthlyTokens: 16, maxFormats: 4, maxRevisions: 2, queuePriority: "EXPEDITED", voiceClone: true, avatarClone: false },
   GROWTH: { monthlyTokens: 32, maxFormats: 4, maxRevisions: 3, queuePriority: "PRIORITY", voiceClone: true, avatarClone: true },
   SCALE: { monthlyTokens: 64, maxFormats: 4, maxRevisions: 5, queuePriority: "RUSH", voiceClone: true, avatarClone: true },
 };
@@ -294,29 +296,140 @@ function mapSubscriptionStatus(status: string): "ACTIVE" | "PAST_DUE" | "CANCELE
 }
 
 /**
- * Handle checkout.session.completed - Credit tokens for one-time purchases
+ * Handle checkout.session.completed
  *
- * This handles token pack purchases (TOP_UP intent):
- * - Finds customer's active subscription cycle
- * - Creates TokenLedgerEntry with type CREDIT_TOPUP
- * - Updates cycle's tokensAllocated
+ * For ALL checkouts:
+ * - Send email notification to Gary
+ * - Log customer to Notion database
+ *
+ * For TOP_UP intent specifically:
+ * - Credit tokens to customer's subscription cycle
  */
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const sessionData = session as any;
-  const intent = sessionData.metadata?.intent;
-
-  // Only handle TOP_UP intent (token pack purchases)
-  if (intent !== "TOP_UP") {
-    console.log("[stripe-webhook] Checkout completed with intent:", intent || "none");
-    return;
-  }
+  const intent = sessionData.metadata?.intent || "UNKNOWN";
+  const customerEmail = sessionData.customer_details?.email || sessionData.customer_email || "unknown@email.com";
+  const amountTotal = sessionData.amount_total || 0;
 
   const customerId = typeof sessionData.customer === "string"
     ? sessionData.customer
-    : sessionData.customer?.id;
+    : sessionData.customer?.id || "";
+
+  // Get product name from metadata or line items
+  const productName = await getProductNameFromSession(session);
+
+  console.log(`[stripe-webhook] Checkout completed: ${productName} ($${(amountTotal / 100).toFixed(2)}) - ${intent}`);
+
+  // =========================================================================
+  // 1. Send email notification to Gary (non-blocking)
+  // =========================================================================
+  try {
+    await sendPurchaseNotificationEmail({
+      customerEmail,
+      productName,
+      amount: amountTotal,
+      intent,
+      stripeSessionId: session.id,
+      stripeCustomerId: customerId,
+    });
+    console.log("[stripe-webhook] Purchase email sent");
+  } catch (error) {
+    console.error("[stripe-webhook] Failed to send purchase email:", error);
+    // Don't throw - email failure shouldn't break webhook
+  }
+
+  // =========================================================================
+  // 2. Log to Notion database (non-blocking)
+  // =========================================================================
+  try {
+    const notionResult = await logCustomerToNotion({
+      email: customerEmail,
+      product: productName,
+      amount: amountTotal,
+      date: new Date(),
+      subscriptionStatus: intent === "SUBSCRIPTION" ? "active" : "one_time",
+      stripeCustomerId: customerId,
+      stripeSessionId: session.id,
+      intent,
+    });
+    if (notionResult.success) {
+      console.log("[stripe-webhook] Logged to Notion:", notionResult.pageId);
+    }
+  } catch (error) {
+    console.error("[stripe-webhook] Failed to log to Notion:", error);
+    // Don't throw - Notion failure shouldn't break webhook
+  }
+
+  // =========================================================================
+  // 3. Handle TOP_UP intent - Credit tokens
+  // =========================================================================
+  if (intent === "TOP_UP") {
+    await handleTopUpTokenCredit(session, customerId);
+  }
+}
+
+/**
+ * Get product name from checkout session
+ */
+async function getProductNameFromSession(session: Stripe.Checkout.Session): Promise<string> {
+  const sessionData = session as any;
+
+  // Try to get from metadata first
+  const priceId = sessionData.metadata?.priceId;
+  if (priceId) {
+    const priceToProduct: Record<string, string> = {
+      price_starter_monthly: "Commercial Lab - Starter",
+      price_starter_yearly: "Commercial Lab - Starter (Yearly)",
+      price_creator_monthly: "Commercial Lab - Creator",
+      price_creator_yearly: "Commercial Lab - Creator (Yearly)",
+      price_growth_monthly: "Commercial Lab - Growth",
+      price_growth_yearly: "Commercial Lab - Growth (Yearly)",
+      price_scale_monthly: "Commercial Lab - Scale",
+      price_scale_yearly: "Commercial Lab - Scale (Yearly)",
+      price_lab_test: "Lab Test (Pilot)",
+      price_single_lab_test: "Lab Test (Pilot)",
+      price_token_pack_8: "Token Pack - 8 Videos",
+      price_token_pack_16: "Token Pack - 16 Videos",
+      price_token_pack_32: "Token Pack - 32 Videos",
+      price_consultation_strategy: "Strategy Consultation",
+      price_consultation_architecture: "Architecture Consultation",
+    };
+    if (priceToProduct[priceId]) {
+      return priceToProduct[priceId];
+    }
+  }
+
+  // Try to get from line items (expanded in session)
+  try {
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+    if (lineItems.data.length > 0) {
+      return lineItems.data[0].description || "Unknown Product";
+    }
+  } catch (error) {
+    console.error("[stripe-webhook] Error fetching line items:", error);
+  }
+
+  // Fallback based on intent
+  const intent = sessionData.metadata?.intent;
+  const intentToProduct: Record<string, string> = {
+    SUBSCRIPTION: "Commercial Lab Subscription",
+    TOP_UP: "Token Pack",
+    CONSULTATION: "Consultation",
+    UPGRADE: "Subscription Upgrade",
+    ENTERPRISE: "Enterprise Plan",
+  };
+
+  return intentToProduct[intent] || "Unknown Product";
+}
+
+/**
+ * Handle token crediting for TOP_UP purchases
+ */
+async function handleTopUpTokenCredit(session: Stripe.Checkout.Session, customerId: string) {
+  const sessionData = session as any;
 
   if (!customerId) {
-    console.log("[stripe-webhook] No customer ID in checkout session");
+    console.log("[stripe-webhook] No customer ID for token top-up");
     return;
   }
 
@@ -387,7 +500,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       description: `Token pack purchase (${tokenAmount} tokens)`,
       metadata: {
         stripeSessionId: session.id,
-        intent: intent,
+        intent: "TOP_UP",
       },
     },
   });

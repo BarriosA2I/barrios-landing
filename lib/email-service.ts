@@ -72,6 +72,15 @@ export interface NewOrderNotificationData {
   timestamp: Date;
 }
 
+export interface PurchaseNotificationData {
+  customerEmail: string;
+  productName: string;
+  amount: number; // in cents
+  intent: string;
+  stripeSessionId: string;
+  stripeCustomerId?: string;
+}
+
 // ============================================================================
 // Email Functions
 // ============================================================================
@@ -199,6 +208,42 @@ export async function sendNewOrderNotificationEmail(
     return { success: true, id: result?.id };
   } catch (error) {
     console.error("[EmailService] sendNewOrderNotificationEmail exception:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Send purchase notification to Gary on every successful checkout
+ * This is triggered by the Stripe webhook on checkout.session.completed
+ */
+export async function sendPurchaseNotificationEmail(
+  data: PurchaseNotificationData
+): Promise<{ success: boolean; id?: string; error?: string }> {
+  const formattedAmount = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(data.amount / 100);
+
+  try {
+    const { data: result, error } = await getResend().emails.send({
+      from: FROM_EMAIL,
+      to: "alienation2innovation@gmail.com",
+      subject: `New Purchase: ${data.productName} (${formattedAmount})`,
+      html: generatePurchaseNotificationHtml(data),
+    });
+
+    if (error) {
+      console.error("[EmailService] sendPurchaseNotificationEmail error:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log(`[EmailService] Purchase notification sent: ${result?.id}`);
+    return { success: true, id: result?.id };
+  } catch (error) {
+    console.error("[EmailService] sendPurchaseNotificationEmail exception:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -601,9 +646,145 @@ function generateNewOrderNotificationHtml(data: {
   `.trim();
 }
 
+function generatePurchaseNotificationHtml(data: PurchaseNotificationData): string {
+  const formattedAmount = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(data.amount / 100);
+
+  const timestamp = new Date().toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+
+  // Determine intent label and color
+  const intentColors: Record<string, string> = {
+    SUBSCRIPTION: "#00CED1",
+    TOP_UP: "#D4AF37",
+    CONSULTATION: "#8B5CF6",
+    UPGRADE: "#10B981",
+    ENTERPRISE: "#F59E0B",
+  };
+  const intentColor = intentColors[data.intent] || "#6B7280";
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Purchase</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0A0A0F; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0A0A0F; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #0B1220 0%, #0A0A0F 100%); border: 1px solid rgba(0, 206, 209, 0.2); border-radius: 16px; overflow: hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td style="padding: 24px 40px; text-align: center; border-bottom: 1px solid rgba(0, 206, 209, 0.1);">
+              <h1 style="margin: 0; color: #00CED1; font-size: 24px; font-weight: 700; letter-spacing: 2px;">
+                BARRIOS A2I
+              </h1>
+              <p style="margin: 4px 0 0; color: #6B7280; font-size: 12px;">
+                Purchase Notification
+              </p>
+            </td>
+          </tr>
+
+          <!-- Alert Banner -->
+          <tr>
+            <td style="padding: 0 40px;">
+              <div style="background: #10B981; border-radius: 8px; padding: 16px; text-align: center; margin-top: 24px;">
+                <span style="color: #FFFFFF; font-size: 16px; font-weight: 700; letter-spacing: 1px;">
+                  NEW PURCHASE - ${formattedAmount}
+                </span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Purchase Details -->
+          <tr>
+            <td style="padding: 24px 40px;">
+              <h2 style="margin: 0 0 16px; color: #00CED1; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                Purchase Details
+              </h2>
+              <p style="margin: 0 0 12px; color: #E4E4E7; font-size: 14px;">
+                <span style="color: #71717A;">Product:</span>
+                <strong style="color: #FFFFFF;">${data.productName}</strong>
+              </p>
+              <p style="margin: 0 0 12px; color: #E4E4E7; font-size: 14px;">
+                <span style="color: #71717A;">Amount:</span>
+                <strong style="color: #10B981;">${formattedAmount}</strong>
+              </p>
+              <p style="margin: 0 0 12px; color: #E4E4E7; font-size: 14px;">
+                <span style="color: #71717A;">Intent:</span>
+                <span style="background: ${intentColor}; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${data.intent}</span>
+              </p>
+              <p style="margin: 0 0 12px; color: #E4E4E7; font-size: 14px;">
+                <span style="color: #71717A;">Time:</span> ${timestamp}
+              </p>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding: 0 40px;">
+              <hr style="border: none; border-top: 1px solid #27272A; margin: 0;">
+            </td>
+          </tr>
+
+          <!-- Customer Info -->
+          <tr>
+            <td style="padding: 24px 40px;">
+              <h2 style="margin: 0 0 16px; color: #00CED1; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                Customer
+              </h2>
+              <p style="margin: 0 0 12px; color: #E4E4E7; font-size: 14px;">
+                <span style="color: #71717A;">Email:</span>
+                <a href="mailto:${data.customerEmail}" style="color: #00CED1; text-decoration: none;">${data.customerEmail}</a>
+              </p>
+              ${data.stripeCustomerId ? `
+              <p style="margin: 0 0 12px; color: #E4E4E7; font-size: 14px;">
+                <span style="color: #71717A;">Stripe Customer:</span>
+                <a href="https://dashboard.stripe.com/customers/${data.stripeCustomerId}" style="color: #00CED1; text-decoration: none;">${data.stripeCustomerId}</a>
+              </p>
+              ` : ""}
+              <p style="margin: 0; color: #E4E4E7; font-size: 14px;">
+                <span style="color: #71717A;">Session:</span>
+                <a href="https://dashboard.stripe.com/payments/${data.stripeSessionId}" style="color: #00CED1; text-decoration: none; font-size: 12px;">${data.stripeSessionId.substring(0, 30)}...</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 40px; border-top: 1px solid rgba(0, 206, 209, 0.1); background: rgba(0, 0, 0, 0.3); text-align: center;">
+              <p style="margin: 0; color: #52525B; font-size: 11px;">
+                Barrios A2I | Stripe Webhook Notification
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
 export default {
   sendProductionCompleteEmail,
   sendWelcomeEmail,
   sendPaymentFailedEmail,
   sendNewOrderNotificationEmail,
+  sendPurchaseNotificationEmail,
 };

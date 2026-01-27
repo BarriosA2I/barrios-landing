@@ -41,6 +41,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.36.8",
     "@clerk/themes": "^2.4.48",
+    "@notionhq/client": "^5.8.0",
     "@prisma/client": "^5.22.0",
     "@react-email/components": "^1.0.6",
     "@stripe/stripe-js": "^8.6.1",
