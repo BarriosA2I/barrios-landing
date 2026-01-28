@@ -2931,10 +2931,10 @@
             addTypingIndicator();
 
             try {
-                // Use pipeline or V2 endpoint
+                // Use pipeline or V3 endpoint (V3 fixes AI repeating questions bug)
                 const endpoint = PIPELINE_ENABLED
                     ? `${API_URL}/api/legendary/message`
-                    : `${API_URL}/api/chat/v2`;
+                    : `${API_URL}/api/chat/v3`;
 
                 const res = await fetch(endpoint, {
                     method: 'POST',
@@ -8444,7 +8444,7 @@
                 // Get model info for telemetry
                 const modelInfo = MODELS[model] || MODELS.claude;
 
-                const response = await fetch('https://barrios-genesis-flawless.onrender.com/api/chat/v2', {
+                const response = await fetch('https://barrios-genesis-flawless.onrender.com/api/chat/v3', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
