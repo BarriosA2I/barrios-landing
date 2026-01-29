@@ -189,7 +189,7 @@ Every commercial includes:
 | 1 | Create this documentation | COMPLETE |
 | 2 | Create Stripe products/prices | COMPLETE (2026-01-29) |
 | 3 | Update backend (webhook, tokens) | COMPLETE (2026-01-29) |
-| 4 | Update frontend (checkout, display) | PENDING |
+| 4 | Update frontend (checkout, display) | COMPLETE (2026-01-29) |
 | 5 | E2E testing | PENDING |
 
 ---

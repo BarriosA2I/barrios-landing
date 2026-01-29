@@ -1585,57 +1585,52 @@
         <!-- ========== PRICING SECTION ========== -->
         <section id="pricing" class="w-full py-24 px-6 relative z-10">
             <div class="max-w-7xl mx-auto">
-                <!-- Section Header -->
+                <!-- Section Header - V2 "Performance Engine" -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-8 mb-12">
                     <div>
-                        <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">Subscriptions &bull; Token-Based</span>
+                        <span class="text-neon text-xs font-medium tracking-[0.2em] uppercase mb-2 block">Performance Engine &bull; Token-Based</span>
                         <h2 class="text-3xl md:text-5xl font-medium tracking-tight text-white max-w-2xl">
-                            A2I Commercial Lab<span class="text-neon">.</span>
-                            <br><span class="text-white/50 font-serif italic font-normal">Choose your tier.</span>
+                            High-Performance Creative<span class="text-neon">.</span>
+                            <br><span class="text-white/50 font-serif italic font-normal">At machine speed.</span>
                         </h2>
                     </div>
                     <div class="flex flex-col items-end gap-3">
                         <p class="text-sm text-white/60 max-w-md text-right hidden md:block">
-                            64-second commercials engineered from 8-second cinematic scenes. 1 Token = 1 Scene.
+                            Compare Growth at $1,199/mo to a part-time motion designer ($4,000/mo). That's $29/ad vs $500+/ad.
                         </p>
-                        <!-- Billing Toggle -->
-                        <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full p-1">
-                            <button id="billing-monthly" onclick="toggleBilling(false)" class="px-4 py-2 text-xs font-mono tracking-widest text-white bg-neon/20 border border-neon/50 rounded-full transition-all">MONTHLY</button>
-                            <button id="billing-yearly" onclick="toggleBilling(true)" class="px-4 py-2 text-xs font-mono tracking-widest text-white/50 rounded-full transition-all hover:text-white">YEARLY <span class="text-brand-gold">-17%</span></button>
-                        </div>
                     </div>
                 </div>
 
-                <!-- Pricing Grid -->
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Starter Tier -->
+                <!-- Pricing Grid - V2 "Performance Engine" -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Prototyper Tier -->
                     <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-all backdrop-blur-sm overflow-hidden">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         <div class="relative z-10">
                             <div class="flex justify-between items-start mb-4">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-white">Starter</h3>
-                                    <p class="text-xs text-white/40 mt-1">For testing the waters</p>
+                                    <h3 class="text-lg font-semibold text-white">Prototyper</h3>
+                                    <p class="text-xs text-white/40 mt-1">Stop the scroll with pro-grade AI visuals</p>
                                 </div>
                                 <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
-                                    <span class="text-neon font-mono text-sm">8</span>
+                                    <span class="text-neon font-mono text-sm">16</span>
                                 </div>
                             </div>
                             <div class="mb-6">
                                 <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-bold text-white price-display" data-tier="starter">$449</span>
+                                    <span class="text-3xl font-bold text-white price-display" data-tier="prototyper">$599</span>
                                     <span class="text-white/40 text-sm">/mo</span>
                                 </div>
-                                <p class="text-xs text-white/30 mt-1 yearly-savings hidden">$374/mo billed yearly</p>
+                                <p class="text-xs text-neon/70 mt-1">$300/commercial &bull; $37.44/token</p>
                             </div>
                             <ul class="space-y-3 mb-6">
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-neon mt-0.5">✓</span>
-                                    <span><strong class="text-white">8 Tokens</strong> (1× 64s commercial)</span>
+                                    <span><strong class="text-white">16 Tokens</strong> (2 commercials/mo)</span>
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-neon mt-0.5">✓</span>
-                                    <span><strong class="text-white">1 Format</strong> (9:16 or 16:9)</span>
+                                    <span><strong class="text-white">2 Formats</strong> (9:16 + 16:9)</span>
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-neon mt-0.5">✓</span>
@@ -1643,20 +1638,20 @@
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-neon mt-0.5">✓</span>
-                                    <span>5-Day Queue</span>
+                                    <span>4-Day turnaround</span>
                                 </li>
-                                <li class="flex items-start gap-2 text-sm text-white/30">
-                                    <span class="mt-0.5">✗</span>
-                                    <span>No Voice/Avatar Clone</span>
+                                <li class="flex items-start gap-2 text-sm text-white/60">
+                                    <span class="text-neon mt-0.5">✓</span>
+                                    <span>Captions included</span>
                                 </li>
                             </ul>
-                            <button onclick="initiateCheckout('starter')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
+                            <button onclick="initiateCheckout('prototyper')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
                                 Get Started
                             </button>
                         </div>
                     </div>
 
-                    <!-- Creator Tier (Most Popular) -->
+                    <!-- Growth Tier (Most Popular) -->
                     <div class="group relative p-6 rounded-2xl bg-white/5 border-2 border-neon/50 hover:border-neon transition-all backdrop-blur-sm overflow-hidden shadow-[0_0_30px_rgba(0,206,209,0.15)]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent"></div>
                         <!-- Most Popular Badge -->
@@ -1666,28 +1661,28 @@
                         <div class="relative z-10 pt-2">
                             <div class="flex justify-between items-start mb-4">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-white">Creator</h3>
-                                    <p class="text-xs text-white/40 mt-1">For growing brands</p>
+                                    <h3 class="text-lg font-semibold text-white">Growth</h3>
+                                    <p class="text-xs text-white/40 mt-1">Sweet spot for scaling brands</p>
                                 </div>
                                 <div class="w-10 h-10 rounded-lg bg-neon/20 border border-neon/50 flex items-center justify-center">
-                                    <span class="text-neon font-mono text-sm">16</span>
+                                    <span class="text-neon font-mono text-sm">40</span>
                                 </div>
                             </div>
                             <div class="mb-6">
                                 <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-bold text-white price-display" data-tier="creator">$899</span>
+                                    <span class="text-3xl font-bold text-white price-display" data-tier="growth">$1,199</span>
                                     <span class="text-white/40 text-sm">/mo</span>
                                 </div>
-                                <p class="text-xs text-white/30 mt-1 yearly-savings hidden">$749/mo billed yearly</p>
+                                <p class="text-xs text-neon/70 mt-1">$240/commercial &bull; $30/token</p>
                             </div>
                             <ul class="space-y-3 mb-6">
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-neon mt-0.5">✓</span>
-                                    <span><strong class="text-white">16 Tokens</strong> (2× 64s commercials)</span>
+                                    <span><strong class="text-white">40 Tokens</strong> (5 commercials/mo)</span>
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-neon mt-0.5">✓</span>
-                                    <span><strong class="text-white">All 4 Formats</strong> (9:16, 16:9, 1:1, 4:5)</span>
+                                    <span><strong class="text-white">4 Formats</strong> (9:16, 16:9, 1:1, 4:5)</span>
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-neon mt-0.5">✓</span>
@@ -1695,63 +1690,15 @@
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-neon mt-0.5">✓</span>
-                                    <span>3-Day Queue</span>
+                                    <span>2-Day turnaround</span>
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-brand-gold">
                                     <span class="mt-0.5">✓</span>
-                                    <span><strong>Voice Clone</strong> included</span>
+                                    <span><strong>A/B Hook Variants</strong> included</span>
                                 </li>
                             </ul>
-                            <button onclick="initiateCheckout('creator')" class="w-full py-3 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all">
-                                Start Creating
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Growth Tier -->
-                    <div class="group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon/50 transition-all backdrop-blur-sm overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="relative z-10">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-white">Growth</h3>
-                                    <p class="text-xs text-white/40 mt-1">For scaling campaigns</p>
-                                </div>
-                                <div class="w-10 h-10 rounded-lg bg-neon/10 border border-neon/30 flex items-center justify-center">
-                                    <span class="text-neon font-mono text-sm">32</span>
-                                </div>
-                            </div>
-                            <div class="mb-6">
-                                <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-bold text-white price-display" data-tier="growth">$1,699</span>
-                                    <span class="text-white/40 text-sm">/mo</span>
-                                </div>
-                                <p class="text-xs text-white/30 mt-1 yearly-savings hidden">$1,416/mo billed yearly</p>
-                            </div>
-                            <ul class="space-y-3 mb-6">
-                                <li class="flex items-start gap-2 text-sm text-white/60">
-                                    <span class="text-neon mt-0.5">✓</span>
-                                    <span><strong class="text-white">32 Tokens</strong> (4× 64s commercials)</span>
-                                </li>
-                                <li class="flex items-start gap-2 text-sm text-white/60">
-                                    <span class="text-neon mt-0.5">✓</span>
-                                    <span><strong class="text-white">All 4 Formats</strong></span>
-                                </li>
-                                <li class="flex items-start gap-2 text-sm text-white/60">
-                                    <span class="text-neon mt-0.5">✓</span>
-                                    <span>3 Revision rounds</span>
-                                </li>
-                                <li class="flex items-start gap-2 text-sm text-white/60">
-                                    <span class="text-neon mt-0.5">✓</span>
-                                    <span>48-Hour Queue</span>
-                                </li>
-                                <li class="flex items-start gap-2 text-sm text-brand-gold">
-                                    <span class="mt-0.5">✓</span>
-                                    <span><strong>Voice + Avatar Clone</strong></span>
-                                </li>
-                            </ul>
-                            <button onclick="initiateCheckout('growth')" class="w-full py-3 bg-white/5 border border-white/20 text-white text-sm font-medium rounded-lg hover:bg-white/10 hover:border-neon/50 transition-all">
-                                Scale Up
+                            <button onclick="initiateCheckout('growth')" class="w-full py-3 bg-neon text-black text-sm font-bold rounded-lg hover:bg-white transition-all">
+                                Scale Your Brand
                             </button>
                         </div>
                     </div>
@@ -1763,31 +1710,31 @@
                             <div class="flex justify-between items-start mb-4">
                                 <div>
                                     <h3 class="text-lg font-semibold text-white">Scale</h3>
-                                    <p class="text-xs text-brand-gold/70 mt-1">Enterprise volume</p>
+                                    <p class="text-xs text-brand-gold/70 mt-1">Automated production house</p>
                                 </div>
                                 <div class="w-10 h-10 rounded-lg bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center">
-                                    <span class="text-brand-gold font-mono text-sm">64</span>
+                                    <span class="text-brand-gold font-mono text-sm">96</span>
                                 </div>
                             </div>
                             <div class="mb-6">
                                 <div class="flex items-baseline gap-1">
-                                    <span class="text-3xl font-bold text-white price-display" data-tier="scale">$3,199</span>
+                                    <span class="text-3xl font-bold text-white price-display" data-tier="scale">$2,499</span>
                                     <span class="text-white/40 text-sm">/mo</span>
                                 </div>
-                                <p class="text-xs text-white/30 mt-1 yearly-savings hidden">$2,666/mo billed yearly</p>
+                                <p class="text-xs text-brand-gold/70 mt-1">$208/commercial &bull; $26/token</p>
                             </div>
                             <ul class="space-y-3 mb-6">
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-brand-gold mt-0.5">✓</span>
-                                    <span><strong class="text-white">64 Tokens</strong> (8× 64s commercials)</span>
+                                    <span><strong class="text-white">96 Tokens</strong> (12 commercials/mo)</span>
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-brand-gold mt-0.5">✓</span>
-                                    <span><strong class="text-white">All 4 Formats</strong></span>
+                                    <span><strong class="text-white">All Formats</strong></span>
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-brand-gold mt-0.5">✓</span>
-                                    <span>5 Revision rounds</span>
+                                    <span>4 Revision rounds</span>
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-white/60">
                                     <span class="text-brand-gold mt-0.5">✓</span>
@@ -1795,7 +1742,7 @@
                                 </li>
                                 <li class="flex items-start gap-2 text-sm text-brand-gold">
                                     <span class="mt-0.5">✓</span>
-                                    <span><strong>Premium Clone Suite</strong></span>
+                                    <span><strong>Voice + Avatar Clone</strong> ($1,198 value)</span>
                                 </li>
                             </ul>
                             <button onclick="initiateCheckout('scale')" class="w-full py-3 bg-brand-gold/20 border border-brand-gold/50 text-brand-gold text-sm font-bold rounded-lg hover:bg-brand-gold hover:text-black transition-all">
@@ -1805,12 +1752,111 @@
                     </div>
                 </div>
 
+                <!-- Entry Offer: Rapid Pilot -->
+                <div class="mt-12 max-w-2xl mx-auto">
+                    <div class="group relative p-6 rounded-2xl bg-gradient-to-r from-neon/5 to-brand-gold/5 border border-dashed border-neon/30 hover:border-neon/60 transition-all">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div class="text-center md:text-left">
+                                <span class="text-xs font-mono text-neon tracking-widest">FIRST TIME? TRY THIS</span>
+                                <h3 class="text-xl font-semibold text-white mt-1">Rapid Pilot</h3>
+                                <p class="text-sm text-white/60 mt-2">1 commercial, 2 formats, 1 revision. Get 100% credited to first month if you upgrade within 7 days.</p>
+                            </div>
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-3xl font-bold text-white">$299</span>
+                                <span class="text-xs text-white/40">one-time</span>
+                                <button onclick="initiateCheckout('rapid_pilot')" class="mt-2 px-6 py-2 bg-neon/20 border border-neon/50 text-neon text-sm font-medium rounded-lg hover:bg-neon hover:text-black transition-all">
+                                    Start Pilot
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token Packs Section -->
+                <div class="mt-16">
+                    <div class="text-center mb-8">
+                        <span class="text-xs font-mono text-white/40 tracking-widest">NEED MORE TOKENS?</span>
+                        <h3 class="text-xl font-medium text-white mt-2">Token Packs <span class="text-white/40 text-sm font-normal">(Non-Subscriber Pricing)</span></h3>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all text-center">
+                            <span class="text-2xl font-bold text-white">8</span>
+                            <span class="text-white/40 text-sm block">tokens</span>
+                            <span class="text-lg font-semibold text-white mt-2 block">$600</span>
+                            <span class="text-xs text-white/30">$75/token</span>
+                            <button onclick="initiateCheckout('token_pack_8')" class="mt-3 w-full py-2 bg-white/5 border border-white/20 text-white text-xs font-medium rounded-lg hover:bg-white/10 transition-all">
+                                Buy Pack
+                            </button>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all text-center">
+                            <span class="text-2xl font-bold text-white">16</span>
+                            <span class="text-white/40 text-sm block">tokens</span>
+                            <span class="text-lg font-semibold text-white mt-2 block">$1,200</span>
+                            <span class="text-xs text-white/30">$75/token</span>
+                            <button onclick="initiateCheckout('token_pack_16')" class="mt-3 w-full py-2 bg-white/5 border border-white/20 text-white text-xs font-medium rounded-lg hover:bg-white/10 transition-all">
+                                Buy Pack
+                            </button>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all text-center">
+                            <span class="text-2xl font-bold text-white">40</span>
+                            <span class="text-white/40 text-sm block">tokens</span>
+                            <span class="text-lg font-semibold text-white mt-2 block">$3,000</span>
+                            <span class="text-xs text-white/30">$75/token</span>
+                            <button onclick="initiateCheckout('token_pack_40')" class="mt-3 w-full py-2 bg-white/5 border border-white/20 text-white text-xs font-medium rounded-lg hover:bg-white/10 transition-all">
+                                Buy Pack
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-white/30 mt-4">Subscribers get discounted top-up rates: $37.44/token (Prototyper), $30/token (Growth), $26/token (Scale)</p>
+                </div>
+
+                <!-- Add-Ons Section -->
+                <div class="mt-16">
+                    <div class="text-center mb-8">
+                        <span class="text-xs font-mono text-white/40 tracking-widest">ENHANCE YOUR PRODUCTION</span>
+                        <h3 class="text-xl font-medium text-white mt-2">Add-Ons</h3>
+                    </div>
+                    <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto">
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                            <span class="text-sm font-medium text-white block">Voice Clone</span>
+                            <span class="text-lg font-bold text-neon block mt-1">$199</span>
+                            <span class="text-[10px] text-white/30">Free at Scale</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                            <span class="text-sm font-medium text-white block">Avatar Clone</span>
+                            <span class="text-lg font-bold text-neon block mt-1">$999</span>
+                            <span class="text-[10px] text-white/30">Free at Scale</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                            <span class="text-sm font-medium text-white block">Variant Pack</span>
+                            <span class="text-lg font-bold text-neon block mt-1">$149</span>
+                            <span class="text-[10px] text-white/30">3 CTA swaps</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                            <span class="text-sm font-medium text-white block">Rush 48h</span>
+                            <span class="text-lg font-bold text-neon block mt-1">$299</span>
+                            <span class="text-[10px] text-white/30">Priority delivery</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                            <span class="text-sm font-medium text-white block">Rush 24h</span>
+                            <span class="text-lg font-bold text-neon block mt-1">$499</span>
+                            <span class="text-[10px] text-white/30">Same-day delivery</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                            <span class="text-sm font-medium text-white block">Extra Revisions</span>
+                            <span class="text-lg font-bold text-neon block mt-1">$149</span>
+                            <span class="text-[10px] text-white/30">+2 rounds</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Token Explainer Note -->
-                <div class="mt-8 text-center">
+                <div class="mt-12 text-center">
                     <p class="text-xs text-white/40 font-mono">
-                        <span class="text-neon">1 TOKEN</span> = 1× 8-second scene &nbsp;|&nbsp;
-                        <span class="text-neon">8 TOKENS</span> = 1× 64-second commercial &nbsp;|&nbsp;
-                        Tokens reset monthly (no rollover)
+                        <span class="text-neon">1 TOKEN</span> = 1 scene = 8 seconds &nbsp;|&nbsp;
+                        <span class="text-neon">8 TOKENS</span> = 1 complete 64-second commercial &nbsp;|&nbsp;
+                        1-month rollover (max 2x allotment) &nbsp;|&nbsp;
+                        Expires after 60 days
                     </p>
                 </div>
             </div>
@@ -2640,21 +2686,19 @@
         // Checkout API integration
         const CHECKOUT_API = '/api/checkout/session';
 
-        // Price ID mapping for checkout
+        // Price ID mapping for checkout - V2 "Performance Engine" Pricing
+        // Updated 2026-01-29
         const TIER_PRICES = {
-            'starter_monthly': 'price_starter_monthly',
-            'starter_yearly': 'price_starter_yearly',
-            'creator_monthly': 'price_creator_monthly',
-            'creator_yearly': 'price_creator_yearly',
-            'growth_monthly': 'price_growth_monthly',
-            'growth_yearly': 'price_growth_yearly',
-            'scale_monthly': 'price_scale_monthly',
-            'scale_yearly': 'price_scale_yearly',
-            'lab_test': 'price_single_lab_test',
-            // Token Packs (one-time purchases)
-            'token_pack_8': 'price_token_pack_8',
-            'token_pack_16': 'price_token_pack_16',
-            'token_pack_32': 'price_token_pack_32'
+            // V2 Subscription tiers (monthly only for now)
+            'prototyper_monthly': 'price_1SuxDoLyFGkLiU4CxxLjgoZq',  // $599/mo - 16 tokens
+            'growth_monthly': 'price_1SuxFnLyFGkLiU4CzqWvv9DR',      // $1,199/mo - 40 tokens
+            'scale_monthly': 'price_1SuxGQLyFGkLiU4CiDiAEkOD',       // $2,499/mo - 96 tokens
+            // V2 Entry offer
+            'rapid_pilot': 'price_1SuxIMLyFGkLiU4CBoIEIfs8',         // $299 one-time - 8 tokens
+            // V2 Token packs (non-subscriber premium pricing)
+            'token_pack_8': 'price_1SuxKTLyFGkLiU4CyMuPCSPL',        // $600 - 8 tokens
+            'token_pack_16': 'price_1SuxMCLyFGkLiU4C8Q45qVPJ',       // $1,200 - 16 tokens
+            'token_pack_40': 'price_1SuxO2LyFGkLiU4CRR7D14wh'        // $3,000 - 40 tokens
         };
 
         // Current billing interval (default monthly)
@@ -2673,8 +2717,8 @@
 
         // Initiate checkout with tier selection
         async function initiateCheckout(tier, intent = 'SUBSCRIPTION') {
-            // Token packs and lab_test use direct tier name, subscriptions need billing interval
-            const isOneTime = tier === 'lab_test' || tier.startsWith('token_pack_');
+            // One-time purchases: rapid_pilot, token packs
+            const isOneTime = tier === 'rapid_pilot' || tier.startsWith('token_pack_');
             const priceKey = isOneTime ? tier : `${tier}_${billingInterval}`;
             const priceId = TIER_PRICES[priceKey];
 
@@ -5309,11 +5353,11 @@
         // ==================================================================================
         // PRICING SECTION - Monthly/Yearly Toggle
         // ==================================================================================
+        // V2 "Performance Engine" Pricing - Updated 2026-01-29
         const pricingData = {
-            starter: { monthly: 449, yearly: 374 },
-            creator: { monthly: 899, yearly: 749 },
-            growth: { monthly: 1699, yearly: 1416 },
-            scale: { monthly: 3199, yearly: 2666 }
+            prototyper: { monthly: 599 },  // 16 tokens
+            growth: { monthly: 1199 },     // 40 tokens
+            scale: { monthly: 2499 }       // 96 tokens
         };
 
         let isYearlyBilling = false;
