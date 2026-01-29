@@ -28,72 +28,61 @@ function getPrisma(): PrismaClient {
   return prisma;
 }
 
-// Product Catalog (inline to avoid import issues)
+// Product Catalog - V2 "Performance Engine" Pricing
+// Updated 2026-01-29 with actual Stripe price IDs
 const PRODUCT_CATALOG = [
-  // COMMERCIAL LAB SUBSCRIPTIONS
+  // V2 COMMERCIAL LAB SUBSCRIPTIONS (monthly only)
   {
-    id: 'prod_commercial_lab_starter',
+    id: 'prod_TsifPU8AtmGacQ',
     category: 'COMMERCIAL_LAB',
-    metadata: { tier: 'STARTER' },
+    metadata: { tier: 'PROTOTYPER', tokens: '16' },
     prices: [
-      { id: 'price_starter_monthly', recurring: { interval: 'month' } },
-      { id: 'price_starter_yearly', recurring: { interval: 'year' } },
+      { id: 'price_1SuxDoLyFGkLiU4CxxLjgoZq', recurring: { interval: 'month' } },
     ],
   },
   {
-    id: 'prod_commercial_lab_creator',
+    id: 'prod_TsihSVy6TuDqQS',
     category: 'COMMERCIAL_LAB',
-    metadata: { tier: 'CREATOR' },
+    metadata: { tier: 'GROWTH', tokens: '40' },
     prices: [
-      { id: 'price_creator_monthly', recurring: { interval: 'month' } },
-      { id: 'price_creator_yearly', recurring: { interval: 'year' } },
+      { id: 'price_1SuxFnLyFGkLiU4CzqWvv9DR', recurring: { interval: 'month' } },
     ],
   },
   {
-    id: 'prod_commercial_lab_growth',
+    id: 'prod_TsihDQL1l9FesH',
     category: 'COMMERCIAL_LAB',
-    metadata: { tier: 'GROWTH' },
+    metadata: { tier: 'SCALE', tokens: '96' },
     prices: [
-      { id: 'price_growth_monthly', recurring: { interval: 'month' } },
-      { id: 'price_growth_yearly', recurring: { interval: 'year' } },
+      { id: 'price_1SuxGQLyFGkLiU4CiDiAEkOD', recurring: { interval: 'month' } },
     ],
   },
+  // V2 ENTRY OFFER: RAPID PILOT (one-time)
   {
-    id: 'prod_commercial_lab_scale',
-    category: 'COMMERCIAL_LAB',
-    metadata: { tier: 'SCALE' },
-    prices: [
-      { id: 'price_scale_monthly', recurring: { interval: 'month' } },
-      { id: 'price_scale_yearly', recurring: { interval: 'year' } },
-    ],
+    id: 'prod_TsijBRlNjstjQQ',
+    category: 'ENTRY_OFFER',
+    metadata: { type: 'rapid_pilot', tokens: '8' },
+    prices: [{ id: 'price_1SuxIMLyFGkLiU4CBoIEIfs8' }],
   },
-  // ONE-TIME: LAB TEST
+  // V2 TOKEN PACKS (one-time, non-subscriber pricing at $75/token)
   {
-    id: 'prod_single_lab_test',
-    category: 'LAB_ONE_TIME',
-    metadata: { type: 'lab_test' },
-    prices: [{ id: 'price_single_lab_test' }],
-  },
-  // TOKEN PACKS (one-time top-ups)
-  {
-    id: 'prod_token_pack_8',
+    id: 'prod_TsimCkEe8xqNXm',
     category: 'TOKEN_PACK',
     metadata: { tokens: '8', commercials: '1' },
-    prices: [{ id: 'price_token_pack_8' }],
+    prices: [{ id: 'price_1SuxKTLyFGkLiU4CyMuPCSPL' }],
   },
   {
-    id: 'prod_token_pack_16',
+    id: 'prod_Tsin5CzxDOqIrB',
     category: 'TOKEN_PACK',
     metadata: { tokens: '16', commercials: '2' },
-    prices: [{ id: 'price_token_pack_16' }],
+    prices: [{ id: 'price_1SuxMCLyFGkLiU4C8Q45qVPJ' }],
   },
   {
-    id: 'prod_token_pack_32',
+    id: 'prod_TsipCaJHJqtCOM',
     category: 'TOKEN_PACK',
-    metadata: { tokens: '32', commercials: '4' },
-    prices: [{ id: 'price_token_pack_32' }],
+    metadata: { tokens: '40', commercials: '5' },
+    prices: [{ id: 'price_1SuxO2LyFGkLiU4CRR7D14wh' }],
   },
-  // CONSULTATION
+  // CONSULTATION (unchanged)
   {
     id: 'prod_consultation_strategy',
     category: 'CONSULTATION',
@@ -189,11 +178,14 @@ function getTokensForPriceId(priceId: string | undefined): number {
     if (tokens) return parseInt(tokens, 10);
   }
 
-  // Fallback mapping
+  // Fallback mapping - V2 pricing
   const tokenMap: Record<string, number> = {
-    price_token_pack_8: 8,
-    price_token_pack_16: 16,
-    price_token_pack_32: 32,
+    // V2 Token Packs
+    'price_1SuxKTLyFGkLiU4CyMuPCSPL': 8,   // $600
+    'price_1SuxMCLyFGkLiU4C8Q45qVPJ': 16,  // $1,200
+    'price_1SuxO2LyFGkLiU4CRR7D14wh': 40,  // $3,000
+    // Rapid Pilot
+    'price_1SuxIMLyFGkLiU4CBoIEIfs8': 8,   // $299
   };
 
   return tokenMap[priceId] || 0;
