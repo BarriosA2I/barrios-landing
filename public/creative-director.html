@@ -2946,14 +2946,16 @@
             addTypingIndicator();
 
             try {
-                // Always use V3 - the endpoint that helps users instead of repeating questions
-                // Note: /api/legendary/message doesn't exist, so we bypass PIPELINE_ENABLED
-                const endpoint = `${API_URL}/api/chat/v3`;
+                // Use unified endpoint - token-gated AI with knowledge injection
+                const endpoint = `${API_URL}/api/chat/unified`;
+
+                // Get user_id from localStorage if available (set by Clerk auth)
+                const userId = localStorage.getItem('clerk_user_id') || null;
 
                 const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session_id: sessionId, message })
+                    body: JSON.stringify({ session_id: sessionId, message, user_id: userId })
                 });
 
                 if (!res.ok) throw new Error('Chat request failed');
@@ -8458,7 +8460,10 @@
                 // Get model info for telemetry
                 const modelInfo = MODELS[model] || MODELS.claude;
 
-                const response = await fetch('https://barrios-genesis-flawless.onrender.com/api/chat/v3', {
+                // Get user_id from localStorage if available (set by Clerk auth)
+                const userId = localStorage.getItem('clerk_user_id') || null;
+
+                const response = await fetch('https://barrios-genesis-flawless.onrender.com/api/chat/unified', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -8466,6 +8471,7 @@
                     body: JSON.stringify({
                         message: message,
                         session_id: sessionId,
+                        user_id: userId,
                         model: model,
                         model_name: modelInfo.name
                     })
