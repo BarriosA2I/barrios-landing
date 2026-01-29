@@ -2547,10 +2547,16 @@
 
         // Initiate checkout with tier selection
         async function initiateCheckout(tier, intent = 'SUBSCRIPTION') {
-            // One-time purchases: rapid_pilot, token packs
+            // One-time purchases: rapid_pilot, token packs → use 'payment' mode
+            // Subscriptions: prototyper, growth, scale → use 'subscription' mode
             const isOneTime = tier === 'rapid_pilot' || tier.startsWith('token_pack_');
             const priceKey = isOneTime ? tier : `${tier}_${billingInterval}`;
             const priceId = TIER_PRICES[priceKey];
+
+            // HOTFIX: Explicitly set intent based on product type
+            // TOP_UP intent forces 'payment' mode in backend
+            // SUBSCRIPTION intent with recurring price uses 'subscription' mode
+            const checkoutIntent = isOneTime ? 'TOP_UP' : 'SUBSCRIPTION';
 
             if (!priceId) {
                 console.error('Unknown tier/interval:', tier, billingInterval);
@@ -2559,7 +2565,7 @@
                 return;
             }
 
-            console.log('[Checkout] Creating session for:', tier, priceId, intent);
+            console.log('[Checkout] Creating session for:', tier, priceId, 'intent:', checkoutIntent, 'isOneTime:', isOneTime);
             safeSystemMessage('Creating secure checkout session...');
 
             try {
@@ -2568,7 +2574,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         items: [{ priceId, quantity: 1 }],
-                        intent: intent,
+                        intent: checkoutIntent,
                         email: localStorage.getItem('userEmail') || undefined,
                         clientReferenceId: sessionId || undefined
                     })

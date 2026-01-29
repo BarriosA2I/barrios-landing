@@ -2471,17 +2471,19 @@
         // Checkout API integration
         const CHECKOUT_API = '/api/checkout/session';
 
-        // Price ID mapping for checkout
+        // Price ID mapping for checkout - V2 "Performance Engine" Pricing
+        // Updated 2026-01-29
         const TIER_PRICES = {
-            'starter_monthly': 'price_starter_monthly',
-            'starter_yearly': 'price_starter_yearly',
-            'creator_monthly': 'price_creator_monthly',
-            'creator_yearly': 'price_creator_yearly',
-            'growth_monthly': 'price_growth_monthly',
-            'growth_yearly': 'price_growth_yearly',
-            'scale_monthly': 'price_scale_monthly',
-            'scale_yearly': 'price_scale_yearly',
-            'lab_test': 'price_single_lab_test'
+            // V2 Subscription tiers (monthly only for now)
+            'prototyper_monthly': 'price_1SuxDoLyFGkLiU4CxxLjgoZq',  // $599/mo - 16 tokens
+            'growth_monthly': 'price_1SuxFnLyFGkLiU4CzqWvv9DR',      // $1,199/mo - 40 tokens
+            'scale_monthly': 'price_1SuxGQLyFGkLiU4CiDiAEkOD',       // $2,499/mo - 96 tokens
+            // V2 Entry offer
+            'rapid_pilot': 'price_1SuxIMLyFGkLiU4CBoIEIfs8',         // $299 one-time - 8 tokens
+            // V2 Token packs (non-subscriber premium pricing)
+            'token_pack_8': 'price_1SuxKTLyFGkLiU4CyMuPCSPL',        // $600 - 8 tokens
+            'token_pack_16': 'price_1SuxMCLyFGkLiU4C8Q45qVPJ',       // $1,200 - 16 tokens
+            'token_pack_40': 'price_1SuxO2LyFGkLiU4CRR7D14wh'        // $3,000 - 40 tokens
         };
 
         // Current billing interval (default monthly)
@@ -2500,8 +2502,16 @@
 
         // Initiate checkout with tier selection
         async function initiateCheckout(tier, intent = 'SUBSCRIPTION') {
-            const priceKey = tier === 'lab_test' ? 'lab_test' : `${tier}_${billingInterval}`;
+            // One-time purchases: rapid_pilot, token packs → use 'payment' mode
+            // Subscriptions: prototyper, growth, scale → use 'subscription' mode
+            const isOneTime = tier === 'rapid_pilot' || tier.startsWith('token_pack_');
+            const priceKey = isOneTime ? tier : `${tier}_${billingInterval}`;
             const priceId = TIER_PRICES[priceKey];
+
+            // HOTFIX: Explicitly set intent based on product type
+            // TOP_UP intent forces 'payment' mode in backend
+            // SUBSCRIPTION intent with recurring price uses 'subscription' mode
+            const checkoutIntent = isOneTime ? 'TOP_UP' : 'SUBSCRIPTION';
 
             if (!priceId) {
                 console.error('Unknown tier/interval:', tier, billingInterval);
@@ -2510,7 +2520,7 @@
                 return;
             }
 
-            console.log('[Checkout] Creating session for:', tier, priceId, intent);
+            console.log('[Checkout] Creating session for:', tier, priceId, 'intent:', checkoutIntent, 'isOneTime:', isOneTime);
             safeSystemMessage('Creating secure checkout session...');
 
             try {
@@ -2519,7 +2529,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         items: [{ priceId, quantity: 1 }],
-                        intent: intent,
+                        intent: checkoutIntent,
                         email: localStorage.getItem('userEmail') || undefined,
                         clientReferenceId: sessionId || undefined
                     })
