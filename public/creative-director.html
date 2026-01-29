@@ -8186,7 +8186,8 @@
             }
 
             // Enable production when brief is complete (backend sets ragnarok_ready or user confirms)
-            const shouldTriggerProduction = window.briefComplete === true || hasProductionTrigger;
+            // FIX: Changed || to && - production should ONLY trigger when brief IS complete AND user requests it
+            const shouldTriggerProduction = window.briefComplete === true && hasProductionTrigger;
 
             if (shouldTriggerProduction && window.ProductionManager) {
                 // Trigger GENESIS 24-agent autonomous pipeline
