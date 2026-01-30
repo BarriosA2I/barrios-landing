@@ -9,6 +9,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks/(.*)',
   '/api/nexus/(.*)',
   '/api/checkout/(.*)',
+  '/api/commercial-request(.*)',
   '/api/mulligan(.*)',
   '/mulligan(.*)',  // Feedback page for email links
   '/nexus-personal(.*)',
