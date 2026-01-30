@@ -69,7 +69,7 @@ View in Dashboard: https://www.barriosa2i.com/dashboard/queue
     try {
       await resend.emails.send({
         from: 'Barrios A2I <notifications@barriosa2i.com>',
-        to: ['gary@barriosa2i.com'],
+        to: ['alienation2innovation@gmail.com'],
         subject: `New Commercial Request: ${brandName}`,
         text: emailContent,
       });

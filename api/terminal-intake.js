@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: 'Barrios Terminal <system@barriosa2i.com>',
-        to: ['gary@barriosa2i.com'],
+        to: ['alienation2innovation@gmail.com'],
         subject: `[TERMINAL] New ${protocol} Inquiry - ${company}`,
         html: `
           <div style="font-family: 'Courier New', monospace; background: #0a0a1e; color: #00c2ff; padding: 32px; border: 1px solid #00c2ff33;">

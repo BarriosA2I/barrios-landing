@@ -113,7 +113,7 @@ The Barrios A2I Team
           to: [currentRequest.clientEmail],
           subject: `Your Commercial is Ready! - ${currentRequest.brandName}`,
           text: deliveryEmailContent,
-          replyTo: 'gary@barriosa2i.com',
+          replyTo: 'alienation2innovation@gmail.com',
         });
 
         console.log(`Delivery email sent to ${currentRequest.clientEmail}`);
