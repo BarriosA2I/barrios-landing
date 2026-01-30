@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CreditCard, ArrowUpRight, Check, History } from 'lucide-react';
+import { CreditCard, ArrowUpRight, Check, History, Zap, Sparkles } from 'lucide-react';
 
 // Glass Card Component
 const GlassCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
@@ -14,26 +14,48 @@ const GlassCard = ({ children, className = "" }: { children: React.ReactNode, cl
 const PlanCard = ({
   tier,
   price,
+  tokens,
+  commercials,
   features,
-  active = false
+  active = false,
+  popular = false
 }: {
   tier: string;
   price: string;
+  tokens: number;
+  commercials: number;
   features: string[];
   active?: boolean;
+  popular?: boolean;
 }) => (
   <div className={`relative rounded-2xl border p-6 transition-all ${
-    active ? "border-[#ffd700] bg-[#ffd700]/5 ring-1 ring-[#ffd700]" : "border-white/10 bg-white/5 hover:border-white/20"
+    active ? "border-[#ffd700] bg-[#ffd700]/5 ring-1 ring-[#ffd700]" :
+    popular ? "border-[#00bfff] bg-[#00bfff]/5" : "border-white/10 bg-white/5 hover:border-white/20"
   }`}>
     {active && (
       <span className="absolute -top-3 left-6 rounded-full bg-[#ffd700] px-3 py-1 text-[10px] font-black uppercase text-[#0B1220]">
         Current Plan
       </span>
     )}
+    {popular && !active && (
+      <span className="absolute -top-3 left-6 rounded-full bg-[#00bfff] px-3 py-1 text-[10px] font-black uppercase text-[#0B1220]">
+        Most Popular
+      </span>
+    )}
     <h3 className="text-xl font-black text-white uppercase tracking-tighter">{tier}</h3>
     <div className="mt-2 flex items-baseline gap-1">
       <span className="text-3xl font-bold text-white">{price}</span>
       <span className="text-sm text-slate-500">/month</span>
+    </div>
+    <div className="mt-3 flex items-center gap-4 text-xs text-slate-400">
+      <span className="flex items-center gap-1">
+        <Zap size={12} className="text-[#ffd700]" />
+        {tokens} tokens
+      </span>
+      <span className="flex items-center gap-1">
+        <Sparkles size={12} className="text-[#00bfff]" />
+        {commercials} commercials
+      </span>
     </div>
     <ul className="mt-6 space-y-3">
       {features.map((f, i) => (
@@ -51,10 +73,10 @@ const PlanCard = ({
 );
 
 export default function BillingPage() {
-  // Mock invoice data
+  // Mock invoice data - V2 pricing
   const invoices = [
-    { id: "INV-0012", date: "Jan 01, 2026", amount: "$199.00", status: "Paid" },
-    { id: "INV-0011", date: "Dec 01, 2025", amount: "$199.00", status: "Paid" }
+    { id: "INV-0012", date: "Jan 01, 2026", amount: "$599.00", status: "Paid" },
+    { id: "INV-0011", date: "Dec 01, 2025", amount: "$599.00", status: "Paid" }
   ];
 
   return (
@@ -67,50 +89,72 @@ export default function BillingPage() {
         <p className="text-slate-400">Monitor your compute credits and subscription tier.</p>
       </header>
 
-      {/* Plan Selection */}
+      {/* Plan Selection - V2 Performance Engine Pricing */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <PlanCard
-          tier="Standard"
-          price="$49"
-          features={["50 AI Minutes", "720p Export", "Community Support"]}
+          tier="Prototyper"
+          price="$599"
+          tokens={16}
+          commercials={2}
+          features={[
+            "2 formats (9:16 + 16:9)",
+            "1 revision round",
+            "4-day turnaround",
+            "Captions included"
+          ]}
         />
         <PlanCard
-          tier="Studio"
-          price="$199"
-          features={["500 AI Minutes", "4K Export", "Priority Rendering"]}
-          active
+          tier="Growth"
+          price="$1,199"
+          tokens={40}
+          commercials={5}
+          features={[
+            "4 formats (9:16, 16:9, 1:1, 4:5)",
+            "2 revision rounds",
+            "2-day turnaround",
+            "A/B hook variants"
+          ]}
+          popular
         />
         <PlanCard
-          tier="Enterprise"
-          price="Custom"
-          features={["Unlimited compute", "API Access", "Dedicated Account Manager"]}
+          tier="Scale"
+          price="$2,499"
+          tokens={96}
+          commercials={12}
+          features={[
+            "All formats",
+            "4 revision rounds",
+            "24-hour priority",
+            "Voice + Avatar clone included"
+          ]}
         />
       </div>
 
-      {/* Usage Stats */}
+      {/* Usage Stats - Token-based */}
       <section>
         <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-4">Current Usage</h3>
         <GlassCard className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">AI Minutes Used</p>
+              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Tokens Used</p>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold text-white">0</span>
-                <span className="text-sm text-slate-500">/ 500</span>
+                <span className="text-sm text-slate-500">/ 16</span>
               </div>
               <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: '5%' }}
+                  animate={{ width: '0%' }}
                   className="h-full bg-gradient-to-r from-[#00bfff] to-[#ffd700]"
                 />
               </div>
+              <p className="text-[10px] text-slate-600 mt-2">8 tokens = 1 commercial (64s video)</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Storage Used</p>
+              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Commercials This Month</p>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold text-white">0</span>
-                <span className="text-sm text-slate-500">/ 50 GB</span>
+                <span className="text-sm text-slate-500">/ 2</span>
               </div>
               <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
                 <motion.div
@@ -119,6 +163,7 @@ export default function BillingPage() {
                   className="h-full bg-[#00bfff]"
                 />
               </div>
+              <p className="text-[10px] text-slate-600 mt-2">Unused tokens roll over 1 month</p>
             </div>
             <div>
               <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Billing Cycle</p>
