@@ -244,6 +244,60 @@
             font-size: 9px;
             letter-spacing: 0.05em;
         }
+
+        /* Production Submit Button */
+        @keyframes submitPulse {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(0, 206, 209, 0.4), inset 0 0 20px rgba(0, 206, 209, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(0, 206, 209, 0.7), inset 0 0 30px rgba(0, 206, 209, 0.2);
+            }
+        }
+        .submit-production-btn {
+            width: 100%;
+            padding: 16px 24px;
+            margin-top: 12px;
+            background: linear-gradient(135deg, rgba(0, 206, 209, 0.15) 0%, rgba(0, 206, 209, 0.05) 100%);
+            border: 2px solid #00CED1;
+            border-radius: 12px;
+            color: #00CED1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: submitPulse 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .submit-production-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 206, 209, 0.3) 0%, rgba(0, 206, 209, 0.15) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(0, 206, 209, 0.5);
+        }
+        .submit-production-btn:active {
+            transform: translateY(0);
+        }
+        .submit-production-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            animation: none;
+        }
+        .submit-production-btn .btn-icon {
+            font-size: 18px;
+        }
+        .submit-production-btn .btn-subtext {
+            font-size: 10px;
+            opacity: 0.7;
+            font-weight: 400;
+            display: block;
+            margin-top: 4px;
+        }
         .scene-content {
             color: rgba(255,255,255,0.7);
             line-height: 1.3;
@@ -2741,6 +2795,13 @@
                         <p class="text-sm text-white/80">${escapeHtml(content)}</p>
                     </div>
                 `;
+
+                // Check if AI response indicates brief completion
+                if (checkForBriefCompletion(content)) {
+                    setTimeout(() => {
+                        showProductionSubmitButton();
+                    }, 500); // Small delay for smooth UX
+                }
             }
 
             container.appendChild(msgDiv);
@@ -3474,6 +3535,195 @@
             }
         }
 
+        // Track if production submit button has been shown
+        let productionSubmitShown = false;
+
+        /**
+         * Check if AI response indicates brief completion
+         */
+        function checkForBriefCompletion(responseText) {
+            const completionSignals = [
+                'completed every field',
+                'brief is complete',
+                'ready to generate',
+                'all the information',
+                'we have everything',
+                'brief complete',
+                'all fields collected',
+                'ready for production',
+                'let me recap',
+                'here\'s what we have'
+            ];
+
+            const lowerResponse = responseText.toLowerCase();
+            return completionSignals.some(signal => lowerResponse.includes(signal));
+        }
+
+        /**
+         * Extract brief data from conversation history
+         */
+        function extractBriefFromConversation() {
+            const messages = document.querySelectorAll('#chat-messages .text-white, #chat-messages .text-white\\/80');
+            let conversationText = '';
+
+            messages.forEach(msg => {
+                conversationText += msg.textContent + '\n';
+            });
+
+            // Extract key fields using patterns
+            const extracted = {
+                brandName: '',
+                product: '',
+                targetAudience: '',
+                tone: 'professional',
+                keyMessage: '',
+                cta: 'Contact us today'
+            };
+
+            // Look for business/brand name patterns
+            const brandPatterns = [
+                /business[:\s]+([^,.\n]+)/i,
+                /brand[:\s]+([^,.\n]+)/i,
+                /called\s+([^,.\n]+)/i,
+                /company[:\s]+([^,.\n]+)/i,
+                /🏢\s*Business[:\s]+([^,.\n🏢💪👥📲🎨]+)/i
+            ];
+            for (const pattern of brandPatterns) {
+                const match = conversationText.match(pattern);
+                if (match) {
+                    extracted.brandName = match[1].trim();
+                    break;
+                }
+            }
+
+            // Look for product patterns
+            const productPatterns = [
+                /product[:\s]+([^,.\n]+)/i,
+                /💪\s*Product[:\s]+([^,.\n🏢💪👥📲🎨]+)/i,
+                /we (?:sell|offer|provide)[:\s]+([^,.\n]+)/i,
+                /service[:\s]+([^,.\n]+)/i
+            ];
+            for (const pattern of productPatterns) {
+                const match = conversationText.match(pattern);
+                if (match) {
+                    extracted.product = match[1].trim();
+                    break;
+                }
+            }
+
+            // Look for audience patterns
+            const audiencePatterns = [
+                /audience[:\s]+([^,.\n]+)/i,
+                /👥\s*Audience[:\s]+([^,.\n🏢💪👥📲🎨]+)/i,
+                /target[:\s]+([^,.\n]+)/i,
+                /targeting\s+([^,.\n]+)/i
+            ];
+            for (const pattern of audiencePatterns) {
+                const match = conversationText.match(pattern);
+                if (match) {
+                    extracted.targetAudience = match[1].trim();
+                    break;
+                }
+            }
+
+            // Look for CTA patterns
+            const ctaPatterns = [
+                /cta[:\s]+["']?([^"'\n]+)["']?/i,
+                /📲\s*CTA[:\s]+([^,.\n🏢💪👥📲🎨]+)/i,
+                /call.to.action[:\s]+["']?([^"'\n]+)["']?/i,
+                /"([^"]+)"\s+(?:is|as)\s+(?:the\s+)?cta/i
+            ];
+            for (const pattern of ctaPatterns) {
+                const match = conversationText.match(pattern);
+                if (match) {
+                    extracted.cta = match[1].trim();
+                    break;
+                }
+            }
+
+            // Look for tone patterns
+            const tonePatterns = [
+                /tone[:\s]+([^,.\n]+)/i,
+                /🎨\s*Tone[:\s]+([^,.\n🏢💪👥📲🎨]+)/i,
+                /feel\s+(premium|professional|friendly|bold|minimalist|aspirational)/i
+            ];
+            for (const pattern of tonePatterns) {
+                const match = conversationText.match(pattern);
+                if (match) {
+                    extracted.tone = match[1].trim().toLowerCase();
+                    break;
+                }
+            }
+
+            // Build key message from goals/pain points mentioned
+            const keyMessagePatterns = [
+                /key message[:\s]+([^.\n]+)/i,
+                /main (?:message|point)[:\s]+([^.\n]+)/i,
+                /pain point[:\s]+([^.\n]+)/i
+            ];
+            for (const pattern of keyMessagePatterns) {
+                const match = conversationText.match(pattern);
+                if (match) {
+                    extracted.keyMessage = match[1].trim();
+                    break;
+                }
+            }
+
+            // If no key message found, use product as fallback
+            if (!extracted.keyMessage && extracted.product) {
+                extracted.keyMessage = extracted.product;
+            }
+
+            return extracted;
+        }
+
+        /**
+         * Show the production submit button in the chat
+         */
+        function showProductionSubmitButton() {
+            if (productionSubmitShown) return;
+            productionSubmitShown = true;
+
+            const container = document.getElementById('chat-messages');
+            const buttonDiv = document.createElement('div');
+            buttonDiv.id = 'production-submit-container';
+            buttonDiv.className = 'mt-4 p-4 bg-gradient-to-r from-neon/10 to-transparent border border-neon/30 rounded-lg';
+            buttonDiv.innerHTML = `
+                <div class="text-neon font-mono text-xs mb-3">[ BRIEF COMPLETE - READY FOR PRODUCTION ]</div>
+                <button class="submit-production-btn" onclick="handleProductionSubmit()">
+                    <span class="btn-icon">📋</span>
+                    <span>
+                        Submit Brief for Production
+                        <span class="btn-subtext">48-hour delivery guaranteed</span>
+                    </span>
+                </button>
+                <p class="text-center text-white/40 text-xs mt-3">Your commercial will be crafted by our production team</p>
+            `;
+            container.appendChild(buttonDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        /**
+         * Handle production submit button click
+         */
+        async function handleProductionSubmit() {
+            const btn = document.querySelector('.submit-production-btn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="btn-icon">⏳</span> Submitting...';
+            }
+
+            await submitToProductionQueue();
+
+            // Update button to show success
+            if (btn) {
+                btn.innerHTML = '<span class="btn-icon">✅</span> Brief Submitted!';
+                btn.style.borderColor = '#10b981';
+                btn.style.color = '#10b981';
+                btn.style.animation = 'none';
+            }
+        }
+
         /**
          * Submit commercial request to Production Queue
          * This sends the collected brief to Gary's dashboard for manual production
@@ -3490,23 +3740,45 @@
 
             if (!clientEmail) {
                 console.log('[Production Queue] No email provided, skipping submission');
+                addSystemMessage('❌ Email required to submit your brief. Please try again.');
                 return;
             }
 
-            // Build the commercial request from collected data
-            const requestData = {
-                brandName: collectedLeadData.businessName || 'Unknown Brand',
-                product: collectedLeadData.industry || 'Product/Service',
-                targetAudience: collectedLeadData.targetAudience || 'General audience',
-                tone: 'professional', // Default tone
-                keyMessage: Array.isArray(collectedLeadData.goals)
-                    ? collectedLeadData.goals.join('. ')
-                    : (collectedLeadData.goals || 'Key message to be defined'),
-                cta: 'Contact us today', // Default CTA
-                clientEmail: clientEmail,
-                clientName: collectedLeadData.businessName || undefined,
-                priority: 'STANDARD'
-            };
+            // First try to use collectedLeadData, then fall back to conversation extraction
+            let requestData;
+
+            if (collectedLeadData.businessName || collectedLeadData.industry) {
+                // Use existing collectedLeadData
+                requestData = {
+                    brandName: collectedLeadData.businessName || 'Unknown Brand',
+                    product: collectedLeadData.industry || 'Product/Service',
+                    targetAudience: collectedLeadData.targetAudience || 'General audience',
+                    tone: 'professional',
+                    keyMessage: Array.isArray(collectedLeadData.goals)
+                        ? collectedLeadData.goals.join('. ')
+                        : (collectedLeadData.goals || 'Key message to be defined'),
+                    cta: 'Contact us today',
+                    clientEmail: clientEmail,
+                    clientName: collectedLeadData.businessName || undefined,
+                    priority: 'STANDARD'
+                };
+            } else {
+                // Extract from conversation
+                const extracted = extractBriefFromConversation();
+                requestData = {
+                    brandName: extracted.brandName || 'Brand from conversation',
+                    product: extracted.product || 'Product/Service',
+                    targetAudience: extracted.targetAudience || 'General audience',
+                    tone: extracted.tone || 'professional',
+                    keyMessage: extracted.keyMessage || 'See conversation for details',
+                    cta: extracted.cta || 'Contact us today',
+                    clientEmail: clientEmail,
+                    clientName: extracted.brandName || undefined,
+                    priority: 'STANDARD'
+                };
+            }
+
+            console.log('[Production Queue] Submitting request:', requestData);
 
             try {
                 const response = await fetch('/api/commercial-request', {
@@ -3519,12 +3791,14 @@
 
                 if (data.success) {
                     console.log('[Production Queue] Request submitted:', data.requestId);
-                    addSystemMessage('📋 Your commercial brief has been submitted! You\'ll receive your completed commercial within 48 hours.');
+                    addSystemMessage('🎉 Your commercial brief has been submitted! You\'ll receive your completed commercial within 48 hours. Check your email at ' + clientEmail + ' for updates.');
                 } else {
                     console.error('[Production Queue] Submission failed:', data.error);
+                    addSystemMessage('❌ Submission failed: ' + (data.error || 'Please try again.'));
                 }
             } catch (error) {
                 console.error('[Production Queue] Error submitting request:', error);
+                addSystemMessage('❌ Connection error. Please try again or contact support.');
             }
         }
 
