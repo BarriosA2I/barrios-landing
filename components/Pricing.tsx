@@ -34,10 +34,10 @@ const PATHS: PricingPath[] = [
     unit: '/ MONTH_START',
     desc: 'Token-based subscription. Generate full 64-second AI commercials from text prompts.',
     features: [
-      { name: 'STARTER', detail: '$449 • 8 TOKENS' },
-      { name: 'CREATOR', detail: '$899 • 16 TOKENS' },
-      { name: 'GROWTH', detail: '$1,699 • 32 TOKENS' },
-      { name: 'SCALE', detail: '$3,199 • 64 TOKENS' },
+      { name: 'RAPID PILOT', detail: '$299 one-time • 8 TOKENS' },
+      { name: 'PROTOTYPER', detail: '$599/mo • 16 TOKENS' },
+      { name: 'GROWTH', detail: '$1,199/mo • 40 TOKENS' },
+      { name: 'SCALE', detail: '$2,499/mo • 96 TOKENS' },
     ],
     note: '"8 tokens = 1 full 64-second commercial. Script, voiceover, video, captions—all included."',
     cta: 'SUBSCRIBE NOW',
@@ -158,7 +158,7 @@ export default function Pricing() {
                     <span className="text-xs font-mono text-gray-500 tracking-tighter">{feat.name}</span>
                     {path.id === 'commercial-lab' ? (
                       <button
-                        onClick={() => redirectToCheckout(['starter', 'creator', 'growth', 'scale'][featIdx] as 'starter' | 'creator' | 'growth' | 'scale')}
+                        onClick={() => redirectToCheckout(['rapid-pilot', 'prototyper', 'growth', 'scale'][featIdx] as 'rapid-pilot' | 'prototyper' | 'growth' | 'scale')}
                         className="text-xs font-bold text-[#00bfff] tracking-wide hover:text-white transition-colors cursor-pointer hover:underline"
                       >
                         {feat.detail} →
@@ -181,7 +181,7 @@ export default function Pricing() {
                 disabled={path.isComingSoon}
                 onClick={() => {
                   if (path.isComingSoon) return;
-                  if (path.id === 'commercial-lab') redirectToCheckout('starter');
+                  if (path.id === 'commercial-lab') redirectToCheckout('prototyper');
                   else if (path.id === 'total-command') redirectToEnterprise();
                 }}
                 className={`

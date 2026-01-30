@@ -2,11 +2,11 @@
  * Checkout URL utilities for Barrios A2I monetization
  */
 
-export type PricingTier = 'starter' | 'creator' | 'growth' | 'scale';
+export type PricingTier = 'rapid-pilot' | 'prototyper' | 'growth' | 'scale';
 
 const tierIndex: Record<PricingTier, number> = {
-  starter: 0,
-  creator: 1,
+  'rapid-pilot': 0,
+  prototyper: 1,
   growth: 2,
   scale: 3,
 };
