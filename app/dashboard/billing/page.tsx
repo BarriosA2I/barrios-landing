@@ -1,7 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CreditCard, ArrowUpRight, Check, History, Zap, Sparkles } from 'lucide-react';
+import { CreditCard, ArrowUpRight, Check, History, Zap, Sparkles, Loader2 } from 'lucide-react';
+
+// V2 Performance Engine - Stripe Price IDs
+const TIER_PRICES: Record<string, string> = {
+  prototyper: 'price_1SuxDoLyFGkLiU4CxxLjgoZq',  // $599/mo - 16 tokens
+  growth: 'price_1SuxFnLyFGkLiU4CzqWvv9DR',      // $1,199/mo - 40 tokens
+  scale: 'price_1SuxGQLyFGkLiU4CiDiAEkOD',       // $2,499/mo - 96 tokens
+};
 
 // Glass Card Component
 const GlassCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
@@ -13,20 +21,26 @@ const GlassCard = ({ children, className = "" }: { children: React.ReactNode, cl
 // Plan Card Component
 const PlanCard = ({
   tier,
+  tierId,
   price,
   tokens,
   commercials,
   features,
   active = false,
-  popular = false
+  popular = false,
+  onUpgrade,
+  isLoading = false
 }: {
   tier: string;
+  tierId: string;
   price: string;
   tokens: number;
   commercials: number;
   features: string[];
   active?: boolean;
   popular?: boolean;
+  onUpgrade: (tierId: string) => void;
+  isLoading?: boolean;
 }) => (
   <div className={`relative rounded-2xl border p-6 transition-all ${
     active ? "border-[#ffd700] bg-[#ffd700]/5 ring-1 ring-[#ffd700]" :
@@ -64,20 +78,68 @@ const PlanCard = ({
         </li>
       ))}
     </ul>
-    <button className={`mt-8 w-full rounded-xl py-3 text-sm font-bold transition-all ${
-      active ? "bg-white/10 text-white cursor-default" : "bg-[#00bfff] text-[#0B1220] hover:brightness-110"
-    }`}>
-      {active ? "Manage Subscription" : "Upgrade Now"}
+    <button
+      onClick={() => !active && !isLoading && onUpgrade(tierId)}
+      disabled={active || isLoading}
+      className={`mt-8 w-full rounded-xl py-3 text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+        active ? "bg-white/10 text-white cursor-default" :
+        isLoading ? "bg-[#00bfff]/50 text-[#0B1220] cursor-wait" :
+        "bg-[#00bfff] text-[#0B1220] hover:brightness-110"
+      }`}
+    >
+      {isLoading ? (
+        <>
+          <Loader2 size={16} className="animate-spin" />
+          Processing...
+        </>
+      ) : active ? "Manage Subscription" : "Upgrade Now"}
     </button>
   </div>
 );
 
 export default function BillingPage() {
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+
   // Mock invoice data - V2 pricing
   const invoices = [
     { id: "INV-0012", date: "Jan 01, 2026", amount: "$599.00", status: "Paid" },
     { id: "INV-0011", date: "Dec 01, 2025", amount: "$599.00", status: "Paid" }
   ];
+
+  // Initiate Stripe checkout for subscription upgrade
+  const handleUpgrade = async (tierId: string) => {
+    const priceId = TIER_PRICES[tierId];
+    if (!priceId) {
+      alert('Invalid tier selection');
+      return;
+    }
+
+    setLoadingTier(tierId);
+
+    try {
+      const response = await fetch('/api/checkout/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: [{ priceId, quantity: 1 }],
+          intent: 'SUBSCRIPTION',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Checkout failed: ' + (data.error || 'Unknown error'));
+        setLoadingTier(null);
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      alert('Connection error. Please try again.');
+      setLoadingTier(null);
+    }
+  };
 
   return (
     <div className="space-y-10">
@@ -93,6 +155,7 @@ export default function BillingPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <PlanCard
           tier="Prototyper"
+          tierId="prototyper"
           price="$599"
           tokens={16}
           commercials={2}
@@ -102,9 +165,12 @@ export default function BillingPage() {
             "4-day turnaround",
             "Captions included"
           ]}
+          onUpgrade={handleUpgrade}
+          isLoading={loadingTier === 'prototyper'}
         />
         <PlanCard
           tier="Growth"
+          tierId="growth"
           price="$1,199"
           tokens={40}
           commercials={5}
@@ -115,9 +181,12 @@ export default function BillingPage() {
             "A/B hook variants"
           ]}
           popular
+          onUpgrade={handleUpgrade}
+          isLoading={loadingTier === 'growth'}
         />
         <PlanCard
           tier="Scale"
+          tierId="scale"
           price="$2,499"
           tokens={96}
           commercials={12}
@@ -127,6 +196,8 @@ export default function BillingPage() {
             "24-hour priority",
             "Voice + Avatar clone included"
           ]}
+          onUpgrade={handleUpgrade}
+          isLoading={loadingTier === 'scale'}
         />
       </div>
 
