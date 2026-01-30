@@ -3563,7 +3563,7 @@
          * Extract brief data from conversation history
          */
         function extractBriefFromConversation() {
-            const messages = document.querySelectorAll('#chat-messages .text-white, #chat-messages .text-white\\/80');
+            const messages = document.querySelectorAll('#ni-messages .text-white, #ni-messages .text-white\\/80');
             let conversationText = '';
 
             messages.forEach(msg => {
@@ -3684,7 +3684,7 @@
             if (productionSubmitShown) return;
             productionSubmitShown = true;
 
-            const container = document.getElementById('chat-messages');
+            const container = document.getElementById('ni-messages');
             const buttonDiv = document.createElement('div');
             buttonDiv.id = 'production-submit-container';
             buttonDiv.className = 'mt-4 p-4 bg-gradient-to-r from-neon/10 to-transparent border border-neon/30 rounded-lg';
@@ -8498,6 +8498,13 @@
 
             container.appendChild(msgDiv);
             container.scrollTop = container.scrollHeight;
+
+            // Check if AI response indicates brief completion
+            if (role === 'ai' && checkForBriefCompletion(content)) {
+                setTimeout(() => {
+                    showProductionSubmitButton();
+                }, 500); // Small delay for smooth UX
+            }
         }
 
         // Show typing indicator
