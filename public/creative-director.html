@@ -1318,57 +1318,83 @@
 
 
     <main class="relative z-10 w-full">
-        <!-- HERO -->
-        <section class="min-h-screen w-full flex flex-col lg:flex-row justify-center items-center px-4 lg:px-6 relative pt-24 pb-12 gap-8 lg:gap-12 overflow-hidden">
+        <!-- HERO - Split Layout with Video -->
+        <section class="min-h-screen w-full flex items-center px-4 lg:px-6 relative pt-24 pb-12 overflow-hidden">
             <!-- Animated Mesh Background -->
             <div class="hero-mesh-bg"></div>
-            <!-- Floating Orbs -->
-            <div class="hero-orb hero-orb--cyan"></div>
-            <div class="hero-orb hero-orb--purple"></div>
+            <!-- Floating Orbs (scaled down) -->
+            <div class="hero-orb hero-orb--cyan" style="opacity: 0.3; transform: scale(0.6);"></div>
+            <div class="hero-orb hero-orb--purple" style="opacity: 0.3; transform: scale(0.6);"></div>
 
-            <div class="max-w-xl space-y-6 text-center lg:text-left relative z-10">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm" style="animation: fadeSlideIn 0.8s ease-out 0.8s both;">
-                    <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
-                    <span class="text-neon text-xs font-medium tracking-widest uppercase">AI Creative Director &bull; No Signup Required</span>
-                </div>
-                <h1 class="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tighter leading-none" style="animation: fadeSlideIn 0.8s ease-out 1s both;">
-                    Your Commercial Brief<span class="text-neon">.</span>
-                    <br><span class="text-white/50 font-serif italic font-normal">Built in Minutes.</span>
-                </h1>
-                <p class="text-base text-white/60 max-w-md mx-auto lg:mx-0" style="animation: fadeSlideIn 0.8s ease-out 1.2s both;">
-                    Answer guided questions. Receive a production-ready brief optimized for AI video generation. No guesswork. No blank page.
-                </p>
-                <div class="space-y-3 text-left max-w-md mx-auto lg:mx-0" style="animation: fadeSlideIn 0.8s ease-out 1.3s both;">
-                    <div class="flex items-center gap-3">
-                        <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                        <span class="text-sm text-white/70">Structured 10-phase intake &mdash; we ask, you answer</span>
+            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center relative z-10">
+
+                <!-- LEFT: Text Content -->
+                <div class="space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm" style="animation: fadeSlideIn 0.8s ease-out 0.8s both;">
+                        <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+                        <span class="text-neon text-xs font-medium tracking-widest uppercase">AI Creative Director &bull; No Signup Required</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                        <span class="text-sm text-white/70">Captures offer, audience, hook, tone &amp; CTA</span>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tighter leading-none" style="animation: fadeSlideIn 0.8s ease-out 1s both;">
+                        Your Commercial Brief<span class="text-neon">.</span>
+                        <br><span class="text-white/50 font-serif italic font-normal">Built in Minutes.</span>
+                    </h1>
+                    <p class="text-base text-white/60 max-w-md mx-auto lg:mx-0" style="animation: fadeSlideIn 0.8s ease-out 1.2s both;">
+                        Answer guided questions. Receive a production-ready brief optimized for AI video generation. No guesswork. No blank page.
+                    </p>
+                    <div class="space-y-3 text-left max-w-md mx-auto lg:mx-0" style="animation: fadeSlideIn 0.8s ease-out 1.3s both;">
+                        <div class="flex items-center gap-3">
+                            <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
+                            <span class="text-sm text-white/70">Structured 10-phase intake &mdash; we ask, you answer</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
+                            <span class="text-sm text-white/70">Captures offer, audience, hook, tone &amp; CTA</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
+                            <span class="text-sm text-white/70">Output ready for Veo, Runway &amp; AI production</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                        <span class="text-sm text-white/70">Output ready for Veo, Runway &amp; AI production</span>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4" style="animation: fadeSlideIn 0.8s ease-out 1.4s both;">
+                        <a href="#" onclick="event.stopPropagation(); toggleNeuralInterface(); return false;" class="cta-glow group relative px-8 py-4 bg-transparent overflow-hidden border border-neon text-white transition-all hover:border-neon cursor-pointer">
+                            <div class="absolute inset-0 w-0 bg-neon transition-all duration-[250ms] ease-out group-hover:w-full opacity-80"></div>
+                            <span class="relative flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-widest group-hover:text-white">
+                                Begin Your Brief
+                                <i data-lucide="arrow-right" class="w-4 h-4" stroke-width="1.5"></i>
+                            </span>
+                        </a>
+                        <a href="#how-it-works" class="group relative px-8 py-4 bg-transparent overflow-hidden border border-white/30 text-white transition-all hover:border-white/60">
+                            <span class="relative flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-widest">
+                                See the Process
+                            </span>
+                        </a>
                     </div>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4" style="animation: fadeSlideIn 0.8s ease-out 1.4s both;">
-                    <a href="#" onclick="event.stopPropagation(); toggleNeuralInterface(); return false;" class="cta-glow group relative px-8 py-4 bg-transparent overflow-hidden border border-neon text-white transition-all hover:border-neon cursor-pointer">
-                        <div class="absolute inset-0 w-0 bg-neon transition-all duration-[250ms] ease-out group-hover:w-full opacity-80"></div>
-                        <span class="relative flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-widest group-hover:text-white">
-                            Begin Your Brief
-                            <i data-lucide="arrow-right" class="w-4 h-4" stroke-width="1.5"></i>
-                        </span>
-                    </a>
-                    <a href="#how-it-works" class="group relative px-8 py-4 bg-transparent overflow-hidden border border-white/30 text-white transition-all hover:border-white/60">
-                        <span class="relative flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-widest">
-                            See the Process
-                        </span>
-                    </a>
+
+                <!-- RIGHT: Sample Video -->
+                <div class="relative" style="animation: fadeSlideIn 0.8s ease-out 1.2s both;">
+                    <div class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl shadow-neon/10">
+                        <video
+                            id="hero-sample-video"
+                            class="w-full aspect-video object-cover"
+                            src="/samples/commercial_lab_promo_FINAL.mp4"
+                            controls
+                            playsinline
+                            preload="metadata"
+                        ></video>
+                        <div class="p-4 border-t border-white/10">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-white text-sm font-medium">Sample Output</p>
+                                    <p class="text-white/40 text-xs">AI-generated commercial &bull; 23 seconds</p>
+                                </div>
+                                <span class="px-2 py-1 bg-[#FFD700]/20 text-[#FFD700] text-xs font-bold rounded uppercase tracking-wider">Preview</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-
-            <!-- NOTE: Old embedded chat widget removed - use Neural Interface FAB (ni-fab) instead -->
         </section>
 
         <!-- ========== HOW IT WORKS (REMASTERED) ========== -->
