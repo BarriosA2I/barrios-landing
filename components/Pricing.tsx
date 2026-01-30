@@ -39,8 +39,8 @@ const PATHS: PricingPath[] = [
       { name: 'GROWTH', detail: '$1,699 • 32 TOKENS' },
       { name: 'SCALE', detail: '$3,199 • 64 TOKENS' },
     ],
-    note: '*8 tokens = 1 full 64-second commercial. Script, voiceover, video, captions—all included.',
-    cta: 'EXPLORE COMMERCIAL_LAB',
+    note: '"8 tokens = 1 full 64-second commercial. Script, voiceover, video, captions—all included."',
+    cta: 'SUBSCRIBE NOW',
     color: '#00bfff',
   },
   {
@@ -151,12 +151,21 @@ export default function Pricing() {
                 {path.desc}
               </p>
 
-              {/* Feature List (Terminal Style) */}
-              <div className="space-y-4 mb-8 flex-grow">
-                {path.features.map((feat) => (
+              {/* Feature List (Terminal Style) - With Buy Buttons for Commercial Lab */}
+              <div className="space-y-3 mb-8 flex-grow">
+                {path.features.map((feat, featIdx) => (
                   <div key={feat.name} className="flex justify-between items-center border-b border-white/5 pb-2">
                     <span className="text-xs font-mono text-gray-500 tracking-tighter">{feat.name}</span>
-                    <span className="text-xs font-bold text-white tracking-widest">{feat.detail}</span>
+                    {path.id === 'commercial-lab' ? (
+                      <button
+                        onClick={() => redirectToCheckout(['starter', 'creator', 'growth', 'scale'][featIdx] as 'starter' | 'creator' | 'growth' | 'scale')}
+                        className="text-xs font-bold text-[#00bfff] tracking-wide hover:text-white transition-colors cursor-pointer hover:underline"
+                      >
+                        {feat.detail} →
+                      </button>
+                    ) : (
+                      <span className="text-xs font-bold text-white tracking-widest">{feat.detail}</span>
+                    )}
                   </div>
                 ))}
               </div>
