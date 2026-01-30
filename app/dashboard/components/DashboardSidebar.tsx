@@ -17,12 +17,14 @@ import {
   X,
   CheckSquare,
   MessageSquare,
-  BarChart3
+  BarChart3,
+  ListTodo
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Commercial Lab', href: '/dashboard/lab', icon: Video },
+  { name: 'Production Queue', href: '/dashboard/queue', icon: ListTodo },
   { name: 'NEXUS Personal', href: '/dashboard/nexus', icon: Cpu },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
   { name: 'Success Portal', href: '/dashboard/success', icon: CheckSquare },

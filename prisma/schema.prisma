@@ -219,6 +219,19 @@ enum StripeEventStatus {
   SKIPPED
 }
 
+// Commercial Request (Manual Production Queue)
+enum CommercialRequestStatus {
+  PENDING       // Waiting for Gary to start
+  IN_PROGRESS   // Gary is working on it
+  DELIVERED     // Sent to client
+  CANCELLED
+}
+
+enum CommercialRequestPriority {
+  STANDARD      // 48h turnaround
+  RUSH          // 24h turnaround
+}
+
 // =============================================================================
 // USER & ACCOUNT MODELS
 // =============================================================================
@@ -273,6 +286,7 @@ model Account {
   supportTickets    SupportTicket[]
   referralsGiven    Referral[]      @relation("ReferrerAccount")
   referralsReceived Referral[]      @relation("ReferredAccount")
+  commercialRequests CommercialRequest[]
 
   // Timestamps
   createdAt         DateTime        @default(now()) @map("created_at")
@@ -1054,4 +1068,46 @@ model Referral {
   @@index([code])
   @@index([referredEmail])
   @@map("referrals")
+}
+
+// =============================================================================
+// COMMERCIAL REQUEST (MANUAL PRODUCTION QUEUE)
+// =============================================================================
+
+model CommercialRequest {
+  id                String                      @id @default(cuid())
+
+  // Client Info (Basic capture from AI assistant)
+  brandName         String                      @map("brand_name")
+  product           String
+  targetAudience    String                      @map("target_audience")
+  tone              String                      // professional, friendly, bold, minimalist
+  keyMessage        String                      @map("key_message")
+  cta               String                      // call-to-action
+
+  // Contact Info
+  clientEmail       String                      @map("client_email")
+  clientName        String?                     @map("client_name")
+
+  // Status & Priority
+  status            CommercialRequestStatus     @default(PENDING)
+  priority          CommercialRequestPriority   @default(STANDARD)
+
+  // Account relationship (optional - for logged-in users)
+  accountId         String?                     @map("account_id")
+  account           Account?                    @relation(fields: [accountId], references: [id], onDelete: SetNull)
+
+  // Internal notes (for Gary)
+  internalNotes     String?                     @map("internal_notes") @db.Text
+  deliveryUrl       String?                     @map("delivery_url")
+
+  // Timestamps
+  createdAt         DateTime                    @default(now()) @map("created_at")
+  updatedAt         DateTime                    @updatedAt @map("updated_at")
+  deliveredAt       DateTime?                   @map("delivered_at")
+
+  @@index([status])
+  @@index([clientEmail])
+  @@index([createdAt])
+  @@map("commercial_requests")
 }
