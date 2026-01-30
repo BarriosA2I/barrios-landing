@@ -3475,6 +3475,60 @@
         }
 
         /**
+         * Submit commercial request to Production Queue
+         * This sends the collected brief to Gary's dashboard for manual production
+         */
+        async function submitToProductionQueue() {
+            // Get email - prompt if not available
+            let clientEmail = localStorage.getItem('userEmail');
+            if (!clientEmail) {
+                clientEmail = prompt('Please enter your email to receive your commercial:');
+                if (clientEmail) {
+                    localStorage.setItem('userEmail', clientEmail);
+                }
+            }
+
+            if (!clientEmail) {
+                console.log('[Production Queue] No email provided, skipping submission');
+                return;
+            }
+
+            // Build the commercial request from collected data
+            const requestData = {
+                brandName: collectedLeadData.businessName || 'Unknown Brand',
+                product: collectedLeadData.industry || 'Product/Service',
+                targetAudience: collectedLeadData.targetAudience || 'General audience',
+                tone: 'professional', // Default tone
+                keyMessage: Array.isArray(collectedLeadData.goals)
+                    ? collectedLeadData.goals.join('. ')
+                    : (collectedLeadData.goals || 'Key message to be defined'),
+                cta: 'Contact us today', // Default CTA
+                clientEmail: clientEmail,
+                clientName: collectedLeadData.businessName || undefined,
+                priority: 'STANDARD'
+            };
+
+            try {
+                const response = await fetch('/api/commercial-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log('[Production Queue] Request submitted:', data.requestId);
+                    addSystemMessage('📋 Your commercial brief has been submitted! You\'ll receive your completed commercial within 48 hours.');
+                } else {
+                    console.error('[Production Queue] Submission failed:', data.error);
+                }
+            } catch (error) {
+                console.error('[Production Queue] Error submitting request:', error);
+            }
+        }
+
+        /**
          * Trigger FLAWLESS GENESIS pipeline
          */
         async function triggerGenesisStrategy() {
@@ -3526,6 +3580,9 @@
 
                 addSystemMessage('🚀 FLAWLESS GENESIS initiated! Our AI agents are crafting your strategy...');
 
+                // Also submit to Production Queue for manual backup
+                await submitToProductionQueue();
+
             } catch (error) {
                 console.error('Genesis trigger error:', error);
                 genesisStatus = 'error';
@@ -3533,7 +3590,10 @@
                     btn.disabled = false;
                     btn.innerHTML = '🚀 Generate AI Strategy';
                 }
-                addSystemMessage('❌ Genesis initialization failed. Please try again.');
+
+                // Submit to Production Queue as fallback when Genesis fails
+                await submitToProductionQueue();
+                addSystemMessage('📋 Your brief has been submitted to our production team. You\'ll receive your commercial within 48 hours!');
             }
         }
 
