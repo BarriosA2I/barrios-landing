@@ -104,18 +104,21 @@ export default function BillingPage() {
   const { balance, planType, loading: tokensLoading } = useTokenBalance(user?.id);
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
-  // Determine tokens total based on plan (will be replaced with API data later)
+  // Determine tokens total based on plan
   const getTierTokens = (plan: string | null): number => {
     switch (plan?.toLowerCase()) {
       case 'prototyper': return 16;
       case 'growth': return 40;
       case 'scale': return 96;
-      default: return 16; // Default to Prototyper
+      default: return 0; // Free tier has no token allocation
     }
   };
 
   const tokensTotal = getTierTokens(planType);
-  const tokensUsed = Math.max(0, tokensTotal - balance);
+  // For free users with bonus tokens, show balance as "available" not "remaining from allocation"
+  const tokensUsed = tokensTotal > 0 ? Math.max(0, tokensTotal - balance) : 0;
+  const hasSubscription = tokensTotal > 0;
+  const hasBonusTokens = tokensTotal === 0 && balance > 0;
 
   // Mock invoice data - V2 pricing (will be replaced with Stripe data later)
   const invoices = [
@@ -223,56 +226,97 @@ export default function BillingPage() {
         <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-4">Current Usage</h3>
         <GlassCard className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Column 1: Tokens Used OR No Tokens CTA */}
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Tokens Used</p>
+              {hasSubscription ? (
+                <>
+                  <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Tokens Used</p>
+                  <div className="flex items-baseline gap-2">
+                    {tokensLoading ? (
+                      <Loader2 className="h-8 w-8 animate-spin text-[#00bfff]" />
+                    ) : (
+                      <>
+                        <span className="text-3xl font-bold text-white">{tokensUsed}</span>
+                        <span className="text-sm text-slate-500">/ {tokensTotal}</span>
+                      </>
+                    )}
+                  </div>
+                  <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(tokensUsed / tokensTotal) * 100}%` }}
+                      className="h-full bg-gradient-to-r from-[#00bfff] to-[#ffd700]"
+                    />
+                  </div>
+                  <p className="text-[10px] text-slate-600 mt-2">8 tokens = 1 commercial (64s video)</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Token Balance</p>
+                  <div className="flex items-baseline gap-2">
+                    {tokensLoading ? (
+                      <Loader2 className="h-8 w-8 animate-spin text-[#00bfff]" />
+                    ) : hasBonusTokens ? (
+                      <>
+                        <span className="text-3xl font-bold text-[#ffd700]">{balance}</span>
+                        <span className="text-sm text-slate-500">bonus tokens</span>
+                      </>
+                    ) : (
+                      <span className="text-2xl font-bold text-slate-500">No tokens</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-600 mt-3">
+                    {hasBonusTokens ? 'Use for video generation' : 'Subscribe to get monthly tokens'}
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* Column 2: Tokens Remaining OR Available Balance */}
+            <div>
+              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">
+                {hasSubscription ? 'Tokens Remaining' : 'Available'}
+              </p>
               <div className="flex items-baseline gap-2">
                 {tokensLoading ? (
                   <Loader2 className="h-8 w-8 animate-spin text-[#00bfff]" />
                 ) : (
                   <>
-                    <span className="text-3xl font-bold text-white">{tokensUsed}</span>
-                    <span className="text-sm text-slate-500">/ {tokensTotal}</span>
+                    <span className={`text-3xl font-bold ${balance > 0 ? 'text-[#00bfff]' : 'text-slate-500'}`}>
+                      {balance}
+                    </span>
+                    <span className="text-sm text-slate-500">
+                      {hasSubscription ? 'available' : 'tokens'}
+                    </span>
                   </>
                 )}
               </div>
-              <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: tokensTotal > 0 ? `${(tokensUsed / tokensTotal) * 100}%` : '0%' }}
-                  className="h-full bg-gradient-to-r from-[#00bfff] to-[#ffd700]"
-                />
-              </div>
-              <p className="text-[10px] text-slate-600 mt-2">8 tokens = 1 commercial (64s video)</p>
+              {hasSubscription && (
+                <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(balance / tokensTotal) * 100}%` }}
+                    className="h-full bg-[#00bfff]"
+                  />
+                </div>
+              )}
+              <p className="text-[10px] text-slate-600 mt-2">
+                {hasSubscription ? 'Unused tokens roll over 1 month' : '8 tokens = 1 commercial'}
+              </p>
             </div>
-            <div>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Tokens Remaining</p>
-              <div className="flex items-baseline gap-2">
-                {tokensLoading ? (
-                  <Loader2 className="h-8 w-8 animate-spin text-[#00bfff]" />
-                ) : (
-                  <>
-                    <span className="text-3xl font-bold text-white">{balance}</span>
-                    <span className="text-sm text-slate-500">available</span>
-                  </>
-                )}
-              </div>
-              <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: tokensTotal > 0 ? `${(balance / tokensTotal) * 100}%` : '0%' }}
-                  className="h-full bg-[#00bfff]"
-                />
-              </div>
-              <p className="text-[10px] text-slate-600 mt-2">Unused tokens roll over 1 month</p>
-            </div>
+
+            {/* Column 3: Current Plan */}
             <div>
               <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Current Plan</p>
               <p className="text-lg font-bold text-white capitalize">
                 {tokensLoading ? '...' : (planType || 'Free')}
               </p>
               <p className="text-xs text-slate-500 mt-1">
-                {planType ? `${tokensTotal} tokens/month` : 'No active subscription'}
+                {hasSubscription ? `${tokensTotal} tokens/month` : 'No active subscription'}
               </p>
+              {!hasSubscription && !tokensLoading && (
+                <p className="text-[10px] text-[#00bfff] mt-3">↑ Choose a plan above to get started</p>
+              )}
             </div>
           </div>
         </GlassCard>

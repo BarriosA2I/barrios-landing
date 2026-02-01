@@ -75,16 +75,17 @@ export default function ProfilePage() {
   }, []);
 
   // Merge GENESIS token data with profile data
+  // For free users (tokensTotal = 0), show balance as available tokens, not "used from allocation"
   const mergedStats = profileData?.stats ? {
     ...profileData.stats,
-    // Use GENESIS balance if available, otherwise fallback to Prisma data
-    tokensUsed: genesisBalance !== undefined
-      ? Math.max(0, (profileData.stats.tokensTotal || 16) - genesisBalance)
+    // Use GENESIS balance to calculate remaining
+    tokensUsed: genesisBalance !== undefined && profileData.stats.tokensTotal > 0
+      ? Math.max(0, profileData.stats.tokensTotal - genesisBalance)
       : profileData.stats.tokensUsed,
-    tokensTotal: profileData.stats.tokensTotal || 16,
+    tokensTotal: profileData.stats.tokensTotal || 0, // Free tier = 0, not 16
   } : {
     tokensUsed: 0,
-    tokensTotal: 16,
+    tokensTotal: 0, // Free tier = 0
     productions: 0,
     voiceClones: 0,
     nexusStatus: null

@@ -105,10 +105,10 @@ export default function DashboardPage() {
         <MetricCard
           title="Token Balance"
           value={tokensLoading ? '...' : balance}
-          subtext="tokens remaining"
+          subtext={balance > 0 ? 'tokens available' : 'no tokens'}
           tag="Commercial Lab"
           tagColor="bg-[#00bfff]/20 text-[#00bfff]"
-          progress={balance > 0 ? Math.min((balance / 16) * 100, 100) : 0}
+          progress={0}
         />
         <MetricCard
           title="Active Productions"
