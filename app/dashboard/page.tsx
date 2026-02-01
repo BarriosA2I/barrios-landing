@@ -8,10 +8,12 @@ import {
   Mic,
   Activity,
   CreditCard,
-  LogOut
+  LogOut,
+  Loader2
 } from 'lucide-react';
 import { useClerk } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 
 // Reusable Glass Card Component
 const GlassCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
@@ -62,6 +64,7 @@ export default function DashboardPage() {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
+  const { balance, loading: tokensLoading, error: tokensError } = useTokenBalance(user?.id);
 
   const handleSignOut = async () => {
     await signOut();
@@ -101,11 +104,11 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <MetricCard
           title="Token Balance"
-          value="0"
+          value={tokensLoading ? '...' : balance}
           subtext="tokens remaining"
           tag="Commercial Lab"
           tagColor="bg-[#00bfff]/20 text-[#00bfff]"
-          progress={5}
+          progress={balance > 0 ? Math.min((balance / 16) * 100, 100) : 0}
         />
         <MetricCard
           title="Active Productions"

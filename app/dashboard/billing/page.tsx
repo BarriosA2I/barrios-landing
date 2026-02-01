@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import { CreditCard, ArrowUpRight, Check, History, Zap, Sparkles, Loader2 } from 'lucide-react';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 
 // V2 Performance Engine - Stripe Price IDs
 const TIER_PRICES: Record<string, string> = {
@@ -98,9 +100,24 @@ const PlanCard = ({
 );
 
 export default function BillingPage() {
+  const { user } = useUser();
+  const { balance, planType, loading: tokensLoading } = useTokenBalance(user?.id);
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
-  // Mock invoice data - V2 pricing
+  // Determine tokens total based on plan (will be replaced with API data later)
+  const getTierTokens = (plan: string | null): number => {
+    switch (plan?.toLowerCase()) {
+      case 'prototyper': return 16;
+      case 'growth': return 40;
+      case 'scale': return 96;
+      default: return 16; // Default to Prototyper
+    }
+  };
+
+  const tokensTotal = getTierTokens(planType);
+  const tokensUsed = Math.max(0, tokensTotal - balance);
+
+  // Mock invoice data - V2 pricing (will be replaced with Stripe data later)
   const invoices = [
     { id: "INV-0012", date: "Jan 01, 2026", amount: "$599.00", status: "Paid" },
     { id: "INV-0011", date: "Dec 01, 2025", amount: "$599.00", status: "Paid" }
@@ -209,37 +226,53 @@ export default function BillingPage() {
             <div>
               <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Tokens Used</p>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-white">0</span>
-                <span className="text-sm text-slate-500">/ 16</span>
+                {tokensLoading ? (
+                  <Loader2 className="h-8 w-8 animate-spin text-[#00bfff]" />
+                ) : (
+                  <>
+                    <span className="text-3xl font-bold text-white">{tokensUsed}</span>
+                    <span className="text-sm text-slate-500">/ {tokensTotal}</span>
+                  </>
+                )}
               </div>
               <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: '0%' }}
+                  animate={{ width: tokensTotal > 0 ? `${(tokensUsed / tokensTotal) * 100}%` : '0%' }}
                   className="h-full bg-gradient-to-r from-[#00bfff] to-[#ffd700]"
                 />
               </div>
               <p className="text-[10px] text-slate-600 mt-2">8 tokens = 1 commercial (64s video)</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Commercials This Month</p>
+              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Tokens Remaining</p>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-white">0</span>
-                <span className="text-sm text-slate-500">/ 2</span>
+                {tokensLoading ? (
+                  <Loader2 className="h-8 w-8 animate-spin text-[#00bfff]" />
+                ) : (
+                  <>
+                    <span className="text-3xl font-bold text-white">{balance}</span>
+                    <span className="text-sm text-slate-500">available</span>
+                  </>
+                )}
               </div>
               <div className="mt-3 h-2 w-full bg-white/5 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: '0%' }}
+                  animate={{ width: tokensTotal > 0 ? `${(balance / tokensTotal) * 100}%` : '0%' }}
                   className="h-full bg-[#00bfff]"
                 />
               </div>
               <p className="text-[10px] text-slate-600 mt-2">Unused tokens roll over 1 month</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Billing Cycle</p>
-              <p className="text-lg font-bold text-white">Resets Jan 31, 2026</p>
-              <p className="text-xs text-slate-500 mt-1">12 days remaining</p>
+              <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Current Plan</p>
+              <p className="text-lg font-bold text-white capitalize">
+                {tokensLoading ? '...' : (planType || 'Free')}
+              </p>
+              <p className="text-xs text-slate-500 mt-1">
+                {planType ? `${tokensTotal} tokens/month` : 'No active subscription'}
+              </p>
             </div>
           </div>
         </GlassCard>

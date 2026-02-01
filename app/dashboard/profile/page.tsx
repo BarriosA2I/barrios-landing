@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import ProfileHeader from './components/ProfileHeader';
 import StatsGrid from './components/StatsGrid';
 import ActivityTimeline from './components/ActivityTimeline';
 import AccountDetails from './components/AccountDetails';
 import QuickLinks from './components/QuickLinks';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 
 interface ProfileData {
   subscription: {
@@ -32,9 +34,13 @@ interface ProfileData {
 }
 
 export default function ProfilePage() {
+  const { user } = useUser();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Fetch token balance from GENESIS backend
+  const { balance: genesisBalance, planType, loading: tokensLoading } = useTokenBalance(user?.id);
 
   useEffect(() => {
     async function fetchProfileData() {
@@ -67,6 +73,22 @@ export default function ProfilePage() {
 
     fetchProfileData();
   }, []);
+
+  // Merge GENESIS token data with profile data
+  const mergedStats = profileData?.stats ? {
+    ...profileData.stats,
+    // Use GENESIS balance if available, otherwise fallback to Prisma data
+    tokensUsed: genesisBalance !== undefined
+      ? Math.max(0, (profileData.stats.tokensTotal || 16) - genesisBalance)
+      : profileData.stats.tokensUsed,
+    tokensTotal: profileData.stats.tokensTotal || 16,
+  } : {
+    tokensUsed: 0,
+    tokensTotal: 16,
+    productions: 0,
+    voiceClones: 0,
+    nexusStatus: null
+  };
 
   if (loading) {
     return (
@@ -122,16 +144,8 @@ export default function ProfilePage() {
         } : undefined}
       />
 
-      {/* Stats Grid */}
-      <StatsGrid
-        stats={profileData?.stats || {
-          tokensUsed: 0,
-          tokensTotal: 0,
-          productions: 0,
-          voiceClones: 0,
-          nexusStatus: null
-        }}
-      />
+      {/* Stats Grid - uses GENESIS token balance when available */}
+      <StatsGrid stats={mergedStats} />
 
       {/* Two Column Layout: Activity + Account Details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
